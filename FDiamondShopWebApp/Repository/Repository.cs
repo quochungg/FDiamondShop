@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using FDiamondShopWebApp.Data;
 using FDiamondShopWebApp.Repository.IRepository;
+using FDiamondShopWebApp.Data;
 
 
 namespace FDiamondShopWebApp.Repository
@@ -9,11 +9,11 @@ namespace FDiamondShopWebApp.Repository
 
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _db;
+        private readonly FDiamondContext _db;
         internal DbSet<T> dbSet;
 
 
-        public Repository(ApplicationDbContext db)
+        public Repository(FDiamondContext db)
         {
             _db = db;
             this.dbSet = _db.Set<T>();
