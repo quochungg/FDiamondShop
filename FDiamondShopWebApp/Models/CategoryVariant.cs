@@ -11,7 +11,7 @@ public partial class CategoryVariant
 
     public string VariantName { get; set; } = null!;
 
-    public string? Description { get; set; }
+    public string Description { get; set; } = null!;
 
     public virtual Category? Category { get; set; }
 

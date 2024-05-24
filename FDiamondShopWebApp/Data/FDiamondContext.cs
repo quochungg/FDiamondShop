@@ -28,12 +28,12 @@ public partial class FDiamondContext : DbContext
 
     public virtual DbSet<SubCategory> SubCategories { get; set; }
 
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__categori__D54EE9B4CD94E19C");
+            entity.HasKey(e => e.CategoryId).HasName("PK__categori__D54EE9B41F208242");
 
             entity.ToTable("categories");
 
@@ -51,7 +51,7 @@ public partial class FDiamondContext : DbContext
 
         modelBuilder.Entity<CategoryVariant>(entity =>
         {
-            entity.HasKey(e => e.VariantId).HasName("PK__category__EACC68B79351C935");
+            entity.HasKey(e => e.VariantId).HasName("PK__category__EACC68B77F3D652B");
 
             entity.ToTable("category_variants");
 
@@ -66,12 +66,12 @@ public partial class FDiamondContext : DbContext
 
             entity.HasOne(d => d.Category).WithMany(p => p.CategoryVariants)
                 .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("FK__category___categ__3C69FB99");
+                .HasConstraintName("FK__category___categ__29572725");
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__products__47027DF542AA3F75");
+            entity.HasKey(e => e.ProductId).HasName("PK__products__47027DF5E9F82F0A");
 
             entity.ToTable("products");
 
@@ -96,12 +96,12 @@ public partial class FDiamondContext : DbContext
 
             entity.HasOne(d => d.SubCategory).WithMany(p => p.Products)
                 .HasForeignKey(d => d.SubCategoryId)
-                .HasConstraintName("FK__products__sub_ca__3F466844");
+                .HasConstraintName("FK__products__sub_ca__2C3393D0");
         });
 
         modelBuilder.Entity<ProductImage>(entity =>
         {
-            entity.HasKey(e => e.ProductImageId).HasName("PK__product___0302EB4A4022F421");
+            entity.HasKey(e => e.ProductImageId).HasName("PK__product___0302EB4ACDDAE1DE");
 
             entity.ToTable("product_images");
 
@@ -116,12 +116,12 @@ public partial class FDiamondContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK__product_i__produ__47DBAE45");
+                .HasConstraintName("FK__product_i__produ__34C8D9D1");
         });
 
         modelBuilder.Entity<ProductVariantValue>(entity =>
         {
-            entity.HasKey(e => new { e.VariantId, e.ProductId }).HasName("PK__product___AEBC4F6884AD39C0");
+            entity.HasKey(e => new { e.VariantId, e.ProductId }).HasName("PK__product___AEBC4F68B5BE01FC");
 
             entity.ToTable("product_variant_values");
 
@@ -134,17 +134,17 @@ public partial class FDiamondContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.ProductVariantValues)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__product_v__produ__44FF419A");
+                .HasConstraintName("FK__product_v__produ__31EC6D26");
 
             entity.HasOne(d => d.Variant).WithMany(p => p.ProductVariantValues)
                 .HasForeignKey(d => d.VariantId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__product_v__varia__440B1D61");
+                .HasConstraintName("FK__product_v__varia__30F848ED");
         });
 
         modelBuilder.Entity<SubCategory>(entity =>
         {
-            entity.HasKey(e => e.SubCategoryId).HasName("PK__sub_cate__0A556D5FC5CFE8A1");
+            entity.HasKey(e => e.SubCategoryId).HasName("PK__sub_cate__0A556D5FCA9F6012");
 
             entity.ToTable("sub_categories");
 
@@ -162,7 +162,7 @@ public partial class FDiamondContext : DbContext
 
             entity.HasOne(d => d.Category).WithMany(p => p.SubCategories)
                 .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("FK__sub_categ__categ__398D8EEE");
+                .HasConstraintName("FK__sub_categ__categ__267ABA7A");
         });
 
         OnModelCreatingPartial(modelBuilder);

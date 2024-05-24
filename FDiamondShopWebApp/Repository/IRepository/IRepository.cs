@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using FDiamondShop.API.Models;
+using System.Linq.Expressions;
 
 
 namespace FDiamondShop.API.Repository.IRepository
@@ -7,8 +8,8 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null);
         Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true);
-        Task CreateAsync(T entity);
         Task RemoveAsync(T entity);
-        Task SaveAsync();
+        Task<List<T>> PartialGet(int pageNumber);
+
     }
 }
