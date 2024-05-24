@@ -23,7 +23,7 @@ namespace FDiamondShopWebApp.Repository
         public async Task CreateAsync(T entity)
         {
             await dbSet.AddAsync(entity);
-            await SaveAsync();
+
         }
 
         public async Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true)
@@ -56,12 +56,9 @@ namespace FDiamondShopWebApp.Repository
         public async Task RemoveAsync(T entity)
         {
             dbSet.Remove(entity);
-            await SaveAsync();
+
         }
 
-        public async Task SaveAsync()
-        {
-            await _db.SaveChangesAsync();
-        }
+
     }
 }
