@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FDiamondShopWebApp.Controllers
+namespace FDiamondShop.API.Controllers
 {
     [Route("api/Product")]
     [ApiController]

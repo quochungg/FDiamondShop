@@ -1,4 +1,4 @@
-﻿namespace FDiamondShopWebApp
+﻿namespace FDiamondShop.API
 {
     public class MappingConfig
     {

@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 
 
-namespace FDiamondShopWebApp.Repository.IRepository
+namespace FDiamondShop.API.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {

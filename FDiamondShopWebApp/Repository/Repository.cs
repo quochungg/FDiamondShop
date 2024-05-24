@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using FDiamondShopWebApp.Repository.IRepository;
-using FDiamondShopWebApp.Data;
+using FDiamondShop.API.Repository.IRepository;
+using FDiamondShop.API.Data;
 
 
 namespace FDiamondShopWebApp.Repository
