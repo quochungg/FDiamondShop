@@ -11,6 +11,6 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<Product> CreateProduct(ProductCreateDTO product);
         Task<Product> UpdateProduct(Product product);
         Task<Product> Disable(int id);
-        
+        Task<Product> GetProductByIdAsync(int id);
     }
 }

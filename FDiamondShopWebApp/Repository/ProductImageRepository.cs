@@ -4,7 +4,7 @@ using FDiamondShop.API.Repository.IRepository;
 
 namespace FDiamondShop.API.Repository
 {
-    public class ProductImageRepository : Repository<ProductImage>,IProductImageRepository
+    public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
     {
         private readonly FDiamondContext _db;
         public ProductImageRepository(FDiamondContext db) : base(db)

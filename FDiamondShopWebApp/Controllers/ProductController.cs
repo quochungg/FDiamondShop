@@ -5,6 +5,7 @@ using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -26,12 +27,45 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAllProduct()
         {
-            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllProductsAsync();
-            var model = _mapper.Map<List<ProductDTO>>(ProductList);
-            _response.Result = model;
-            return Ok(_response);
+            try
+            {
+                IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllProductsAsync();
+                var model = _mapper.Map<List<ProductDTO>>(ProductList);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = model;
+                return Ok(_response);
+            }catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
+
+        [HttpGet("{id:int}", Name = "GetProductById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetAProduct(int id)
+        {
+            try
+            {
+                var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(id);
+                var productDTO = _mapper.Map<ProductDTO>(product);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = productDTO;
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return _response;
+            }
         }
     }
 }
