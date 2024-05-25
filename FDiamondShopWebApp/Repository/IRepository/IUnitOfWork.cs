@@ -3,6 +3,9 @@
     public interface IUnitOfWork : IDisposable
     {
         IProductRepository ProductRepository { get; }
-        Task Save();
+        IProductImageRepository ProductImageRepository { get; }
+        IProductVariantValueRepository ProductVariantValueRepository { get; }
+
+        Task SaveAsync();
     }
 }
