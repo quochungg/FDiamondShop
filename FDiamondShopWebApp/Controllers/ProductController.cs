@@ -3,7 +3,7 @@ using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
-using FDiamondShopWebApp.Repository;
+using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FDiamondShop.API.Controllers
@@ -15,27 +15,23 @@ namespace FDiamondShop.API.Controllers
     {
         private readonly APIResponse _response;
         private readonly FDiamondContext _db;
-        private readonly UnitOfWork unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ProductController(UnitOfWork unitOfWork, FDiamondContext db , IMapper mapper)
+        public ProductController(IUnitOfWork unitOfWork, FDiamondContext db, IMapper mapper)
         {
             this._response = new();
-            this.unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
             _db = db;
             _mapper = mapper;
         }
-        [HttpGet] //endpoint to get data
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        //using async
-        public async Task<ActionResult<APIResponse>> GetProduct() // Ienmerarble la kieu dem duoc
+        public async Task<ActionResult<APIResponse>> GetAllProduct()
         {
-
-
-
-            IEnumerable<Product> ProductList = await unitOfWork.ProductRepository.GetAllAsync();
-            _response.Result = _mapper.Map<List<ProductDTO>>(ProductList);
-            await unitOfWork.SaveAsync();
-            return Ok(ProductList);
+            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllProductsAsync();
+            var model = _mapper.Map<List<ProductDTO>>(ProductList);
+            _response.Result = model;
+            return Ok(_response);
         }
     }
 }

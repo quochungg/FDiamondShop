@@ -13,5 +13,5 @@ public partial class ProductImage
 
     public bool? IsGia { get; set; }
 
-    public virtual Product? Product { get; set; }
+    public virtual Product Product { get; set; } = null!;
 }

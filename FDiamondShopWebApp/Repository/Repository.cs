@@ -4,7 +4,7 @@ using FDiamondShop.API.Repository.IRepository;
 using FDiamondShop.API.Data;
 
 
-namespace FDiamondShopWebApp.Repository
+namespace FDiamondShop.API.Repository
 {
 
     public class Repository<T> : IRepository<T> where T : class
@@ -59,9 +59,15 @@ namespace FDiamondShopWebApp.Repository
 
         }
 
-        public Task<List<T>> PartialGet(int pageNumber)
+        public async Task<List<T>> PartialGet(int pageNumber)
         {
             throw new NotImplementedException();
         }
+
+        public async Task CreateAsync(T entity)
+        {
+            await dbSet.AddAsync(entity);           
+        }
+
     }
 }

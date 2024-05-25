@@ -1,13 +1,14 @@
 ﻿using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
-using FDiamondShopWebApp.Repository;
+using FDiamondShop.API.Models.DTO;
+using FDiamondShop.API.Repository;
 
 namespace FDiamondShop.API.Repository.IRepository
 {
     public interface IProductRepository : IRepository<Product>
     {
-
-        Task<Product> CreateProduct(Product product, List<ProductVariantValue> listValue);
+        Task<IEnumerable<Product>> GetAllProductsAsync();
+        Task<Product> CreateProduct(ProductCreateDTO product);
         Task<Product> UpdateProduct(Product product);
         Task<Product> Disable(int id);
         

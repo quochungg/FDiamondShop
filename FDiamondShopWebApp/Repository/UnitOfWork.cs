@@ -2,18 +2,23 @@
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
 
-namespace FDiamondShopWebApp.Repository
+namespace FDiamondShop.API.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
         public FDiamondContext _db { get; }
         public IProductRepository ProductRepository { get; }
+        public IProductImageRepository ProductImageRepository { get; }
+        public IProductVariantValueRepository ProductVariantValueRepository { get; }
 
 
-        public UnitOfWork(FDiamondContext db, IProductRepository productRepository)
+
+        public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, IProductVariantValueRepository productVariantValueRepository)
         {
             _db = db;
             ProductRepository = productRepository;
+            ProductImageRepository = productImageRepository;
+            ProductVariantValueRepository = productVariantValueRepository;
         }
         public async Task SaveAsync()
         {
@@ -38,7 +43,6 @@ namespace FDiamondShopWebApp.Repository
             GC.SuppressFinalize(this);
         }
 
-       
     }
 }
 

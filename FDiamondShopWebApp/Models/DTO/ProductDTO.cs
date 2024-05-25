@@ -4,7 +4,7 @@
     {
         public int ProductId { get; set; }
 
-        public int? SubCategoryId { get; set; }
+        public int SubCategoryId { get; set; }
 
         public string ProductName { get; set; } = null!;
 
@@ -18,10 +18,9 @@
 
         public bool? IsDeleted { get; set; }
 
-        public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+        public virtual ICollection<ProductImageDTO> ProductImages { get; set; }
 
-        public virtual ICollection<ProductVariantValue> ProductVariantValues { get; set; } = new List<ProductVariantValue>();
+        public virtual ICollection<ProductVariantValueDTO> ProductVariantValues { get; set; }
 
-        public virtual SubCategory? SubCategory { get; set; }
     }
 }
