@@ -59,6 +59,9 @@ namespace FDiamondShopWebApp.Repository
 
         }
 
-
+        public Task<List<T>> PartialGet(int pageNumber)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

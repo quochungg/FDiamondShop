@@ -38,10 +38,7 @@ namespace FDiamondShopWebApp.Repository
             GC.SuppressFinalize(this);
         }
 
-        public Task Save()
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }
 

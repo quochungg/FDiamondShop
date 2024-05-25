@@ -1,7 +1,9 @@
 using FDiamondShop.API;
 using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
+using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
+using FDiamondShopWebApp;
 using FDiamondShopWebApp.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,8 +14,7 @@ builder.Services.AddDbContext<FDiamondContext>(option => {
 // Add services to the container.
 
 builder.Services.AddTransient<UnitOfWork>();
-builder.Services.AddTransient<IRepository<Category>,Repository<Category>>();
-builder.Services.AddTransient<IRepository<Product>, Repository<Product>>();
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddControllers(option =>
 {
