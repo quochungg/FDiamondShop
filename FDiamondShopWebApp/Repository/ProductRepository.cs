@@ -22,6 +22,12 @@ namespace FDiamondShop.API.Repository
                 .ToListAsync();
         }
 
+        public async Task<Product> GetProductByIdAsync(int id)
+        {
+            return await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(u => u.ProductId == id);
+        }
+
         public Task<Product> CreateProduct(Product product, List<ProductVariantValue> listValue)
         {
             throw new NotImplementedException();

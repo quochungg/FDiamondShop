@@ -27,6 +27,7 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAllProduct()
         {
             try
@@ -42,6 +43,28 @@ namespace FDiamondShop.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
                 return BadRequest(_response);
+            }
+        }
+
+        [HttpGet("{id:int}", Name = "GetProductById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetAProduct(int id)
+        {
+            try
+            {
+                var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(id);
+                var productDTO = _mapper.Map<ProductDTO>(product);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = productDTO;
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return _response;
             }
         }
     }
