@@ -8,9 +8,9 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null);
         Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true);
-        Task RemoveAsync(T entity);
+        Task<T> RemoveAsync(T entity);
         Task<List<T>> PartialGet(int pageNumber);
-        Task CreateAsync(T entity);
+        Task<T> CreateAsync(T entity);
 
     }
 }
