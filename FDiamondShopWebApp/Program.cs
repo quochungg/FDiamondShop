@@ -1,8 +1,8 @@
 using FDiamondShop.API;
 using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
-using FDiamondShop.API.Repository.IRepository;
 using FDiamondShop.API.Repository;
+using FDiamondShop.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -16,6 +16,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
 
+builder.Services.AddTransient<UnitOfWork>();
+builder.Services.AddTransient<IRepository<Category>,Repository<Category>>();
+builder.Services.AddTransient<IRepository<Product>, Repository<Product>>();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddControllers(option =>
 {
