@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-import { UserView } from 'src/sections/user/view';
+import { CategoryView } from 'src/sections/category/view';
 
 // ----------------------------------------------------------------------
 
@@ -8,10 +8,10 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User Management </title>
+        <title> Category Management </title>
       </Helmet>
 
-      <UserView />
+      <CategoryView />
     </>
   );
 }

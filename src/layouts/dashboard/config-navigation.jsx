@@ -20,7 +20,17 @@ const navConfig = [
   {
     title: 'product',
     path: '/products',
-    icon: icon('ic_cart'),
+    icon: icon('ic_product'),
+  },
+  {
+    title: 'category',
+    path: '/category',
+    icon: icon('ic_category'),
+  },
+  {
+    title: 'order',
+    path: '/order',
+    icon: icon('ic_order'),
   },
   {
     title: 'blog',

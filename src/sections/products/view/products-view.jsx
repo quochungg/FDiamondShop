@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -45,6 +46,13 @@ export default function ProductsView() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const navigate = useNavigate();
+
+  const handleClickAdd = () => {
+    // Điều hướng đến một đường dẫn mới
+    navigate('/new');
+  };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -115,7 +123,12 @@ export default function ProductsView() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Products</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        <Button
+          onClick={handleClickAdd}
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+        >
           New Product
         </Button>
       </Stack>
