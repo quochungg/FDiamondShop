@@ -11,6 +11,8 @@ namespace FDiamondShop.API
         {
             CreateMap<Product,ProductDTO>().ReverseMap();
             CreateMap<Product,ProductCreateDTO>().ReverseMap();
+            CreateMap<Product, ProductUpdateDTO>().ReverseMap();
+
             CreateMap<ProductImage,ProductImageCreateDTO>().ReverseMap();
             CreateMap<ProductVariantValue,ProductVariantValueCreateDTO>().ReverseMap();
             CreateMap<ProductImage,ProductImageDTO>().ReverseMap();

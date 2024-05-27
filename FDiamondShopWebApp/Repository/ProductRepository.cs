@@ -48,9 +48,10 @@ namespace FDiamondShop.API.Repository
             throw new NotImplementedException();
         }
 
-        public Task<Product> UpdateProduct(Product product)
+        public async Task<Product> UpdateProduct(Product product)
         {
-            throw new NotImplementedException();
+            _db.Products.Update(product);
+            return product;
         }
     }
 }

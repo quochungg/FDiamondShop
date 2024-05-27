@@ -67,5 +67,34 @@ namespace FDiamondShop.API.Controllers
                 return _response;
             }
         }
+
+
+        [HttpPut("{id:int}", Name = "UpdateProduct")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> UpdateProduct(int id, [FromBody] ProductUpdateDTO updateDTO)
+        {
+            try
+            {
+                if (updateDTO == null || id != updateDTO.ProductId)
+                {
+                    ModelState.AddModelError("CustomError", "ID is not Valid!");
+                    return BadRequest(ModelState);
+                }
+                Product model = _mapper.Map<Product>(updateDTO);
+                await _unitOfWork.ProductRepository.UpdateProduct(model);
+                await _unitOfWork.SaveAsync();
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _response;
+        }
+
     }
 }
