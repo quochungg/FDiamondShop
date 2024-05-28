@@ -17,9 +17,9 @@ public partial class Product
 
     public string? Description { get; set; }
 
-    public bool? IsVisible { get; set; }
+    public bool IsVisible { get; set; } = true;
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; } = false;
 
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 

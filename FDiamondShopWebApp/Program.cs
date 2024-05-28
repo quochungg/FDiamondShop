@@ -15,7 +15,6 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
-
 builder.Services.AddTransient<UnitOfWork>();
 builder.Services.AddTransient<IRepository<Category>,Repository<Category>>();
 builder.Services.AddTransient<IRepository<Product>, Repository<Product>>();
