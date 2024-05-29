@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
@@ -14,7 +15,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 // import { products } from 'src/_mock/products';
-import { products } from 'src/_mock/products';
+// import { products } from 'src/_mock/products';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -37,13 +38,15 @@ export default function ProductsView() {
   // const [openFilter, setOpenFilter] = useState(false);
   const [page, setPage] = useState(0);
 
+  const [data, setData] = useState([]);
+
   const [order, setOrder] = useState('asc');
 
   const [selected, setSelected] = useState([]);
 
   const [orderBy, setOrderBy] = useState('name');
 
-  const [filterName, setFilterName] = useState('');
+  const [filterById, setFilterById] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -54,18 +57,29 @@ export default function ProductsView() {
     navigate('/new');
   };
 
+  useEffect(() => {
+    const getAll = async () => {
+      const response = await axios.get(
+        'https://66548f261c6af63f46787c32.mockapi.io/productapi/products'
+      );
+      console.log(response.data);
+      setData(response.data);
+    };
+    getAll();
+  }, []);
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = products.map((n) => n.name);
+      const newSelecteds = data.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleFilterByName = (event) => {
+  const handleFilterByID = (event) => {
     setPage(0);
-    setFilterName(event.target.value);
+    setFilterById(event.target.value);
   };
 
   const handleSort = (event, id) => {
@@ -86,16 +100,16 @@ export default function ProductsView() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: products,
+    inputData: data,
     comparator: getComparator(order, orderBy),
-    filterName,
+    filterById,
   });
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -109,7 +123,7 @@ export default function ProductsView() {
     setSelected(newSelected);
   };
 
-  const notFound = !dataFiltered.length && !!filterName;
+  const notFound = !dataFiltered.length && !!filterById;
   // const handleOpenFilter = () => {
   //   setOpenFilter(true);
   // };
@@ -136,8 +150,8 @@ export default function ProductsView() {
       <Card>
         <ProductTableToolbar
           numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
+          filterById={filterById}
+          onFilterById={handleFilterByID}
         />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
@@ -145,15 +159,16 @@ export default function ProductsView() {
               <ProductTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={products.length}
+                rowCount={data.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
+                  { id: 'id', label: 'Id' },
                   { id: 'name', label: 'Name' },
                   { id: 'price', label: 'Price' },
-                  { id: 'priceSale', label: 'Price Sale' },
-                  { id: 'colors', label: 'Colors', align: 'center' },
+                  { id: 'quantity', label: 'Quantity' },
+                  { id: 'category', label: 'Category' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}
@@ -161,26 +176,23 @@ export default function ProductsView() {
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
+                  .map((row, id) => (
                     <ProductTableRow
-                      key={row.id}
+                      key={id}
+                      id={row.id}
                       name={row.name}
-                      role={row.priceSale}
+                      price={row.price}
+                      quantity={row.quantity}
+                      category={row.category}
                       status={row.status}
-                      company={row.price}
-                      avatarUrl={row.cover}
-                      isVerified={row.colors}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
+                      selected={selected.indexOf(row.id) !== -1}
+                      handleClick={(event) => handleClick(event, row.id)}
                     />
                   ))}
 
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, products.length)}
-                />
+                <TableEmptyRows height={77} emptyRows={emptyRows(page, rowsPerPage, data.length)} />
 
-                {notFound && <TableNoData query={filterName} />}
+                {notFound && <TableNoData query={filterById} />}
               </TableBody>
             </Table>
           </TableContainer>
@@ -188,7 +200,7 @@ export default function ProductsView() {
         <TablePagination
           page={page}
           component="div"
-          count={products.length}
+          count={data.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
