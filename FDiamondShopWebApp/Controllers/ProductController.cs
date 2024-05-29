@@ -4,6 +4,7 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -27,6 +28,7 @@ namespace FDiamondShop.API.Controllers
             _db = db;
             _mapper = mapper;
         }
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -48,7 +50,7 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
-
+        [Authorize(Roles ="Admin")]
         [HttpGet("{id:int}", Name = "GetProductById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
