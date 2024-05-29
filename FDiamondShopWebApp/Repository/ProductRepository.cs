@@ -15,18 +15,14 @@ namespace FDiamondShop.API.Repository
             _db = db;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<IEnumerable<Product>> SearchProductByName(string searchValue)
         {
-            return await _db.Products
-                .Include(p => p.SubCategory).Include(p => p.ProductVariantValues).Include(p => p.ProductImages) 
-                .ToListAsync();
-        }
-
-        public async Task<Product> GetProductByIdAsync(int id)
-        {
-            var product = await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages)
-                .FirstOrDefaultAsync(u => u.ProductId == id);
-            return product ?? new Product();
+            return await _db.Products.Include(p => p.ProductImages).
+                Include(p => p.ProductVariantValues).
+                Include(p => p.SubCategory).
+                ThenInclude(o => o.Category).
+                Where(p => p.ProductName.Contains(searchValue)).
+                ToListAsync();
         }
 
         public async Task<Product> UpdateProduct(ProductUpdateDTO dto)

@@ -7,8 +7,7 @@ namespace FDiamondShop.API.Repository.IRepository
 {
     public interface IProductRepository : IRepository<Product>
     {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-        Task<Product> GetProductByIdAsync(int id);
         Task<Product> UpdateProduct(ProductUpdateDTO dto);
+        Task<IEnumerable<Product>> SearchProductByName(string searchValue);
     }
 }
