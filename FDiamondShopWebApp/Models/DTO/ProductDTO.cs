@@ -14,13 +14,13 @@
 
         public string? Description { get; set; }
 
-        public bool? IsVisible { get; set; }
+        public bool IsVisible { get; set; } = true;
 
-        public bool? IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
-        public virtual ICollection<ProductImageDTO> ProductImages { get; set; }
+        public virtual ICollection<ProductImageDTO> ProductImages { get; set; } = new List<ProductImageDTO>();
 
-        public virtual ICollection<ProductVariantValueDTO> ProductVariantValues { get; set; }
+        public virtual ICollection<ProductVariantValueDTO> ProductVariantValues { get; set; } = new List<ProductVariantValueDTO>();
 
     }
 }

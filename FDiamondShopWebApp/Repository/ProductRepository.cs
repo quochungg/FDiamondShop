@@ -18,40 +18,21 @@ namespace FDiamondShop.API.Repository
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
             return await _db.Products
-                .Include(p => p.SubCategory).Include(p => p.ProductVariantValues).Include(p => p.ProductImages) // Include the SubCategory navigation property
+                .Include(p => p.SubCategory).Include(p => p.ProductVariantValues).Include(p => p.ProductImages) 
                 .ToListAsync();
         }
 
         public async Task<Product> GetProductByIdAsync(int id)
         {
-            return await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages)
+            var product = await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(u => u.ProductId == id);
+            return product ?? new Product();
         }
 
-        public Task<Product> CreateProduct(Product product, List<ProductVariantValue> listValue)
+        public async Task<Product> UpdateProduct(ProductUpdateDTO dto)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<Product> CreateProduct(ProductCreateDTO product)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Product> Disable(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Product>> PartialGet(int pageNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Product> UpdateProduct(Product product)
-        {
-            _db.Products.Update(product);
-            return product;
+            var product = await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages).FirstOrDefaultAsync(u => u.ProductId == dto.ProductId) ?? throw new Exception("Product Not Found!");
+            return product ?? new Product();
         }
     }
 }

@@ -20,11 +20,13 @@ namespace FDiamondShop.API.Repository
         }
 
 
-        //public async Task CreateAsync(T entity)
-        //{
-        //    await dbSet.AddAsync(entity);
+        public async Task<T> CreateAsync(T entity)
+        {
+            var create = await dbSet.AddAsync(entity);
+            
+            return create.Entity;
 
-        //}
+        }
 
         public async Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, bool tracked = true)
         {
@@ -64,9 +66,9 @@ namespace FDiamondShop.API.Repository
             throw new NotImplementedException();
         }
 
-        public async Task CreateAsync(T entity)
+        Task<T> IRepository<T>.RemoveAsync(T entity)
         {
-            await dbSet.AddAsync(entity);           
+            throw new NotImplementedException();
         }
 
     }

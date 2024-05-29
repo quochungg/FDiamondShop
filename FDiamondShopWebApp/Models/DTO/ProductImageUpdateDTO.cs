@@ -1,6 +1,6 @@
 ﻿namespace FDiamondShop.API.Models.DTO
 {
-    public class ProductImageCreateDTO
+    public class ProductImageUpdateDTO
     {
 
         public string ImageUrl { get; set; } = null!;

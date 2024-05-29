@@ -10,14 +10,15 @@ namespace FDiamondShop.API
         public MappingConfig()
         {
             CreateMap<Product,ProductDTO>().ReverseMap();
-            CreateMap<Product,ProductCreateDTO>().ReverseMap();
-            CreateMap<Product, ProductUpdateDTO>().ReverseMap();
-
+            CreateMap<Product,ProductCreateDTO>().ForMember(dest => dest.ProductImages, opt => opt.Ignore()) 
+            .ForMember(dest => dest.ProductVariantValues, opt => opt.Ignore()).ReverseMap(); 
+            CreateMap<Product,ProductUpdateDTO>().ReverseMap();
             CreateMap<ProductImage,ProductImageCreateDTO>().ReverseMap();
-            CreateMap<ProductVariantValue,ProductVariantValueCreateDTO>().ReverseMap();
             CreateMap<ProductImage,ProductImageDTO>().ReverseMap();
+            CreateMap<ProductImage,ProductImageUpdateDTO>().ReverseMap();
             CreateMap<ProductVariantValue,ProductVariantValueDTO>().ReverseMap();
-
+            CreateMap<ProductVariantValue,ProductVariantValueCreateDTO>().ReverseMap();
+            CreateMap<ProductVariantValue,ProductVariantValueUpdateDTO>().ReverseMap();
 
         }
     }
