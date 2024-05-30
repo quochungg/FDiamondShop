@@ -26,4 +26,5 @@ public partial class Product
     public virtual ICollection<ProductVariantValue> ProductVariantValues { get; set; } = new List<ProductVariantValue>();
 
     public virtual SubCategory? SubCategory { get; set; }
+
 }

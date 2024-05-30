@@ -17,14 +17,14 @@ namespace FDiamondShop.API.Repository
     {
         private readonly FDiamondContext _context;
         private readonly IMapper _mapper;
-        private string sercetKey;
+        private string secretKey;
         private readonly IPasswordHasher _passwordHasher;
         
         public AccountRepository(FDiamondContext context,IMapper mapper,IConfiguration configuration,IPasswordHasher passwordHasher)
         {
             _context = context;
             _mapper = mapper;
-            sercetKey = configuration.GetValue<string>("ApiSettings:Secrect");
+            secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _passwordHasher = passwordHasher;
         }
        
@@ -87,7 +87,7 @@ namespace FDiamondShop.API.Repository
             
             var account = _context.Accounts.FirstOrDefault(x=>x.Email == loginRequestDTO.Email);
             var result=_passwordHasher.Verify(account.PasswordHash, loginRequestDTO.PasswordHash);
-
+            Console.WriteLine(result);
              
             if(account == null || !result)
             {
@@ -99,7 +99,7 @@ namespace FDiamondShop.API.Repository
             // if user found then generate JWT Token
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(sercetKey);
+            var key = Encoding.ASCII.GetBytes(secretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -128,7 +128,7 @@ namespace FDiamondShop.API.Repository
                 account.FirstName = registrationRequestDTO.FirstName;
                 account.LastName = registrationRequestDTO.LastName;
                 account.PasswordHash = passwordHasher;
-            }
+            };
             _context.Add(account);           
           return account;
   
