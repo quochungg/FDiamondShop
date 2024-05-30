@@ -26,18 +26,27 @@ var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme= JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(x=> { 
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
+ filter
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
 }); ;
+
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+    };
+});
+master
 builder.Services.AddTransient<UnitOfWork>();
 builder.Services.AddTransient<IRepository<Category>,Repository<Category>>();
 builder.Services.AddTransient<IRepository<Product>, Repository<Product>>();
