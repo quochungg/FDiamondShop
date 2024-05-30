@@ -4,6 +4,7 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -104,11 +105,15 @@ namespace FDiamondShop.API.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, account.Email.ToString()),
-                    new Claim(ClaimTypes.Role, account.Role)
+                    new Claim(ClaimTypes.Name, account.FirstName),
+                    new Claim(ClaimTypes.Name, account.LastName),
+                    new Claim(ClaimTypes.Email, account.Email),
+                    new Claim("Id",account.AccountId.ToString()),
+                    new Claim(ClaimTypes.Role, account.Role),
+                    new Claim("TokenId",Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.Now.AddDays(7),
-                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token=tokenHandler.CreateToken(tokenDescriptor);
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
@@ -134,6 +139,36 @@ namespace FDiamondShop.API.Repository
   
         }
 
-        
+        public async Task<Account> CreateEmployeeAccount(RegistrationEmployeeDTO employeeDTO)
+        {
+            
+           
+            Account account = new Account();
+            {
+                account.Email = employeeDTO.Email;
+                account.FirstName = employeeDTO.FirstName;
+                account.LastName = employeeDTO.LastName;
+                account.PasswordHash ="Employee@123";
+                account.Role=employeeDTO.Role;                
+            }
+            account.PasswordHash = _passwordHasher.HashPassword(account.PasswordHash);
+            _context.Add(account);
+            return account;
+        }
+
+        public async void UpdateEmployeeAccount(UpdateAccountDTO updateAccountDTO)
+        {
+            var updateAccount=_context.Accounts.FirstOrDefault(x=>x.AccountId == updateAccountDTO.AccountId);
+            
+            var check = _passwordHasher.Verify(updateAccount.PasswordHash, updateAccountDTO.Password);
+            if (check && updateAccount != null)
+            {
+                var passwordHasher = _passwordHasher.HashPassword(updateAccountDTO.NewPassword);  
+                    updateAccount.FirstName = updateAccountDTO.FirstName;
+                    updateAccount.LastName = updateAccountDTO.LastName;
+                    updateAccount.PasswordHash = passwordHasher;
+                
+            }                  
+        }
     }
 }

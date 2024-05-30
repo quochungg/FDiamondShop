@@ -10,6 +10,9 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<Account> Register(RegistrationRequestDTO registrationRequestDTO);
         bool IsValidEmail(string email);
         bool IsValidPassword(string password);
+        Task<Account>CreateEmployeeAccount(RegistrationEmployeeDTO employeeDTO);
+        void UpdateEmployeeAccount(UpdateAccountDTO updateAccountDTO);
+        
        
     }
 }

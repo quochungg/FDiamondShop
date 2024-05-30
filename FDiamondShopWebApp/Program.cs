@@ -4,7 +4,6 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -27,7 +26,7 @@ var key = builder.Configuration.GetValue<string>("ApiSettings:Secrect");
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme= JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(x=> { 
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
@@ -36,10 +35,10 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
         ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateAudience = false,
     };
 });
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<FDiamondContext>();
+
 builder.Services.AddTransient<UnitOfWork>();
 builder.Services.AddTransient<IRepository<Category>,Repository<Category>>();
 builder.Services.AddTransient<IRepository<Product>, Repository<Product>>();
