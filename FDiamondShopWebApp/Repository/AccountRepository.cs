@@ -87,7 +87,7 @@ namespace FDiamondShop.API.Repository
         {
             
             var account = _context.Accounts.FirstOrDefault(x=>x.Email == loginRequestDTO.Email);
-            var result=_passwordHasher.Verify(account.PasswordHash, loginRequestDTO.PasswordHash);
+            var result=  _passwordHasher.Verify(account.PasswordHash, loginRequestDTO.PasswordHash);
             Console.WriteLine(result);
              
             if(account == null || !result)
