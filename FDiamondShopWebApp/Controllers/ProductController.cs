@@ -47,33 +47,33 @@ namespace FDiamondShop.API.Controllers
             
         {
             IEnumerable<Product> ProductList;
+            ProductList = await _db.Products.Include(p => p.ProductImages)
+                .Include(p => p.ProductVariantValues)
+                .Include(p => p.SubCategory).ThenInclude(p => p.Category).ToListAsync();
 
             if (CateName != null)
             {
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.SubCategory.Category.CategoryName.
-                                       ToLower().Contains(Subcate.ToLower()),
-                                       includeProperties: "ProductImages,ProductVariantValues");
-               
+                //ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.SubCategory.Category.CategoryName.
+                //                       ToLower().Contains(Subcate.ToLower()),
+                //                       includeProperties: "ProductImages,ProductVariantValues");
+               ProductList = ProductList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(CateName.ToLower()));
             }
-            else if (Subcate != null)
+            if (Subcate != null)
             {
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync
-                                       (u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()),
-                                       includeProperties: "ProductImages,ProductVariantValues");
+                //ProductList = await _unitOfWork.ProductRepository.GetAllAsync
+                //                       (u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()),
+                //                       includeProperties: "ProductImages,ProductVariantValues");
+                ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()));
             }
-            else if (Visible != null){
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.IsVisible == Visible,
-                    includeProperties: "ProductImages,ProductVariantValues");
+            if (Visible != null){
+                //ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.IsVisible == Visible,
+                //    includeProperties: "ProductImages,ProductVariantValues");
+                ProductList = ProductList.Where(u => u.IsVisible == Visible);
             }
-            else if (Delete != null)
+            if (Delete != null)
             {
                 ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.IsDeleted == Delete,
                     includeProperties: "ProductImages,ProductVariantValues");
-            }
-            else
-            {
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync
-                    (includeProperties: "ProductImages,ProductVariantValues");
             }
             try
             {
