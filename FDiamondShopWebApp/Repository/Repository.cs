@@ -69,21 +69,5 @@ namespace FDiamondShop.API.Repository
             return await query.ToListAsync();
         }
 
-        public async Task RemoveAsync(T entity)
-        {
-            dbSet.Remove(entity);
-
-        }
-
-        public async Task<List<T>> PartialGet(int pageNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<T> IRepository<T>.RemoveAsync(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

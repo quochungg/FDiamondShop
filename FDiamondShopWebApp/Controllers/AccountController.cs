@@ -19,11 +19,11 @@ namespace FDiamondShop.API.Controllers
     {
         private readonly IAccountRepository _accountRepository;
         private readonly FDiamondContext _context;
-        protected  APIResponse _response;
+        protected APIResponse _response;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        
-        public AccountController(IAccountRepository accountRepository, IMapper mapper,IUnitOfWork unitOfWork,
+
+        public AccountController(IAccountRepository accountRepository, IMapper mapper, IUnitOfWork unitOfWork,
             FDiamondContext context)
 
         {
@@ -32,24 +32,24 @@ namespace FDiamondShop.API.Controllers
             _unitOfWork = unitOfWork;
             _context = context;
             this._response = new();
-            
+
         }
         
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
-            var loginResponse=await _accountRepository.Login(model);
-            if(loginResponse.User== null || string.IsNullOrEmpty(loginResponse.Token))
+            var loginResponse = await _accountRepository.Login(model);
+            if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
-                _response.StatusCode=HttpStatusCode.BadRequest;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add("Email or Password is incorrect");
                 return BadRequest(_response);
             }
-            
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.IsSuccess = true;
-                _response.Result = loginResponse;          
+
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = loginResponse;
             return Ok(_response);
 
         }
@@ -58,7 +58,7 @@ namespace FDiamondShop.API.Controllers
         {
             bool EmailUnique = _accountRepository.IsUniqueEmail(model.Email);
             bool EmailValid = _accountRepository.IsValidEmail(model.Email);
-            bool PasswordValid=_accountRepository.IsValidPassword(model.PasswordHash);
+            bool PasswordValid = _accountRepository.IsValidPassword(model.PasswordHash);
             try
             {
                 if (!EmailUnique)
@@ -68,12 +68,12 @@ namespace FDiamondShop.API.Controllers
                     _response.ErrorMessages.Add("Email is alredy exist !");
                     return BadRequest(_response);
                 }
-                if(!EmailValid)
+                if (!EmailValid)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
                     _response.ErrorMessages.Add("Wrong format Email !");
-                    return BadRequest(_response) ;
+                    return BadRequest(_response);
                 }
                 var account = await _accountRepository.Register(model);
                 if (account == null)
@@ -83,7 +83,7 @@ namespace FDiamondShop.API.Controllers
                     _response.ErrorMessages.Add("Error when registing , Please try again !!!");
                     return BadRequest(_response);
                 }
-                if(!PasswordValid)
+                if (!PasswordValid)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
@@ -94,14 +94,14 @@ namespace FDiamondShop.API.Controllers
                 {
                     return BadRequest("ModelState");
                 }
-                if(model.PasswordHash != model.ConfirmPassWord)
+                if (model.PasswordHash != model.ConfirmPassWord)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
                     _response.ErrorMessages.Add("Wrong Confirm Password !");
                     return BadRequest(_response);
                 }
-                
+
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -112,7 +112,7 @@ namespace FDiamondShop.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            
+
             return Ok(_response);
 
         }

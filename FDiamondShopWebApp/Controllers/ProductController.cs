@@ -13,13 +13,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Data;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.Xml;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FDiamondShop.API.Controllers
 {
+    
     [Route("api/Product")]
     [ApiController]
-
+    
     public class ProductController : ControllerBase
     {
         private readonly APIResponse _response;
@@ -40,45 +42,59 @@ namespace FDiamondShop.API.Controllers
        // [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetAllProduct([FromQuery] string? CateName, [FromQuery] string? Subcate,
-            [FromQuery] bool? Visible, [FromQuery] bool? Delete)
+        public async Task<ActionResult<APIResponse>> GetAllProduct([FromQuery(Name = "Category Name")] string? cateName, [FromQuery(Name = "Subcategory Name")] string? Subcate,
+            [FromQuery(Name = "Is Visible")] bool? visible, [FromQuery(Name = "Is Deleted")] bool? delete, [FromQuery(Name = "Order By")] string? orderBy, 
+            [FromQuery(Name = "Sort By")] string sortBy = "asc", [FromQuery(Name = "Page Size")] int pageSize = 10, [FromQuery (Name = "Page Number")] int pageNumber = 1)
             
             
         {
-            IEnumerable<Product> ProductList;
+            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
 
-            if (CateName != null)
+            if (cateName != null)
             {
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.SubCategory.Category.CategoryName.
-                                       ToLower().Contains(Subcate.ToLower()),
-                                       includeProperties: "ProductImages,ProductVariantValues");
-               
+               ProductList = ProductList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(cateName.ToLower()));
             }
-            else if (Subcate != null)
+            if (Subcate != null)
             {
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync
-                                       (u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()),
-                                       includeProperties: "ProductImages,ProductVariantValues");
+                ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()));
             }
-            else if (Visible != null){
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.IsVisible == Visible,
-                    includeProperties: "ProductImages,ProductVariantValues");
+            if (visible != null){
+                ProductList = ProductList.Where(u => u.IsVisible == visible);
             }
-            else if (Delete != null)
+            if (delete != null)
             {
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.IsDeleted == Delete,
-                    includeProperties: "ProductImages,ProductVariantValues");
+                ProductList = ProductList.Where(u => u.IsDeleted == delete);
+            }
+            if (orderBy != null)
+            {
+                if (sortBy.ToLower() == "desc")
+                {
+                    ProductList = ProductList.OrderByDescending(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                }
+                else
+                {
+                    ProductList = ProductList.OrderBy(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                }
             }
             else
             {
-                ProductList = await _unitOfWork.ProductRepository.GetAllAsync
-                    (includeProperties: "ProductImages,ProductVariantValues");
+                if (sortBy.ToLower() == "desc")
+                {
+                    ProductList = ProductList.OrderByDescending(u => u.ProductName);
+                }
+                else
+                {
+                    ProductList = ProductList.OrderBy(u => u.ProductName);
+
+                }
             }
+            ProductList = ProductList.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
             try
             {
                 
                 var model = _mapper.Map<List<ProductDTO>>(ProductList);
                 _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
                 _response.Result = model;
                 return Ok(_response);
             }
