@@ -12,7 +12,8 @@ using Newtonsoft.Json;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<FDiamondContext>(option => {
+builder.Services.AddDbContext<FDiamondContext>(option =>
+{
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 // Add services to the container.
@@ -23,12 +24,16 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
 //cofigure Bearer TOKEN
-var key = builder.Configuration.GetValue<string>("ApiSettings:Secrect");
+
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme= JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x=> { 
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
@@ -38,10 +43,10 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuer = false,
         ValidateAudience = false
     };
-});
+}); ;
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<FDiamondContext>();
 builder.Services.AddTransient<UnitOfWork>();
-builder.Services.AddTransient<IRepository<Category>,Repository<Category>>();
+builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
 builder.Services.AddTransient<IRepository<Product>, Repository<Product>>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
@@ -67,7 +72,7 @@ builder.Services.AddSwaggerGen(option =>
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
-                     "Enter Bearer '[space] and then your token in the text input below.\r\n\r\n" +
+                     "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
                      "Example: \"Bearer 123abcdef\"",
         Name = "Authorization",
         In = ParameterLocation.Header,
@@ -91,7 +96,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
- 
+
 
 var app = builder.Build();
 
@@ -103,6 +108,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 
 app.UseAuthorization();

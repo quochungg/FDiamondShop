@@ -4,6 +4,7 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,10 @@ using System.Net;
 
 namespace FDiamondShop.API.Controllers
 {
+    
     [Route("api/Product")]
     [ApiController]
-
+    
     public class ProductController : ControllerBase
     {
         private readonly APIResponse _response;
@@ -28,6 +30,7 @@ namespace FDiamondShop.API.Controllers
             _db = db;
             _mapper = mapper;
         }
+
         [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]

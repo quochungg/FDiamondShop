@@ -24,7 +24,7 @@ namespace FDiamondShop.API.Repository
         {
             _context = context;
             _mapper = mapper;
-            sercetKey = configuration.GetValue<string>("ApiSettings:Secrect");
+            sercetKey = configuration.GetValue<string>("ApiSettings:Secret");
             _passwordHasher = passwordHasher;
         }
        
