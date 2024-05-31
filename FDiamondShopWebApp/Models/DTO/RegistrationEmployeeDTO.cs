@@ -2,17 +2,15 @@
 
 namespace FDiamondShop.API.Models.DTO
 {
-    public class RegistrationRequestDTO
+    public class RegistrationEmployeeDTO
     {
         [Required]
         public string Email { get; set; } = null!;
         [Required]
         public string FirstName { get; set; } = null!;
         [Required]
-        public string LastName { get; set; } = null!;
+        public string LastName { get; set; } = null!;       
         [Required]
-        public string PasswordHash { get; set; } =null!;
-        [Required]
-        public string ConfirmPassWord { get; set; } =null!;
+        public string Role { get; set; } = null!;
     }
 }

@@ -6,10 +6,14 @@ using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Data;
+using System.Linq;
 using System.Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -31,15 +35,49 @@ namespace FDiamondShop.API.Controllers
             _mapper = mapper;
         }
 
-        [Authorize]
+        //get and filter
+
         [HttpGet]
+       // [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetAllProduct()
+        public async Task<ActionResult<APIResponse>> GetAllProduct([FromQuery] string? CateName, [FromQuery] string? Subcate,
+            [FromQuery] bool? Visible, [FromQuery] bool? Delete)
+            
+            
         {
+            IEnumerable<Product> ProductList;
+
+            if (CateName != null)
+            {
+                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.SubCategory.Category.CategoryName.
+                                       ToLower().Contains(Subcate.ToLower()),
+                                       includeProperties: "ProductImages,ProductVariantValues");
+               
+            }
+            else if (Subcate != null)
+            {
+                ProductList = await _unitOfWork.ProductRepository.GetAllAsync
+                                       (u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()),
+                                       includeProperties: "ProductImages,ProductVariantValues");
+            }
+            else if (Visible != null){
+                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.IsVisible == Visible,
+                    includeProperties: "ProductImages,ProductVariantValues");
+            }
+            else if (Delete != null)
+            {
+                ProductList = await _unitOfWork.ProductRepository.GetAllAsync(u => u.IsDeleted == Delete,
+                    includeProperties: "ProductImages,ProductVariantValues");
+            }
+            else
+            {
+                ProductList = await _unitOfWork.ProductRepository.GetAllAsync
+                    (includeProperties: "ProductImages,ProductVariantValues");
+            }
             try
             {
-                IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues");
+                
                 var model = _mapper.Map<List<ProductDTO>>(ProductList);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = model;
@@ -53,7 +91,7 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
-        [Authorize(Roles ="Admin")]
+       // [Authorize(Roles = "Admin")]
         [HttpGet("{id:int}", Name = "GetProductById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -132,6 +170,8 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
+
+
         [HttpPost(Name = "CreateProduct")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -270,6 +310,6 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
                 return BadRequest(_response);
             }
-        }
+        }        
     }
 }

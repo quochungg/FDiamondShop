@@ -4,6 +4,7 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,14 +18,14 @@ namespace FDiamondShop.API.Repository
     {
         private readonly FDiamondContext _context;
         private readonly IMapper _mapper;
-        private string sercetKey;
+        private string secretKey;
         private readonly IPasswordHasher _passwordHasher;
         
         public AccountRepository(FDiamondContext context,IMapper mapper,IConfiguration configuration,IPasswordHasher passwordHasher)
         {
             _context = context;
             _mapper = mapper;
-            sercetKey = configuration.GetValue<string>("ApiSettings:Secret");
+            secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _passwordHasher = passwordHasher;
         }
        
@@ -87,7 +88,7 @@ namespace FDiamondShop.API.Repository
             
             var account = _context.Accounts.FirstOrDefault(x=>x.Email == loginRequestDTO.Email);
             var result=_passwordHasher.Verify(account.PasswordHash, loginRequestDTO.PasswordHash);
-
+            Console.WriteLine(result);
              
             if(account == null || !result)
             {
@@ -99,16 +100,20 @@ namespace FDiamondShop.API.Repository
             // if user found then generate JWT Token
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(sercetKey);
+            var key = Encoding.ASCII.GetBytes(secretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, account.Email.ToString()),
-                    new Claim(ClaimTypes.Role, account.Role)
+                    new Claim(ClaimTypes.Name, account.FirstName),
+                    new Claim(ClaimTypes.Name, account.LastName),
+                    new Claim(ClaimTypes.Email, account.Email),
+                    new Claim("Id",account.AccountId.ToString()),
+                    new Claim(ClaimTypes.Role, account.Role),
+                    new Claim("TokenId",Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.Now.AddDays(7),
-                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token=tokenHandler.CreateToken(tokenDescriptor);
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
@@ -128,12 +133,42 @@ namespace FDiamondShop.API.Repository
                 account.FirstName = registrationRequestDTO.FirstName;
                 account.LastName = registrationRequestDTO.LastName;
                 account.PasswordHash = passwordHasher;
-            }
+            };
             _context.Add(account);           
           return account;
   
         }
 
-        
+        public async Task<Account> CreateEmployeeAccount(RegistrationEmployeeDTO employeeDTO)
+        {
+            
+           
+            Account account = new Account();
+            {
+                account.Email = employeeDTO.Email;
+                account.FirstName = employeeDTO.FirstName;
+                account.LastName = employeeDTO.LastName;
+                account.PasswordHash ="Employee@123";
+                account.Role=employeeDTO.Role;                
+            }
+            account.PasswordHash = _passwordHasher.HashPassword(account.PasswordHash);
+            _context.Add(account);
+            return account;
+        }
+
+        public async void UpdateEmployeeAccount(UpdateAccountDTO updateAccountDTO)
+        {
+            var updateAccount=_context.Accounts.FirstOrDefault(x=>x.AccountId == updateAccountDTO.AccountId);
+            
+            var check = _passwordHasher.Verify(updateAccount.PasswordHash, updateAccountDTO.Password);
+            if (check && updateAccount != null)
+            {
+                var passwordHasher = _passwordHasher.HashPassword(updateAccountDTO.NewPassword);  
+                    updateAccount.FirstName = updateAccountDTO.FirstName;
+                    updateAccount.LastName = updateAccountDTO.LastName;
+                    updateAccount.PasswordHash = passwordHasher;
+                
+            }                  
+        }
     }
 }
