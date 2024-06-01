@@ -3,8 +3,8 @@
 namespace FDiamondShop.API.Models.DTO
 {
     public class LoginRequestDTO
-    {     
-        public string Email { get; set; } = null!;      
-        public string? PasswordHash { get; set; }     
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }

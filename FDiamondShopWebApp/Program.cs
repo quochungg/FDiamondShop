@@ -4,6 +4,7 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -16,10 +17,10 @@ builder.Services.AddDbContext<FDiamondContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 // Add services to the container.
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<FDiamondContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
 //cofigure Bearer TOKEN

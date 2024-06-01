@@ -6,8 +6,6 @@
         IProductImageRepository ProductImageRepository { get; }
         IProductVariantValueRepository ProductVariantValueRepository { get; }
 
-        IAccountRepository AccountRepository { get; }
-
         Task SaveAsync();
     }
 }

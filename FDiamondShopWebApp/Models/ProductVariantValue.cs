@@ -9,9 +9,9 @@ public partial class ProductVariantValue
 
     public int ProductId { get; set; }
 
-    public string Value { get; set; } = null!;
+    public string Value { get; set; }
 
-    public virtual Product Product { get; set; } = null!;
+    public virtual Product Product { get; set; }
 
-    public virtual CategoryVariant Variant { get; set; } = null!;
+    public virtual CategoryVariant Variant { get; set; }
 }
