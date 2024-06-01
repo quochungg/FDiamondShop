@@ -4,6 +4,7 @@ using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Microsoft.AspNetCore.Identity;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -13,13 +14,18 @@ namespace FDiamondShop.API.Controllers
     {
         private readonly IUserRepository _userRepo;
         protected APIResponse _response;
-        public UsersController(IUserRepository userRepo)
+        private readonly IUnitOfWork _unitOfWork;
+        public UsersController(IUserRepository userRepo,IUnitOfWork unitOfWork)
+        
+        
         {
             _userRepo = userRepo;
             _response = new();
+            _unitOfWork = unitOfWork;   
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
             var loginResponse = await _userRepo.Login(model);
@@ -37,17 +43,9 @@ namespace FDiamondShop.API.Controllers
         }
 
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
-            bool ifUserNameUnique = _userRepo.IsUniqueUser(model.UserName);
-            if (!ifUserNameUnique)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Username already exists");
-                return BadRequest(_response);
-            }
-
             var user = await _userRepo.Register(model);
             if (user == null)
             {
@@ -58,7 +56,27 @@ namespace FDiamondShop.API.Controllers
             }
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
+            await _unitOfWork.SaveAsync();
             return Ok(_response);
         }
+        [HttpPatch("update")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
+        {
+            var user=await _userRepo.Update(model);
+            if(user == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Error while Updating");
+                return BadRequest(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            await _unitOfWork.SaveAsync();
+            return Ok(_response);
+
+        } 
     }
 }

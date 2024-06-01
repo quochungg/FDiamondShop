@@ -17,7 +17,14 @@ builder.Services.AddDbContext<FDiamondContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 // Add services to the container.
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<FDiamondContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
+{
+    option.User.RequireUniqueEmail = true;
+    
+}
+)
+    .AddEntityFrameworkStores<FDiamondContext>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();

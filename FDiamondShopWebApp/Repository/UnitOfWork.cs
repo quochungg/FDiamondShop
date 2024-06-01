@@ -11,6 +11,7 @@ namespace FDiamondShop.API.Repository
         public IProductImageRepository ProductImageRepository { get; }
         public IProductVariantValueRepository ProductVariantValueRepository { get; }
 
+        public IUserRepository UserRepository { get; }
 
         public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, IProductVariantValueRepository productVariantValueRepository)
         {

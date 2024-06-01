@@ -106,7 +106,7 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
-       // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}", Name = "GetProductById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

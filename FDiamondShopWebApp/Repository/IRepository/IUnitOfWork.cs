@@ -5,6 +5,7 @@
         IProductRepository ProductRepository { get; }
         IProductImageRepository ProductImageRepository { get; }
         IProductVariantValueRepository ProductVariantValueRepository { get; }
+        IUserRepository UserRepository { get; }
 
         Task SaveAsync();
     }

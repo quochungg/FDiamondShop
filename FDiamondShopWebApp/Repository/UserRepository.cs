@@ -27,15 +27,7 @@ namespace FDiamondShop.API.Repository
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _roleManager = roleManager;
         }
-        public bool IsUniqueUser(string username)
-        {
-            var user = _db.Users.FirstOrDefault(x => x.UserName == username);
-            if (user == null)
-            {
-                return true;
-            }
-            return false;
-        }
+        
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
@@ -86,22 +78,31 @@ namespace FDiamondShop.API.Repository
                 UserName = registerationRequestDTO.UserName,
                 Email = registerationRequestDTO.UserName,
                 NormalizedEmail = registerationRequestDTO.UserName.ToUpper(),
-                Name = registerationRequestDTO.Name
+                FirstName = registerationRequestDTO.FirstName,
+                LastName = registerationRequestDTO.LastName,
             };
             try
             {
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
                 {
-                    if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
+                    string role = registerationRequestDTO.Role ?? "customer";
+                    if (role == "customer" || role == "admin" || role == "employees")
                     {
-                        await _roleManager.CreateAsync(new IdentityRole("admin"));
-                        await _roleManager.CreateAsync(new IdentityRole("customer"));
-                        await _roleManager.CreateAsync(new IdentityRole("employees"));
 
+
+                        if (!_roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole(role));
+                        }
+                        await _userManager.AddToRoleAsync(user, role);
+                        
+                    }
+                    else
+                    {
+                        throw new Exception("Wrong role");
                     }
                     
-                    await _userManager.AddToRoleAsync(user, "admin");
                     var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
                     return _mapper.Map<UserDTO>(userToReturn);
                 }
@@ -117,6 +118,50 @@ namespace FDiamondShop.API.Repository
                 throw new Exception($"An error occurred during registration: {ex.Message}", ex);
             }
             return new UserDTO();
+        }
+
+        public async Task<UserDTO> Update(AccountUpdateDTO accountUpdateDTO)
+        {
+            var user =await _userManager.FindByEmailAsync(accountUpdateDTO.UserName);
+            if (user == null)
+            {
+                throw new Exception("USER NOT FOUND");
+            }
+            user.FirstName = accountUpdateDTO.FirstName;
+            user.LastName = accountUpdateDTO.LastName;
+            if (!string.IsNullOrEmpty(accountUpdateDTO.NewPassword))
+            {
+                
+                if (!await _userManager.CheckPasswordAsync(user, accountUpdateDTO.Password))
+                {
+                    throw new Exception("Current password is incorrect.");
+                }
+
+                
+                if (accountUpdateDTO.NewPassword != accountUpdateDTO.ConfimPassword)
+                {
+                    throw new Exception("New password and confirmation password do not match.");
+                }
+            }
+            var passwordChange=await _userManager.ChangePasswordAsync(user,accountUpdateDTO.Password,accountUpdateDTO.NewPassword);
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new Exception($"User update failed: {errors}");
+            }
+            var updatedUser = await _userManager.FindByEmailAsync(accountUpdateDTO.UserName);
+            var userDTO = new UserDTO
+            {
+                
+                FirstName = updatedUser.FirstName,
+                LastName = updatedUser.LastName,
+                UserName= updatedUser.UserName,
+                
+            };
+
+            return userDTO;
+
         }
     }
 }
