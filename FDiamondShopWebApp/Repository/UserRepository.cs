@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FDiamondShop.API.Repository
 {
@@ -54,7 +55,8 @@ namespace FDiamondShop.API.Repository
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
+                    new Claim("TokenId",Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -162,6 +164,19 @@ namespace FDiamondShop.API.Repository
 
             return userDTO;
 
+        }
+
+        public bool IsValidName(string input)
+        {
+            string pattern = @"[\d\W_]";
+            Regex regex = new Regex(pattern);
+
+            // Kiểm tra chuỗi với biểu thức chính quy
+            if (regex.IsMatch(input))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
