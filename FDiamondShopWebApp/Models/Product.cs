@@ -9,22 +9,21 @@ public partial class Product
 
     public int? SubCategoryId { get; set; }
 
-    public string ProductName { get; set; } = null!;
+    public string ProductName { get; set; }
 
     public int Quantity { get; set; }
 
     public decimal BasePrice { get; set; }
 
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
-    public bool IsVisible { get; set; } = true;
+    public bool? IsVisible { get; set; }
 
-    public bool IsDeleted { get; set; } = false;
+    public bool? IsDeleted { get; set; }
 
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 
     public virtual ICollection<ProductVariantValue> ProductVariantValues { get; set; } = new List<ProductVariantValue>();
 
-    public virtual SubCategory SubCategory { get; set; } = null!;
-
+    public virtual SubCategory SubCategory { get; set; }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using FDiamondShop.API.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FDiamondShop.API.Data;
 
-public partial class FDiamondContext : DbContext
+public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
 {
     public FDiamondContext()
     {
@@ -15,6 +16,7 @@ public partial class FDiamondContext : DbContext
         : base(options)
     {
     }
+    public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
     public virtual DbSet<Account> Accounts { get; set; }
 
@@ -33,6 +35,7 @@ public partial class FDiamondContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Account>(entity =>
         {
             entity.HasKey(e => e.AccountId).HasName("PK__accounts__46A222CD8ABCA3F2");
