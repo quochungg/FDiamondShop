@@ -6,6 +6,7 @@ using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -30,6 +31,16 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
+var configuration = builder.Configuration;
+//configure gg authen
+builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+{
+    //read information Authentication Google from Appsetting.json
+    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+
+});
+
 //cofigure Bearer TOKEN
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 builder.Services.AddAuthentication(x =>
