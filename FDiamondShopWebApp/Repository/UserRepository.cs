@@ -89,14 +89,14 @@ namespace FDiamondShop.API.Repository
                     string role = registerationRequestDTO.Role ?? "customer";
                     if (role == "customer" || role == "admin" || role == "employees")
                     {
-
-
                         if (!_roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
                         {
                             await _roleManager.CreateAsync(new IdentityRole(role));
                         }
                         await _userManager.AddToRoleAsync(user, role);
-                        
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        await _userManager.ConfirmEmailAsync(user, token);
+
                     }
                     else
                     {
@@ -117,7 +117,6 @@ namespace FDiamondShop.API.Repository
             {
                 throw new Exception($"An error occurred during registration: {ex.Message}", ex);
             }
-            return new UserDTO();
         }
 
         public async Task<UserDTO> Update(AccountUpdateDTO accountUpdateDTO)
@@ -163,5 +162,7 @@ namespace FDiamondShop.API.Repository
             return userDTO;
 
         }
+
+
     }
 }

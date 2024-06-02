@@ -12,23 +12,21 @@ namespace FDiamondShop.API.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        private readonly IUserRepository _userRepo;
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
-        public UsersController(IUserRepository userRepo,IUnitOfWork unitOfWork)
-        
-        
+        private readonly UserManager<ApplicationUser> _userManager;
+        public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
-            _userRepo = userRepo;
             _response = new();
-            _unitOfWork = unitOfWork;   
+            _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
-            var loginResponse = await _userRepo.Login(model);
+            var loginResponse = await _unitOfWork.UserRepository.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -46,7 +44,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
-            var user = await _userRepo.Register(model);
+            var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -64,8 +62,8 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
         {
-            var user=await _userRepo.Update(model);
-            if(user == null)
+            var user = await _unitOfWork.UserRepository.Update(model);
+            if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
@@ -77,6 +75,22 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return Ok(_response);
 
-        } 
+        }
+        [HttpPost("sendemail")]
+        public async Task<IActionResult> SendEmailAsync(string emailTo)
+        {
+            MailRequestDTO mailRequestDTO = new()
+            {
+                Body = "Hello",
+                Subject = "Test",
+                toEmail = emailTo
+            };
+            await _unitOfWork.EmailRepository.SendEmailAsync(mailRequestDTO);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            return Ok(_response);
+        }
+
+
     }
 }
