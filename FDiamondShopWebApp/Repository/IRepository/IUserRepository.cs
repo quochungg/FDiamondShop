@@ -1,8 +1,9 @@
-﻿using FDiamondShop.API.Models.DTO;
+﻿using FDiamondShop.API.Models;
+using FDiamondShop.API.Models.DTO;
 
 namespace FDiamondShop.API.Repository.IRepository
 {
-    public interface IUserRepository
+    public interface IUserRepository: IRepository<ApplicationUser>
     {
         
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);

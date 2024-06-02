@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace FDiamondShop.API.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : Repository<ApplicationUser>, IUserRepository
     {
         private readonly FDiamondContext _db;
         private string secretKey;
@@ -20,7 +20,7 @@ namespace FDiamondShop.API.Repository
         private readonly IMapper _mapper;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserRepository(FDiamondContext db, IConfiguration configuration, UserManager<ApplicationUser> userManager, 
-            IMapper mapper, RoleManager<IdentityRole> roleManager)
+            IMapper mapper, RoleManager<IdentityRole> roleManager):base(db)
         {
             _db = db;
             _userManager = userManager;

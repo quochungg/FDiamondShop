@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.Identity.Client;
+using AutoMapper;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -18,14 +19,16 @@ namespace FDiamondShop.API.Controllers
         private readonly IUserRepository _userRepo;
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         
-        public UsersController(IUserRepository userRepo, IUnitOfWork unitOfWork)
+        public UsersController(IUserRepository userRepo, IUnitOfWork unitOfWork, IMapper mapper)
 
 
         {
             _userRepo = userRepo;
             _response = new();
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
@@ -102,6 +105,41 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
 
         }
-       
+
+
+        [HttpGet("{username}", Name = "SearchUserByUserName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task<ActionResult<APIResponse>> SearchUserByUserName(string username)
+        {
+
+            IEnumerable<ApplicationUser> user = await _userRepo.GetAllAsync(u => u.UserName.Equals(username));
+
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { $"User was not found." };
+                return NotFound(_response);
+            }
+            try
+            {
+                var userDTO = _mapper.Map<List<UserDTO>>(user);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = userDTO;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+
+        }
+
     }
 }
