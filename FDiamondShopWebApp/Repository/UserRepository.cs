@@ -20,11 +20,11 @@ namespace FDiamondShop.API.Repository
         private readonly IMapper _mapper;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserRepository(FDiamondContext db, IConfiguration configuration, UserManager<ApplicationUser> userManager, 
-            IMapper mapper, RoleManager<IdentityRole> roleManager):base(db)
+             RoleManager<IdentityRole> roleManager):base(db)
         {
             _db = db;
             _userManager = userManager;
-            _mapper = mapper;
+            
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _roleManager = roleManager;
         }
@@ -32,7 +32,7 @@ namespace FDiamondShop.API.Repository
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower());
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == loginRequestDTO.UserName);
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
             if (user == null || isValid == false)
@@ -40,7 +40,8 @@ namespace FDiamondShop.API.Repository
                 return new LoginResponseDTO()
                 {
                     Token = "",
-                    User = null
+                    User = null,
+                    Role = null
                 };
             }
 
@@ -66,8 +67,9 @@ namespace FDiamondShop.API.Repository
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
             {
                 Token = tokenHandler.WriteToken(token),
-                User = _mapper.Map<UserDTO>(user),
+                User = _mapper.Map<UserDTO>(user),             
                 Role = roles.FirstOrDefault()
+
             };
             return loginResponseDTO;
         }
@@ -87,26 +89,35 @@ namespace FDiamondShop.API.Repository
             };
             try
             {
+                bool isValidFirstName= IsValidName(registerationRequestDTO.FirstName);
+                bool isValidLastName = IsValidName(registerationRequestDTO.FirstName);
+                if (!isValidFirstName)
+                {
+                    throw new Exception("First Name can not contain special character or number");
+                }
+                if (!isValidLastName)
+                {
+                    throw new Exception("Last Name can not contain special character or number");
+                }
+
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
                 {
                     string role = registerationRequestDTO.Role ?? "customer";
                     if (role == "customer" || role == "admin" || role == "employees")
                     {
-                        if (!_roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole(role));
-                        }
+                        
                         await _userManager.AddToRoleAsync(user, role);
+                        var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
+                        return _mapper.Map<UserDTO>(user);
                     }
                     else
                     {
                         throw new Exception("Wrong role");
                     }
                     
-                    var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
-                    return _mapper.Map<UserDTO>(userToReturn);
-                }
+                    
+            }
                 else
                 {
                     // Log or handle the errors
@@ -129,6 +140,16 @@ namespace FDiamondShop.API.Repository
             }
             user.FirstName = accountUpdateDTO.FirstName;
             user.LastName = accountUpdateDTO.LastName;
+            bool isValidFirstName = IsValidName(accountUpdateDTO.FirstName);
+            bool isValidLastName = IsValidName(accountUpdateDTO.FirstName);
+            if (!isValidFirstName)
+            {
+                throw new Exception("First Name can not contain special character or number");
+            }
+            if (!isValidLastName)
+            {
+                throw new Exception("Last Name can not contain special character or number");
+            }
             if (!string.IsNullOrEmpty(accountUpdateDTO.NewPassword))
             {
                 

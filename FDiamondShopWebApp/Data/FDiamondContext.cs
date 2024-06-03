@@ -17,8 +17,6 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
     }
     public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
-    public virtual DbSet<Account> Accounts { get; set; }
-
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<CategoryVariant> CategoryVariants { get; set; }
@@ -31,52 +29,13 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<SubCategory> SubCategories { get; set; }
 
+    public virtual DbSet<CartItem> ShoppingCartItems { get; set; }
+    public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Account>(entity =>
-        {
-            entity.HasKey(e => e.AccountId).HasName("PK__accounts__46A222CD8ABCA3F2");
-
-            entity.ToTable("accounts");
-
-            entity.HasIndex(e => e.Email, "UQ__accounts__AB6E6164A2413C2B").IsUnique();
-
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
-            entity.Property(e => e.DateCreate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("date_create");
-            entity.Property(e => e.Email)
-                .HasMaxLength(100)
-                .IsUnicode(false)
-                .HasColumnName("email");
-            entity.Property(e => e.FirstName)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("first_name");
-            entity.Property(e => e.Googleid)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("googleid");
-            entity.Property(e => e.IsGoogleAccount)
-                .HasDefaultValueSql("((0))")
-                .HasColumnName("is_google_account");
-            entity.Property(e => e.LastName)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("last_name");
-            entity.Property(e => e.PasswordHash)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("password_hash");
-            entity.Property(e => e.Role)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasDefaultValueSql("('Customer')")
-                .HasColumnName("role");
-        });
+        base.OnModelCreating(modelBuilder);        
 
         modelBuilder.Entity<Category>(entity =>
         {
