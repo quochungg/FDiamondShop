@@ -16,16 +16,11 @@ namespace FDiamondShop.API.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        private readonly IUserRepository _userRepo;
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        
-        public UsersController(IUserRepository userRepo, IUnitOfWork unitOfWork, IMapper mapper)
-
-
+        private readonly UserManager<ApplicationUser> _userManager;
+        public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
-            _userRepo = userRepo;
             _response = new();
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -35,7 +30,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
-            var loginResponse = await _userRepo.Login(model);
+            var loginResponse = await _unitOfWork.UserRepository.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -54,11 +49,13 @@ namespace FDiamondShop.API.Controllers
 
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
             bool checkValidFirstName = _userRepo.IsValidName(model.FirstName);
             bool checkValidLastName= _userRepo.IsValidName(model.LastName);
-            var user = await _userRepo.Register(model);
+            var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -84,14 +81,16 @@ namespace FDiamondShop.API.Controllers
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
-            return Ok(_response);
+            return CreatedAtRoute("SearchUserByUserName", new { username = model.UserName} ,_response); 
         }
         [HttpPatch("update")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
         {
-            var user = await _userRepo.Update(model);
+            var user = await _unitOfWork.UserRepository.Update(model);
             if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -102,7 +101,23 @@ namespace FDiamondShop.API.Controllers
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
+            return NoContent();
+
+        }
+        [HttpPost("sendemail")]
+        public async Task<IActionResult> SendEmailAsync(string emailTo)
+        {
+            MailRequestDTO mailRequestDTO = new()
+            {
+                Body = "Hello",
+                Subject = "Test",
+                toEmail = emailTo
+            };
+            await _unitOfWork.EmailRepository.SendEmailAsync(mailRequestDTO);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
             return Ok(_response);
+        }
 
         }
 
@@ -140,6 +155,5 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
-
     }
 }

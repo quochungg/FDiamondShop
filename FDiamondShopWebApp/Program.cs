@@ -20,12 +20,12 @@ builder.Services.AddDbContext<FDiamondContext>(option =>
 // Add services to the container.
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
 {
-    option.User.RequireUniqueEmail = true;
-    
+    option.User.RequireUniqueEmail = true;  
 }
-)
-    .AddEntityFrameworkStores<FDiamondContext>();
+).AddEntityFrameworkStores<FDiamondContext>();
 
+builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailRepository, EmailRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();

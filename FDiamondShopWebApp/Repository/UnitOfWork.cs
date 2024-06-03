@@ -10,15 +10,18 @@ namespace FDiamondShop.API.Repository
         public IProductRepository ProductRepository { get; }
         public IProductImageRepository ProductImageRepository { get; }
         public IProductVariantValueRepository ProductVariantValueRepository { get; }
-
         public IUserRepository UserRepository { get; }
+        public IEmailRepository EmailRepository { get; }
 
-        public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, IProductVariantValueRepository productVariantValueRepository)
+        public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, 
+            IProductVariantValueRepository productVariantValueRepository, IUserRepository userRepository, IEmailRepository emailRepository)
         {
             _db = db;
             ProductRepository = productRepository;
             ProductImageRepository = productImageRepository;
             ProductVariantValueRepository = productVariantValueRepository;
+            UserRepository = userRepository;
+            EmailRepository = emailRepository;
         }
         public async Task SaveAsync()
         {
