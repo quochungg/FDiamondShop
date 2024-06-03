@@ -189,8 +189,6 @@ namespace FDiamondShop.API.Repository
         {
             string pattern = @"[\d\W_]";
             Regex regex = new Regex(pattern);
-
-            // Kiểm tra chuỗi với biểu thức chính quy
             if (regex.IsMatch(input))
             {
                 return false;
