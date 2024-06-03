@@ -14,12 +14,10 @@ namespace FDiamondShop.API.Controllers
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<ApplicationUser> _userManager;
         public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _response = new();
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
         }
 
         [HttpPost("login")]
