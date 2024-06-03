@@ -88,42 +88,17 @@ namespace FDiamondShop.API.Repository
                 PhoneNumber = registerationRequestDTO.PhoneNumber
             };
             try
-            {
-                bool isValidFirstName= IsValidName(registerationRequestDTO.FirstName);
-                bool isValidLastName = IsValidName(registerationRequestDTO.FirstName);
-                if (!isValidFirstName)
-                {
-                    throw new Exception("First Name can not contain special character or number");
-                }
-                if (!isValidLastName)
-                {
-                    throw new Exception("Last Name can not contain special character or number");
-                }
-
+            {               
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
                 {
-                    string role = registerationRequestDTO.Role ?? "customer";
-                    if (role == "customer" || role == "admin" || role == "employees")
-                    {
-                        
+                    string role = registerationRequestDTO.Role;
+         
                         await _userManager.AddToRoleAsync(user, role);
-                        var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
-                        return _mapper.Map<UserDTO>(user);
+                        
                     }
-                    else
-                    {
-                        throw new Exception("Wrong role");
-                    }
-                    
-                    
-            }
-                else
-                {
-                    // Log or handle the errors
-                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    throw new Exception($"User creation failed: {errors}");
-                }
+                var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
+                return _mapper.Map<UserDTO>(user);
             }
             catch (Exception ex)
             {
@@ -139,17 +114,7 @@ namespace FDiamondShop.API.Repository
                 throw new Exception("USER NOT FOUND");
             }
             user.FirstName = accountUpdateDTO.FirstName;
-            user.LastName = accountUpdateDTO.LastName;
-            bool isValidFirstName = IsValidName(accountUpdateDTO.FirstName);
-            bool isValidLastName = IsValidName(accountUpdateDTO.FirstName);
-            if (!isValidFirstName)
-            {
-                throw new Exception("First Name can not contain special character or number");
-            }
-            if (!isValidLastName)
-            {
-                throw new Exception("Last Name can not contain special character or number");
-            }
+            user.LastName = accountUpdateDTO.LastName;         
             if (!string.IsNullOrEmpty(accountUpdateDTO.NewPassword))
             {
                 
@@ -184,20 +149,6 @@ namespace FDiamondShop.API.Repository
             return userDTO;
 
         }
-
-        public bool IsValidName(string input)
-        {
-            string pattern = @"[\d\W_]";
-            Regex regex = new Regex(pattern);
-
-            // Kiểm tra chuỗi với biểu thức chính quy
-            if (regex.IsMatch(input))
-            {
-                return false;
-            }
-            return true;
-        }
-
         public async Task<UserDTO> GetUserByUsername(string username)
         {
             var user = await _userManager.FindByNameAsync(username) ?? throw new Exception("User not found");
