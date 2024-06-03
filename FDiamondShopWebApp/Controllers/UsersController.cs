@@ -56,15 +56,11 @@ namespace FDiamondShop.API.Controllers
         {            
            
             var currentUser = await _userManager.FindByEmailAsync(model.UserName);
-            bool isValidFirstName=_unitOfWork.UserRepository.IsValidName(model.FirstName);
-            bool isValidLastName = _unitOfWork.UserRepository.IsValidName(model.LastName);
-            if(model.UserName == null || (model.LastName== null) || model.FirstName==null ||
-                model.Address==null|| model.PhoneNumber == null || model.Password==null)
+            if(!ModelState.IsValid)
             {
-                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.StatusCode=HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Please input full field !");
-                return BadRequest(_response);
+                return BadRequest(ModelState);
             }
                 
             if (!await _userManager.CheckPasswordAsync(currentUser, model.Password))
@@ -74,22 +70,7 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Wrong format password");
                 return BadRequest(_response);
             }
-            if (!isValidFirstName)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("First Name can not contain speacial character and number");
-                return BadRequest(_response);
-            }
-            if (!isValidLastName)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Last Name can not contain speacial character and number");
-                return BadRequest(_response);
-            }
-
-            var user = await _unitOfWork.UserRepository.Register(model);
+         var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -114,17 +95,12 @@ namespace FDiamondShop.API.Controllers
         {
             
             
-            var currentUser= await _userManager.FindByEmailAsync(model.UserName);           
-            bool isValidFirstName = _unitOfWork.UserRepository.IsValidName(model.FirstName);
-            bool isValidLastName = _unitOfWork.UserRepository.IsValidName(model.LastName);
-
-            if (model.UserName == null || (model.LastName == null) || model.FirstName == null ||
-                model.Address == null || model.PhoneNumber == null)
+            var currentUser= await _userManager.FindByEmailAsync(model.UserName);
+            if (!ModelState.IsValid)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Please input full personal information field !");
-                return BadRequest(_response);
+                return BadRequest(ModelState);
             }
             if (!string.IsNullOrEmpty(model.NewPassword))
             {
@@ -146,22 +122,7 @@ namespace FDiamondShop.API.Controllers
                     return BadRequest(_response);
                     
                 }
-            }
-
-            if (!isValidFirstName)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("First Name can not contain speacial character and number");
-                return BadRequest(_response);
-            }
-            if (!isValidLastName)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Last Name can not contain speacial character and number");
-                return BadRequest(_response);
-            }
+            }           
             var user = await _unitOfWork.UserRepository.Update(model);
             if (user == null)
             {
