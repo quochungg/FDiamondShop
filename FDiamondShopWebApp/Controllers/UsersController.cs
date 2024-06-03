@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Security.Principal;
+using Microsoft.Identity.Client;
+using AutoMapper;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -19,7 +23,7 @@ namespace FDiamondShop.API.Controllers
         {
             _response = new();
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
@@ -34,9 +38,12 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Username or password is incorrect");
                 return BadRequest(_response);
             }
+            
+             
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
+            
             return Ok(_response);
         }
 
@@ -46,6 +53,8 @@ namespace FDiamondShop.API.Controllers
 
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
+            bool checkValidFirstName = _userRepo.IsValidName(model.FirstName);
+            bool checkValidLastName= _userRepo.IsValidName(model.LastName);
             var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
             {
@@ -54,6 +63,21 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Error while registering");
                 return BadRequest(_response);
             }
+            if (!checkValidFirstName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("FirstName can not contain special character or number");
+                return BadRequest(_response);
+            }
+            if (!checkValidLastName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("LastName can not contain special character or number");
+                return BadRequest(_response);
+            }
+
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
@@ -95,7 +119,41 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
         }
 
+        }
 
 
+        [HttpGet("{username}", Name = "SearchUserByUserName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task<ActionResult<APIResponse>> SearchUserByUserName(string username)
+        {
+
+            IEnumerable<ApplicationUser> user = await _userRepo.GetAllAsync(u => u.UserName.Equals(username));
+
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { $"User was not found." };
+                return NotFound(_response);
+            }
+            try
+            {
+                var userDTO = _mapper.Map<List<UserDTO>>(user);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = userDTO;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+
+        }
     }
 }
