@@ -42,6 +42,8 @@ namespace FDiamondShop.API.Controllers
 
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
             var user = await _unitOfWork.UserRepository.Register(model);
@@ -55,11 +57,13 @@ namespace FDiamondShop.API.Controllers
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
-            return Ok(_response);
+            return CreatedAtRoute("SearchUserByUserName", new { username = model.UserName} ,_response); 
         }
         [HttpPatch("update")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
         {
             var user = await _unitOfWork.UserRepository.Update(model);
@@ -73,7 +77,7 @@ namespace FDiamondShop.API.Controllers
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
-            return Ok(_response);
+            return NoContent();
 
         }
         [HttpPost("sendemail")]
@@ -90,6 +94,7 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             return Ok(_response);
         }
+
 
 
     }

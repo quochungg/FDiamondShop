@@ -80,6 +80,8 @@ namespace FDiamondShop.API.Repository
                 NormalizedEmail = registerationRequestDTO.UserName.ToUpper(),
                 FirstName = registerationRequestDTO.FirstName,
                 LastName = registerationRequestDTO.LastName,
+                Address = registerationRequestDTO.Address,
+                PhoneNumber = registerationRequestDTO.PhoneNumber
             };
             try
             {
@@ -94,9 +96,6 @@ namespace FDiamondShop.API.Repository
                             await _roleManager.CreateAsync(new IdentityRole(role));
                         }
                         await _userManager.AddToRoleAsync(user, role);
-                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        await _userManager.ConfirmEmailAsync(user, token);
-
                     }
                     else
                     {
