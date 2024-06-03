@@ -24,8 +24,9 @@ builder.Services.AddDbContext<FDiamondContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedAccount = true;
 })
-.AddEntityFrameworkStores<FDiamondContext>();
+.AddEntityFrameworkStores<FDiamondContext>().AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
 
 // Configure Email Settings
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
@@ -123,11 +124,12 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseSwagger();
-app.UseSwaggerUI( options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FDiamond-API");
-    options.RoutePrefix = "";
-});
+app.UseSwaggerUI();
+//app.UseSwaggerUI(options =>
+//{
+//    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FDiamond-API");
+//    options.RoutePrefix = "";
+//});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
