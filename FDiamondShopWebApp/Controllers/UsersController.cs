@@ -14,16 +14,20 @@ namespace FDiamondShop.API.Controllers
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IMapper mapper)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public UsersController(IUnitOfWork unitOfWork,UserManager<ApplicationUser>userManager)
         {
             _response = new();
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _userManager = userManager;
+            
+           
         }
 
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
             var loginResponse = await _unitOfWork.UserRepository.Login(model);
@@ -46,11 +50,45 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
-        {
-            bool checkValidFirstName = _unitOfWork.UserRepository.IsValidName(model.FirstName);
-            bool checkValidLastName = _unitOfWork.UserRepository.IsValidName(model.LastName);
+        {            
+           
+            var currentUser = await _userManager.FindByEmailAsync(model.UserName);
+            bool isValidFirstName=_unitOfWork.UserRepository.IsValidName(model.FirstName);
+            bool isValidLastName = _unitOfWork.UserRepository.IsValidName(model.LastName);
+            if(model.UserName == null || (model.LastName== null) || model.FirstName==null ||
+                model.Address==null|| model.PhoneNumber == null || model.Password==null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Please input full field !");
+                return BadRequest(_response);
+            }
+                
+            if (!await _userManager.CheckPasswordAsync(currentUser, model.Password))
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Wrong format password");
+                return BadRequest(_response);
+            }
+            if (!isValidFirstName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("First Name can not contain speacial character and number");
+                return BadRequest(_response);
+            }
+            if (!isValidLastName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Last Name can not contain speacial character and number");
+                return BadRequest(_response);
+            }
+
             var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
             {
@@ -59,21 +97,7 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Error while registering");
                 return BadRequest(_response);
             }
-            if (!checkValidFirstName)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("FirstName can not contain special character or number");
-                return BadRequest(_response);
-            }
-            if (!checkValidLastName)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("LastName can not contain special character or number");
-                return BadRequest(_response);
-            }
-
+            
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
@@ -83,9 +107,61 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
 
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
         {
+            
+            
+            var currentUser= await _userManager.FindByEmailAsync(model.UserName);           
+            bool isValidFirstName = _unitOfWork.UserRepository.IsValidName(model.FirstName);
+            bool isValidLastName = _unitOfWork.UserRepository.IsValidName(model.LastName);
+
+            if (model.UserName == null || (model.LastName == null) || model.FirstName == null ||
+                model.Address == null || model.PhoneNumber == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Please input full personal information field !");
+                return BadRequest(_response);
+            }
+            if (!string.IsNullOrEmpty(model.NewPassword))
+            {
+
+                if (!await _userManager.CheckPasswordAsync(currentUser, model.Password))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Wrong old password");
+                    return BadRequest(_response);
+                }
+
+
+                if (model.NewPassword != model.ConfimPassword)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("New password and confirmation password do not match.");
+                    return BadRequest(_response);
+                    
+                }
+            }
+
+            if (!isValidFirstName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("First Name can not contain speacial character and number");
+                return BadRequest(_response);
+            }
+            if (!isValidLastName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Last Name can not contain speacial character and number");
+                return BadRequest(_response);
+            }
             var user = await _unitOfWork.UserRepository.Update(model);
             if (user == null)
             {
@@ -101,6 +177,8 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpPost("sendemail")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SendEmailAsync(string emailTo)
         {
             MailRequestDTO mailRequestDTO = new()
