@@ -10,5 +10,6 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO);
         Task<UserDTO> Update(AccountUpdateDTO updateAccountDTO);
         bool IsValidName(string input);
+        Task<UserDTO> GetUserByUsername(string username);
     }
 }

@@ -176,5 +176,20 @@ namespace FDiamondShop.API.Repository
             }
             return true;
         }
+
+        public async Task<UserDTO> GetUserByUsername(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username) ?? throw new Exception("User not found");
+            UserDTO dto = new()
+            {
+                Address = user.Address,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                UserName = user.UserName
+            };
+            return dto;
+        }
+        
     }
 }
