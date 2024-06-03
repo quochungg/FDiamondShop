@@ -1,10 +1,10 @@
 ﻿using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
+using AutoMapper;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -14,10 +14,12 @@ namespace FDiamondShop.API.Controllers
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
-        public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        private readonly IMapper _mapper;
+        public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _response = new();
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
@@ -32,9 +34,12 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Username or password is incorrect");
                 return BadRequest(_response);
             }
+
+
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
+
             return Ok(_response);
         }
 
@@ -44,6 +49,8 @@ namespace FDiamondShop.API.Controllers
 
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
+            bool checkValidFirstName = _unitOfWork.UserRepository.IsValidName(model.FirstName);
+            bool checkValidLastName = _unitOfWork.UserRepository.IsValidName(model.LastName);
             var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
             {
@@ -52,10 +59,25 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Error while registering");
                 return BadRequest(_response);
             }
+            if (!checkValidFirstName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("FirstName can not contain special character or number");
+                return BadRequest(_response);
+            }
+            if (!checkValidLastName)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("LastName can not contain special character or number");
+                return BadRequest(_response);
+            }
+
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
-            return CreatedAtRoute("SearchUserByUserName", new { username = model.UserName} ,_response); 
+            return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
         [HttpPatch("update")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -92,8 +114,38 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             return Ok(_response);
         }
+        [HttpGet("{username}", Name = "searchuserbyusername")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
 
+        public async Task<ActionResult<APIResponse>> SearchUserByUserName(string username)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetUserByUsername(username);
 
+                if (user == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { $"User was not found." };
+                    return NotFound(_response);
+                }
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = user;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+
+        }
 
     }
 }
+

@@ -4,17 +4,12 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Data;
-using System.Linq;
 using System.Net;
-using System.Security.Cryptography.Xml;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace FDiamondShop.API.Controllers
 {
@@ -27,7 +22,7 @@ namespace FDiamondShop.API.Controllers
         private readonly APIResponse _response;
         private readonly FDiamondContext _db;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IMapper  _mapper;
         public ProductController(IUnitOfWork unitOfWork, FDiamondContext db, IMapper mapper)
         {
             this._response = new();

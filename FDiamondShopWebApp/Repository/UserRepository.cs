@@ -8,10 +8,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FDiamondShop.API.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : Repository<ApplicationUser>, IUserRepository
     {
         private readonly FDiamondContext _db;
         private string secretKey;
@@ -19,7 +20,7 @@ namespace FDiamondShop.API.Repository
         private readonly IMapper _mapper;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserRepository(FDiamondContext db, IConfiguration configuration, UserManager<ApplicationUser> userManager, 
-            IMapper mapper, RoleManager<IdentityRole> roleManager)
+            IMapper mapper, RoleManager<IdentityRole> roleManager):base(db)
         {
             _db = db;
             _userManager = userManager;
@@ -54,7 +55,8 @@ namespace FDiamondShop.API.Repository
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
+                    new Claim("TokenId",Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -162,6 +164,32 @@ namespace FDiamondShop.API.Repository
 
         }
 
+        public bool IsValidName(string input)
+        {
+            string pattern = @"[\d\W_]";
+            Regex regex = new Regex(pattern);
 
+            // Kiểm tra chuỗi với biểu thức chính quy
+            if (regex.IsMatch(input))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<UserDTO> GetUserByUsername(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username) ?? throw new Exception("User not found");
+            UserDTO dto = new()
+            {
+                Address = user.Address,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                UserName = user.UserName
+            };
+            return dto;
+        }
+        
     }
 }
