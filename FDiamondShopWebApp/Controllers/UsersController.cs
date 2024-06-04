@@ -5,27 +5,28 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FDiamondShop.API.Controllers
 {
-    [Route("api/UsersAuth")]
+    [Route("api/Users")]
     [ApiController]
     public class UsersController : Controller
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public UsersController(IUnitOfWork unitOfWork,UserManager<ApplicationUser>userManager)
+        public UsersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _response = new();
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
             _userManager = userManager;
-            
-           
         }
-
+       
         [HttpPost("login")]
+        //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
@@ -48,6 +49,7 @@ namespace FDiamondShop.API.Controllers
         }
 
         [HttpPost("register")]
+        //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -74,15 +76,15 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
+       
         [HttpPatch("update")]
+        //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
-        {
-            
-            
+        {                       
             var currentUser= await _userManager.FindByEmailAsync(model.UserName);
             if (!ModelState.IsValid)
             {
@@ -116,7 +118,9 @@ namespace FDiamondShop.API.Controllers
             return NoContent();
 
         }
+        
         [HttpPost("sendemail")]
+        //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SendEmailAsync(string emailTo)
@@ -132,11 +136,12 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             return Ok(_response);
         }
+
         [HttpGet("{username}", Name = "searchuserbyusername")]
+        //[Authorize("admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-
+        [ProducesResponseType(StatusCodes.Status404NotFound)]             
         public async Task<ActionResult<APIResponse>> SearchUserByUserName(string username)
         {
             try
@@ -164,6 +169,26 @@ namespace FDiamondShop.API.Controllers
 
         }
 
+        [HttpGet("confirmemail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("User not found.");
+                return BadRequest(_response);
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {               
+                return Ok("Your email is confirm successfully!");
+            }
+            return BadRequest("Error confirming your email.");
+        }
     }
 }
 

@@ -17,7 +17,7 @@ namespace FDiamondShop.API.Repository
             this._emailSetting = options.Value;
         }
         public async Task SendEmailAsync(MailRequestDTO mailRequest)
-        {
+        {            
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_emailSetting.Mail);
             email.To.Add(MailboxAddress.Parse(mailRequest.toEmail));
@@ -26,10 +26,10 @@ namespace FDiamondShop.API.Repository
             builder.HtmlBody = mailRequest.Body;
             email.Body = builder.ToMessageBody();
 
-            using var smtp = new SmtpClient() ;
+            using var smtp = new SmtpClient();
 
-            smtp.Connect(_emailSetting.Host, _emailSetting.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_emailSetting.Mail, _emailSetting.Password);
+            await smtp.ConnectAsync(_emailSetting.Host, _emailSetting.Port, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_emailSetting.Mail, _emailSetting.Password);
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
 
