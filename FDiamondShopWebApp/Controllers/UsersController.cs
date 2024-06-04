@@ -57,21 +57,11 @@ namespace FDiamondShop.API.Controllers
            
             var currentUser = await _userManager.FindByEmailAsync(model.UserName);
             if(!ModelState.IsValid)
-            {
-                _response.StatusCode=HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
+            {                
                 return BadRequest(ModelState);
             }
-                
-            if (!await _userManager.CheckPasswordAsync(currentUser, model.Password))
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Wrong format password");
-                return BadRequest(_response);
-            }
-         var user = await _unitOfWork.UserRepository.Register(model);
-            if (user == null)
+            var user = await _unitOfWork.UserRepository.Register(model);
+                if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
@@ -89,8 +79,6 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
         {
             
@@ -104,15 +92,6 @@ namespace FDiamondShop.API.Controllers
             }
             if (!string.IsNullOrEmpty(model.NewPassword))
             {
-
-                if (!await _userManager.CheckPasswordAsync(currentUser, model.Password))
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Wrong old password");
-                    return BadRequest(_response);
-                }
-
 
                 if (model.NewPassword != model.ConfimPassword)
                 {
