@@ -184,10 +184,8 @@ namespace FDiamondShop.API.Controllers
             }
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
-            {
-                _response.IsSuccess = true;
-                _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+            {               
+                return Ok("Your email is confirm successfully!");
             }
             return BadRequest("Error confirming your email.");
         }
