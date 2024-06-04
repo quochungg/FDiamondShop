@@ -1,3 +1,4 @@
+using Azure;
 using FDiamondShop.API;
 using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
@@ -12,19 +13,25 @@ using Newtonsoft.Json;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<FDiamondContext>(option =>
-{
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
-});
-// Add services to the container.
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
-{
-    option.User.RequireUniqueEmail = true;  
-}
-).AddEntityFrameworkStores<FDiamondContext>();
 
+// Configure DbContext
+builder.Services.AddDbContext<FDiamondContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+});
+
+// Configure Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<FDiamondContext>();
+
+// Configure Email Settings
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailRepository, EmailRepository>();
+
+// Register Repositories
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -32,57 +39,47 @@ builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 var configuration = builder.Configuration;
-//configure gg authen
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    //read information Authentication Google from Appsetting.json
     googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
     googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-
 });
 
-//cofigure Bearer TOKEN
-var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+// Configure JWT Bearer Token
+var key = Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("ApiSettings:Secret"));
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme= JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x=> { 
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(x =>
+{
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+        IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
         ValidateAudience = false
     };
 });
-builder.Services.AddTransient<UnitOfWork>();
-builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
-builder.Services.AddTransient<IRepository<Product>, Repository<Product>>();
 
+// Configure AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-builder.Services.AddControllers(option =>
-{
-    //option.ReturnHttpNotAcceptable=true;
-}).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
-builder.Services.AddControllers();
+
+// Configure Controllers with NewtonsoftJson
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     });
-builder.Services.AddDbContext<FDiamondContext>(option =>
-{
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
-});
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
-//configure token swaggerUI
-builder.Services.AddSwaggerGen(option =>
+builder.Services.AddSwaggerGen(options =>
 {
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
                      "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
@@ -91,41 +88,50 @@ builder.Services.AddSwaggerGen(option =>
         In = ParameterLocation.Header,
         Scheme = "Bearer"
     });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference=new OpenApiReference
+                Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 },
-                Scheme="oauth2",
-                Name="Bearer",
-                In=ParameterLocation.Header
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
             },
             new List<string>()
         }
     });
 });
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline
+app.UseSwagger();
+app.UseSwaggerUI( options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FDiamond-API");
+    options.RoutePrefix = "";
+});
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
-
 app.UseAuthorization();
+app.UseCors("AllowAllOrigins");
 
 app.MapControllers();
-
 app.Run();
