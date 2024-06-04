@@ -68,13 +68,21 @@ namespace FDiamondShop.API.Repository
             {
                 User = _mapper.Map<UserDTO>(user),
                 Token = tokenHandler.WriteToken(token),
+                User = new()
+                {
+                    Address = user.Address,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName
+                },             
                 Role = roles.FirstOrDefault()
 
             };
             return loginResponseDTO;
         }
 
-        public async Task<UserDTO> Register(RegistrationRequestDTO registerationRequestDTO)
+        public async Task<ApplicationUser> Register(RegistrationRequestDTO registerationRequestDTO)
         {
 
             ApplicationUser user = new()
@@ -97,8 +105,9 @@ namespace FDiamondShop.API.Repository
                         await _userManager.AddToRoleAsync(user, role);
                         
                     }
+
                 var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
-                return _mapper.Map<UserDTO>(user);
+                return userToReturn;
             }
             catch (Exception ex)
             {
@@ -114,7 +123,10 @@ namespace FDiamondShop.API.Repository
                 throw new Exception("USER NOT FOUND");
             }
             user.FirstName = accountUpdateDTO.FirstName;
-            user.LastName = accountUpdateDTO.LastName;         
+            user.LastName = accountUpdateDTO.LastName; 
+            user.Address = accountUpdateDTO.Address;
+            user.PhoneNumber = accountUpdateDTO.PhoneNumber;
+            
             if (!string.IsNullOrEmpty(accountUpdateDTO.NewPassword))
             {
                 
@@ -143,6 +155,8 @@ namespace FDiamondShop.API.Repository
                 FirstName = updatedUser.FirstName,
                 LastName = updatedUser.LastName,
                 UserName= updatedUser.UserName,
+                Address = updatedUser.Address,
+                PhoneNumber = updatedUser.PhoneNumber,
                 
             };
 

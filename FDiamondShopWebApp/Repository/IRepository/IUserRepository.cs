@@ -7,7 +7,7 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
-        Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO);
+        Task<ApplicationUser> Register(RegistrationRequestDTO registrationRequestDTO);
         Task<UserDTO> Update(AccountUpdateDTO updateAccountDTO);
         Task<UserDTO> GetUserByUsername(string username);
     }
