@@ -66,7 +66,7 @@ namespace FDiamondShop.API.Repository
             var token = tokenHandler.CreateToken(tokenDescriptor);
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
             {
-                User = _mapper.Map<UserDTO>(user),
+                //User = _mapper.Map<UserDTO>(user),
                 Token = tokenHandler.WriteToken(token),
                 User = new()
                 {
