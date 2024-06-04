@@ -122,11 +122,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseSwagger();
-app.UseSwaggerUI( options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FDiamond-API");
-    options.RoutePrefix = "";
-});
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
