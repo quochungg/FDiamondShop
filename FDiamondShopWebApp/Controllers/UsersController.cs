@@ -6,6 +6,7 @@ using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -63,14 +64,17 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(ModelState);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
-                if (user == null)
+            if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add("Error while registering");
                 return BadRequest(_response);
             }
-            
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
+            await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
+
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
@@ -118,12 +122,14 @@ namespace FDiamondShop.API.Controllers
             return NoContent();
 
         }
+
+        
         
         [HttpPost("sendemail")]
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> SendEmailAsync(string emailTo)
+        public async Task<IActionResult> SendEmail(string emailTo)
         {
             MailRequestDTO mailRequestDTO = new()
             {
@@ -188,6 +194,43 @@ namespace FDiamondShop.API.Controllers
                 return Ok("Your email is confirm successfully!");
             }
             return BadRequest("Error confirming your email.");
+        }
+
+        [HttpPost("forgotpassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([Required][FromBody] string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = Url.Action(nameof(ResetPassword), "Users", new { email = email, token = token }, Request.Scheme);
+            await _unitOfWork.UserRepository.SendPasswordResetAsync(user, resetLink);
+            return Ok("Reset password link has been sent to your email.");
+        }       
+
+        [HttpPost("resetpassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                return Ok("Password reset successfully.");
+            }
+            return BadRequest("Error resetting password.");
+            //cmt
         }
     }
 }

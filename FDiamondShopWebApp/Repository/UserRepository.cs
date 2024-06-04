@@ -275,6 +275,21 @@ namespace FDiamondShop.API.Repository
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
-
+        public async Task SendPasswordResetAsync(ApplicationUser user, string resetLink)
+        {
+            var message = new MimeMessage();
+            message.Sender = MailboxAddress.Parse(_emailSetting.Mail);
+            message.To.Add(MailboxAddress.Parse(user.Email));
+            message.Subject = "Forgot Password";
+            message.Body = new TextPart("html")
+            {
+                Text = $@"{resetLink}"
+            };
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(_emailSetting.Host, _emailSetting.Port, SecureSocketOptions.StartTls);
+            smtp.Authenticate(_emailSetting.Mail, _emailSetting.Password);
+            await smtp.SendAsync(message);
+            smtp.Disconnect(true);
+        }
     }
 }
