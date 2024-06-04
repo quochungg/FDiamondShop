@@ -23,7 +23,7 @@ namespace FDiamondShop.API
             CreateMap<ProductVariantValue,ProductVariantValueUpdateDTO>().ReverseMap();
 
 
-            CreateMap < ApplicationUser,UserDTO>().ReverseMap();
+            CreateMap <ApplicationUser,UserDTO>().ReverseMap();
 
             
         }
