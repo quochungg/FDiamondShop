@@ -9,7 +9,6 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
         Task<ApplicationUser> Register(RegistrationRequestDTO registrationRequestDTO);
         Task<UserDTO> Update(AccountUpdateDTO updateAccountDTO);
-        bool IsValidName(string input);
         Task<UserDTO> GetUserByUsername(string username);
         Task SendEmailConfirmationAsync(ApplicationUser user, string confirmationLink);
     }

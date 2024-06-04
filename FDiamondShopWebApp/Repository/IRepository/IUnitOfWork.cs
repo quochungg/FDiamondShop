@@ -7,6 +7,7 @@
         IProductVariantValueRepository ProductVariantValueRepository { get; }
         IUserRepository UserRepository { get; }
         IEmailRepository EmailRepository { get; }
+        IShoppingCartRepository ShoppingCartRepository { get; }
         Task SaveAsync();
     }
 }

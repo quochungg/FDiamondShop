@@ -31,8 +31,7 @@ namespace FDiamondShop.API.Repository
         {
             this._emailSetting = options.Value;
             _db = db;
-            _userManager = userManager;
-            _mapper = mapper;
+            _userManager = userManager;            
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _roleManager = roleManager;
         }
@@ -40,7 +39,7 @@ namespace FDiamondShop.API.Repository
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower());
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == loginRequestDTO.UserName);
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
             if (user == null || isValid == false)
@@ -48,7 +47,8 @@ namespace FDiamondShop.API.Repository
                 return new LoginResponseDTO()
                 {
                     Token = "",
-                    User = null
+                    User = null,
+                    Role = null
                 };
             }
 
@@ -74,8 +74,16 @@ namespace FDiamondShop.API.Repository
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
             {
                 Token = tokenHandler.WriteToken(token),
-                User = _mapper.Map<UserDTO>(user),
+                User = new()
+                {
+                    Address = user.Address,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName
+                },             
                 Role = roles.FirstOrDefault()
+
             };
             return loginResponseDTO;
         }
@@ -94,25 +102,12 @@ namespace FDiamondShop.API.Repository
                 PhoneNumber = registerationRequestDTO.PhoneNumber
             };
             try
-            {
+            {               
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
                 {
-
-                    string role = registerationRequestDTO.Role ?? "customer";
-                    if (role == "customer" || role == "admin" || role == "employees")
-                    {
-                        if (!_roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole(role));
-                        }
-                        await _userManager.AddToRoleAsync(user, role);
-                    }
-                    else
-                    {
-                        throw new Exception("Wrong role");
-                    }
-
+                    string role = registerationRequestDTO.Role;         
+                    await _userManager.AddToRoleAsync(user, role);                       
                     var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
                     return userToReturn;
                 }
@@ -137,7 +132,10 @@ namespace FDiamondShop.API.Repository
                 throw new Exception("USER NOT FOUND");
             }
             user.FirstName = accountUpdateDTO.FirstName;
-            user.LastName = accountUpdateDTO.LastName;
+            user.LastName = accountUpdateDTO.LastName; 
+            user.Address = accountUpdateDTO.Address;
+            user.PhoneNumber = accountUpdateDTO.PhoneNumber;
+            
             if (!string.IsNullOrEmpty(accountUpdateDTO.NewPassword))
             {
 
@@ -165,23 +163,13 @@ namespace FDiamondShop.API.Repository
 
                 FirstName = updatedUser.FirstName,
                 LastName = updatedUser.LastName,
-                UserName = updatedUser.UserName,
-
+                UserName= updatedUser.UserName,
+                Address = updatedUser.Address,
+                PhoneNumber = updatedUser.PhoneNumber,
             };
 
             return userDTO;
 
-        }
-
-        public bool IsValidName(string input)
-        {
-            string pattern = @"[\d\W_]";
-            Regex regex = new Regex(pattern);
-            if (regex.IsMatch(input))
-            {
-                return false;
-            }
-            return true;
         }
 
         public async Task<UserDTO> GetUserByUsername(string username)

@@ -28,6 +28,7 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("login")]
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
             var loginResponse = await _unitOfWork.UserRepository.Login(model);
@@ -51,51 +52,29 @@ namespace FDiamondShop.API.Controllers
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
-        {
-            try
-            {
-                bool checkValidFirstName = _unitOfWork.UserRepository.IsValidName(model.FirstName);
-                bool checkValidLastName = _unitOfWork.UserRepository.IsValidName(model.LastName);
-                var user = await _unitOfWork.UserRepository.Register(model);
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-                if (user == null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Error while registering");
-                    return BadRequest(_response);
-                }
-                if (!checkValidFirstName)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("FirstName can not contain special character or number");
-                    return BadRequest(_response);
-                }
-                if (!checkValidLastName)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("LastName can not contain special character or number");
-                    return BadRequest(_response);
-                }
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token, email = user.Email }, Request.Scheme);
-                await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.IsSuccess = true;
-                await _unitOfWork.SaveAsync();
-                return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
+        public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
+        {            
+           
+            var currentUser = await _userManager.FindByEmailAsync(model.UserName);
+            if(!ModelState.IsValid)
+            {                
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var user = await _unitOfWork.UserRepository.Register(model);
+                if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add(ex.Message);
+                _response.ErrorMessages.Add("Error while registering");
                 return BadRequest(_response);
             }
-
+            
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            await _unitOfWork.SaveAsync();
+            return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
        
         [HttpPatch("update")]
@@ -103,8 +82,28 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
-        {
+        {                       
+            var currentUser= await _userManager.FindByEmailAsync(model.UserName);
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                return BadRequest(ModelState);
+            }
+            if (!string.IsNullOrEmpty(model.NewPassword))
+            {
+
+                if (model.NewPassword != model.ConfimPassword)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("New password and confirmation password do not match.");
+                    return BadRequest(_response);
+                    
+                }
+            }           
             var user = await _unitOfWork.UserRepository.Update(model);
             if (user == null)
             {
@@ -122,6 +121,7 @@ namespace FDiamondShop.API.Controllers
         
         [HttpPost("sendemail")]
         //[AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SendEmailAsync(string emailTo)
         {
