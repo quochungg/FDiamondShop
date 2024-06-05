@@ -46,8 +46,8 @@ namespace FDiamondShop.API.Repository
             {
                 return new LoginResponseDTO()
                 {
-                    Token = "",
                     User = null,
+                    Token = "",
                     Role = null
                 };
             }
@@ -73,6 +73,7 @@ namespace FDiamondShop.API.Repository
             var token = tokenHandler.CreateToken(tokenDescriptor);
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
             {
+                //User = _mapper.Map<UserDTO>(user),
                 Token = tokenHandler.WriteToken(token),
                 User = new()
                 {

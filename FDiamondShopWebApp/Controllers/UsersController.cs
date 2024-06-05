@@ -63,14 +63,17 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(ModelState);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
-                if (user == null)
+            if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add("Error while registering");
                 return BadRequest(_response);
             }
-            
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
+            await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
+
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();

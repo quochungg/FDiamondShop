@@ -29,6 +29,9 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<SubCategory> SubCategories { get; set; }
 
+    public virtual DbSet<DiscountCode> DiscountCodes { get; set; }
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
