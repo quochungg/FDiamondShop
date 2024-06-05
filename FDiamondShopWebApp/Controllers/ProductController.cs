@@ -31,10 +31,9 @@ namespace FDiamondShop.API.Controllers
             _mapper = mapper;
         }
 
-        //get and filter
 
         [HttpGet]
-       // [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAllProduct([FromQuery(Name = "Category Name")] string? cateName, [FromQuery(Name = "Subcategory Name")] string? Subcate,
@@ -101,7 +100,8 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
-        [Authorize(Roles = "admin")]
+
+        //[Authorize(Roles = "admin")]
         [HttpGet("{id:int}", Name = "GetProductById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
