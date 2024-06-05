@@ -27,4 +27,6 @@ public partial class Product
     public ICollection<ProductDiscount> discounts { get; set; } = new List<ProductDiscount>();  
 
     public virtual SubCategory SubCategory { get; set; }
+
+    public virtual ICollection<CartLineItem> CartLineItems { get; set; } = new List<CartLineItem>();
 }

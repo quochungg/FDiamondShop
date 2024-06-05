@@ -32,7 +32,6 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<DiscountCode> DiscountCodes { get; set; }
 
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);        
@@ -169,8 +168,29 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
             entity.HasOne(d => d.Category).WithMany(p => p.SubCategories)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("FK__sub_categ__categ__30F848ED");
-        });
 
+        });
+        modelBuilder.Entity<CartLineItem>()
+       .HasKey(oli => new { oli.ProductId, oli.CartLineId });
+
+        modelBuilder.Entity<CartLineItem>()
+            .HasOne(oli => oli.Product)
+            .WithMany(p => p.CartLineItems)
+            .HasForeignKey(oli => oli.ProductId);
+
+        modelBuilder.Entity<CartLineItem>()
+            .HasOne(oli => oli.CartLine)
+            .WithMany(ol => ol.CartLineItems)
+            .HasForeignKey(oli => oli.CartLineId);
+
+        // Order-OrderLine one-to-many relationship
+        modelBuilder.Entity<CartLine>()
+            .HasKey(ol => ol.CartLineId);
+
+        modelBuilder.Entity<CartLine>()
+            .HasOne(ol => ol.Order)
+            .WithMany(o => o.CartLines)
+            .HasForeignKey(ol => ol.OrderId);
         OnModelCreatingPartial(modelBuilder);
     }
 
