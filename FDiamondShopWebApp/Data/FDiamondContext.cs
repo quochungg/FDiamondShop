@@ -35,7 +35,6 @@ namespace FDiamondShop.API.Data
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.HasKey(e => e.CategoryId).HasName("PK__categori__D54EE9B40910DE00");
-                entity.ToTable("categories");
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
                 entity.Property(e => e.CategoryName).HasMaxLength(30).HasColumnName("category_name");
                 entity.Property(e => e.Description).HasMaxLength(500).HasColumnName("description");
@@ -44,8 +43,7 @@ namespace FDiamondShop.API.Data
 
             modelBuilder.Entity<CategoryVariant>(entity =>
             {
-                entity.HasKey(e => e.VariantId).HasName("PK__category__EACC68B780BFAFCD");
-                entity.ToTable("category_variants");
+                entity.HasKey(e => e.VariantId).HasName("PK__category__EACC68B780BFAFCD");               
                 entity.Property(e => e.VariantId).HasColumnName("variant_id");
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
                 entity.Property(e => e.Description).HasMaxLength(255).HasColumnName("description");
@@ -58,7 +56,6 @@ namespace FDiamondShop.API.Data
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasKey(e => e.ProductId).HasName("PK__products__47027DF50082A97F");
-                entity.ToTable("products");
                 entity.Property(e => e.ProductId).HasColumnName("product_id");
                 entity.Property(e => e.BasePrice).HasColumnType("decimal(10, 2)").HasColumnName("base_price");
                 entity.Property(e => e.Description).HasMaxLength(500).HasColumnName("description");
@@ -75,7 +72,6 @@ namespace FDiamondShop.API.Data
             modelBuilder.Entity<ProductImage>(entity =>
             {
                 entity.HasKey(e => e.ProductImageId).HasName("PK__product___0302EB4A81F0C8B7");
-                entity.ToTable("product_images");
                 entity.Property(e => e.ProductImageId).HasColumnName("product_image_id");
                 entity.Property(e => e.ImageUrl).HasMaxLength(255).HasColumnName("image_url");
                 entity.Property(e => e.IsGia).HasDefaultValueSql("((0))").HasColumnName("is_GIA");
@@ -88,7 +84,6 @@ namespace FDiamondShop.API.Data
             modelBuilder.Entity<ProductVariantValue>(entity =>
             {
                 entity.HasKey(e => new { e.VariantId, e.ProductId }).HasName("PK__product___AEBC4F683554C815");
-                entity.ToTable("product_variant_values");
                 entity.Property(e => e.VariantId).HasColumnName("variant_id");
                 entity.Property(e => e.ProductId).HasColumnName("product_id");
                 entity.Property(e => e.Value).HasMaxLength(80).HasColumnName("value");
@@ -105,7 +100,6 @@ namespace FDiamondShop.API.Data
             modelBuilder.Entity<SubCategory>(entity =>
             {
                 entity.HasKey(e => e.SubCategoryId).HasName("PK__sub_cate__0A556D5F0EB73593");
-                entity.ToTable("sub_categories");
                 entity.Property(e => e.SubCategoryId).HasColumnName("sub_category_id");
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
                 entity.Property(e => e.Description).HasMaxLength(500).HasColumnName("description");

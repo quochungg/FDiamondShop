@@ -12,26 +12,6 @@ namespace FDiamondShop.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "accounts",
-                columns: table => new
-                {
-                    account_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
-                    first_name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    last_name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    password_hash = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    googleid = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
-                    is_google_account = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))"),
-                    role = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true, defaultValueSql: "('Customer')"),
-                    date_create = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__accounts__46A222CD8ABCA3F2", x => x.account_id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -50,6 +30,9 @@ namespace FDiamondShop.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -71,7 +54,7 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "categories",
+                name: "Categories",
                 columns: table => new
                 {
                     category_id = table.Column<int>(type: "int", nullable: false)
@@ -83,6 +66,23 @@ namespace FDiamondShop.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__categori__D54EE9B40910DE00", x => x.category_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountCodes",
+                columns: table => new
+                {
+                    discount_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    discount_code_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    discount_percent = table.Column<int>(type: "int", nullable: false),
+                    starting_date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    end_date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    is_expried = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountCodes", x => x.discount_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,7 +192,34 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "category_variants",
+                name: "Orders",
+                columns: table => new
+                {
+                    order_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    order_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    payment_type = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    payment_date_time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    note = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    phone_number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.order_id);
+                    table.ForeignKey(
+                        name: "FK_Orders_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryVariants",
                 columns: table => new
                 {
                     variant_id = table.Column<int>(type: "int", nullable: false)
@@ -207,12 +234,12 @@ namespace FDiamondShop.API.Migrations
                     table.ForeignKey(
                         name: "FK__category___categ__33D4B598",
                         column: x => x.category_id,
-                        principalTable: "categories",
+                        principalTable: "Categories",
                         principalColumn: "category_id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "sub_categories",
+                name: "SubCategories",
                 columns: table => new
                 {
                     sub_category_id = table.Column<int>(type: "int", nullable: false)
@@ -228,12 +255,37 @@ namespace FDiamondShop.API.Migrations
                     table.ForeignKey(
                         name: "FK__sub_categ__categ__30F848ED",
                         column: x => x.category_id,
-                        principalTable: "categories",
+                        principalTable: "Categories",
                         principalColumn: "category_id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "products",
+                name: "CartLines",
+                columns: table => new
+                {
+                    CartLineId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    IsOrdered = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartLines", x => x.CartLineId);
+                    table.ForeignKey(
+                        name: "FK_CartLines_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CartLines_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "order_id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
                 columns: table => new
                 {
                     product_id = table.Column<int>(type: "int", nullable: false)
@@ -252,12 +304,38 @@ namespace FDiamondShop.API.Migrations
                     table.ForeignKey(
                         name: "FK__products__sub_ca__36B12243",
                         column: x => x.sub_category_id,
-                        principalTable: "sub_categories",
+                        principalTable: "SubCategories",
                         principalColumn: "sub_category_id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "product_images",
+                name: "CartLineItems",
+                columns: table => new
+                {
+                    CartLineId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    RingSize = table.Column<double>(type: "float", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartLineItems", x => new { x.ProductId, x.CartLineId });
+                    table.ForeignKey(
+                        name: "FK_CartLineItems_CartLines_CartLineId",
+                        column: x => x.CartLineId,
+                        principalTable: "CartLines",
+                        principalColumn: "CartLineId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartLineItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "product_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductImages",
                 columns: table => new
                 {
                     product_image_id = table.Column<int>(type: "int", nullable: false)
@@ -272,12 +350,12 @@ namespace FDiamondShop.API.Migrations
                     table.ForeignKey(
                         name: "FK__product_i__produ__3F466844",
                         column: x => x.product_id,
-                        principalTable: "products",
+                        principalTable: "Products",
                         principalColumn: "product_id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "product_variant_values",
+                name: "ProductVariantValues",
                 columns: table => new
                 {
                     variant_id = table.Column<int>(type: "int", nullable: false),
@@ -290,21 +368,14 @@ namespace FDiamondShop.API.Migrations
                     table.ForeignKey(
                         name: "FK__product_v__produ__3C69FB99",
                         column: x => x.product_id,
-                        principalTable: "products",
+                        principalTable: "Products",
                         principalColumn: "product_id");
                     table.ForeignKey(
                         name: "FK__product_v__varia__3B75D760",
                         column: x => x.variant_id,
-                        principalTable: "category_variants",
+                        principalTable: "CategoryVariants",
                         principalColumn: "variant_id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "UQ__accounts__AB6E6164A2413C2B",
-                table: "accounts",
-                column: "email",
-                unique: true,
-                filter: "[email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -346,37 +417,60 @@ namespace FDiamondShop.API.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_category_variants_category_id",
-                table: "category_variants",
+                name: "IX_CartLineItems_CartLineId",
+                table: "CartLineItems",
+                column: "CartLineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartLines_OrderId",
+                table: "CartLines",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartLines_UserId",
+                table: "CartLines",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryVariants_category_id",
+                table: "CategoryVariants",
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_product_images_product_id",
-                table: "product_images",
+                name: "IX_DiscountCodes_discount_code_name",
+                table: "DiscountCodes",
+                column: "discount_code_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_user_id",
+                table: "Orders",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductImages_product_id",
+                table: "ProductImages",
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_product_variant_values_product_id",
-                table: "product_variant_values",
-                column: "product_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_products_sub_category_id",
-                table: "products",
+                name: "IX_Products_sub_category_id",
+                table: "Products",
                 column: "sub_category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_sub_categories_category_id",
-                table: "sub_categories",
+                name: "IX_ProductVariantValues_product_id",
+                table: "ProductVariantValues",
+                column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubCategories_category_id",
+                table: "SubCategories",
                 column: "category_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "accounts");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -393,28 +487,40 @@ namespace FDiamondShop.API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "product_images");
+                name: "CartLineItems");
 
             migrationBuilder.DropTable(
-                name: "product_variant_values");
+                name: "DiscountCodes");
+
+            migrationBuilder.DropTable(
+                name: "ProductImages");
+
+            migrationBuilder.DropTable(
+                name: "ProductVariantValues");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "CartLines");
+
+            migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "CategoryVariants");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "SubCategories");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "products");
-
-            migrationBuilder.DropTable(
-                name: "category_variants");
-
-            migrationBuilder.DropTable(
-                name: "sub_categories");
-
-            migrationBuilder.DropTable(
-                name: "categories");
+                name: "Categories");
         }
     }
 }

@@ -170,7 +170,7 @@ namespace FDiamondShop.API.Migrations
                     b.HasKey("CategoryId")
                         .HasName("PK__categori__D54EE9B40910DE00");
 
-                    b.ToTable("categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.CategoryVariant", b =>
@@ -201,7 +201,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("category_variants", (string)null);
+                    b.ToTable("CategoryVariants");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.DiscountCode", b =>
@@ -353,7 +353,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.ProductImage", b =>
@@ -385,7 +385,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("product_images", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.ProductVariantValue", b =>
@@ -408,7 +408,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("product_variant_values", (string)null);
+                    b.ToTable("ProductVariantValues");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.SubCategory", b =>
@@ -444,7 +444,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("sub_categories", (string)null);
+                    b.ToTable("SubCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
