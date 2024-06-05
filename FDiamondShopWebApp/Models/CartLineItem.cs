@@ -1,8 +1,8 @@
 ﻿namespace FDiamondShop.API.Models
 {
-    public class OrderLineItem
+    public class CartLineItem
     {
-        public int OrderLineId { get; set; }
+        public int CartLineId { get; set; }
 
         public int ProductId { get; set; }
 
@@ -12,6 +12,6 @@
 
         public Product Product { get; set; }
 
-        public OrderLine OrderLine { get; set; }
+        public CartLine CartLine { get; set; }
     }
 }

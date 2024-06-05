@@ -27,5 +27,5 @@ public partial class Product
 
     public virtual SubCategory SubCategory { get; set; }
 
-    public virtual ICollection<OrderLineItem> OrderLineItems { get; set; } = new List<OrderLineItem>();
+    public virtual ICollection<CartLineItem> CartLineItems { get; set; } = new List<CartLineItem>();
 }

@@ -38,7 +38,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
-builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {

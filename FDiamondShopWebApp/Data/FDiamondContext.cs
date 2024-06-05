@@ -29,9 +29,6 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<SubCategory> SubCategories { get; set; }
 
-    public virtual DbSet<CartItem> ShoppingCartItems { get; set; }
-    public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
-
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -171,26 +168,26 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
                 .HasConstraintName("FK__sub_categ__categ__30F848ED");
 
         });
-        modelBuilder.Entity<OrderLineItem>()
-       .HasKey(oli => new { oli.ProductId, oli.OrderLineId });
+        modelBuilder.Entity<CartLineItem>()
+       .HasKey(oli => new { oli.ProductId, oli.CartLineId });
 
-        modelBuilder.Entity<OrderLineItem>()
+        modelBuilder.Entity<CartLineItem>()
             .HasOne(oli => oli.Product)
-            .WithMany(p => p.OrderLineItems)
+            .WithMany(p => p.CartLineItems)
             .HasForeignKey(oli => oli.ProductId);
 
-        modelBuilder.Entity<OrderLineItem>()
-            .HasOne(oli => oli.OrderLine)
-            .WithMany(ol => ol.OrderLineItems)
-            .HasForeignKey(oli => oli.OrderLineId);
+        modelBuilder.Entity<CartLineItem>()
+            .HasOne(oli => oli.CartLine)
+            .WithMany(ol => ol.CartLineItems)
+            .HasForeignKey(oli => oli.CartLineId);
 
         // Order-OrderLine one-to-many relationship
-        modelBuilder.Entity<OrderLine>()
-            .HasKey(ol => ol.OrderLineId);
+        modelBuilder.Entity<CartLine>()
+            .HasKey(ol => ol.CartLineId);
 
-        modelBuilder.Entity<OrderLine>()
+        modelBuilder.Entity<CartLine>()
             .HasOne(ol => ol.Order)
-            .WithMany(o => o.OrderLines)
+            .WithMany(o => o.CartLines)
             .HasForeignKey(ol => ol.OrderId);
         OnModelCreatingPartial(modelBuilder);
     }

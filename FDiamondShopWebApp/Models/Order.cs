@@ -26,7 +26,7 @@
 
         public ApplicationUser User { get; set; }
 
-        public ICollection<OrderLine> OrderLines { get; set; }
+        public ICollection<CartLine> CartLines { get; set; }
 
     }
 }
