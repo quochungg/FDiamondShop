@@ -169,8 +169,29 @@ public partial class FDiamondContext : IdentityDbContext<ApplicationUser>
             entity.HasOne(d => d.Category).WithMany(p => p.SubCategories)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("FK__sub_categ__categ__30F848ED");
-        });
 
+        });
+        modelBuilder.Entity<OrderLineItem>()
+       .HasKey(oli => new { oli.ProductId, oli.OrderLineId });
+
+        modelBuilder.Entity<OrderLineItem>()
+            .HasOne(oli => oli.Product)
+            .WithMany(p => p.OrderLineItems)
+            .HasForeignKey(oli => oli.ProductId);
+
+        modelBuilder.Entity<OrderLineItem>()
+            .HasOne(oli => oli.OrderLine)
+            .WithMany(ol => ol.OrderLineItems)
+            .HasForeignKey(oli => oli.OrderLineId);
+
+        // Order-OrderLine one-to-many relationship
+        modelBuilder.Entity<OrderLine>()
+            .HasKey(ol => ol.OrderLineId);
+
+        modelBuilder.Entity<OrderLine>()
+            .HasOne(ol => ol.Order)
+            .WithMany(o => o.OrderLines)
+            .HasForeignKey(ol => ol.OrderId);
         OnModelCreatingPartial(modelBuilder);
     }
 

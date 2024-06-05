@@ -186,6 +186,90 @@ namespace FDiamondShop.API.Migrations
                     b.ToTable("category_variants", (string)null);
                 });
 
+            modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PaymentDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.OrderLine", b =>
+                {
+                    b.Property<int>("OrderLineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderLineId"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderLineId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderLine");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.OrderLineItem", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderLineId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double?>("RingSize")
+                        .HasColumnType("float");
+
+                    b.HasKey("ProductId", "OrderLineId");
+
+                    b.HasIndex("OrderLineId");
+
+                    b.ToTable("OrderLineItem");
+                });
+
             modelBuilder.Entity("FDiamondShop.API.Models.Product", b =>
                 {
                     b.Property<int>("ProductId")
@@ -508,6 +592,45 @@ namespace FDiamondShop.API.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
+                {
+                    b.HasOne("FDiamondShop.API.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.OrderLine", b =>
+                {
+                    b.HasOne("FDiamondShop.API.Models.Order", "Order")
+                        .WithMany("OrderLines")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.OrderLineItem", b =>
+                {
+                    b.HasOne("FDiamondShop.API.Models.OrderLine", "OrderLine")
+                        .WithMany("OrderLineItems")
+                        .HasForeignKey("OrderLineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FDiamondShop.API.Models.Product", "Product")
+                        .WithMany("OrderLineItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderLine");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("FDiamondShop.API.Models.Product", b =>
                 {
                     b.HasOne("FDiamondShop.API.Models.SubCategory", "SubCategory")
@@ -629,8 +752,20 @@ namespace FDiamondShop.API.Migrations
                     b.Navigation("ProductVariantValues");
                 });
 
+            modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
+                {
+                    b.Navigation("OrderLines");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.OrderLine", b =>
+                {
+                    b.Navigation("OrderLineItems");
+                });
+
             modelBuilder.Entity("FDiamondShop.API.Models.Product", b =>
                 {
+                    b.Navigation("OrderLineItems");
+
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductVariantValues");
