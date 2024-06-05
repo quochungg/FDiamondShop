@@ -12,7 +12,6 @@ namespace FDiamondShop.API.Repository
         public IProductVariantValueRepository ProductVariantValueRepository { get; }
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
-        public IShoppingCartRepository ShoppingCartRepository { get; }
         public IDiscountRepository DiscountRepository { get; }
 
 
