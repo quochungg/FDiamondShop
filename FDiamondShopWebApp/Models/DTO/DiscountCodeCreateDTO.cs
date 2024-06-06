@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace FDiamondShop.API.Models.DTO
 {
-    public class DiscountCodeDTO
-    {
-        public int DiscountId { get; set; }
 
+    public class DiscountCodeCreateDTO
+    {
+
+        [Required]
         public string DiscountCodeName { get; set; }
         public int DiscountPercent { get; set; } = 0;
         public DateTime? StartingDate { get; set; }

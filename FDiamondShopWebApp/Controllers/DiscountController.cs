@@ -29,10 +29,10 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAllDiscounCode([FromQuery] string? discountcode, [FromQuery] bool? isexpried)
         {
-            IEnumerable<DiscountCode> DiscountList = await _unitOfWork.DiscountRepository.GetAllAsync();
+            IEnumerable<DiscountCode> DiscountList = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
             if (discountcode != null)
             {
-                DiscountList = DiscountList.Where(u => u.DiscountCodeName.Equals(discountcode)); 
+                DiscountList = DiscountList.Where(u => u.DiscountCodeName.Equals(discountcode));
             }
             if (isexpried != null)
             {
@@ -60,10 +60,9 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateDiscountCode([FromBody] DiscountCodeDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateDiscountCode([FromBody] DiscountCodeCreateDTO createDTO)
         {
 
-           
             if (!ModelState.IsValid)
             {
                 return BadRequest("ModelState");
@@ -71,12 +70,21 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var discount = _mapper.Map<DiscountCode>(createDTO);
-                await _unitOfWork.DiscountRepository.CreateAsync(discount);
-                await _unitOfWork.SaveAsync();
-                _response.Result = _mapper.Map<ProductDTO>(discount);
-                _response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetProductById", new { id = discount.DiscountId }, _response);
-
+                var recent = _db.DiscountCodes.FirstOrDefault(u=>u.DiscountCodeName.Equals(createDTO.DiscountCodeName));
+                if (recent != null)
+                {
+                    _response.IsSuccess = false;
+                    return BadRequest("Dublicate Code is not required");
+                }
+                else
+                {
+                    await _unitOfWork.DiscountCodeRepository.CreateAsync(discount);
+                    await _unitOfWork.SaveAsync();
+                    _response.Result = _mapper.Map<DiscountCodeDTO>(discount);
+                    _response.StatusCode = HttpStatusCode.Created;
+                }
+               
+                //return CreatedAtRoute("GetProductById", new { id = discount.DiscountId }, _response);
             }
             catch (Exception ex)
             {
@@ -84,6 +92,36 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
             }
             return _response;
+        }
+
+
+
+        [HttpPut("Update", Name = "UpdateDiscountCodeStatus")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> UpdateDiscountCodeStatus(string codename, bool isexpried)
+        {
+            try
+            {
+                var discount = await _unitOfWork.DiscountCodeRepository.GetAsync(u => u.DiscountCodeName.Equals(codename));
+                if (discount == null)
+                {
+                    return NotFound("DiscountCode not found");
+                }
+                discount.IsExpried = isexpried;
+                await _unitOfWork.SaveAsync();
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
         }
     }
 }
