@@ -39,6 +39,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRepository>();
 builder.Services.AddScoped<IDiscountRepository,DiscountCodeRepository>();
+builder.Services.AddScoped<IVnPayRepository, VnPayRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 var configuration = builder.Configuration;
@@ -126,11 +127,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 app.UseSwagger();
 app.UseSwaggerUI();
-//app.UseSwaggerUI(options =>
-//{
-//    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FDiamond-API");
-//    options.RoutePrefix = "";
-//});
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FDiamond-API");
+    options.RoutePrefix = "";
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
