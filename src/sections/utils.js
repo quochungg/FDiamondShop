@@ -36,6 +36,10 @@ export function getComparator(order, orderBy) {
 }
 
 export function applyFilter({ inputData, comparator, filterById }) {
+  if (!Array.isArray(inputData)) {
+    console.error('applyFilter expects inputData to be an array, but received:', inputData);
+    return [];
+  }
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 // import Stack from '@mui/material/Stack';
 // import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
+// import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 // import Typography from '@mui/material/Typography';
@@ -17,16 +18,17 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function ProductTableRow({
-  selected,
-  id,
-  name,
-  price,
+  // selected,
+  productId,
+  productName,
+  basePrice,
   quantity,
-  category,
-  status,
-  handleClick,
+  subCategoryId,
+  isVisible,
+  // handleClick,
 }) {
   const [open, setOpen] = useState(null);
+  const navigate = useNavigate();
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -35,13 +37,17 @@ export default function ProductTableRow({
   const handleCloseMenu = () => {
     setOpen(null);
   };
+  const handleEdit = () => {
+    navigate(`/edit-product/${productId}`);
+    handleCloseMenu();
+  };
 
   return (
     <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
+      <TableRow hover tabIndex={-1}>
+        {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
-        </TableCell>
+        </TableCell> */}
 
         {/* <TableCell component="th" scope="row" padding="none"> */}
         {/* <Stack direction="row" alignItems="center" spacing={2}>
@@ -52,17 +58,17 @@ export default function ProductTableRow({
           </Stack> */}
         {/* {id}
         </TableCell> */}
-        <TableCell>{id}</TableCell>
+        <TableCell align="center">{productId}</TableCell>
 
-        <TableCell>{name}</TableCell>
+        <TableCell align="center">{productName}</TableCell>
 
-        <TableCell>{price}</TableCell>
-        <TableCell>{quantity}</TableCell>
-        <TableCell>{category}</TableCell>
-        <TableCell>
+        <TableCell align="center">{basePrice}</TableCell>
+        <TableCell align="center">{quantity}</TableCell>
+        <TableCell align="center">{subCategoryId}</TableCell>
+        <TableCell align="center">
           {/* <Label color={(status === 'false' && 'error') || 'success'}>{status}</Label> */}
           {/*  */}
-          {status}
+          {isVisible ? 'Visible' : 'Hidden'}
         </TableCell>
 
         {/* <TableCell align="center">{colors ? 'Yes' : 'No'}</TableCell>
@@ -88,7 +94,7 @@ export default function ProductTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={handleEdit}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
@@ -103,12 +109,12 @@ export default function ProductTableRow({
 }
 
 ProductTableRow.propTypes = {
-  price: PropTypes.any,
-  handleClick: PropTypes.func,
+  basePrice: PropTypes.any,
+  // handleClick: PropTypes.func,
   quantity: PropTypes.any,
-  category: PropTypes.any,
-  status: PropTypes.any,
-  name: PropTypes.any,
-  id: PropTypes.any,
-  selected: PropTypes.any,
+  subCategoryId: PropTypes.any,
+  isVisible: PropTypes.any,
+  productName: PropTypes.any,
+  productId: PropTypes.any,
+  // selected: PropTypes.any,
 };
