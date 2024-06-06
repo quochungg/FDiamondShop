@@ -106,11 +106,25 @@ namespace FDiamondShop.API.Repository
             {               
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
+                   
                 {
-                    string role = registerationRequestDTO.Role;         
-                    await _userManager.AddToRoleAsync(user, role);                       
-                    var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
-                    return userToReturn;
+                    string role = registerationRequestDTO.Role.ToLower(); 
+                    if(role== "admin" || role=="employees" || role =="customer" || role == "manager")
+                    {
+                        if (!await _roleManager.RoleExistsAsync(role))
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole(role));
+                        }
+
+                        await _userManager.AddToRoleAsync(user, role);
+                        var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
+                        return userToReturn;
+                    }
+                    else
+                    {
+                        throw new Exception("Wrong role");
+                    }
+
                 }
                 else
                 {
