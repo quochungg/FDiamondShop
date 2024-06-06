@@ -12,7 +12,7 @@
 
         public ApplicationUser User { get; set; }
 
-        public bool IsOrdered { get; set; }
+        public bool IsOrdered { get; set; }  = false;
 
         public virtual ICollection<CartLineItem> CartLineItems { get; set; } = new List<CartLineItem>();
     
