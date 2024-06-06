@@ -8,6 +8,7 @@
         IUserRepository UserRepository { get; }
         IEmailRepository EmailRepository { get; }
         IDiscountRepository DiscountRepository { get; }
+        IVnPayRepository VnPayRepository { get; }
         Task SaveAsync();
     }
 }

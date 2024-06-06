@@ -13,11 +13,12 @@ namespace FDiamondShop.API.Repository
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
         public IDiscountRepository DiscountRepository { get; }
+        public IVnPayRepository VnPayRepository { get; }
 
 
         public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, 
             IProductVariantValueRepository productVariantValueRepository, IUserRepository userRepository, 
-            IEmailRepository emailRepository, IDiscountRepository discountRepository)
+            IEmailRepository emailRepository, IDiscountRepository discountRepository, IVnPayRepository vnPayRepository)
         {
             _db = db;
             ProductRepository = productRepository;
@@ -26,6 +27,7 @@ namespace FDiamondShop.API.Repository
             UserRepository = userRepository;
             EmailRepository = emailRepository;
             DiscountRepository = discountRepository;
+            VnPayRepository = vnPayRepository;
         }
         public async Task SaveAsync()
         {
