@@ -40,8 +40,9 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Is Visible")] bool? visible, [FromQuery(Name = "Is Deleted")] bool? delete, [FromQuery(Name = "Order By")] string? orderBy, 
             [FromQuery(Name = "Sort By")] string sortBy = "asc", [FromQuery(Name = "Page Size")] int pageSize = 10, [FromQuery (Name = "Page Number")] int pageNumber = 1)           
         {
+            
             IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
-
+           
             if (cateName != null)
             {
                ProductList = ProductList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(cateName.ToLower()));
@@ -139,47 +140,7 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
-        [HttpGet("{searchValue}", Name = "SearchProductByName")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-
-        public async Task<ActionResult<APIResponse>> SearchProductByName(string searchValue)
-        {
-            if (searchValue == "")
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Search value is invalid" };
-                return BadRequest(_response);
-            }
-            var product = await _unitOfWork.ProductRepository.GetAllAsync(u => u.ProductName.ToLower().Contains(searchValue.ToLower()),
-                includeProperties: "ProductImages,ProductVariantValues");
-            if (product == null)
-            {
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { $"Product was not found." };
-                return NotFound(_response);
-            }
-            try
-            {
-                var productDTO = _mapper.Map<List<ProductDTO>>(product);
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = productDTO;
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { ex.ToString() };
-                return BadRequest(_response);
-            }
-
-        }
-
-
+        
         [HttpPost(Name = "CreateProduct")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
