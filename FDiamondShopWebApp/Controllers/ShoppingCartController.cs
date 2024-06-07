@@ -36,21 +36,22 @@ namespace FDiamondShop.API.Controllers
         {
 
 
-            var userId = _userManager.Users.First(u => u.UserName == cartLineCreateDTO.UserName).Id;
+            var user = _userManager.Users.First(u => u.UserName == cartLineCreateDTO.UserName);
 
             CartLineDTO cartLineDTO = new()
             {
-                UserId = userId,
-                CartLineItems = new List<CartLineItemDTO>()
+                UserId = user.Id,
+                User = user
             };
             
             var cartLine = _mapper.Map<CartLine>(cartLineDTO);
-            _db.Add(cartLine);
+            await _unitOfWork.CartRepository.CreateAsync(cartLine);
+            //_db.Add(cartLine);
             await _db.SaveChangesAsync();
             _response.StatusCode = HttpStatusCode.Created;
             _response.IsSuccess = true;
 
-            return CreatedAtAction("CreateCart", new { userId = userId }, _response);
+            return CreatedAtAction("CreateCart", new { userId = user.Id }, _response);
 
         }
         [HttpPost("AddItemToCartLineItem")]
