@@ -139,45 +139,45 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
-        [HttpGet("{searchValue}", Name = "SearchProductByName")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[HttpGet("{searchValue}", Name = "SearchProductByName")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<ActionResult<APIResponse>> SearchProductByName(string searchValue)
-        {
-            if (searchValue == "")
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Search value is invalid" };
-                return BadRequest(_response);
-            }
-            var product = await _unitOfWork.ProductRepository.GetAllAsync(u => u.ProductName.ToLower().Contains(searchValue.ToLower()),
-                includeProperties: "ProductImages,ProductVariantValues");
-            if (product == null)
-            {
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { $"Product was not found." };
-                return NotFound(_response);
-            }
-            try
-            {
-                var productDTO = _mapper.Map<List<ProductDTO>>(product);
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = productDTO;
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { ex.ToString() };
-                return BadRequest(_response);
-            }
+        //public async Task<ActionResult<APIResponse>> SearchProductByName(string searchValue)
+        //{
+        //    if (searchValue == "")
+        //    {
+        //        _response.StatusCode = HttpStatusCode.BadRequest;
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string> { "Search value is invalid" };
+        //        return BadRequest(_response);
+        //    }
+        //    var product = await _unitOfWork.ProductRepository.GetAllAsync(u => u.ProductName.ToLower().Contains(searchValue.ToLower()),
+        //        includeProperties: "ProductImages,ProductVariantValues");
+        //    if (product == null)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.NotFound;
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string> { $"Product was not found." };
+        //        return NotFound(_response);
+        //    }
+        //    try
+        //    {
+        //        var productDTO = _mapper.Map<List<ProductDTO>>(product);
+        //        _response.StatusCode = HttpStatusCode.OK;
+        //        _response.Result = productDTO;
+        //        return Ok(_response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.BadRequest;
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string> { ex.ToString() };
+        //        return BadRequest(_response);
+        //    }
 
-        }
+        //}
 
 
         [HttpPost(Name = "CreateProduct")]
@@ -319,7 +319,7 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
-        [HttpGet]
+        [HttpGet("GetProductWithFilter")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -330,9 +330,9 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Sort By")] string sortBy = "asc", 
             [FromQuery(Name = "Page Size")] int pageSize = 10, 
             [FromQuery(Name = "Page Number")] int pageNumber = 1, 
-            [FromQuery(Name = "Clarity")] ICollection<string> clarity = null,
-            [FromQuery(Name = "Cut")] ICollection<string> cut = null,
-            [FromQuery(Name = "Color")] ICollection<string> color = null,
+            [FromQuery(Name = "Clarity")] string clarity = null,
+            [FromQuery(Name = "Cut")] string cut = null,
+            [FromQuery(Name = "Color")] string color = null,
             [FromQuery(Name = "CaratFrom")] double caratFrom = 1.0,
             [FromQuery(Name = "CaratTo")] double caratTo = 30.0,
             [FromQuery(Name = "PriceFrom")] decimal priceFrom = 1000,
@@ -340,7 +340,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Metal")] string metal = null
             )
         {
-            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository
+                IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository
                 .GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
 
             if (cateName != null)
@@ -349,7 +349,7 @@ namespace FDiamondShop.API.Controllers
             }
             if (subCate != null)
             {
-                ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()));
+                ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(subCate.ToLower()));
             }
             if (orderBy != null)
             {
@@ -369,20 +369,28 @@ namespace FDiamondShop.API.Controllers
                     //filter by carat
                     ProductList = ProductList.Where(u => u.ProductVariantValues
                     .Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo));
-
-                    //fliter by clarity
-                    ProductList = ProductList.Where(u => clarity.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 2).Value));
-
-                    //filter by color
-                    ProductList = ProductList.Where(u => color.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 1).Value));
-
-                    //filter by cut
-                    ProductList = ProductList.Where(u => cut.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 3).Value));
+                    if(clarity != null) {
+                        //fliter by clarity
+                        ProductList = ProductList.Where(u => clarity.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 2).Value));
+                    }
+                    if(color != null)
+                    {
+                        //filter by color
+                        ProductList = ProductList.Where(u => color.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 1).Value));
+                    }                              
+                    if (cut != null)
+                    {
+                        //filter by cut
+                        ProductList = ProductList.Where(u => cut.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 3).Value));
+                    }
                     break;
                 default:
                     //filter by metal
-                    ProductList = ProductList.Where(u => metal.Contains(u.ProductVariantValues
+                    if (metal != null)
+                    {
+                        ProductList = ProductList.Where(u => metal.Contains(u.ProductVariantValues
                         .FirstOrDefault(v => v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9).Value));
+                    }
                     break;
 
             }
