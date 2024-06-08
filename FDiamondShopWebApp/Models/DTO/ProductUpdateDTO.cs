@@ -3,7 +3,7 @@
     public class ProductUpdateDTO
     {
         public int ProductId { get; set; }
-        public int SubCategoryId { get; set; }
+        public int? SubCategoryId { get; set; }
         public string ProductName { get; set; } = null!;
 
         public int Quantity { get; set; }

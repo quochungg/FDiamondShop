@@ -186,6 +186,12 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateProduct([FromBody] ProductCreateDTO createDTO)
         {
+            var subcate = await _db.SubCategories.FirstOrDefaultAsync(s => s.SubcategoryName == createDTO.SubCategoryName.Trim());
+            if (subcate == null)
+            {
+                ModelState.AddModelError("CustomError", "Subcategory is not valid!");
+                return BadRequest(ModelState);
+            }
 
             if (createDTO == null)
             {
@@ -201,6 +207,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var product = _mapper.Map<Product>(createDTO);
+                product.SubCategoryId = subcate.SubCategoryId;
                 await _unitOfWork.ProductRepository.CreateAsync(product);
                 await _unitOfWork.SaveAsync();
                 _response.Result = _mapper.Map<ProductDTO>(product);
@@ -221,6 +228,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> UpdateProduct(int id, [FromBody] ProductUpdateDTO updateDTO)
         {
+            
             try
             {
                 if (updateDTO == null || id != updateDTO.ProductId)
