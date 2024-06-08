@@ -228,7 +228,6 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> UpdateProduct(int id, [FromBody] ProductUpdateDTO updateDTO)
         {
-            
             try
             {
                 if (updateDTO == null || id != updateDTO.ProductId)
@@ -236,7 +235,6 @@ namespace FDiamondShop.API.Controllers
                     ModelState.AddModelError("CustomError", "ID is not Valid!");
                     return BadRequest(ModelState);
                 }
-
                 var product = await _db.Products
                                        .Include(p => p.ProductVariantValues)
                                        .Include(p => p.ProductImages)
