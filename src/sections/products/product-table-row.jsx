@@ -12,7 +12,7 @@ import TableCell from '@mui/material/TableCell';
 // import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-// import Label from 'src/components/label';
+import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -66,9 +66,8 @@ export default function ProductTableRow({
         <TableCell align="center">{quantity}</TableCell>
         <TableCell align="center">{subCategoryId}</TableCell>
         <TableCell align="center">
-          {/* <Label color={(status === 'false' && 'error') || 'success'}>{status}</Label> */}
+          <Label color={isVisible ? 'success' : 'error'}>{isVisible ? 'Visible' : 'Hidden'}</Label>
           {/*  */}
-          {isVisible ? 'Visible' : 'Hidden'}
         </TableCell>
 
         {/* <TableCell align="center">{colors ? 'Yes' : 'No'}</TableCell>

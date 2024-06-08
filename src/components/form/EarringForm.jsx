@@ -10,10 +10,10 @@ function EarringForm({ formData, handleInputChange }) {
         <FormControl fullWidth required>
           <InputLabel>Shape</InputLabel>
           <Select
-            value={formData.subcatgory_name}
+            value={formData.subCategoryName}
             onChange={handleInputChange}
             label="Shape"
-            name="subcatgory_name"
+            name="subCategoryName"
           >
             <MenuItem value="Hoop">Hoop</MenuItem>
             <MenuItem value="Trilogy">Trilogy</MenuItem>
@@ -26,10 +26,10 @@ function EarringForm({ formData, handleInputChange }) {
         <FormControl fullWidth required>
           <InputLabel>Metal</InputLabel>
           <OutlinedInput
-            value={formData.Metal}
+            value={formData.EarringMetal}
             onChange={handleInputChange}
             label="Metal"
-            name="Metal"
+            name="EarringMetal"
           />
         </FormControl>
       </Grid>
@@ -39,8 +39,8 @@ function EarringForm({ formData, handleInputChange }) {
 
 EarringForm.propTypes = {
   formData: PropTypes.shape({
-    subcatgory_name: PropTypes.string,
-    Metal: PropTypes.string,
+    subCategoryName: PropTypes.string,
+    EarringMetal: PropTypes.string,
   }).isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };

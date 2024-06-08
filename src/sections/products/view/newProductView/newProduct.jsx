@@ -1,4 +1,4 @@
-// import axios from 'axios';
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,12 +6,15 @@ import {
   Box,
   Card,
   Grid,
+  // Alert,
   Button,
   Select,
   Switch,
   MenuItem,
+  // Snackbar,
   Container,
   TextField,
+  // AlertTitle,
   CardHeader,
   InputLabel,
   Typography,
@@ -31,12 +34,14 @@ import { AddMutipleFile } from 'src/components/upload';
 export default function NewProductView() {
   const [formData, setFormData] = useState({
     category: 'diamond',
-    subcatgory_name: '',
+    subCategoryName: '',
     productName: '',
     basePrice: '',
+    quantity: '',
     description: '',
     isVisible: false,
     productImages: [],
+    GIAImages: [],
     Color: '', // Giá trị mặc định
     clarity: '', // Giá trị mặc định
     Cut: '', // Giá trị mặc định
@@ -45,10 +50,17 @@ export default function NewProductView() {
     Length: '', // Giá trị mặc định
     Depth: '', // Giá trị mặc định
     Size: '', // Giá tr
-    Metal: '',
+    RingMetal: '',
+    EarringMetal: '',
+    NecklaceMetal: '',
   });
   // const [selectedImage, setSelectedImage] = useState(null);
+  // const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
+
+  // const handleCloseSnackbar = () => {
+  //   setOpenSnackbar(false);
+  // };
 
   const handleInputChange = (event) => {
     const { name, value, checked } = event.target;
@@ -59,24 +71,19 @@ export default function NewProductView() {
     });
   };
 
-  const handleImageSelect = (fileList) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      productImages: fileList,
-    }));
+  const handleImageSelect = (fileList, isGIA = false) => {
+    if (isGIA) {
+      setFormData((prevData) => ({
+        ...prevData,
+        GIAImages: Array.from(fileList),
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        productImages: Array.from(fileList),
+      }));
+    }
   };
-  // const handleCancel = () => {
-  //   // Reset form fields to initial state
-  //   setFormData({
-  //     category: 'diamond',
-  //     productName: '',
-  //     price: '',
-  //     description: '',
-  //     status: false, // Set the default status to 'hide'
-  //   });
-  //   // Reset the selected image
-  //   setSelectedImage(null);
-  // };
 
   const category = [
     { value: 'diamond', label: 'Diamond' },
@@ -85,10 +92,31 @@ export default function NewProductView() {
     { value: 'earring', label: 'Earring' },
   ];
 
-  const uploadFiles = async (files) => {
-    const uploadPromises = files.map((file) => {
+  const variantMapping = {
+    diamond: [
+      { variantId: 1, key: 'Color' },
+      { variantId: 2, key: 'clarity' },
+      { variantId: 3, key: 'Cut' },
+      { variantId: 4, key: 'CaratWeight' },
+      { variantId: 5, key: 'Florescence' },
+      { variantId: 6, key: 'Length' },
+      { variantId: 7, key: 'Depth' },
+    ],
+    necklace: [{ variantId: 8, key: 'NecklaceMetal' }],
+    ring: [
+      { variantId: 9, key: 'RingMetal' },
+      { variantId: 10, key: 'Size' },
+    ],
+    earring: [{ variantId: 11, key: 'EarringMetal' }],
+  };
+
+  const uploadFiles = async (fileList) => {
+    const uploadPromises = fileList.map((file) => {
       if (file.originFileObj) {
         return uploadFile(file.originFileObj);
+      }
+      if (file.url) {
+        return file.url; // Return the existing URL if already uploaded
       }
       throw new Error('No file provided');
     });
@@ -100,18 +128,35 @@ export default function NewProductView() {
 
     try {
       // Upload files to Firebase Storage
-      const fileUrls = await uploadFiles(formData.productImages);
+      const productFileUrls = await uploadFiles(formData.productImages);
+      const GIAFileUrls = await uploadFiles(formData.GIAImages);
+
+      const productVariantValues = variantMapping[formData.category].map((variant) => ({
+        variantId: variant.variantId,
+        value: formData[variant.key],
+      }));
 
       const productData = {
-        ...formData,
-        productImages: fileUrls, // Save URLs of uploaded images
+        subCategoryName: formData.subCategoryName,
+        productName: formData.productName,
+        quantity: formData.quantity, // Assuming default value is 0
+        basePrice: formData.basePrice,
+        description: formData.description,
+        isVisible: formData.isVisible,
+        productImages: [
+          ...productFileUrls.map((url) => ({ imageUrl: url, isGIA: false })),
+          ...GIAFileUrls.map((url) => ({ imageUrl: url, isGIA: true })),
+        ], // Save URLs of uploaded images
+        productVariantValues,
       };
       console.log('Submitting product data:', productData);
-      // const response = await axios.post(
-      //   'https://fdiamond-api.azurewebsites.net/api/Product',
-      //   productData
-      // );
-      // console.log('API response:', response.data);
+      const response = await axios.post(
+        'https://fdiamond-api.azurewebsites.net/api/Product',
+        productData
+      );
+      console.log('API response:', response.data);
+      // setOpenSnackbar(true);
+      navigate('/products', { state: { showSnackbar: true } }); // Redirect to product list page after successful update
 
       // Gửi dữ liệu lên server hoặc xử lý dữ liệu tại đây
     } catch (error) {
@@ -150,29 +195,8 @@ export default function NewProductView() {
                   </Select>
                 </FormControl>
               </Grid>
-              {/* <Grid item md={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Sub category</InputLabel>
-                  <OutlinedInput
-                    value={formData.subCategoryId}
-                    onChange={handleInputChange}
-                    label="Sub category ID"
-                    name="subCategoryId"
-                  />
-                </FormControl>
-              </Grid> */}
-              {/* <Grid item md={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Variant Values</InputLabel>
-                  <OutlinedInput
-                    value={formData.productVariantValues}
-                    onChange={handleInputChange}
-                    label="Variant Values"
-                    name="productVariantValues"
-                  />
-                </FormControl>
-              </Grid> */}
-              <Grid item md={8}>
+
+              <Grid item md={12}>
                 <FormControl fullWidth required>
                   <InputLabel>Product name</InputLabel>
                   <OutlinedInput
@@ -184,7 +208,7 @@ export default function NewProductView() {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item xs={6}>
                 <FormControl fullWidth required>
                   <InputLabel>Price</InputLabel>
                   <OutlinedInput
@@ -192,6 +216,18 @@ export default function NewProductView() {
                     onChange={handleInputChange}
                     label="Price"
                     name="basePrice"
+                    type="number"
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Quantity</InputLabel>
+                  <OutlinedInput
+                    value={formData.quantity}
+                    onChange={handleInputChange}
+                    label="Quantity"
+                    name="quantity"
                     type="number"
                   />
                 </FormControl>
@@ -221,7 +257,13 @@ export default function NewProductView() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth required>
-                  <AddMutipleFile onImageSelect={handleImageSelect} />
+                  <AddMutipleFile
+                    onImageSelect={(fileList) => handleImageSelect(fileList, false)}
+                  />
+                  <Typography variant="subtitle1" gutterBottom>
+                    Upload GIA Images
+                  </Typography>
+                  <AddMutipleFile onImageSelect={(fileList) => handleImageSelect(fileList, true)} />
                 </FormControl>
               </Grid>
               <Grid item xs={8}>
@@ -248,7 +290,7 @@ export default function NewProductView() {
                     onClick={() => navigate(-1)}
                     sx={{ mr: 2 }}
                   >
-                    Cancel
+                    Back
                   </Button>
                   <Button type="submit" variant="contained" color="primary">
                     Submit
@@ -259,6 +301,17 @@ export default function NewProductView() {
           </CardContent>
         </Card>
       </form>
+      {/* <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          <AlertTitle>Success</AlertTitle>
+          Product created successfully!
+        </Alert>
+      </Snackbar> */}
     </Container>
   );
 }

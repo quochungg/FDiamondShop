@@ -10,10 +10,10 @@ function NecklaceForm({ formData, handleInputChange }) {
         <FormControl fullWidth required>
           <InputLabel>Shape</InputLabel>
           <Select
-            value={formData.subcatgory_name}
+            value={formData.subCategoryName}
             onChange={handleInputChange}
             label="Shape"
-            name="subcatgory_name"
+            name="subCategoryName"
           >
             <MenuItem value="Solitaire">Solitaire</MenuItem>
             <MenuItem value="Trilogy">Trilogy</MenuItem>
@@ -26,10 +26,10 @@ function NecklaceForm({ formData, handleInputChange }) {
         <FormControl fullWidth required>
           <InputLabel>Metal</InputLabel>
           <OutlinedInput
-            value={formData.Metal}
+            value={formData.NecklaceMetal}
             onChange={handleInputChange}
             label="Metal"
-            name="Metal"
+            name="NecklaceMetal"
           />
         </FormControl>
       </Grid>
@@ -39,8 +39,8 @@ function NecklaceForm({ formData, handleInputChange }) {
 
 NecklaceForm.propTypes = {
   formData: PropTypes.shape({
-    subcatgory_name: PropTypes.string,
-    Metal: PropTypes.string,
+    subCategoryName: PropTypes.string,
+    NecklaceMetal: PropTypes.string,
   }).isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };

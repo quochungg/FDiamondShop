@@ -10,10 +10,10 @@ function RingForm({ formData, handleInputChange }) {
         <FormControl fullWidth required>
           <InputLabel>Shape</InputLabel>
           <Select
-            value={formData.subcatgory_name}
+            value={formData.subCategoryName}
             onChange={handleInputChange}
             label="Shape"
-            name="subcatgory_name"
+            name="subCategoryName"
           >
             <MenuItem value="Solitaire">Solitaire</MenuItem>
             <MenuItem value="Halo">Halo</MenuItem>
@@ -39,10 +39,10 @@ function RingForm({ formData, handleInputChange }) {
         <FormControl fullWidth required>
           <InputLabel>Metal</InputLabel>
           <OutlinedInput
-            value={formData.Metal}
+            value={formData.RingMetal}
             onChange={handleInputChange}
             label="Metal"
-            name="Metal"
+            name="RingMetal"
           />
         </FormControl>
       </Grid>
@@ -53,9 +53,9 @@ function RingForm({ formData, handleInputChange }) {
 
 RingForm.propTypes = {
   formData: PropTypes.shape({
-    subcatgory_name: PropTypes.string,
+    subCategoryName: PropTypes.string,
     Size: PropTypes.string,
-    Metal: PropTypes.string,
+    RingMetal: PropTypes.string,
   }).isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };

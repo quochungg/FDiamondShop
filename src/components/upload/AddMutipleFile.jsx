@@ -32,7 +32,19 @@ function AddMutipleFile({ onImageSelect }) {
     setPreviewOpen(true);
   };
 
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+  const handleChange = ({ fileList: newFileList }) => {
+    setFileList(
+      newFileList.map((file) => {
+        if (file.originFileObj) {
+          return file;
+        }
+        return {
+          ...file,
+          originFileObj: new File([file], file.name, { type: file.type }),
+        };
+      })
+    );
+  };
 
   const uploadButton = (
     <button

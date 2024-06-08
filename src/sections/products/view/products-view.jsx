@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -8,6 +8,7 @@ import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
+import { Alert, Snackbar, AlertTitle } from '@mui/material';
 // import Grid from '@mui/material/Unstable_Grid2';
 
 import TableRow from '@mui/material/TableRow';
@@ -52,6 +53,10 @@ export default function ProductsView() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const location = useLocation();
+
   const navigate = useNavigate();
 
   const handleClickAdd = () => {
@@ -75,6 +80,18 @@ export default function ProductsView() {
     };
     getAll();
   }, []);
+
+  useEffect(() => {
+    if (location.state && location.state.showSnackbar) {
+      setOpenSnackbar(true);
+      // Clear the state to avoid showing Snackbar again if the user navigates back to this page
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -144,6 +161,17 @@ export default function ProductsView() {
 
   return (
     <Container>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          <AlertTitle>Success</AlertTitle>
+          Product created successfully!
+        </Alert>
+      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Products</Typography>
 

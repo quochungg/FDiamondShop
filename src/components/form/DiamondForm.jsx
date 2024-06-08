@@ -10,10 +10,10 @@ function DiamondForm({ formData, handleInputChange }) {
         <FormControl fullWidth required>
           <InputLabel>Shape</InputLabel>
           <Select
-            value={formData.subcatgory_name}
+            value={formData.subCategoryName}
             onChange={handleInputChange}
             label="Shape"
-            name="subcatgory_name"
+            name="subCategoryName"
           >
             <MenuItem value="Round">Round</MenuItem>
             <MenuItem value="Princess">Princess</MenuItem>
@@ -106,7 +106,7 @@ function DiamondForm({ formData, handleInputChange }) {
 
 DiamondForm.propTypes = {
   formData: PropTypes.shape({
-    subcatgory_name: PropTypes.string,
+    subCategoryName: PropTypes.string,
     Color: PropTypes.string,
     clarity: PropTypes.string,
     Cut: PropTypes.string,
