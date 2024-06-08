@@ -324,28 +324,30 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetProductFiltering(
-            [FromQuery(Name = "Category Name")] string? cateName, 
-            [FromQuery(Name = "Subcategory Name")] string? Subcate,
-            [FromQuery(Name = "Order By")] string? orderBy, 
+            [FromQuery(Name = "Category Name")] string cateName, 
+            [FromQuery(Name = "Subcategory Name")] string subCate,
+            [FromQuery(Name = "Order By")] string orderBy = "ProductName", 
             [FromQuery(Name = "Sort By")] string sortBy = "asc", 
             [FromQuery(Name = "Page Size")] int pageSize = 10, 
             [FromQuery(Name = "Page Number")] int pageNumber = 1, 
-            [FromQuery(Name = "Clarity")] ICollection<string>? clarity = null,
-            [FromQuery(Name = "Cut")] ICollection<string>? cut = null,
-            [FromQuery(Name = "Color")] ICollection<string>? color = null,
-            [FromQuery(Name = "CaratFrom")] double? caratFrom = 1.0,
-            [FromQuery(Name = "CaratTo")] double? caratTo = 30.0,
-            [FromQuery(Name = "PriceFrom")] decimal? priceFrom = 1000,
-            [FromQuery(Name = "PriceTo")] decimal? priceTo = 30000
+            [FromQuery(Name = "Clarity")] ICollection<string> clarity = null,
+            [FromQuery(Name = "Cut")] ICollection<string> cut = null,
+            [FromQuery(Name = "Color")] ICollection<string> color = null,
+            [FromQuery(Name = "CaratFrom")] double caratFrom = 1.0,
+            [FromQuery(Name = "CaratTo")] double caratTo = 30.0,
+            [FromQuery(Name = "PriceFrom")] decimal priceFrom = 1000,
+            [FromQuery(Name = "PriceTo")] decimal priceTo = 30000,
+            [FromQuery(Name = "Metal")] string metal = null
             )
         {
-            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
+            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository
+                .GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
 
             if (cateName != null)
             {
                 ProductList = ProductList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(cateName.ToLower()));
             }
-            if (Subcate != null)
+            if (subCate != null)
             {
                 ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()));
             }
@@ -360,17 +362,29 @@ namespace FDiamondShop.API.Controllers
                     ProductList = ProductList.OrderBy(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
                 }
             }
-            else
+            ProductList = ProductList.Where(u => u.BasePrice >= priceFrom && u.BasePrice <= priceTo);
+            switch (cateName)
             {
-                if (sortBy.ToLower() == "desc")
-                {
-                    ProductList = ProductList.OrderByDescending(u => u.ProductName);
-                }
-                else
-                {
-                    ProductList = ProductList.OrderBy(u => u.ProductName);
+                case "Diamond":
+                    //filter by carat
+                    ProductList = ProductList.Where(u => u.ProductVariantValues
+                    .Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo));
 
-                }
+                    //fliter by clarity
+                    ProductList = ProductList.Where(u => clarity.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 2).Value));
+
+                    //filter by color
+                    ProductList = ProductList.Where(u => color.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 1).Value));
+
+                    //filter by cut
+                    ProductList = ProductList.Where(u => cut.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 3).Value));
+                    break;
+                default:
+                    //filter by metal
+                    ProductList = ProductList.Where(u => metal.Contains(u.ProductVariantValues
+                        .FirstOrDefault(v => v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9).Value));
+                    break;
+
             }
             ProductList = ProductList.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
             try
