@@ -318,6 +318,77 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
                 return BadRequest(_response);
             }
-        }        
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetProductFiltering(
+            [FromQuery(Name = "Category Name")] string? cateName, 
+            [FromQuery(Name = "Subcategory Name")] string? Subcate,
+            [FromQuery(Name = "Order By")] string? orderBy, 
+            [FromQuery(Name = "Sort By")] string sortBy = "asc", 
+            [FromQuery(Name = "Page Size")] int pageSize = 10, 
+            [FromQuery(Name = "Page Number")] int pageNumber = 1, 
+            [FromQuery(Name = "Clarity")] ICollection<string>? clarity = null,
+            [FromQuery(Name = "Cut")] ICollection<string>? cut = null,
+            [FromQuery(Name = "Color")] ICollection<string>? color = null,
+            [FromQuery(Name = "CaratFrom")] double? caratFrom = 1.0,
+            [FromQuery(Name = "CaratTo")] double? caratTo = 30.0,
+            [FromQuery(Name = "PriceFrom")] decimal? priceFrom = 1000,
+            [FromQuery(Name = "PriceTo")] decimal? priceTo = 30000
+            )
+        {
+            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
+
+            if (cateName != null)
+            {
+                ProductList = ProductList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(cateName.ToLower()));
+            }
+            if (Subcate != null)
+            {
+                ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(Subcate.ToLower()));
+            }
+            if (orderBy != null)
+            {
+                if (sortBy.ToLower() == "desc")
+                {
+                    ProductList = ProductList.OrderByDescending(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                }
+                else
+                {
+                    ProductList = ProductList.OrderBy(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                }
+            }
+            else
+            {
+                if (sortBy.ToLower() == "desc")
+                {
+                    ProductList = ProductList.OrderByDescending(u => u.ProductName);
+                }
+                else
+                {
+                    ProductList = ProductList.OrderBy(u => u.ProductName);
+
+                }
+            }
+            ProductList = ProductList.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            try
+            {
+
+                var model = _mapper.Map<List<ProductDTO>>(ProductList);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = model;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
     }
 }
