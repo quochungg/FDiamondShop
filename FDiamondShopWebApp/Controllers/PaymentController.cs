@@ -20,37 +20,45 @@ namespace FDiamondShop.API.Controllers
             _response = new();
         }
 
-        //[HttpPost("vnpay")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("vnpay")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        //public IActionResult CreatePaymentUrl([FromBody] PaymentInformationModel model)
-        //{
-        //    try
-        //    {
-        //        var paymentUrl = _unitOfWork.VnPayRepository.CreatePaymentUrl(model, HttpContext);
-        //        _response.StatusCode = HttpStatusCode.OK;
-        //        _response.IsSuccess = true;
-        //        _response.Result = paymentUrl;
-        //        return Ok(_response);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        _response.StatusCode = HttpStatusCode.BadRequest;
-        //        _response.IsSuccess = false;
-        //        _response.ErrorMessages.Add(ex.Message);
-        //        return BadRequest(_response);
-        //    }
-        //}
+        public IActionResult CreatePaymentUrl([FromBody] PaymentInformationModel model)
+        {
+            try
+            {
+                var paymentUrl = _unitOfWork.VnPayRepository.CreatePaymentUrl(model, HttpContext);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = paymentUrl;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add(ex.Message);
+                return BadRequest(_response);
+            }
+
+        }
+        [HttpGet("executepay")]
+        public IActionResult PaymentExecute()
+        {
+            var response = _unitOfWork.VnPayRepository.PaymentExecute(Request.Query);
+
+            return Ok(response);
+        }
         [HttpPost("momo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public IActionResult CreateMomoPaymentUrl(PaymentInformationModel model)
+        public async Task<IActionResult> CreateMomoPaymentUrl(PaymentInformationModel model)
         {
             try
             {
-                var paymentUrl = _unitOfWork.MomoRepository.CreateMomoPaymentAsync(model);
+                var paymentUrl =await _unitOfWork.MomoRepository.CreateMomoPaymentAsync(model);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = paymentUrl;
@@ -63,9 +71,10 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add(ex.Message);
                 return BadRequest();
             }
+
         }
-        [HttpGet("executepay")]
-        public async Task<IActionResult> PaymentExecute()
+        [HttpGet("executepayMomo")]
+        public async Task<IActionResult> PaymentExecuteMomo()
         {
             var response = await _unitOfWork.MomoRepository.PaymentExecuteAsync(HttpContext.Request.Query);
 
