@@ -11,5 +11,16 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
+
+        public async Task CreateCartlineItem(CartLineItem cartLineItem)
+        {
+             _db.CartLineItems.Add(cartLineItem);
+            
+        }
+
+        public async Task RemoveRange(List<CartLineItem> cartLineItems)
+        {
+            _db.RemoveRange(cartLineItems);
+        }
     }
 }
