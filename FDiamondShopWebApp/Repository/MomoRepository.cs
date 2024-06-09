@@ -65,10 +65,9 @@ namespace FDiamondShop.API.Repository
                 requestId = model.OrderID,
                 extraData="",
                 signature = Signature,
-            };
-            
+            };          
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
-            var response = await client.ExecuteAsync(request);        
+            var response = await client.ExecuteAsync(request);
             return JsonConvert.DeserializeObject(response.Content);
             
 
