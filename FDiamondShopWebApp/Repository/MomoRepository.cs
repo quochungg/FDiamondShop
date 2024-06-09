@@ -73,6 +73,19 @@ namespace FDiamondShop.API.Repository
             
 
         }
-        
+        public async Task<MomoExecuteResponseModel>  PaymentExecuteAsync(IQueryCollection collection)
+        {
+            var amount = collection.First(s => s.Key == "amount").Value;
+            var orderInfo = collection.First(s => s.Key == "orderInfo").Value;
+            var orderId = collection.First(s => s.Key == "orderId").Value;
+            return new MomoExecuteResponseModel()
+            {
+                Amount = amount,
+                OrderId = orderId,
+                OrderInfo = orderInfo
+            };
+        }
+
+
     }
 }
