@@ -1,5 +1,6 @@
 ﻿using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
+using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -64,10 +65,10 @@ namespace FDiamondShop.API.Controllers
             }
         }
         [HttpGet("executepay")]
-        public IActionResult PaymentExecute()
+        public async Task<IActionResult> PaymentExecute()
         {
-            var response = _unitOfWork.VnPayRepository.PaymentExecute(Request.Query);
-            
+            var response = await _unitOfWork.MomoRepository.PaymentExecuteAsync(HttpContext.Request.Query);
+
             return Ok(response);
         }
     }
