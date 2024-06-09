@@ -69,5 +69,11 @@ namespace FDiamondShop.API.Repository
             return await query.ToListAsync();
         }
 
+        public async Task<T> RemoveAsync(T entity)
+        {
+            var Remove =  dbSet.Remove(entity);
+
+            return Remove.Entity;
+        }
     }
 }
