@@ -19,29 +19,50 @@ namespace FDiamondShop.API.Controllers
             _response = new();
         }
 
-        [HttpPost("vnpay")]
+        //[HttpPost("vnpay")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+        //public IActionResult CreatePaymentUrl([FromBody] PaymentInformationModel model)
+        //{
+        //    try
+        //    {
+        //        var paymentUrl = _unitOfWork.VnPayRepository.CreatePaymentUrl(model, HttpContext);
+        //        _response.StatusCode = HttpStatusCode.OK;
+        //        _response.IsSuccess = true;
+        //        _response.Result = paymentUrl;
+        //        return Ok(_response);
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.BadRequest;
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages.Add(ex.Message);
+        //        return BadRequest(_response);
+        //    }
+        //}
+        [HttpPost("momo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public IActionResult CreatePaymentUrl([FromBody] PaymentInformationModel model)
+        public IActionResult CreateMomoPaymentUrl(PaymentInformationModel model)
         {
             try
             {
-                var paymentUrl = _unitOfWork.VnPayRepository.CreatePaymentUrl(model, HttpContext);
+                var paymentUrl = _unitOfWork.MomoRepository.CreateMomoPaymentAsync(model);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = paymentUrl;
                 return Ok(_response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add(ex.Message);
-                return BadRequest(_response);
+                return BadRequest();
             }
         }
-
         [HttpGet("executepay")]
         public IActionResult PaymentExecute()
         {

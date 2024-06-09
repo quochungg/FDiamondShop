@@ -41,7 +41,7 @@ builder.Services.AddScoped<IProductVariantValueRepository, ProductVariantValueRe
 builder.Services.AddScoped<IDiscountRepository,DiscountCodeRepository>();
 builder.Services.AddScoped<IVnPayRepository, VnPayRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
-
+builder.Services.AddScoped<IMomoRepository, MomoRepository>();
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {

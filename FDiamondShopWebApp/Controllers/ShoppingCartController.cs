@@ -41,7 +41,7 @@ namespace FDiamondShop.API.Controllers
             CartLineDTO cartLineDTO = new()
             {
                 UserId = user.Id,
-                User = user
+                //User = user
             };
             
             var cartLine = _mapper.Map<CartLine>(cartLineDTO);

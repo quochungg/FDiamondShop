@@ -9,6 +9,7 @@
         IEmailRepository EmailRepository { get; }
         IDiscountRepository DiscountRepository { get; }
         IVnPayRepository VnPayRepository { get; }
+        IMomoRepository MomoRepository { get; }
         ICartRepository CartRepository { get; }
         IDiscountRepository DiscountCodeRepository { get; }
 
