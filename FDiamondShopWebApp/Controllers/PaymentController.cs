@@ -74,9 +74,9 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepayMomo")]
-        public async Task<IActionResult> PaymentExecuteMomo()
+        public  IActionResult PaymentExecuteMomo()
         {
-            var response = await _unitOfWork.MomoRepository.PaymentExecuteAsync(HttpContext.Request.Query);
+            var response =_unitOfWork.MomoRepository.PaymentExecute(HttpContext.Request.Query);
 
             return Ok(response);
         }
