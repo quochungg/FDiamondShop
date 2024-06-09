@@ -2,9 +2,9 @@
 using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
-using FDiamondShop.API.Repository;
+
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
