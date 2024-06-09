@@ -19,7 +19,7 @@ namespace FDiamondShop.API.Repository
         {           
             foreach (var item in product.ProductImages)
             {
-                var existedImage = product.ProductImages.FirstOrDefault(x => x.ProductImageId == item.ProductId && x.IsGia == isGIA);
+                var existedImage = product.ProductImages.FirstOrDefault(x => x.ProductId == item.ProductId && x.IsGia == isGIA);
                 if(existedImage != null) { 
                     existedImage.ImageUrl = productImages.ImageUrl;
                     return;
