@@ -14,4 +14,6 @@ public partial class ProductVariantValue
     public virtual Product Product { get; set; }
 
     public virtual CategoryVariant Variant { get; set; }
+
+
 }

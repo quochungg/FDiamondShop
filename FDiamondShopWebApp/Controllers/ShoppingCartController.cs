@@ -2,9 +2,9 @@
 using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
-using FDiamondShop.API.Repository;
+
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +41,7 @@ namespace FDiamondShop.API.Controllers
             CartLineDTO cartLineDTO = new()
             {
                 UserId = user.Id,
-                User = user
+                //User = user
             };
             
                 var cartLine = _mapper.Map<CartLine>(cartLineDTO);
