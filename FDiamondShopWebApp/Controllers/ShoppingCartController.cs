@@ -32,11 +32,11 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpPost("CreateCart")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<APIResponse>> CreateCart([FromBody] CartLineCreateDTO cartLineCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateCart( string Username,[FromBody]List <CartLineItemCreateDTO> model)
         {
 
 
-            var user = _userManager.Users.First(u => u.UserName == cartLineCreateDTO.UserName);
+            var user = _userManager.Users.First(u => u.UserName == Username);
 
             CartLineDTO cartLineDTO = new()
             {
@@ -44,37 +44,54 @@ namespace FDiamondShop.API.Controllers
                 //User = user
             };
             
-            var cartLine = _mapper.Map<CartLine>(cartLineDTO);
+                var cartLine = _mapper.Map<CartLine>(cartLineDTO);
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
-            //_db.Add(cartLine);
-            await _db.SaveChangesAsync();
+            await _unitOfWork.SaveAsync();
+            foreach (var item in model)
+            {
+                var product = await _db.Products.FindAsync(item.ProductId);
+
+                decimal price = product.BasePrice;
+
+                var cartLineItem = new CartLineItem
+                {
+                    CartLineId = cartLine.CartLineId,
+                    ProductId = item.ProductId,
+                    RingSize = item.RingSize,
+                    Price = price
+                };
+                await _unitOfWork.CartRepository.CreateCartlineItem(cartLineItem);
+            }
+
+
+            await _unitOfWork.SaveAsync();
             _response.StatusCode = HttpStatusCode.Created;
             _response.IsSuccess = true;
 
             return CreatedAtAction("CreateCart", new { userId = user.Id }, _response);
 
         }
-        [HttpPost("AddItemToCartLineItem")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddProductToCartLineItem(int cartLineId, [FromBody] CartLineItemCreateDTO model)
-        {
-            var product = await _db.Products.FindAsync(model.ProductId);
-            decimal price = product.BasePrice;
-            var cartLineItem = new CartLineItem
-            {
-                CartLineId = cartLineId,
-                ProductId = model.ProductId,
-                RingSize = model.RingSize,
-                Price = price
-            };
+        //[HttpPost("AddItemToCartLineItem")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<IActionResult> AddProductToCartLineItem(int cartLineId, [FromBody] CartLineItemCreateDTO model)
+        //{
+        //    var product = await _db.Products.FindAsync(model.ProductId);
+        //    decimal price = product.BasePrice;
+        //    var cartLineItem = new CartLineItem
+        //    {
+        //        CartLineId = cartLineId,
+        //        ProductId = model.ProductId,
+        //        RingSize = model.RingSize,
+        //        Price = price
+        //    };
 
-            _db.CartLineItems.Add(cartLineItem);
-            _response.IsSuccess = true;
-            _response.StatusCode= HttpStatusCode.OK;
-            await _db.SaveChangesAsync();
+        //    _db.CartLineItems.Add(cartLineItem);
+        //    _response.IsSuccess = true;
+        //    _response.StatusCode= HttpStatusCode.OK;
+        //    await _db.SaveChangesAsync();
 
-            return Ok(_response);
-        }
+        //    return Ok(_response);
+        //}
         [HttpGet("GetAllCartLines")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllCartLines(string userName)
@@ -97,6 +114,13 @@ namespace FDiamondShop.API.Controllers
                     Price = cli.Price
                 }).ToList()
             }).ToList();
+            if(cartLineDTOs == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode=HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("Empty Cart here !");
+                return NotFound();
+            }
             _response.IsSuccess = true;
             _response.StatusCode= HttpStatusCode.OK;
             _response.Result = cartLineDTOs;
@@ -111,9 +135,9 @@ namespace FDiamondShop.API.Controllers
             
             var cartLine = await _db.CartLines.FindAsync(cartLineId);
             var cartLineItems = await _db.CartLineItems.Where(cli => cli.CartLineId == cartLineId).ToListAsync();
-            _db.CartLineItems.RemoveRange(cartLineItems);
-            _db.CartLines.Remove(cartLine);
-            await _db.SaveChangesAsync();
+            await _unitOfWork.CartRepository.RemoveRange(cartLineItems);
+            await _unitOfWork.CartRepository.RemoveAsync(cartLine);
+            await _unitOfWork.SaveAsync();
             
 
             return NoContent();
@@ -125,8 +149,8 @@ namespace FDiamondShop.API.Controllers
             var cartLine = await _db.CartLines.FindAsync(cartLineId);
             var cartLineItem = await _db.CartLineItems.Where(cli=>cli.CartLineId==cartLineId && cli.ProductId==ProductId).ToListAsync();
 
-            _db.CartLineItems.RemoveRange(cartLineItem);
-            await _db.SaveChangesAsync();
+            await _unitOfWork.CartRepository.RemoveRange(cartLineItem);
+            await _unitOfWork.SaveAsync();
             
             return NoContent();
         }

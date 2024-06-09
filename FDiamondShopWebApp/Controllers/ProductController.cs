@@ -140,13 +140,18 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
-        
         [HttpPost(Name = "CreateProduct")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateProduct([FromBody] ProductCreateDTO createDTO)
         {
+            var subcate = await _db.SubCategories.FirstOrDefaultAsync(s => s.SubcategoryName == createDTO.SubCategoryName.Trim());
+            if (subcate == null)
+            {
+                ModelState.AddModelError("CustomError", "Subcategory is not valid!");
+                return BadRequest(ModelState);
+            }
 
             if (createDTO == null)
             {
@@ -162,6 +167,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var product = _mapper.Map<Product>(createDTO);
+                product.SubCategoryId = subcate.SubCategoryId;
                 await _unitOfWork.ProductRepository.CreateAsync(product);
                 await _unitOfWork.SaveAsync();
                 _response.Result = _mapper.Map<ProductDTO>(product);
@@ -189,7 +195,6 @@ namespace FDiamondShop.API.Controllers
                     ModelState.AddModelError("CustomError", "ID is not Valid!");
                     return BadRequest(ModelState);
                 }
-
                 var product = await _db.Products
                                        .Include(p => p.ProductVariantValues)
                                        .Include(p => p.ProductImages)
@@ -279,6 +284,99 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
                 return BadRequest(_response);
             }
-        }        
+        }
+        [HttpGet("GetProductWithFilter")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetProductFiltering(
+            [FromQuery(Name = "Category Name")] string cateName, 
+            [FromQuery(Name = "Subcategory Name")] string subCate,
+            [FromQuery(Name = "Order By")] string orderBy = "ProductName", 
+            [FromQuery(Name = "Sort By")] string sortBy = "asc", 
+            [FromQuery(Name = "Page Size")] int pageSize = 10, 
+            [FromQuery(Name = "Page Number")] int pageNumber = 1, 
+            [FromQuery(Name = "Clarity")] string clarity = null,
+            [FromQuery(Name = "Cut")] string cut = null,
+            [FromQuery(Name = "Color")] string color = null,
+            [FromQuery(Name = "CaratFrom")] double caratFrom = 1.0,
+            [FromQuery(Name = "CaratTo")] double caratTo = 30.0,
+            [FromQuery(Name = "PriceFrom")] decimal priceFrom = 1000,
+            [FromQuery(Name = "PriceTo")] decimal priceTo = 30000,
+            [FromQuery(Name = "Metal")] string metal = null
+            )
+        {
+                IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository
+                .GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
+
+            if (cateName != null)
+            {
+                ProductList = ProductList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(cateName.ToLower()));
+            }
+            if (subCate != null)
+            {
+                ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(subCate.ToLower()));
+            }
+            if (orderBy != null)
+            {
+                if (sortBy.ToLower() == "desc")
+                {
+                    ProductList = ProductList.OrderByDescending(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                }
+                else
+                {
+                    ProductList = ProductList.OrderBy(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                }
+            }
+            ProductList = ProductList.Where(u => u.BasePrice >= priceFrom && u.BasePrice <= priceTo);
+            switch (cateName)
+            {
+                case "Diamond":
+                    //filter by carat
+                    ProductList = ProductList.Where(u => u.ProductVariantValues
+                    .Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo));
+                    if(clarity != null) {
+                        //fliter by clarity
+                        ProductList = ProductList.Where(u => clarity.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 2).Value));
+                    }
+                    if(color != null)
+                    {
+                        //filter by color
+                        ProductList = ProductList.Where(u => color.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 1).Value));
+                    }                              
+                    if (cut != null)
+                    {
+                        //filter by cut
+                        ProductList = ProductList.Where(u => cut.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 3).Value));
+                    }
+                    break;
+                default:
+                    //filter by metal
+                    if (metal != null)
+                    {
+                        ProductList = ProductList.Where(u => metal.Contains(u.ProductVariantValues
+                        .FirstOrDefault(v => v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9).Value));
+                    }
+                    break;
+
+            }
+            ProductList = ProductList.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            try
+            {
+
+                var model = _mapper.Map<List<ProductDTO>>(ProductList);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = model;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
     }
 }

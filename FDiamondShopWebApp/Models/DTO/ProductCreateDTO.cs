@@ -5,7 +5,7 @@ namespace FDiamondShop.API.Models.DTO
     public class ProductCreateDTO
     {
         [Required]
-        public int SubCategoryId { get; set; }
+        public string SubCategoryName { get; set; }
         [Required]
         public string ProductName { get; set; } = null!;
         public int Quantity { get; set; } = 1;
