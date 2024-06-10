@@ -130,18 +130,10 @@ namespace FDiamondShop.API.Data
 
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.HasKey(o => o.OrderId);
-                entity.Property(o => o.OrderId).HasColumnName("order_id");
+                entity.HasKey(o => o.Id);
+                entity.Property(o => o.Id).HasColumnName("order_id");
                 entity.Property(o => o.OrderDate).HasColumnName("order_date");
                 entity.Property(o => o.UserId).HasColumnName("user_id");
-                entity.Property(o => o.Status).HasMaxLength(20).HasColumnName("status");
-                entity.Property(o => o.PaymentType).HasMaxLength(20).HasColumnName("payment_type");
-                entity.Property(o => o.PaymentDateTime).HasColumnName("payment_date_time");
-                entity.Property(o => o.Total).HasColumnType("decimal(18, 2)").HasColumnName("total");
-                entity.Property(o => o.Note).HasMaxLength(500).HasColumnName("note");
-                entity.Property(o => o.Address).HasMaxLength(500).HasColumnName("address");
-                entity.Property(o => o.PhoneNumber).HasMaxLength(20).HasColumnName("phone_number");
-                entity.Property(o => o.Email).HasMaxLength(50).HasColumnName("email");
                 entity.HasOne(o => o.User)
                     .WithMany(u => u.Orders)
                     .HasForeignKey(o => o.UserId);
