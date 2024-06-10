@@ -1,4 +1,5 @@
-﻿using FDiamondShop.API.Data;
+﻿using AutoMapper;
+using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
@@ -15,35 +16,15 @@ namespace FDiamondShop.API.Repository
             _db = db;
         }
 
-        public void UpdateProductImageAsync(Product product, ProductImageUpdateDTO productImages, bool isGIA = false)
+        public async void UpdateProductImageAsync(Product product, List<ProductImage> productUpdate)
         {
-            if (isGIA)
+            var existingProductImages = _db.ProductImages.Where(x => x.ProductId == product.ProductId).ToList();
+            if (existingProductImages.Count > 0)
             {
-                // Handle the GIA picture case
-                var giaImage = product.ProductImages.FirstOrDefault(x => x.IsGia);
-                if (giaImage != null)
-                {
-                    giaImage.ImageUrl = productImages.ImageUrl;
-                }
-                else
-                {
-                    // If no GIA image exists, add a new one
-                    product.ProductImages.Add(new ProductImage
-                    {
-                        ProductId = product.ProductId,
-                        ImageUrl = productImages.ImageUrl,
-                        IsGia = true
-                    });
-                }
+                _db.ProductImages.RemoveRange(existingProductImages);
             }
-            else
-            {
-                // Handle non-GIA pictures case
-                foreach (var image in product.ProductImages.Where(x => !x.IsGia))
-                {
-                    image.ImageUrl = productImages.ImageUrl;
-                }
-            }
+            product.ProductImages = productUpdate;
+
         }
     }
 }

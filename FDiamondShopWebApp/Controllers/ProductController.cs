@@ -209,11 +209,9 @@ namespace FDiamondShop.API.Controllers
                 {
                     _unitOfWork.ProductVariantValueRepository.UpdateVariantValue(product, variantValueDto);
                 }
-
-                foreach (var imageDto in updateDTO.ProductImages)
-                {
-                    _unitOfWork.ProductImageRepository.UpdateProductImageAsync(product, imageDto, imageDto.IsGia);
-                }
+                var productImages = _mapper.Map<List<ProductImage>>(updateDTO.ProductImages);
+                _unitOfWork.ProductImageRepository.UpdateProductImageAsync(product, productImages);
+                
 
                 await _unitOfWork.SaveAsync();
 
