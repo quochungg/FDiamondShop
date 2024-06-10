@@ -16,16 +16,34 @@ namespace FDiamondShop.API.Repository
         }
 
         public void UpdateProductImageAsync(Product product, ProductImageUpdateDTO productImages, bool isGIA = false)
-        {           
-            foreach (var item in product.ProductImages)
+        {
+            if (isGIA)
             {
-                var existedImage = product.ProductImages.FirstOrDefault(x => x.ProductId == item.ProductId && x.IsGia == isGIA);
-                if(existedImage != null) { 
-                    existedImage.ImageUrl = productImages.ImageUrl;
-                    return;
+                // Handle the GIA picture case
+                var giaImage = product.ProductImages.FirstOrDefault(x => x.IsGia);
+                if (giaImage != null)
+                {
+                    giaImage.ImageUrl = productImages.ImageUrl;
+                }
+                else
+                {
+                    // If no GIA image exists, add a new one
+                    product.ProductImages.Add(new ProductImage
+                    {
+                        ProductId = product.ProductId,
+                        ImageUrl = productImages.ImageUrl,
+                        IsGia = true
+                    });
                 }
             }
-            return;
+            else
+            {
+                // Handle non-GIA pictures case
+                foreach (var image in product.ProductImages.Where(x => !x.IsGia))
+                {
+                    image.ImageUrl = productImages.ImageUrl;
+                }
+            }
         }
     }
 }
