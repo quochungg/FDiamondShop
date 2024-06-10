@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    [Migration("20240607082920_SecondMigration")]
+    [Migration("20240610144915_SecondMigration")]
     partial class SecondMigration
     {
         /// <inheritdoc />
@@ -245,64 +245,88 @@ namespace FDiamondShop.API.Migrations
 
             modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("order_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("address");
+                    b.Property<decimal>("BasePrice")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("email");
+                    b.Property<int?>("DiscountCodeDiscountId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Note")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("note");
+                    b.Property<string>("DiscountCodeId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("order_date");
 
-                    b.Property<DateTime>("PaymentDateTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("payment_date_time");
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PaymentType")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("payment_type");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("phone_number");
-
-                    b.Property<string>("Status")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("status");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18, 2)")
-                        .HasColumnName("total");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("user_id");
 
-                    b.HasKey("OrderId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscountCodeDiscountId");
+
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("Payment");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.PaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentMethod");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.Product", b =>
@@ -370,7 +394,7 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("image_url");
 
-                    b.Property<bool?>("IsGia")
+                    b.Property<bool>("IsGia")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("is_GIA")
@@ -626,11 +650,36 @@ namespace FDiamondShop.API.Migrations
 
             modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
                 {
+                    b.HasOne("FDiamondShop.API.Models.DiscountCode", "DiscountCode")
+                        .WithMany("Orders")
+                        .HasForeignKey("DiscountCodeDiscountId");
+
+                    b.HasOne("FDiamondShop.API.Models.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FDiamondShop.API.Models.ApplicationUser", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId");
 
+                    b.Navigation("DiscountCode");
+
+                    b.Navigation("Payment");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.Payment", b =>
+                {
+                    b.HasOne("FDiamondShop.API.Models.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.Product", b =>
@@ -753,6 +802,11 @@ namespace FDiamondShop.API.Migrations
             modelBuilder.Entity("FDiamondShop.API.Models.CategoryVariant", b =>
                 {
                     b.Navigation("ProductVariantValues");
+                });
+
+            modelBuilder.Entity("FDiamondShop.API.Models.DiscountCode", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
