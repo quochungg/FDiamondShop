@@ -39,8 +39,6 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Username or password is incorrect");
                 return BadRequest(_response);
             }
-
-
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;

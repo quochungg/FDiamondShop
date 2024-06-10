@@ -38,7 +38,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAllProduct([FromQuery(Name = "Category Name")] string? cateName, [FromQuery(Name = "Subcategory Name")] string? Subcate,
             [FromQuery(Name = "Is Visible")] bool? visible, [FromQuery(Name = "Is Deleted")] bool? delete, [FromQuery(Name = "Order By")] string? orderBy, 
-            [FromQuery(Name = "Sort By")] string sortBy = "asc", [FromQuery(Name = "Page Size")] int pageSize = 10, [FromQuery (Name = "Page Number")] int pageNumber = 1)           
+            [FromQuery(Name = "Sort By")] string sortBy = "asc")           
         {
             
             IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
@@ -81,7 +81,6 @@ namespace FDiamondShop.API.Controllers
 
                 }
             }
-            ProductList = ProductList.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
             try
             {
                 

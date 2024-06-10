@@ -51,8 +51,6 @@ namespace FDiamondShop.API.Repository
                     Role = null
                 };
             }
-
-
             //if user was found generate JWT Token
             var roles = await _userManager.GetRolesAsync(user);
             var tokenHandler = new JwtSecurityTokenHandler();
