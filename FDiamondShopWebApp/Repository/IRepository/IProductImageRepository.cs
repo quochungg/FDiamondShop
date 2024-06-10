@@ -5,7 +5,7 @@ namespace FDiamondShop.API.Repository.IRepository
 {
     public interface IProductImageRepository : IRepository<ProductImage>
     {
-        void UpdateProductImageAsync(Product product, ProductImageUpdateDTO productImages, bool isGIA = false);
+        public void UpdateProductImageAsync(Product product, List<ProductImage> productUpdate);
 
     }
 }
