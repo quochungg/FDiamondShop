@@ -291,7 +291,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Subcategory Name")] string subCate,
             [FromQuery(Name = "Order By")] string orderBy = "ProductName", 
             [FromQuery(Name = "Sort By")] string sortBy = "asc", 
-            [FromQuery(Name = "Page Size")] int pageSize = 10, 
+            [FromQuery(Name = "Page Size")] int pageSize = 3, 
             [FromQuery(Name = "Page Number")] int pageNumber = 1, 
             [FromQuery(Name = "Clarity")] string clarity = null,
             [FromQuery(Name = "Cut")] string cut = null,
@@ -363,8 +363,8 @@ namespace FDiamondShop.API.Controllers
 
             var productDTOList = _mapper.Map<List<ProductDTO>>(ProductList);
             
-            //var totalPages = (int)Math.Ceiling(count / (double)pageSize);
-            var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, count);
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+            var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, totalPages);
             try
             {
                 _response.StatusCode = HttpStatusCode.OK;
