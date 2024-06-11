@@ -32,21 +32,19 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpPost("CreateCart")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<APIResponse>> CreateCart( string Username,[FromBody]List <CartLineItemCreateDTO> model)
+        public async Task<ActionResult<APIResponse>> CreateCart( string UserName,[FromBody]List<CartLineItemCreateDTO> model)
         {
 
+            var user = _userManager.Users.First(u => u.UserName == UserName);
 
-            var user = _userManager.Users.First(u => u.UserName == Username);
+            var cartLine = new CartLine();
 
-            CartLineDTO cartLineDTO = new()
-            {
-                UserId = user.Id,
-                //User = user
-            };
-            
-                var cartLine = _mapper.Map<CartLine>(cartLineDTO);
+            cartLine.UserId = user.Id;
+
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
+
             await _unitOfWork.SaveAsync();
+
             foreach (var item in model)
             {
                 var product = await _db.Products.FindAsync(item.ProductId);
@@ -68,7 +66,7 @@ namespace FDiamondShop.API.Controllers
             _response.StatusCode = HttpStatusCode.Created;
             _response.IsSuccess = true;
 
-            return CreatedAtAction("CreateCart", new { userId = user.Id }, _response);
+            return CreatedAtAction(nameof(GetAllCartLines), new { username = user.UserName }, _response);
 
         }
         //[HttpPost("AddItemToCartLineItem")]
@@ -104,8 +102,8 @@ namespace FDiamondShop.API.Controllers
 
             var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
             {
+                CartLineId = cl.CartLineId,
                 OrderId = cl.OrderId,
-                UserId = cl.UserId,
                 IsOrdered = cl.IsOrdered,
                 CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
                 {
@@ -150,6 +148,11 @@ namespace FDiamondShop.API.Controllers
             var cartLineItem = await _db.CartLineItems.Where(cli=>cli.CartLineId==cartLineId && cli.ProductId==ProductId).ToListAsync();
 
             await _unitOfWork.CartRepository.RemoveRange(cartLineItem);
+            await _unitOfWork.SaveAsync();
+            if (cartLine.CartLineItems.Count == 0)
+            {
+                await _unitOfWork.CartRepository.RemoveAsync(cartLine);
+            }
             await _unitOfWork.SaveAsync();
             
             return NoContent();

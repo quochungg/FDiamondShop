@@ -298,13 +298,12 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Color")] string color = null,
             [FromQuery(Name = "CaratFrom")] double caratFrom = 1.0,
             [FromQuery(Name = "CaratTo")] double caratTo = 30.0,
-            [FromQuery(Name = "PriceFrom")] decimal priceFrom = 1000,
+            [FromQuery(Name = "PriceFrom")] decimal priceFrom = 100,
             [FromQuery(Name = "PriceTo")] decimal priceTo = 30000,
             [FromQuery(Name = "Metal")] string metal = null
             )
         {
-                IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository
-                .GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
+            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
 
             if (cateName != null)
             {
@@ -332,15 +331,16 @@ namespace FDiamondShop.API.Controllers
                     //filter by carat
                     ProductList = ProductList.Where(u => u.ProductVariantValues
                     .Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo));
-                    if(clarity != null) {
+                    if (clarity != null)
+                    {
                         //fliter by clarity
                         ProductList = ProductList.Where(u => clarity.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 2).Value));
                     }
-                    if(color != null)
+                    if (color != null)
                     {
                         //filter by color
                         ProductList = ProductList.Where(u => color.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 1).Value));
-                    }                              
+                    }
                     if (cut != null)
                     {
                         //filter by cut
@@ -355,8 +355,10 @@ namespace FDiamondShop.API.Controllers
                         .FirstOrDefault(v => v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9).Value));
                     }
                     break;
-
             }
+
+
+
             ProductList = ProductList.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
             try
             {
