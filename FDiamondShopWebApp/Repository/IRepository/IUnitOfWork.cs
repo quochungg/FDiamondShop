@@ -13,8 +13,8 @@
         ICartRepository CartRepository { get; }
         IDiscountRepository DiscountCodeRepository { get; }
         ICategoryRepository CategoryRepository { get; }
-
-
+        IPayPalRepository PayPalRepository { get; }
+        
         Task SaveAsync();
     }
 }

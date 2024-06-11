@@ -86,6 +86,19 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentMethod",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethod", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -192,33 +205,6 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    order_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    order_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    payment_type = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    payment_date_time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    note = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    phone_number = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.order_id);
-                    table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_user_id",
-                        column: x => x.user_id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CategoryVariants",
                 columns: table => new
                 {
@@ -260,28 +246,26 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CartLines",
+                name: "Payment",
                 columns: table => new
                 {
-                    CartLineId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    IsOrdered = table.Column<bool>(type: "bit", nullable: false)
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartLines", x => x.CartLineId);
+                    table.PrimaryKey("PK_Payment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CartLines_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_CartLines_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "order_id");
+                        name: "FK_Payment_PaymentMethod_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethod",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -309,28 +293,37 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CartLineItems",
+                name: "Orders",
                 columns: table => new
                 {
-                    CartLineId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    RingSize = table.Column<double>(type: "float", nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    order_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    order_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentId = table.Column<int>(type: "int", nullable: false),
+                    BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DiscountCodeId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DiscountCodeDiscountId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartLineItems", x => new { x.ProductId, x.CartLineId });
+                    table.PrimaryKey("PK_Orders", x => x.order_id);
                     table.ForeignKey(
-                        name: "FK_CartLineItems_CartLines_CartLineId",
-                        column: x => x.CartLineId,
-                        principalTable: "CartLines",
-                        principalColumn: "CartLineId",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Orders_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_CartLineItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "product_id",
+                        name: "FK_Orders_DiscountCodes_DiscountCodeDiscountId",
+                        column: x => x.DiscountCodeDiscountId,
+                        principalTable: "DiscountCodes",
+                        principalColumn: "discount_id");
+                    table.ForeignKey(
+                        name: "FK_Orders_Payment_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payment",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -375,6 +368,57 @@ namespace FDiamondShop.API.Migrations
                         column: x => x.variant_id,
                         principalTable: "CategoryVariants",
                         principalColumn: "variant_id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartLines",
+                columns: table => new
+                {
+                    CartLineId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    IsOrdered = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartLines", x => x.CartLineId);
+                    table.ForeignKey(
+                        name: "FK_CartLines_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CartLines_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "order_id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartLineItems",
+                columns: table => new
+                {
+                    CartLineId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    RingSize = table.Column<double>(type: "float", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartLineItems", x => new { x.ProductId, x.CartLineId });
+                    table.ForeignKey(
+                        name: "FK_CartLineItems_CartLines_CartLineId",
+                        column: x => x.CartLineId,
+                        principalTable: "CartLines",
+                        principalColumn: "CartLineId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartLineItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "product_id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -437,15 +481,24 @@ namespace FDiamondShop.API.Migrations
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DiscountCodes_discount_code_name",
-                table: "DiscountCodes",
-                column: "discount_code_name",
-                unique: true);
+                name: "IX_Orders_DiscountCodeDiscountId",
+                table: "Orders",
+                column: "DiscountCodeDiscountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_PaymentId",
+                table: "Orders",
+                column: "PaymentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_user_id",
                 table: "Orders",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payment_PaymentMethodId",
+                table: "Payment",
+                column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_product_id",
@@ -490,9 +543,6 @@ namespace FDiamondShop.API.Migrations
                 name: "CartLineItems");
 
             migrationBuilder.DropTable(
-                name: "DiscountCodes");
-
-            migrationBuilder.DropTable(
                 name: "ProductImages");
 
             migrationBuilder.DropTable(
@@ -520,7 +570,16 @@ namespace FDiamondShop.API.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "DiscountCodes");
+
+            migrationBuilder.DropTable(
+                name: "Payment");
+
+            migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethod");
         }
     }
 }

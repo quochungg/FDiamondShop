@@ -17,6 +17,7 @@ namespace FDiamondShop.API.Repository
         public IMomoRepository MomoRepository { get; }
         public IDiscountRepository DiscountCodeRepository { get; }
         public ICartRepository CartRepository { get; }
+        public IPayPalRepository PayPalRepository { get; }
         public ICategoryRepository CategoryRepository { get; }
 
 
@@ -30,7 +31,8 @@ namespace FDiamondShop.API.Repository
             IVnPayRepository vnPayRepository, 
             ICartRepository cartRepository,
             IMomoRepository momoRepository,
-            ICategoryRepository categoryRepository
+            ICategoryRepository categoryRepository,
+            IPayPalRepository payPalRepository
             )
         {
             _db = db;
@@ -44,6 +46,7 @@ namespace FDiamondShop.API.Repository
             CartRepository = cartRepository;
             MomoRepository = momoRepository;
             CategoryRepository = categoryRepository;
+            PayPalRepository = payPalRepository;
         }
         public async Task SaveAsync()
         {
