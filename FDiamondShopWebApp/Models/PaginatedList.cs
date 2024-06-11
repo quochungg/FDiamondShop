@@ -2,15 +2,17 @@
 {
     public class PaginatedList<T>
     {
-        public int PageIndex { get; }
-        public int TotalProduct { get; }
         public List<T> Items { get; }
-        public PaginatedList(List<T> items, int pageIndex, int totalProduct)
+        public int PageIndex { get; }
+        public int TotalPages { get; }
+        public bool HasPreviousPage => PageIndex > 1;
+        public bool HasNextPage => PageIndex < TotalPages;
+
+        public PaginatedList(List<T> items, int pageIndex, int totalPages)
         {
             Items = items;
             PageIndex = pageIndex;
-            TotalProduct = totalProduct;
-
+            TotalPages = totalPages;
         }
     }
 }
