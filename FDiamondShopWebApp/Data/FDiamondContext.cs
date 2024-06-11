@@ -27,6 +27,8 @@ namespace FDiamondShop.API.Data
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<CartLine> CartLines { get; set; }
         public virtual DbSet<CartLineItem> CartLineItems { get; set; }
+        public virtual DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

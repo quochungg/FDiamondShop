@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace FDiamondShop.API.Models
+﻿namespace FDiamondShop.API.Models.DTO
 {
-    public class Order
+    public class OrderDTO
     {
         public int Id { get; set; }
 
@@ -11,6 +9,7 @@ namespace FDiamondShop.API.Models
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
         public int PaymentId { get; set; }
+
         public Payment Payment { get; set; }
 
         public decimal BasePrice { get; set; }
@@ -18,11 +17,6 @@ namespace FDiamondShop.API.Models
         public decimal TotalPrice { get; set; }
 
         public string? DiscountCodeId { get; set; }
-
-        public DiscountCode? DiscountCode { get; set; }
-
-        public ApplicationUser User { get; set; }
-
         public ICollection<CartLine> CartLines { get; set; }
 
     }

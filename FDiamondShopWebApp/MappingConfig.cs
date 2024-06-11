@@ -29,6 +29,10 @@ namespace FDiamondShop.API
 
             CreateMap<DiscountCode, DiscountCodeCreateDTO>().ReverseMap();
 
+            CreateMap<Order, OrderDTO>().ReverseMap();
+            CreateMap<Order, OrderCreateDTO>().ReverseMap();
+
+
 
 
         }

@@ -44,7 +44,7 @@ namespace FDiamondShop.API.Controllers
                 //User = user
             };
             
-                var cartLine = _mapper.Map<CartLine>(cartLineDTO);
+            var cartLine = _mapper.Map<CartLine>(cartLineDTO);
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
             await _unitOfWork.SaveAsync();
             foreach (var item in model)
