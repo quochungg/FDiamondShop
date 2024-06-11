@@ -18,11 +18,22 @@ namespace FDiamondShop.API.Repository
         public IDiscountRepository DiscountCodeRepository { get; }
         public ICartRepository CartRepository { get; }
         public IPayPalRepository PayPalRepository { get; }
+        public ICategoryRepository CategoryRepository { get; }
 
-        public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, 
-            IProductVariantValueRepository productVariantValueRepository, IUserRepository userRepository, 
-            IEmailRepository emailRepository, IDiscountRepository discountRepository, IVnPayRepository vnPayRepository, ICartRepository cartRepository,
-            IMomoRepository momoRepository,IPayPalRepository payPalRepository)
+
+        public UnitOfWork(FDiamondContext db, 
+            IProductRepository productRepository, 
+            IProductImageRepository productImageRepository, 
+            IProductVariantValueRepository productVariantValueRepository, 
+            IUserRepository userRepository, 
+            IEmailRepository emailRepository, 
+            IDiscountRepository discountRepository, 
+            IVnPayRepository vnPayRepository, 
+            ICartRepository cartRepository,
+            IMomoRepository momoRepository,
+            ICategoryRepository categoryRepository,
+            IPayPalRepository payPalRepository
+            )
         {
             _db = db;
             ProductRepository = productRepository;
@@ -34,6 +45,7 @@ namespace FDiamondShop.API.Repository
             DiscountCodeRepository = discountRepository;
             CartRepository = cartRepository;
             MomoRepository = momoRepository;
+            CategoryRepository = categoryRepository;
             PayPalRepository = payPalRepository;
         }
         public async Task SaveAsync()
