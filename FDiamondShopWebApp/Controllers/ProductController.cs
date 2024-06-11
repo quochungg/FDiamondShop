@@ -356,14 +356,17 @@ namespace FDiamondShop.API.Controllers
                     }
                     break;
             }
+            var count = ProductList.Count();
+            ProductList = ProductList
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize);
 
-
-
-            ProductList = ProductList.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            var productDTOList = _mapper.Map<List<ProductDTO>>(ProductList);
+            
+            //var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+            var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, count);
             try
             {
-
-                var model = _mapper.Map<List<ProductDTO>>(ProductList);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = model;
