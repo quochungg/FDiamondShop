@@ -80,5 +80,35 @@ namespace FDiamondShop.API.Controllers
 
             return Ok(response);
         }
+        [HttpPost("PayPal")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+        public async Task<IActionResult> CreatePaypalPaymentUrl(PaymentInformationModel model)
+        {
+            try
+            {
+                var paymentUrl = await _unitOfWork.PayPalRepository.CreatePaymentUrl(model);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = paymentUrl;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add(ex.Message);
+                return BadRequest();
+            }
+
+        }
+        [HttpGet("executepayPayPal")]
+        public IActionResult PaymentExecutePayPal()
+        {
+            var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
+
+            return Ok(response);
+        }
     }
 }
