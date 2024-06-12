@@ -23,7 +23,7 @@ export default function ProductTableRow({
   productName,
   basePrice,
   quantity,
-  subCategoryId,
+  subCategoryName,
   isVisible,
   // handleClick,
 }) {
@@ -64,7 +64,7 @@ export default function ProductTableRow({
 
         <TableCell align="center">{basePrice}</TableCell>
         <TableCell align="center">{quantity}</TableCell>
-        <TableCell align="center">{subCategoryId}</TableCell>
+        <TableCell align="center">{subCategoryName}</TableCell>
         <TableCell align="center">
           <Label color={isVisible ? 'success' : 'error'}>{isVisible ? 'Visible' : 'Hidden'}</Label>
           {/*  */}
@@ -111,7 +111,7 @@ ProductTableRow.propTypes = {
   basePrice: PropTypes.any,
   // handleClick: PropTypes.func,
   quantity: PropTypes.any,
-  subCategoryId: PropTypes.any,
+  subCategoryName: PropTypes.any,
   isVisible: PropTypes.any,
   productName: PropTypes.any,
   productId: PropTypes.any,

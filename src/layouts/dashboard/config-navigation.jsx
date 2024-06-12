@@ -32,6 +32,11 @@ const navConfig = [
     path: '/order',
     icon: icon('ic_order'),
   },
+  {
+    title: 'voucher',
+    path: '/voucher',
+    icon: icon('ic_voucher'),
+  },
   // {
   //   title: 'blog',
   //   path: '/blog',

@@ -1,17 +1,29 @@
 // EditProductPage.jsx
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import {
   Box,
+  Card,
+  Grid,
   Button,
-  Checkbox,
+  Switch,
+  // Checkbox,
   TextField,
   Container,
   Typography,
-  FormControlLabel,
+  InputLabel,
+  CardHeader,
+  CardContent,
+  FormControl,
+  OutlinedInput,
+  // FormControlLabel,
 } from '@mui/material';
+
+import uploadFile from 'src/utils/upload';
+
+import { AddMutipleFile } from 'src/components/upload';
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -21,10 +33,33 @@ const EditProductPage = () => {
     productName: '',
     basePrice: 0,
     quantity: 0,
-    subCategoryId: 0,
     isVisible: false,
+    productImages: [],
+    GIAImages: [],
+    productVariantValues: [],
   });
   const [loading, setLoading] = useState(true);
+
+  const variantMapping = useCallback(
+    () => ({
+      diamond: [
+        { variantId: 1, key: 'Color' },
+        { variantId: 2, key: 'clarity' },
+        { variantId: 3, key: 'Cut' },
+        { variantId: 4, key: 'CaratWeight' },
+        { variantId: 5, key: 'Florescence' },
+        { variantId: 6, key: 'Length' },
+        { variantId: 7, key: 'Depth' },
+      ],
+      necklace: [{ variantId: 8, key: 'NecklaceMetal' }],
+      ring: [
+        { variantId: 9, key: 'RingMetal' },
+        { variantId: 10, key: 'Size' },
+      ],
+      earring: [{ variantId: 11, key: 'EarringMetal' }],
+    }),
+    []
+  );
 
   useEffect(() => {
     // Fetch product data from API
@@ -32,60 +67,110 @@ const EditProductPage = () => {
       .get(`https://fdiamond-api.azurewebsites.net/api/Product/${id}`)
       .then((response) => {
         const productData = response.data.result;
+        const productVariants = productData.productVariantValues.map((variant) => ({
+          ...variant,
+          key: Object.values(variantMapping())
+            .flat()
+            .find((v) => v.variantId === variant.variantId)?.key,
+        }));
         setProduct({
-          productId: productData.productId || 0,
-          productName: productData.productName || '',
-          basePrice: productData.basePrice || 0,
-          quantity: productData.quantity || 0,
-          subCategoryId: productData.subCategoryId || 0,
-          isVisible: productData.isVisible || false,
+          ...productData,
+          // productImages: productData.productImages.filter((img) => img.isGia === false),
+          // GIAImages: productData.productImages.filter((img) => img.isGia),
+          productVariantValues: productVariants,
         });
+        console.log(response.data.result);
         setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching product data:', error);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, variantMapping]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleInputChange = (event) => {
+    const { name, value, type, checked } = event.target;
     setProduct({
       ...product,
       [name]: type === 'checkbox' ? checked : value,
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleVariantChange = (event, variantId) => {
+    const { value } = event.target;
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      productVariantValues: prevProduct.productVariantValues.map((variant) =>
+        variant.variantId === variantId ? { ...variant, value } : variant
+      ),
+    }));
+  };
+
+  const handleImageSelect = (fileList, isGia = false) => {
+    if (isGia) {
+      setProduct((prevData) => ({
+        ...prevData,
+        GIAImages: fileList,
+      }));
+    } else {
+      setProduct((prevData) => ({
+        ...prevData,
+        productImages: fileList,
+      }));
+    }
+  };
+
+  const uploadFiles = async (fileList) => {
+    const uploadPromises = fileList.map((file) => {
+      if (file.originFileObj) {
+        return uploadFile(file.originFileObj);
+      }
+      if (file.url) {
+        return file.url;
+      }
+      throw new Error('No file provided');
+    });
+    return Promise.all(uploadPromises);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     // Log the product object to see what is being sent
     console.log('Submitting product:', product);
 
     // Filter out unnecessary fields
-    const { productId, productName, basePrice, quantity, subCategoryId, isVisible } = product;
-    const payload = {
-      productId,
-      productName,
-      basePrice: Number(basePrice), // Ensure basePrice is a number
-      quantity: Number(quantity), // Ensure quantity is a number
-      subCategoryId: Number(subCategoryId), // Ensure subCategoryId is a number
-      isVisible,
-    };
+    try {
+      const productFileUrls = await uploadFiles(product.productImages);
+      const GIAFileUrls = await uploadFiles(product.GIAImages);
 
-    axios
-      .put(`https://fdiamond-api.azurewebsites.net/api/Product/${id}`, payload)
-      .then((response) => {
-        console.log('Product updated:', response.data);
-        navigate('/products'); // Redirect to product list page after successful update
-      })
-      .catch((error) => {
-        console.error('Error updating product:', error);
-        if (error.response) {
-          // Log the response data for detailed error information
-          console.error('Error response data:', error.response.data);
-        }
-      });
+      const productVariantValues = product.productVariantValues.map((variant) => ({
+        variantId: variant.variantId,
+        value: variant.value,
+      }));
+
+      const payload = {
+        ...product,
+        productImages: [
+          ...productFileUrls.map((url) => ({ imageUrl: url, isGia: false })),
+          ...GIAFileUrls.map((url) => ({ imageUrl: url, isGia: true })),
+        ],
+        productVariantValues,
+      };
+
+      const response = await axios.put(
+        `https://fdiamond-api.azurewebsites.net/api/Product/${id}`,
+        payload
+      );
+      console.log('Product updated:', response.data);
+      navigate('/products');
+    } catch (error) {
+      console.error('Error updating product:', error);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+      }
+    }
   };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -95,56 +180,127 @@ const EditProductPage = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Edit Product
       </Typography>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-      >
-        <TextField
-          label="Product Name"
-          name="productName"
-          value={product.productName}
-          onChange={handleChange}
-          fullWidth
-          required
-        />
-        <TextField
-          label="Base Price"
-          name="basePrice"
-          type="number"
-          value={product.basePrice}
-          onChange={handleChange}
-          fullWidth
-          required
-        />
-        <TextField
-          label="Quantity"
-          name="quantity"
-          type="number"
-          value={product.quantity}
-          onChange={handleChange}
-          fullWidth
-          required
-        />
-        <TextField
-          label="Sub Category ID"
-          name="subCategoryId"
-          type="number"
-          value={product.subCategoryId}
-          onChange={handleChange}
-          fullWidth
-          required
-        />
-        <FormControlLabel
-          control={
-            <Checkbox checked={product.isVisible} onChange={handleChange} name="isVisible" />
-          }
-          label="Visible"
-        />
-        <Button type="submit" variant="contained" color="primary">
-          Save
-        </Button>
-      </Box>
+      <form onSubmit={handleSubmit}>
+        <Card>
+          <CardHeader title="Product information" />
+          <CardContent>
+            <Grid container spacing={3}>
+              <Grid item md={12}>
+                <FormControl fullWidth required>
+                  <InputLabel>Product name</InputLabel>
+                  <OutlinedInput
+                    value={product.productName}
+                    onChange={handleInputChange}
+                    label="Product Name"
+                    name="productName"
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Price</InputLabel>
+                  <OutlinedInput
+                    value={product.basePrice}
+                    onChange={handleInputChange}
+                    label="Price"
+                    name="basePrice"
+                    type="number"
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Quantity</InputLabel>
+                  <OutlinedInput
+                    value={product.quantity}
+                    onChange={handleInputChange}
+                    label="Quantity"
+                    name="quantity"
+                    type="number"
+                  />
+                </FormControl>
+              </Grid>
+              {product.productVariantValues.map((variant, index) => (
+                <Grid item xs={6} key={index}>
+                  <FormControl fullWidth required>
+                    <InputLabel>{variant.key}</InputLabel>
+                    <OutlinedInput
+                      value={variant.value}
+                      onChange={(event) => handleVariantChange(event, variant.variantId)}
+                      label={variant.key}
+                      name={variant.key}
+                    />
+                  </FormControl>
+                </Grid>
+              ))}
+              <Grid item xs={12}>
+                <FormControl fullWidth required>
+                  <TextField
+                    value={product.description}
+                    onChange={handleInputChange}
+                    label="Description"
+                    name="description"
+                    variant="outlined"
+                    multiline
+                    rows={4}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth required>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Upload Product Images
+                  </Typography>
+                  <AddMutipleFile
+                    initialFiles={product.productImages.filter((img) => img.isGia === false)}
+                    onImageSelect={(fileList) => handleImageSelect(fileList, false)}
+                  />
+                  <Typography variant="subtitle1" gutterBottom>
+                    Upload GIA Report
+                  </Typography>
+                  <AddMutipleFile
+                    initialFiles={product.productImages.filter((img) => img.isGia)}
+                    onImageSelect={(fileList) => handleImageSelect(fileList, true)}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={8}>
+                <FormControl component="fieldset">
+                  <Grid container alignItems="center">
+                    <Grid item>
+                      <Grid item>
+                        <Switch
+                          checked={product.isVisible}
+                          onChange={handleInputChange}
+                          name="isVisible"
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Typography>Publish</Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </FormControl>
+              </Grid>
+              <Grid item xs={4}>
+                <Box display="flex" justifyContent="flex-end">
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => navigate(-1)}
+                    sx={{ mr: 2 }}
+                  >
+                    Back
+                  </Button>
+                  <Button type="submit" variant="contained" color="primary">
+                    Save
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </form>
     </Container>
   );
 };

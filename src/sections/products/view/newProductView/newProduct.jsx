@@ -71,8 +71,8 @@ export default function NewProductView() {
     });
   };
 
-  const handleImageSelect = (fileList, isGIA = false) => {
-    if (isGIA) {
+  const handleImageSelect = (fileList, isGia = false) => {
+    if (isGia) {
       setFormData((prevData) => ({
         ...prevData,
         GIAImages: Array.from(fileList),
@@ -144,8 +144,8 @@ export default function NewProductView() {
         description: formData.description,
         isVisible: formData.isVisible,
         productImages: [
-          ...productFileUrls.map((url) => ({ imageUrl: url, isGIA: false })),
-          ...GIAFileUrls.map((url) => ({ imageUrl: url, isGIA: true })),
+          ...productFileUrls.map((url) => ({ imageUrl: url, isGia: false })),
+          ...GIAFileUrls.map((url) => ({ imageUrl: url, isGia: true })),
         ], // Save URLs of uploaded images
         productVariantValues,
       };
@@ -252,18 +252,27 @@ export default function NewProductView() {
                     label="Description"
                     name="description"
                     variant="outlined"
+                    multiline
+                    rows={4}
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <FormControl fullWidth required>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Upload GIA Report
+                  </Typography>
+                  <AddMutipleFile onImageSelect={(fileList) => handleImageSelect(fileList, true)} />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth required>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Upload Product Images
+                  </Typography>
                   <AddMutipleFile
                     onImageSelect={(fileList) => handleImageSelect(fileList, false)}
                   />
-                  <Typography variant="subtitle1" gutterBottom>
-                    Upload GIA Images
-                  </Typography>
-                  <AddMutipleFile onImageSelect={(fileList) => handleImageSelect(fileList, true)} />
                 </FormControl>
               </Grid>
               <Grid item xs={8}>

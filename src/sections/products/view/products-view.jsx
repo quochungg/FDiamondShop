@@ -206,7 +206,7 @@ export default function ProductsView() {
                   { id: 'productName', label: 'Name' },
                   { id: 'basePrice', label: 'Price' },
                   { id: 'quantity', label: 'Quantity' },
-                  { id: 'subCategoryId', label: 'Category' },
+                  { id: 'subCategoryName', label: 'Shape' },
                   { id: 'isVisible', label: 'Status' },
                   { id: '' },
                 ]}
@@ -228,7 +228,7 @@ export default function ProductsView() {
                       productName={row.productName}
                       basePrice={row.basePrice}
                       quantity={row.quantity}
-                      subCategoryId={row.subCategoryId}
+                      subCategoryName={row.subCategoryName}
                       isVisible={row.isVisible}
                       // selected={selected.indexOf(row.id) !== -1}
                       // handleClick={(event) => handleClick(event, row.id)}

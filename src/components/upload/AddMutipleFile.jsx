@@ -13,10 +13,29 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-function AddMutipleFile({ onImageSelect }) {
+function AddMutipleFile({ onImageSelect, initialFiles }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [fileList, setFileList] = useState([]);
+
+  useEffect(() => {
+    if (initialFiles && initialFiles.length > 0) {
+      const initialFileList = initialFiles.map((file, index) => {
+        const fileName = file.imageUrl
+          ? file.imageUrl.substring(file.imageUrl.lastIndexOf('/') + 1)
+          : `file-${index}`;
+        return {
+          uid: index.toString(),
+          name: fileName,
+          status: 'done',
+          url: file.imageUrl,
+          preview: file.imageUrl,
+          thumbUrl: file.imageUrl,
+        };
+      });
+      setFileList(initialFileList);
+    }
+  }, [initialFiles]);
 
   useEffect(() => {
     if (onImageSelect) {
@@ -75,10 +94,10 @@ function AddMutipleFile({ onImageSelect }) {
       onError(error);
     }
   };
+
   return (
     <>
       <Upload
-        // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
         customRequest={handleUpload}
         listType="picture-card"
         fileList={fileList}
@@ -106,6 +125,11 @@ function AddMutipleFile({ onImageSelect }) {
 
 AddMutipleFile.propTypes = {
   onImageSelect: PropTypes.func.isRequired,
+  initialFiles: PropTypes.array,
+};
+
+AddMutipleFile.defaultProps = {
+  initialFiles: [],
 };
 
 export default AddMutipleFile;

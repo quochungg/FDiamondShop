@@ -1,16 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { LoginView } from 'src/sections/login';
+import { VoucherView } from 'src/sections/voucher/view';
 
 // ----------------------------------------------------------------------
 
-export default function LoginPage() {
+export default function VoucherPage() {
   return (
     <>
       <Helmet>
-        <title> Login | Minimal UI </title>
+        <title> Voucher Management </title>
       </Helmet>
-      <LoginView />
+
+      <VoucherView />
     </>
   );
 }
