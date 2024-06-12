@@ -32,8 +32,10 @@ The application provides several endpoints for managing users, diamond, and orde
 - Front - end 
   + Nguyen Thi Bich Duyen - SE183629
   + Doan Dang Thien Bao - SE171827
--Back - end
+- Back - end
   + Nguyen Huu Quoc Hung - SE172905
   + Ha Duy Tung - SE173573
   + Tran Nguyen Thu An - SE182972
-Nguyen Thi Ngoc Thu - SE171992
+ 
+    
+  + Nguyen Thi Ngoc Thu - SE171992
