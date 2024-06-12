@@ -4,4 +4,4 @@
 
 /BE/.vs/FDiamondShop/FileContentIndex
 /.gitignore
-/node_modules
+node_modules/
