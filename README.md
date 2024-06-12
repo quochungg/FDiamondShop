@@ -19,21 +19,21 @@ The application provides several endpoints for managing users, diamond, and orde
 - Category
   GET /api/Category: Get Category
 - Discount
-  GET /api/Discount: Get Discount
-  POST /api/Discount: Add New Discount
-  PUT/api/Discount/Update: Update Discount
+  + GET /api/Discount: Get Discount
+  + POST /api/Discount: Add New Discount
+  + PUT/api/Discount/Update: Update Discount
 - Product
-  GET /api/Product: Get Product (with filter)
-  POST /api/Product: Add New Product
-  GET /api/Product/{id}: Get Product by ID
-  PUT /api/Product/{id}: Update Product by ID
-  PUT /api/Product/Delete/{id}: Delete Product (change status)
+  + GET /api/Product: Get Product (with filter)
+  + POST /api/Product: Add New Product
+  + GET /api/Product/{id}: Get Product by ID
+  + PUT /api/Product/{id}: Update Product by ID
+  + PUT /api/Product/Delete/{id}: Delete Product (change status)
 # Team's Member
 - Front - end 
-  Nguyen Thi Bich Duyen - SE183629
-  Doan Dang Thien Bao - SE171827
+  + Nguyen Thi Bich Duyen - SE183629
+  + Doan Dang Thien Bao - SE171827
 -Back - end
-  Nguyen Huu Quoc Hung - SE172905
-  Ha Duy Tung - SE173573
-  Tran Nguyen Thu An - SE182972
+  + Nguyen Huu Quoc Hung - SE172905
+  + Ha Duy Tung - SE173573
+  + Tran Nguyen Thu An - SE182972
 Nguyen Thi Ngoc Thu - SE171992
