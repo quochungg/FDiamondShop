@@ -291,8 +291,8 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetProductFiltering(
-            [FromQuery(Name = "Category Name")] string cateName, 
-            [FromQuery(Name = "Subcategory Name")] string subCate,
+            [FromQuery(Name = "CategoryName")] string cateName, 
+            [FromQuery(Name = "SubcategoryName")] string subCate,
             [FromQuery(Name = "OrderBy")] string orderBy = "ProductName", 
             [FromQuery(Name = "SortBy")] string sortBy = "asc", 
             [FromQuery(Name = "PageSize")] int pageSize = 3, 

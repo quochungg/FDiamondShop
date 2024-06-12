@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FDiamondShop.API.Models;
 
@@ -9,6 +10,7 @@ public partial class Product
 
     public int? SubCategoryId { get; set; }
 
+    [MaxLength(100)]
     public string ProductName { get; set; }
 
     public int Quantity { get; set; }
