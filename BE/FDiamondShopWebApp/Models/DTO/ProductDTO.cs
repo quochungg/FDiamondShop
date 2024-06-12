@@ -6,6 +6,8 @@
 
         public int SubCategoryId { get; set; }
 
+        public string SubCategoryName { get; set; }
+
         public string ProductName { get; set; } = null!;
 
         public int Quantity { get; set; }

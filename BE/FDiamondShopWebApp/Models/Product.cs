@@ -17,7 +17,7 @@ public partial class Product
 
     public string Description { get; set; }
 
-    public bool IsVisible => Quantity > 0;
+    public bool IsVisible {get; set; }
 
     public bool? IsDeleted { get; set; }
 

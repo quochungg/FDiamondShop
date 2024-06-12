@@ -85,6 +85,10 @@ namespace FDiamondShop.API.Controllers
             {
                 
                 var model = _mapper.Map<List<ProductDTO>>(ProductList);
+                foreach (var product in model)
+                {
+                    product.SubCategoryName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).SubCategory.SubcategoryName;
+                }
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = model;
@@ -289,10 +293,10 @@ namespace FDiamondShop.API.Controllers
         public async Task<ActionResult<APIResponse>> GetProductFiltering(
             [FromQuery(Name = "Category Name")] string cateName, 
             [FromQuery(Name = "Subcategory Name")] string subCate,
-            [FromQuery(Name = "Order By")] string orderBy = "ProductName", 
-            [FromQuery(Name = "Sort By")] string sortBy = "asc", 
-            [FromQuery(Name = "Page Size")] int pageSize = 3, 
-            [FromQuery(Name = "Page Number")] int pageNumber = 1, 
+            [FromQuery(Name = "OrderBy")] string orderBy = "ProductName", 
+            [FromQuery(Name = "SortBy")] string sortBy = "asc", 
+            [FromQuery(Name = "PageSize")] int pageSize = 3, 
+            [FromQuery(Name = "PageNumber")] int pageNumber = 1, 
             [FromQuery(Name = "Clarity")] string clarity = null,
             [FromQuery(Name = "Cut")] string cut = null,
             [FromQuery(Name = "Color")] string color = null,
