@@ -6,6 +6,5 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         Task CreateCartlineItem(CartLineItem cartLineItem);
         Task RemoveRange(List<CartLineItem> cartLineItems);
-        void UpdateCartLineStatus(Order order);
     }
 }

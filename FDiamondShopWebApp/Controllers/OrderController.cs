@@ -48,10 +48,16 @@ namespace FDiamondShop.API.Controllers
                 var user = _userManager.Users.First(u => u.UserName == userName);
                 var cartLines = await _db.CartLines
                                           .Include(cl => cl.CartLineItems)
-                                          .Where(cl => cl.UserId == user.Id)
+                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
                                           .ToListAsync();
+                if(cartLines.Count == 0)
+                {
+                    return NotFound();
+                    
+                }
                 foreach (var cartLine in cartLines)
                 {
+                    
                     foreach (var cartLineItem in cartLine.CartLineItems)
                     {
                         var price = cartLineItem.Price;
@@ -79,12 +85,24 @@ namespace FDiamondShop.API.Controllers
                 var order = _mapper.Map<Order>(orderDTO);
                 await _unitOfWork.OrderRepository.CreateAsync(order);
                 await _unitOfWork.SaveAsync();
+
+                var cartLineupdate =  _db.CartLines.Where(cartLineupdate=>cartLineupdate.UserId.Equals(user.Id));
+                foreach (var item in cartLineupdate)
+                {
+                    item.UserId = user.Id;
+                    item.OrderId = order.Id;
+                    item.IsOrdered = true;
+                }
+                
+                await _unitOfWork.SaveAsync();
                 _response.Result = _mapper.Map<OrderDTO>(order);
+               
+                await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.Created;
                 var paymentInfo = new PaymentInformationModel
                 {        
-                    Amount = 20000,
-                    Name="ha duytung",
+                    Amount = order.TotalPrice *1000,
+                    Name=user.UserName,
                     OrderDescription = "Thanh toan don hang",
                     OrderID="string",
                     OrderType= createDTO.PaymentMethod,
@@ -144,14 +162,7 @@ namespace FDiamondShop.API.Controllers
                         }                       
                         break;
                 }
-                CartLineDTO cartLineDTO = new CartLineDTO
-                {
-                    UserId = user.Id,
-                    OrderId = order.Id,
-                    IsOrdered = true,
-                };
-                var cartlineupdate  = _mapper.Map<CartLine>(cartLineDTO);
-                _unitOfWork.CartRepository.UpdateCartLineStatus(order);
+                
                 await _unitOfWork.SaveAsync();
                 return Ok(_response);
 

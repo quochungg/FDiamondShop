@@ -23,14 +23,6 @@ namespace FDiamondShop.API.Repository
         {
             _db.RemoveRange(cartLineItems);
         }
-        public async void UpdateCartLineStatus(Order order)
-        {
-            var existingLine = _db.CartLines.Where(x => x.OrderId == order.Id).ToList();
-            if (existingLine.Count > 0)
-            {
-                _db.CartLines.RemoveRange(existingLine);
-            }
-
-        }
+        
     }
 }
