@@ -10,14 +10,12 @@
 
         public int PaymentId { get; set; }
 
-        public Payment Payment { get; set; }
-
         public decimal BasePrice { get; set; }
 
         public decimal TotalPrice { get; set; }
 
         public string? DiscountCodeId { get; set; }
-        public ICollection<CartLine> CartLines { get; set; }
+        //public ICollection<CartLine> CartLines { get; set; }
 
     }
 }

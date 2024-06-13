@@ -1,14 +1,4 @@
-﻿using FDiamondShop.API.Models.DTO;
-using FDiamondShop.API.Models;
-using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using FDiamondShop.API.Data;
-using FDiamondShop.API.Repository.IRepository;
-using System.Net;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-
-namespace FDiamondShop.API.Controllers
+﻿namespace FDiamondShop.API.Controllers
 {
     [Route("api/Order")]
     [ApiController]
@@ -50,13 +40,11 @@ namespace FDiamondShop.API.Controllers
                         totalprice += item.Price;
                     }
                 }
+
                 orderDTO = new()
                 {
                     UserId = user.Id,
-                    PaymentId = orderDTO.PaymentId,
-                    //CartLines = cartline,
                     TotalPrice = totalprice,
-                    BasePrice = totalprice,
                 };
                 var order = _mapper.Map<Order>(orderDTO);
                 await _unitOfWork.OderRepository.CreateAsync(order);

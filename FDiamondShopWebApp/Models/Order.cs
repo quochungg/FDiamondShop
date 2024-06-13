@@ -11,7 +11,6 @@ namespace FDiamondShop.API.Models
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
         public int PaymentId { get; set; }
-        public Payment Payment { get; set; }
 
         public decimal BasePrice { get; set; }
 
