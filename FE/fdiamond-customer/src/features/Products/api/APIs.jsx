@@ -1,5 +1,5 @@
 import axios from "axios";
-
+//a
 const API_ROOT = "https://fdiamond-api.azurewebsites.net";
 
 export const getProducts = async ({ category, searchParams }) => {
@@ -47,5 +47,7 @@ export const getCategory = async ({ category }) => {
 //PriceFrom=100&
 //PriceTo=30000
 //Metal=Gold
+
+
 
 
