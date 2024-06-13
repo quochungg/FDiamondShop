@@ -4,15 +4,12 @@ using FDiamondShop.API.Repository.IRepository;
 
 namespace FDiamondShop.API.Repository
 {
-    public class OrderRepository : Repository<Order>, IOrderRepository
+    public class PaymentRepository : Repository<Payment>, IPaymentRepository
     {
         private readonly FDiamondContext _db;
-
-        public OrderRepository(FDiamondContext db) : base(db)
+        public PaymentRepository(FDiamondContext db) : base(db)
         {
             _db = db;
         }
-
     }
-
 }

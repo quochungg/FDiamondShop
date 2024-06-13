@@ -86,16 +86,18 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PaymentMethod",
+                name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PaymentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PaymentMethod", x => x.Id);
+                    table.PrimaryKey("PK_Payments", x => x.PaymentId);
                 });
 
             migrationBuilder.CreateTable(
@@ -246,26 +248,37 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Payment",
+                name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    order_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "int", nullable: false)
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    order_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentId = table.Column<int>(type: "int", nullable: true),
+                    BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DiscountId = table.Column<int>(type: "int", nullable: true),
+                    DiscountCodeDiscountId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Payment", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.order_id);
                     table.ForeignKey(
-                        name: "FK_Payment_PaymentMethod_PaymentMethodId",
-                        column: x => x.PaymentMethodId,
-                        principalTable: "PaymentMethod",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Orders_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Orders_DiscountCodes_DiscountCodeDiscountId",
+                        column: x => x.DiscountCodeDiscountId,
+                        principalTable: "DiscountCodes",
+                        principalColumn: "discount_id");
+                    table.ForeignKey(
+                        name: "FK_Orders_Payments_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payments",
+                        principalColumn: "PaymentId");
                 });
 
             migrationBuilder.CreateTable(
@@ -293,38 +306,23 @@ namespace FDiamondShop.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "CartLines",
                 columns: table => new
                 {
-                    order_id = table.Column<int>(type: "int", nullable: false)
+                    CartLineId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    order_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentId = table.Column<int>(type: "int", nullable: false),
-                    BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DiscountCodeId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DiscountCodeDiscountId = table.Column<int>(type: "int", nullable: true)
+                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsOrdered = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.order_id);
+                    table.PrimaryKey("PK_CartLines", x => x.CartLineId);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_user_id",
-                        column: x => x.user_id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_DiscountCodes_DiscountCodeDiscountId",
-                        column: x => x.DiscountCodeDiscountId,
-                        principalTable: "DiscountCodes",
-                        principalColumn: "discount_id");
-                    table.ForeignKey(
-                        name: "FK_Orders_Payment_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payment",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_CartLines_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "order_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -335,7 +333,7 @@ namespace FDiamondShop.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     product_id = table.Column<int>(type: "int", nullable: true),
                     image_url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    is_GIA = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))")
+                    is_GIA = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "((0))")
                 },
                 constraints: table =>
                 {
@@ -368,31 +366,6 @@ namespace FDiamondShop.API.Migrations
                         column: x => x.variant_id,
                         principalTable: "CategoryVariants",
                         principalColumn: "variant_id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CartLines",
-                columns: table => new
-                {
-                    CartLineId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    IsOrdered = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CartLines", x => x.CartLineId);
-                    table.ForeignKey(
-                        name: "FK_CartLines_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_CartLines_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "order_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -471,11 +444,6 @@ namespace FDiamondShop.API.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartLines_UserId",
-                table: "CartLines",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CategoryVariants_category_id",
                 table: "CategoryVariants",
                 column: "category_id");
@@ -494,11 +462,6 @@ namespace FDiamondShop.API.Migrations
                 name: "IX_Orders_user_id",
                 table: "Orders",
                 column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Payment_PaymentMethodId",
-                table: "Payment",
-                column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_product_id",
@@ -573,13 +536,10 @@ namespace FDiamondShop.API.Migrations
                 name: "DiscountCodes");
 
             migrationBuilder.DropTable(
-                name: "Payment");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "PaymentMethod");
         }
     }
 }

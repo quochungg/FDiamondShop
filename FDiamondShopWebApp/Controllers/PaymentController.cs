@@ -1,5 +1,7 @@
-﻿using FDiamondShop.API.Helper;
+﻿using AutoMapper;
+using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
+using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -14,10 +16,12 @@ namespace FDiamondShop.API.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly APIResponse _response;
-        public PaymentController(IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+        public PaymentController(IUnitOfWork unitOfWork,IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _response = new();
+            _mapper = mapper;
         }
 
         [HttpPost("vnpay")]
@@ -44,10 +48,21 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepay")]
-        public IActionResult PaymentExecute()
+        public async Task <IActionResult> PaymentExecute()
         {
             var response = _unitOfWork.VnPayRepository.PaymentExecute(Request.Query);
-
+            PaymentDTO payment = new PaymentDTO()
+            {
+               TransactionId  = response.OrderId,              
+               PaymentMethod=response.PaymentMethod,
+               
+               
+            };
+            
+            var model=_mapper.Map<Payment>(payment);
+            await _unitOfWork.PaymentRepository.CreateAsync(model);
+            await _unitOfWork.SaveAsync();
+            
             return Ok(response);
         }
         [HttpPost("momo")]
@@ -77,6 +92,14 @@ namespace FDiamondShop.API.Controllers
         public  IActionResult PaymentExecuteMomo()
         {
             var response =_unitOfWork.MomoRepository.PaymentExecute(HttpContext.Request.Query);
+            PaymentDTO payment = new PaymentDTO()
+            {
+                TransactionId = response.OrderId,
+                PaymentMethod="Momo"               
+            };
+            var model = _mapper.Map<Payment>(payment);
+            _unitOfWork.PaymentRepository.CreateAsync(model);
+            _unitOfWork.SaveAsync();
 
             return Ok(response);
         }
