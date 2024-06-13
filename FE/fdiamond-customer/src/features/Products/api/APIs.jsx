@@ -1,11 +1,11 @@
 import axios from "axios";
-//a
+
 const API_ROOT = "https://fdiamond-api.azurewebsites.net";
 
 export const getProducts = async ({ category, searchParams }) => {
     let response;
     const queryStr = searchParams.toString();
-    const URL_str = API_ROOT + `/api/product/GetProductWithFilter?categoryName=${category}&${queryStr}`;
+    const URL_str = API_ROOT + `/api/product/GetProductWithFilter?categoryName=${category}&${queryStr}&PageSize=20`;
     const API_url = URL_str.replace(/ /g, '+');
 
     console.log(API_url);
@@ -20,15 +20,19 @@ export const getProducts = async ({ category, searchParams }) => {
 
 export const getCategory = async ({ category }) => {
     let response;
+    const URL_str = API_ROOT + `/api//category?category Name=${category}`
+    const API_url = URL_str.replace(/ /g, '+');
+
+    console.log(API_url)
+
     try {
-        response = await axios.get(API_ROOT + `/api//category?category%20name=${category}`);
+        response = await axios.get(API_url);
     } catch (error) {
         console.error("There was an error!", error);
     }
     return response;
 };
 
-//abc
 
 
 //https://fdiamond-api.azurewebsites.net/api/Product/
