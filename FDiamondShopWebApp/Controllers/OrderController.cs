@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using FDiamondShop.API.Helper;
 using MailKit.Search;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -38,7 +40,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateOrder(string userName, [FromBody] OrderDTO orderDTO)
+        public async Task<ActionResult<APIResponse>> CreateOrder(string userName, [FromBody] OrderCreateDTO createDTO)
         {
             try
             {
@@ -78,7 +80,6 @@ namespace FDiamondShop.API.Controllers
                 await _unitOfWork.OrderRepository.CreateAsync(order);
                 await _unitOfWork.SaveAsync();
                 _response.Result = _mapper.Map<OrderDTO>(order);
-
                 _response.StatusCode = HttpStatusCode.Created;
                 var paymentInfo = new PaymentInformationModel
                 {        
@@ -86,33 +87,74 @@ namespace FDiamondShop.API.Controllers
                     Name="ha duytung",
                     OrderDescription = "Thanh toan don hang",
                     OrderID="string",
-                    OrderType="string",
+                    OrderType= createDTO.PaymentMethod,
                 };
-                var paymentApiUrl = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/vnpay");
-                var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
-                
-                if (paymentResponse.IsSuccessStatusCode)
+                switch (paymentInfo.OrderType)
                 {
-                    var paymentResult = await paymentResponse.Content.ReadFromJsonAsync<APIResponse>();
-                    if (paymentResult.IsSuccess)
-                    {
-                        _response.Result = new
-                        {                           
-                            PaymentUrl = paymentResult.Result.ToString(),
-                        };
-                        return Ok(_response);
+                    case "VnPay":
+                        
+                        var paymentApiUrl = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/vnpay");
+                        var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
 
-                    }
+                        if (paymentResponse.IsSuccessStatusCode)
+                        {
+                            var paymentResult = await paymentResponse.Content.ReadFromJsonAsync<APIResponse>();
+                            if (paymentResult.IsSuccess)
+                            {
+                                _response.Result = new
+                                {
+                                    PaymentUrl = paymentResult.Result.ToString(),
+                                };
 
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages = paymentResult.ErrorMessages;
-                        return BadRequest(_response);
-                    }
+                            }
+
+                            else
+                            {
+                                _response.StatusCode = HttpStatusCode.BadRequest;
+                                _response.IsSuccess = false;
+                                _response.ErrorMessages = paymentResult.ErrorMessages;
+                                return BadRequest(_response);
+                            }
+                        }
+                        break;
+                    case "MoMo":
+                        var paymentApiUrlMomo = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/momo");
+                        var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
+
+                        if (paymentResponseMomo.IsSuccessStatusCode)
+                        {
+                            
+                            var paymentResult = await paymentResponseMomo.Content.ReadFromJsonAsync<APIResponse>();
+                            if (paymentResult.IsSuccess)
+                            {
+                                _response.Result = new
+                                {
+                                    PaymentUrl = paymentResult.Result.ToString(),
+                                };
+
+                            }
+
+                            else
+                            {
+                                _response.StatusCode = HttpStatusCode.BadRequest;
+                                _response.IsSuccess = false;
+                                _response.ErrorMessages = paymentResult.ErrorMessages;
+                                return BadRequest(_response);
+                            }
+                        }                       
+                        break;
                 }
-                    return Ok(_response);
+                CartLineDTO cartLineDTO = new CartLineDTO
+                {
+                    UserId = user.Id,
+                    OrderId = order.Id,
+                    IsOrdered = true,
+                };
+                var cartlineupdate  = _mapper.Map<CartLine>(cartLineDTO);
+                _unitOfWork.CartRepository.UpdateCartLineStatus(order);
+                await _unitOfWork.SaveAsync();
+                return Ok(_response);
+
             }
             catch (Exception ex)
             {
