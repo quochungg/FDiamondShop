@@ -1,6 +1,7 @@
 //check thua thieu s
 
 const CategoryHero = ({ categoryInfo }) => {
+    console.log('CategoryInfo renders')
     return (
         <>
             <div className="flex flex-row items-start h-[400px] bg-[#f6f6f6] pl-24 py-2 ">
