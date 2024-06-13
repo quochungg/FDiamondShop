@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FDiamondShop.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+883d0d1c658f470433d1da2c9f5214b45ff21679")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93818f0c29bde93987978e0e1bb44734686a39de")]
 [assembly: System.Reflection.AssemblyProductAttribute("FDiamondShop.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FDiamondShop.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
