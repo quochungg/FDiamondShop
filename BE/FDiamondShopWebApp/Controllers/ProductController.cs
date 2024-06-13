@@ -329,36 +329,20 @@ namespace FDiamondShop.API.Controllers
                 }
             }
             ProductList = ProductList.Where(u => u.BasePrice >= priceFrom && u.BasePrice <= priceTo);
-            switch (cateName)
+            if (cateName?.ToLower() == "diamond")
             {
-                case "Diamond":
-                    //filter by carat
-                    ProductList = ProductList.Where(u => u.ProductVariantValues
-                    .Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo));
-                    if (clarity != null)
-                    {
-                        //fliter by clarity
-                        ProductList = ProductList.Where(u => clarity.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 2).Value));
-                    }
-                    if (color != null)
-                    {
-                        //filter by color
-                        ProductList = ProductList.Where(u => color.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 1).Value));
-                    }
-                    if (cut != null)
-                    {
-                        //filter by cut
-                        ProductList = ProductList.Where(u => cut.Contains(u.ProductVariantValues.FirstOrDefault(v => v.VariantId == 3).Value));
-                    }
-                    break;
-                default:
-                    //filter by metal
-                    if (metal != null)
-                    {
-                        ProductList = ProductList.Where(u => metal.Contains(u.ProductVariantValues
-                        .FirstOrDefault(v => v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9).Value));
-                    }
-                    break;
+                ProductList = ProductList.Where(p =>
+                    p.ProductVariantValues.Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo) &&
+                    (clarity == null || p.ProductVariantValues.Any(v => v.VariantId == 2 && clarity.Contains(v.Value))) &&
+                    (color == null || p.ProductVariantValues.Any(v => v.VariantId == 1 && color.Contains(v.Value))) &&
+                    (cut == null || p.ProductVariantValues.Any(v => v.VariantId == 3 && cut.Contains(v.Value)))
+                );
+            }
+            else
+            {
+                ProductList = ProductList.Where(p =>
+                    metal == null || p.ProductVariantValues.Any(v => (v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9) && metal.Contains(v.Value))
+                );
             }
             var count = ProductList.Count();
             ProductList = ProductList
