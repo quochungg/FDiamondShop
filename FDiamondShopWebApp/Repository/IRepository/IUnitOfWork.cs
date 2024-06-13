@@ -12,7 +12,8 @@
         IMomoRepository MomoRepository { get; }
         ICartRepository CartRepository { get; }
         IDiscountRepository DiscountCodeRepository { get; }
-        IOderRepository OderRepository { get; }
+        IOrderRepository OrderRepository { get; }
+        IPaymentRepository PaymentRepository { get; }
 
 
         Task SaveAsync();

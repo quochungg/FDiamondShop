@@ -17,13 +17,14 @@ namespace FDiamondShop.API.Repository
         public IMomoRepository MomoRepository { get; }
         public IDiscountRepository DiscountCodeRepository { get; }
         public ICartRepository CartRepository { get; }
-        public IOderRepository OderRepository { get; }
+        public IOrderRepository OrderRepository { get; }
+        public IPaymentRepository PaymentRepository { get; }
 
 
         public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, 
             IProductVariantValueRepository productVariantValueRepository, IUserRepository userRepository, 
             IEmailRepository emailRepository, IDiscountRepository discountRepository, IVnPayRepository vnPayRepository, ICartRepository cartRepository,
-            IMomoRepository momoRepository,IOderRepository oderRepository)
+            IMomoRepository momoRepository,IOrderRepository orderRepository,IPaymentRepository paymentRepository)
         {
             _db = db;
             ProductRepository = productRepository;
@@ -35,7 +36,8 @@ namespace FDiamondShop.API.Repository
             DiscountCodeRepository = discountRepository;
             CartRepository = cartRepository;
             MomoRepository = momoRepository;
-            OderRepository = oderRepository;
+            OrderRepository = orderRepository;
+            PaymentRepository = paymentRepository;
         }
         public async Task SaveAsync()
         {

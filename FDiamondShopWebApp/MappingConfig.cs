@@ -32,7 +32,7 @@ namespace FDiamondShop.API
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<Order, OrderCreateDTO>().ReverseMap();
 
-
+            CreateMap<Payment, PaymentDTO>().ReverseMap();
 
 
         }
