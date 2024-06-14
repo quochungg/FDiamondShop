@@ -19,11 +19,11 @@ namespace FDiamondShop.API.Repository
         }
 
 
-        public static double ConvertVndToDollar(double vnd)
+        public static decimal ConvertVndToDollar(decimal vnd)
         {
-            var total = Math.Round(vnd / ExchangeRate, 2);
-
-            return total;
+            var total = Math.Round((double)vnd / ExchangeRate, 2);
+            var totalDecimal = (decimal)total;
+            return totalDecimal;
         }
 
         public async Task<string> CreatePaymentUrl(PaymentInformationModel model)

@@ -137,7 +137,7 @@ namespace FDiamondShop.API.Controllers
             var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
             {
                 OrderId = cl.OrderId,
-                UserId = cl.UserId,
+                
                 IsOrdered = cl.IsOrdered,
                 CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
                 {

@@ -295,14 +295,6 @@ namespace FDiamondShop.API.Migrations
                     b.Property<string>("PaymentMethod")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Payment");
-                });
-
                     b.Property<string>("TransactionId")
                         .HasColumnType("nvarchar(max)");
 

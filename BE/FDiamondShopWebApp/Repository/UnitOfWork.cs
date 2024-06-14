@@ -24,23 +24,11 @@ namespace FDiamondShop.API.Repository
         public IPaymentRepository PaymentRepository { get; }
 
 
-        public UnitOfWork(FDiamondContext db, 
-            IProductRepository productRepository, 
-            IProductImageRepository productImageRepository, 
-            IProductVariantValueRepository productVariantValueRepository, 
-            IUserRepository userRepository, 
-            IEmailRepository emailRepository, 
-            IDiscountRepository discountRepository, 
-            IVnPayRepository vnPayRepository, 
-            ICartRepository cartRepository,
-            IMomoRepository momoRepository,
-            ICategoryRepository categoryRepository,
-            IPayPalRepository payPalRepository
-            )
         public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, 
             IProductVariantValueRepository productVariantValueRepository, IUserRepository userRepository, 
             IEmailRepository emailRepository, IDiscountRepository discountRepository, IVnPayRepository vnPayRepository, ICartRepository cartRepository,
-            IMomoRepository momoRepository,IOrderRepository orderRepository,IPaymentRepository paymentRepository)
+            IMomoRepository momoRepository,IOrderRepository orderRepository,IPaymentRepository paymentRepository,ICategoryRepository categoryRepository
+            ,IPayPalRepository payPalRepository)
         {
             _db = db;
             ProductRepository = productRepository;

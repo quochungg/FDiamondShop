@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    [Migration("20240614045958_InitialMigration")]
+    [Migration("20240614110224_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -330,7 +330,7 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnName("is_deleted")
                         .HasDefaultValueSql("((0))");
 
-                    b.Property<bool?>("IsVisible")
+                    b.Property<bool>("IsVisible")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasColumnName("is_visible")

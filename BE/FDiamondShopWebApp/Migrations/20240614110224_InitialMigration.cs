@@ -292,7 +292,7 @@ namespace FDiamondShop.API.Migrations
                     quantity = table.Column<int>(type: "int", nullable: false),
                     base_price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    is_visible = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((1))"),
+                    is_visible = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "((1))"),
                     is_deleted = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((0))")
                 },
                 constraints: table =>
