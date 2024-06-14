@@ -6,11 +6,11 @@
 
         public int? OrderId { get; set; }
 
-        public Order? Order { get; set; }
+       public Order? Order { get; set; }
 
         public string UserId { get; set; }
 
-        public ApplicationUser User { get; set; }
+        //public ApplicationUser User { get; set; }
 
         public bool IsOrdered { get; set; }  = false;
 

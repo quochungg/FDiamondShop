@@ -15,6 +15,10 @@
         ICategoryRepository CategoryRepository { get; }
         IPayPalRepository PayPalRepository { get; }
         
+        IOrderRepository OrderRepository { get; }
+        IPaymentRepository PaymentRepository { get; }
+
+
         Task SaveAsync();
     }
 }

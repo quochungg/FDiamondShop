@@ -97,7 +97,7 @@ namespace FDiamondShop.API.Controllers
             var user = await _db.Users.SingleOrDefaultAsync(u => u.UserName == userName);
             var cartLines = await _db.CartLines
                                           .Include(cl => cl.CartLineItems)
-                                          .Where(cl => cl.UserId == user.Id)
+                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
                                           .ToListAsync();
 
             var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
@@ -121,6 +121,40 @@ namespace FDiamondShop.API.Controllers
             }
             _response.IsSuccess = true;
             _response.StatusCode= HttpStatusCode.OK;
+            _response.Result = cartLineDTOs;
+            return Ok(_response);
+        }
+        [HttpGet("GetAllCartLinesOrdered")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllCartLinesOrdered(string userName)
+        {
+            var user = await _db.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+            var cartLines = await _db.CartLines
+                                          .Include(cl => cl.CartLineItems)
+                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == true)
+                                          .ToListAsync();
+
+            var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
+            {
+                OrderId = cl.OrderId,
+                
+                IsOrdered = cl.IsOrdered,
+                CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
+                {
+                    ProductId = cli.ProductId,
+                    RingSize = cli.RingSize,
+                    Price = cli.Price
+                }).ToList()
+            }).ToList();
+            if (cartLineDTOs == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("Empty Cart here !");
+                return NotFound();
+            }
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
             _response.Result = cartLineDTOs;
             return Ok(_response);
         }

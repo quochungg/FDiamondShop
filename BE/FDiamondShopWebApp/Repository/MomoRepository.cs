@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using RestSharp;
 using Newtonsoft.Json.Linq;
+using Azure;
 namespace FDiamondShop.API.Repository
 {
     public class MomoRepository : IMomoRepository
@@ -68,10 +69,11 @@ namespace FDiamondShop.API.Repository
             };          
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
             var response = await client.ExecuteAsync(request);
-            return JsonConvert.DeserializeObject(response.Content);
-            
-
-        }
+            var jsonResponse = JsonConvert.DeserializeObject<JObject>(response.Content);
+            string payUrl = jsonResponse["payUrl"].ToString();
+            Console.WriteLine(payUrl);
+            return payUrl;          
+        }       
         public  MomoExecuteResponseModel  PaymentExecute(IQueryCollection collection)
         {
             var amount = collection.First(s => s.Key == "amount").Value;

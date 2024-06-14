@@ -1,5 +1,6 @@
 ﻿using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
+using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 
 namespace FDiamondShop.API.Repository
@@ -22,5 +23,6 @@ namespace FDiamondShop.API.Repository
         {
             _db.RemoveRange(cartLineItems);
         }
+        
     }
 }

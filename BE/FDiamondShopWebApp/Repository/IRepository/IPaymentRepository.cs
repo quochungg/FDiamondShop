@@ -2,7 +2,8 @@
 
 namespace FDiamondShop.API.Repository.IRepository
 {
-    public interface IOderRepository : IRepository<Order>
+    public interface IPaymentRepository : IRepository<Payment>
     {
+       
     }
 }

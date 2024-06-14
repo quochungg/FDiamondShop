@@ -31,6 +31,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // Configure Email Settings
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailRepository, EmailRepository>();
+builder.Services.AddHttpClient();
 
 // Register Repositories
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -44,6 +45,8 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IMomoRepository, MomoRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IPayPalRepository, PayPalRepository>();
+builder.Services.AddScoped<IOrderRepository , OrderRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
