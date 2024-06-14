@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 node_modules/
+
+obj/
+bin/

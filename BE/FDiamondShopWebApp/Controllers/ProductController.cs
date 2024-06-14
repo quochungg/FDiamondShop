@@ -307,7 +307,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Metal")] string metal = null
             )
         {
-            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
+            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
 
             if (cateName != null)
             {
@@ -351,6 +351,16 @@ namespace FDiamondShop.API.Controllers
 
             var productDTOList = _mapper.Map<List<ProductDTO>>(ProductList);
             
+            foreach (var product in productDTOList)
+            {
+                product.SubCategoryName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).SubCategory.SubcategoryName;
+                foreach (var variant in product.ProductVariantValues)
+                {
+                    variant.VariantName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
+                }
+            }
+
+            //Pagination
             var totalPages = (int)Math.Ceiling(count / (double)pageSize);
             var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, totalPages);
             try
