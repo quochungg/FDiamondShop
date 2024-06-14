@@ -78,25 +78,14 @@ namespace FDiamondShop.API.Controllers
                     if (discount != null)
                     {
                         orderDTO.DiscountId = discount.DiscountId;
+                        orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);                      
                     }
                 }
 
                 var order = _mapper.Map<Order>(orderDTO);
                 await _unitOfWork.OrderRepository.CreateAsync(order);
-                await _unitOfWork.SaveAsync();
-
-                var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id));
-                foreach (var item in cartLineupdate)
-                {
-                    item.UserId = user.Id;
-                    item.OrderId = order.Id;
-                    item.IsOrdered = true;
-                }
-
-                await _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();               
                 _response.Result = _mapper.Map<OrderDTO>(order);
-
-                await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.Created;
                 var paymentInfo = new PaymentInformationModel
                 {
