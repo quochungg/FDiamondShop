@@ -24,6 +24,7 @@ namespace FDiamondShop.API.Repository
         {
             _db.Update(order);
         }
+        
     }
 
 }

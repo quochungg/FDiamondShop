@@ -8,6 +8,7 @@ using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Net;
 
 namespace FDiamondShop.API.Controllers
@@ -81,10 +82,16 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
             var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
             && cartLineupdate.IsOrdered == false).ToList();
-            foreach (var item in cartLineupdate)
+            foreach (var line in cartLineupdate)
             {
-                item.OrderId = order.Id;
-                item.IsOrdered = true;
+                line.OrderId = order.Id;
+                line.IsOrdered = true;
+                var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
+                foreach (var item in cartlineItems)
+                {
+                    var product = _db.Products.Where(product=>product.ProductId == item.ProductId).FirstOrDefault();
+                    product.Quantity--;
+                }
             }
             await _unitOfWork.SaveAsync();
             return Ok(response);
@@ -138,10 +145,16 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
             var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
             && cartLineupdate.IsOrdered == false).ToList();
-            foreach (var item in cartLineupdate)
+            foreach (var line in cartLineupdate)
             {
-                item.OrderId = order.Id;
-                item.IsOrdered = true;
+                line.OrderId = order.Id;
+                line.IsOrdered = true;
+                var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
+                foreach (var item in cartlineItems)
+                {
+                    var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
+                    product.Quantity--;
+                }
             }
             await _unitOfWork.SaveAsync();
             return Ok(response);

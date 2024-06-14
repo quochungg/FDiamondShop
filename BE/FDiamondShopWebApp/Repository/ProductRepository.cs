@@ -4,6 +4,7 @@ using FDiamondShop.API.Repository.IRepository;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Models.DTO;
 using Microsoft.EntityFrameworkCore;
+using FDiamondShop.API.Controllers;
 
 namespace FDiamondShop.API.Repository
 {
@@ -30,5 +31,6 @@ namespace FDiamondShop.API.Repository
             var product = await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages).FirstOrDefaultAsync(u => u.ProductId == dto.ProductId) ?? throw new Exception("Product Not Found!");
             return product ?? new Product();
         }
+        
     }
 }

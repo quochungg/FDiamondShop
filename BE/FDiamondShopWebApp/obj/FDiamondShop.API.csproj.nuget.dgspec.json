@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Code\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj": {}
+    "D:\\SE182972\\Summer2024\\SWP\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj": {}
   },
   "projects": {
-    "D:\\Code\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj": {
+    "D:\\SE182972\\Summer2024\\SWP\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Code\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj",
+        "projectUniqueName": "D:\\SE182972\\Summer2024\\SWP\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj",
         "projectName": "FDiamondShop.API",
-        "projectPath": "D:\\Code\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj",
-        "packagesPath": "C:\\Users\\Tung soi\\.nuget\\packages\\",
-        "outputPath": "D:\\Code\\FDiamondShop\\BE\\FDiamondShopWebApp\\obj\\",
+        "projectPath": "D:\\SE182972\\Summer2024\\SWP\\FDiamondShop\\BE\\FDiamondShopWebApp\\FDiamondShop.API.csproj",
+        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+        "outputPath": "D:\\SE182972\\Summer2024\\SWP\\FDiamondShop\\BE\\FDiamondShopWebApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Tung soi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -143,24 +143,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[7.0.18, 7.0.18]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[7.0.18, 7.0.18]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[7.0.18, 7.0.18]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[7.0.18, 7.0.18]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
