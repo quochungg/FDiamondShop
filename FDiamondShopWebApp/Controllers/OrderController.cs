@@ -8,10 +8,6 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using FDiamondShop.API.Helper;
-using MailKit.Search;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-
 namespace FDiamondShop.API.Controllers
 {
     [Route("api/Order")]
@@ -48,7 +44,7 @@ namespace FDiamondShop.API.Controllers
                 var user = _userManager.Users.First(u => u.UserName == userName);
                 var cartLines = await _db.CartLines
                                           .Include(cl => cl.CartLineItems)
-                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
+                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false && cl.IsOrdered ==false)
                                           .ToListAsync();
                 if(cartLines.Count == 0)
                 {
@@ -86,15 +82,7 @@ namespace FDiamondShop.API.Controllers
                 await _unitOfWork.OrderRepository.CreateAsync(order);
                 await _unitOfWork.SaveAsync();
 
-                var cartLineupdate =  _db.CartLines.Where(cartLineupdate=>cartLineupdate.UserId.Equals(user.Id));
-                foreach (var item in cartLineupdate)
-                {
-                    item.UserId = user.Id;
-                    item.OrderId = order.Id;
-                    item.IsOrdered = true;
-                }
                 
-                await _unitOfWork.SaveAsync();
                 _response.Result = _mapper.Map<OrderDTO>(order);
                
                 await _unitOfWork.SaveAsync();
@@ -106,10 +94,11 @@ namespace FDiamondShop.API.Controllers
                     OrderDescription = "Thanh toan don hang",
                     OrderID="string",
                     OrderType= createDTO.PaymentMethod,
+
                 };
-                switch (paymentInfo.OrderType)
+                switch (paymentInfo.OrderType.ToLower())
                 {
-                    case "VnPay":
+                    case "vnpay":
                         
                         var paymentApiUrl = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/vnpay");
                         var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
@@ -128,6 +117,8 @@ namespace FDiamondShop.API.Controllers
 
                             else
                             {
+                                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                                await _unitOfWork.SaveAsync();
                                 _response.StatusCode = HttpStatusCode.BadRequest;
                                 _response.IsSuccess = false;
                                 _response.ErrorMessages = paymentResult.ErrorMessages;
@@ -135,7 +126,9 @@ namespace FDiamondShop.API.Controllers
                             }
                         }
                         break;
-                    case "MoMo":
+                    case "momo":
+                        int amountVND=Convert.ToInt32(order.TotalPrice*1000);
+                        paymentInfo.Amount = amountVND;
                         var paymentApiUrlMomo = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/momo");
                         var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
 
@@ -154,6 +147,8 @@ namespace FDiamondShop.API.Controllers
 
                             else
                             {
+                                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                                await _unitOfWork.SaveAsync();
                                 _response.StatusCode = HttpStatusCode.BadRequest;
                                 _response.IsSuccess = false;
                                 _response.ErrorMessages = paymentResult.ErrorMessages;

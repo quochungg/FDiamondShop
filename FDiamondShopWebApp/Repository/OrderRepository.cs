@@ -15,7 +15,15 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
-       
+
+        public async Task RemoveOrderAsync(Order order)
+        {
+            _db.Remove(order);
+        }
+        public async Task UpdateOrderAsync(Order order)
+        {
+            _db.Update(order);
+        }
     }
 
 }

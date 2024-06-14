@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    [Migration("20240613094727_InitialMigration")]
+    [Migration("20240614045958_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />

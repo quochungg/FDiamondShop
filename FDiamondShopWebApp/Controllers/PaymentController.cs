@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using FDiamondShop.API.Data;
 using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -17,11 +19,15 @@ namespace FDiamondShop.API.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly APIResponse _response;
         private readonly IMapper _mapper;
-        public PaymentController(IUnitOfWork unitOfWork,IMapper mapper)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly FDiamondContext _db;
+        public PaymentController(IUnitOfWork unitOfWork,IMapper mapper,UserManager<ApplicationUser> userManager,FDiamondContext db)
         {
             _unitOfWork = unitOfWork;
             _response = new();
             _mapper = mapper;
+            _userManager = userManager;
+            _db = db;
         }
 
         [HttpPost("vnpay")]
@@ -50,19 +56,37 @@ namespace FDiamondShop.API.Controllers
         [HttpGet("executepay")]
         public async Task <IActionResult> PaymentExecute()
         {
+            var user = _userManager.Users.First();
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.VnPayRepository.PaymentExecute(Request.Query);
+            if(response.PaymentId == "0")
+            {
+                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                await _unitOfWork.SaveAsync();
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Payment failed");
+                return BadRequest(_response);
+            }
+            
             PaymentDTO payment = new PaymentDTO()
             {
                TransactionId  = response.OrderId,              
-               PaymentMethod=response.PaymentMethod,
-               
-               
+               PaymentMethod=response.PaymentMethod,             
             };
-            
+
             var model=_mapper.Map<Payment>(payment);
             await _unitOfWork.PaymentRepository.CreateAsync(model);
             await _unitOfWork.SaveAsync();
-            
+            order.PaymentId = model.PaymentId;
+            await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
+            var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
+            && cartLineupdate.IsOrdered == false).ToList();
+            foreach (var item in cartLineupdate)
+            {
+                item.OrderId = order.Id;
+                item.IsOrdered = true;
+            }
+            await _unitOfWork.SaveAsync();
             return Ok(response);
         }
         [HttpPost("momo")]
@@ -89,18 +113,37 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepayMomo")]
-        public  IActionResult PaymentExecuteMomo()
+        public async Task <IActionResult> PaymentExecuteMomo()
         {
+            var user = _userManager.Users.First();
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response =_unitOfWork.MomoRepository.PaymentExecute(HttpContext.Request.Query);
+            if (response.OrderId == "0")
+            {
+                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                await _unitOfWork.SaveAsync();
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Payment failed");
+                return BadRequest(_response);
+            }
             PaymentDTO payment = new PaymentDTO()
             {
                 TransactionId = response.OrderId,
                 PaymentMethod="Momo"               
             };
             var model = _mapper.Map<Payment>(payment);
-            _unitOfWork.PaymentRepository.CreateAsync(model);
-            _unitOfWork.SaveAsync();
-
+            await _unitOfWork.PaymentRepository.CreateAsync(model);
+            await _unitOfWork.SaveAsync();
+            order.PaymentId = model.PaymentId;
+            await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
+            var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
+            && cartLineupdate.IsOrdered == false).ToList();
+            foreach (var item in cartLineupdate)
+            {
+                item.OrderId = order.Id;
+                item.IsOrdered = true;
+            }
+            await _unitOfWork.SaveAsync();
             return Ok(response);
         }
     }
