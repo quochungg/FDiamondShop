@@ -295,7 +295,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "SubcategoryName")] string subCate,
             [FromQuery(Name = "OrderBy")] string orderBy = "ProductName", 
             [FromQuery(Name = "SortBy")] string sortBy = "asc", 
-            [FromQuery(Name = "PageSize")] int pageSize = 3, 
+            [FromQuery(Name = "PageSize")] int pageSize = 20, 
             [FromQuery(Name = "PageNumber")] int pageNumber = 1, 
             [FromQuery(Name = "Clarity")] string clarity = null,
             [FromQuery(Name = "Cut")] string cut = null,
