@@ -132,10 +132,11 @@ namespace FDiamondShop.API.Controllers
                 var productDTO = _mapper.Map<ProductDTO>(product);
                 
                 productDTO.SubCategoryName = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result.SubCategory.SubcategoryName;
-                //foreach (var variant in product.ProductVariantValues)
-                //{
-                //    variant.VariantName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
-                //}
+                foreach (var variant in productDTO.ProductVariantValues)
+                {
+                    variant.VariantName = productDTO.SubCategoryName = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result
+                    .ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
+                }
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = productDTO;
                 return Ok(_response);
