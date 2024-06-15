@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    [Migration("20240614110224_InitialMigration")]
+    [Migration("20240615011839_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -243,20 +243,17 @@ namespace FDiamondShop.API.Migrations
 
             modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("order_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<decimal>("BasePrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("DiscountCodeDiscountId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DiscountId")
+                    b.Property<int?>("DiscountCodeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
@@ -273,9 +270,9 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("OrderId");
 
-                    b.HasIndex("DiscountCodeDiscountId");
+                    b.HasIndex("DiscountCodeId");
 
                     b.HasIndex("PaymentId");
 
@@ -623,7 +620,7 @@ namespace FDiamondShop.API.Migrations
                 {
                     b.HasOne("FDiamondShop.API.Models.DiscountCode", "DiscountCode")
                         .WithMany("Orders")
-                        .HasForeignKey("DiscountCodeDiscountId");
+                        .HasForeignKey("DiscountCodeId");
 
                     b.HasOne("FDiamondShop.API.Models.Payment", "Payment")
                         .WithMany()

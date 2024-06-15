@@ -77,7 +77,7 @@ namespace FDiamondShop.API.Controllers
                     var discount = _db.DiscountCodes.SingleOrDefault(u => u.DiscountCodeName == createDTO.DiscountName);
                     if (discount != null)
                     {
-                        orderDTO.DiscountId = discount.DiscountId;
+                        orderDTO.DiscountCodeId = discount.DiscountId;
                         orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);                      
                     }
                 }

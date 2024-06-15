@@ -4,7 +4,7 @@ namespace FDiamondShop.API.Models
 {
     public class Order
     {
-        public int Id { get; set; }
+        public int OrderId { get; set; }
 
         public string UserId { get; set; }
 
@@ -16,9 +16,10 @@ namespace FDiamondShop.API.Models
         public decimal BasePrice { get; set; }
 
         public decimal TotalPrice { get; set; }
-        public int? DiscountId { get; set; }
+        [ForeignKey("DiscountCode")]
+        public int? DiscountCodeId { get; set; }
 
-        public DiscountCode? DiscountCode { get; set; }
+        public DiscountCode DiscountCode { get; set; }
 
         public ApplicationUser User { get; set; }
 

@@ -84,7 +84,7 @@ namespace FDiamondShop.API.Controllers
             && cartLineupdate.IsOrdered == false).ToList();
             foreach (var line in cartLineupdate)
             {
-                line.OrderId = order.Id;
+                line.OrderId = order.OrderId;
                 line.IsOrdered = true;
                 var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
                 foreach (var item in cartlineItems)
@@ -147,7 +147,7 @@ namespace FDiamondShop.API.Controllers
             && cartLineupdate.IsOrdered == false).ToList();
             foreach (var line in cartLineupdate)
             {
-                line.OrderId = order.Id;
+                line.OrderId = order.OrderId;
                 line.IsOrdered = true;
                 var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
                 foreach (var item in cartlineItems)
