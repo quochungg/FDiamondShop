@@ -297,6 +297,7 @@ namespace FDiamondShop.API.Controllers
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetProductFiltering(
             [FromQuery(Name = "CategoryName")] string cateName, 
             [FromQuery(Name = "SubcategoryName")] string subCate,
@@ -314,31 +315,31 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Metal")] string metal = null
             )
         {
-            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
+            IEnumerable<Product> productList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
 
             if (cateName != null)
             {
-                ProductList = ProductList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(cateName.ToLower()));
+                productList = productList.Where(u => u.SubCategory.Category.CategoryName.ToLower().Contains(cateName.ToLower()));
             }
             if (subCate != null)
             {
-                ProductList = ProductList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(subCate.ToLower()));
+                productList = productList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(subCate.ToLower()));
             }
             if (orderBy != null)
             {
                 if (sortBy.ToLower() == "desc")
                 {
-                    ProductList = ProductList.OrderByDescending(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                    productList = productList.OrderByDescending(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
                 }
                 else
                 {
-                    ProductList = ProductList.OrderBy(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
+                    productList = productList.OrderBy(u => u.GetType().GetProperty(orderBy).GetValue(u, null));
                 }
             }
-            ProductList = ProductList.Where(u => u.BasePrice >= priceFrom && u.BasePrice <= priceTo);
+            productList = productList.Where(u => u.BasePrice >= priceFrom && u.BasePrice <= priceTo);
             if (cateName?.ToLower() == "diamond")
             {
-                ProductList = ProductList.Where(p =>
+                productList = productList.Where(p =>
                     p.ProductVariantValues.Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo) &&
                     (clarity == null || p.ProductVariantValues.Any(v => v.VariantId == 2 && clarity.Contains(v.Value))) &&
                     (color == null || p.ProductVariantValues.Any(v => v.VariantId == 1 && color.Contains(v.Value))) &&
@@ -347,23 +348,30 @@ namespace FDiamondShop.API.Controllers
             }
             else
             {
-                ProductList = ProductList.Where(p =>
+                productList = productList.Where(p =>
                     metal == null || p.ProductVariantValues.Any(v => (v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9) && metal.Contains(v.Value))
                 );
             }
-            var count = ProductList.Count();
-            ProductList = ProductList
+            if(productList.Count() == 0)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Product not found" };
+                return NotFound(_response);
+            }
+            var count = productList.Count();
+            productList = productList
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize);
 
-            var productDTOList = _mapper.Map<List<ProductDTO>>(ProductList);
+            var productDTOList = _mapper.Map<List<ProductDTO>>(productList);
             
             foreach (var product in productDTOList)
             {
-                product.SubCategoryName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).SubCategory.SubcategoryName;
+                product.SubCategoryName = productList.FirstOrDefault(p => p.ProductId == product.ProductId).SubCategory.SubcategoryName;
                 foreach (var variant in product.ProductVariantValues)
                 {
-                    variant.VariantName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
+                    variant.VariantName = productList.FirstOrDefault(p => p.ProductId == product.ProductId).ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
                 }
             }
 
