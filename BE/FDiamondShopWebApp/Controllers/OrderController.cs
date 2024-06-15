@@ -47,7 +47,7 @@ namespace FDiamondShop.API.Controllers
                 var cartLines = await _db.CartLines
                                           .Include(cl => cl.CartLineItems)
                                           .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
-                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false && cl.IsOrdered == false)
+                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false && cl.IsOrdered == false) //delete this line
                                           .ToListAsync();
                 if (cartLines.Count == 0)
                 {
@@ -64,6 +64,8 @@ namespace FDiamondShop.API.Controllers
                     }
 
                 }
+                //totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
+                //      .Sum(cartLineItem => cartLineItem.Price);
 
                 OrderDTO orderDTO = new()
                 {
@@ -80,6 +82,7 @@ namespace FDiamondShop.API.Controllers
                         orderDTO.DiscountCodeId = discount.DiscountId;
                         orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);                      
                     }
+                    //if discount == null => return BadRequest
                 }
 
                 var order = _mapper.Map<Order>(orderDTO);
@@ -92,17 +95,17 @@ namespace FDiamondShop.API.Controllers
                     Amount = order.TotalPrice * 1000,
                     Name = user.UserName,
                     OrderDescription = "Thanh toan don hang",
-                    OrderID = "string",
+                    OrderID = "",
                     OrderType = createDTO.PaymentMethod,
 
                 };
                 
                 switch (paymentInfo.OrderType.ToLower())
                 {
-                    
+                   
                     case "vnpay":
-
-                        var paymentApiUrl = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/vnpay");
+                        //sua link tren swagger
+                        var paymentApiUrl = new Uri(new Uri("https://fdiamond-api.azurewebsites.net/index.html"), "/api/checkout/vnpay");
                         var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
                         if (paymentResponse.IsSuccessStatusCode)
                         {
@@ -130,7 +133,7 @@ namespace FDiamondShop.API.Controllers
                     case "momo":
                         int amountVND = Convert.ToInt32(order.TotalPrice * 1000);
                         paymentInfo.Amount = amountVND;
-                        var paymentApiUrlMomo = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/momo");
+                        var paymentApiUrlMomo = new Uri(new Uri("https://fdiamond-api.azurewebsites.net/index.html"), "/api/checkout/momo");
                         var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
 
                         if (paymentResponseMomo.IsSuccessStatusCode)
