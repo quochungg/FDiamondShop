@@ -159,6 +159,35 @@ namespace FDiamondShop.API.Controllers
                             }
                         }
                         break;
+                    case "paypal":
+                         amountVND = Convert.ToInt32(order.TotalPrice * 1000);
+                        paymentInfo.Amount = amountVND;
+                        var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/PayPal");
+                        var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
+
+                        if (paymentResponsePaypal.IsSuccessStatusCode)
+                        {
+
+                            var paymentResult = await paymentResponsePaypal.Content.ReadFromJsonAsync<APIResponse>();
+                            if (paymentResult.IsSuccess)
+                            {
+                                _response.Result = new
+                                {
+                                    PaymentUrl = paymentResult.Result.ToString(),
+                                };
+                            }
+
+                            else
+                            {
+                                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                                await _unitOfWork.SaveAsync();
+                                _response.StatusCode = HttpStatusCode.BadRequest;
+                                _response.IsSuccess = false;
+                                _response.ErrorMessages = paymentResult.ErrorMessages;
+                                return BadRequest(_response);
+                            }
+                        }
+                        break;
                 }
 
                 await _unitOfWork.SaveAsync();
