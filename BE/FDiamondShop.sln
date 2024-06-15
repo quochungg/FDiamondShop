@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FDiamondShop.API", "FDiamondShopWebApp\FDiamondShop.API.csproj", "{3D2FDA58-D721-48D0-89FC-2045F51F8603}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnit", "xUnit\xUnit.csproj", "{0C5C720E-8075-453E-B5F3-220355C85FA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FDiamondShop.Test", "FDiamondShop.Test\FDiamondShop.Test.csproj", "{74260E5C-D23B-4AFA-9226-705CDB227099}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{3D2FDA58-D721-48D0-89FC-2045F51F8603}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D2FDA58-D721-48D0-89FC-2045F51F8603}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D2FDA58-D721-48D0-89FC-2045F51F8603}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C5C720E-8075-453E-B5F3-220355C85FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C5C720E-8075-453E-B5F3-220355C85FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C5C720E-8075-453E-B5F3-220355C85FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C5C720E-8075-453E-B5F3-220355C85FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74260E5C-D23B-4AFA-9226-705CDB227099}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74260E5C-D23B-4AFA-9226-705CDB227099}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74260E5C-D23B-4AFA-9226-705CDB227099}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74260E5C-D23B-4AFA-9226-705CDB227099}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
