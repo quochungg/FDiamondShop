@@ -1,6 +1,3 @@
-using FDiamondShop.API.Models;
-using FDiamondShop.API.Models.DTO;
-using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
