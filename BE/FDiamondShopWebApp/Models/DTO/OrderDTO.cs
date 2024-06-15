@@ -9,7 +9,7 @@
 
         public decimal TotalPrice { get; set; }
 
-        public int? DiscountId { get; set; }
+        public int? DiscountCodeId { get; set; }
 
     }
 }

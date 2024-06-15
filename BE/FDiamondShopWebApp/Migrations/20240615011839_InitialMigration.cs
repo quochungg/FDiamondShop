@@ -258,8 +258,7 @@ namespace FDiamondShop.API.Migrations
                     PaymentId = table.Column<int>(type: "int", nullable: true),
                     BasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DiscountId = table.Column<int>(type: "int", nullable: true),
-                    DiscountCodeDiscountId = table.Column<int>(type: "int", nullable: true)
+                    DiscountCodeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -270,8 +269,8 @@ namespace FDiamondShop.API.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Orders_DiscountCodes_DiscountCodeDiscountId",
-                        column: x => x.DiscountCodeDiscountId,
+                        name: "FK_Orders_DiscountCodes_DiscountCodeId",
+                        column: x => x.DiscountCodeId,
                         principalTable: "DiscountCodes",
                         principalColumn: "discount_id");
                     table.ForeignKey(
@@ -449,9 +448,9 @@ namespace FDiamondShop.API.Migrations
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_DiscountCodeDiscountId",
+                name: "IX_Orders_DiscountCodeId",
                 table: "Orders",
-                column: "DiscountCodeDiscountId");
+                column: "DiscountCodeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_PaymentId",

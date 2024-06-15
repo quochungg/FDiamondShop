@@ -132,8 +132,8 @@ namespace FDiamondShop.API.Data
 
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.HasKey(o => o.Id);
-                entity.Property(o => o.Id).HasColumnName("order_id");
+                entity.HasKey(o => o.OrderId);
+                entity.Property(o => o.OrderId).HasColumnName("order_id");
                 entity.Property(o => o.OrderDate).HasColumnName("order_date");
                 entity.Property(o => o.UserId).HasColumnName("user_id");
                 entity.HasOne(o => o.User)
