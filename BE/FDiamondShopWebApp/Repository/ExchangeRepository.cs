@@ -15,7 +15,8 @@ namespace FDiamondShop.API.Repository
         {
             string url = "https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx";
             var response = await _httpClient.GetStringAsync(url);
-
+            Console.WriteLine(response);
+            response = response.Replace(",", "");
             var serializer = new XmlSerializer(typeof(ExrateList));
             ExrateList exrateList;
             using (var reader = new StringReader(response))
