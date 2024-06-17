@@ -10,6 +10,7 @@ namespace FDiamondShop.API.Repository
         public IProductRepository ProductRepository { get; }
         public IProductImageRepository ProductImageRepository { get; }
         public IProductVariantValueRepository ProductVariantValueRepository { get; }
+        public ISubCategoryRepository SubCategoryRepository { get; }
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
         public IDiscountRepository DiscountRepository { get; }
@@ -19,13 +20,12 @@ namespace FDiamondShop.API.Repository
         public ICartRepository CartRepository { get; }
         public IPayPalRepository PayPalRepository { get; }
         public ICategoryRepository CategoryRepository { get; }
-
         public IOrderRepository OrderRepository { get; }
         public IPaymentRepository PaymentRepository { get; }
 
 
         public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, 
-            IProductVariantValueRepository productVariantValueRepository, IUserRepository userRepository, 
+            IProductVariantValueRepository productVariantValueRepository, ISubCategoryRepository subCategoryRepository, IUserRepository userRepository, 
             IEmailRepository emailRepository, IDiscountRepository discountRepository, IVnPayRepository vnPayRepository, ICartRepository cartRepository,
             IMomoRepository momoRepository,IOrderRepository orderRepository,IPaymentRepository paymentRepository,ICategoryRepository categoryRepository
             ,IPayPalRepository payPalRepository)
@@ -34,6 +34,7 @@ namespace FDiamondShop.API.Repository
             ProductRepository = productRepository;
             ProductImageRepository = productImageRepository;
             ProductVariantValueRepository = productVariantValueRepository;
+            SubCategoryRepository = subCategoryRepository;
             UserRepository = userRepository;
             EmailRepository = emailRepository;
             VnPayRepository = vnPayRepository;

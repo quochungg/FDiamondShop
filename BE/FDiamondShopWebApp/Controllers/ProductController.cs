@@ -130,7 +130,8 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var productDTO = _mapper.Map<ProductDTO>(product);
-                
+                productDTO.CategoryName = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result.SubCategory.Category.CategoryName;
+                productDTO.CategoryId = _unitOfWork.SubCategoryRepository.GetAsync(s => s.SubCategoryId == product.SubCategoryId).Result.CategoryId;
                 productDTO.SubCategoryName = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result.SubCategory.SubcategoryName;
                 foreach (var variant in productDTO.ProductVariantValues)
                 {
@@ -352,17 +353,18 @@ namespace FDiamondShop.API.Controllers
                     metal == null || p.ProductVariantValues.Any(v => (v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9) && metal.Contains(v.Value))
                 );
             }
-            if(productList.Count() == 0)
+            
+            var count = productList.Count();
+            productList = productList
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize);
+            if (!productList.Any())
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Product not found" };
                 return NotFound(_response);
             }
-            var count = productList.Count();
-            productList = productList
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize);
 
             var productDTOList = _mapper.Map<List<ProductDTO>>(productList);
             
