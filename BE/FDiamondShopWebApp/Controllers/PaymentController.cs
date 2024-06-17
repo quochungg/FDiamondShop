@@ -183,10 +183,43 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepayPayPal")]
-        public IActionResult PaymentExecutePayPal()
+        public async Task< IActionResult> PaymentExecutePayPal()
         {
+            var user = _userManager.Users.First();
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
-
+            if (response.OrderId == "0")
+            {
+                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                await _unitOfWork.SaveAsync();
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Payment failed");
+                return BadRequest(_response);
+            }
+            PaymentDTO payment = new PaymentDTO()
+            {
+                TransactionId = response.OrderId,
+                PaymentMethod = "PayPal"
+            };
+            var model = _mapper.Map<Payment>(payment);
+            await _unitOfWork.PaymentRepository.CreateAsync(model);
+            await _unitOfWork.SaveAsync();
+            order.PaymentId = model.PaymentId;
+            await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
+            var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
+            && cartLineupdate.IsOrdered == false).ToList();
+            foreach (var line in cartLineupdate)
+            {
+                line.OrderId = order.OrderId;
+                line.IsOrdered = true;
+                var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
+                foreach (var item in cartlineItems)
+                {
+                    var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
+                    product.Quantity--;
+                }
+            }
+            await _unitOfWork.SaveAsync();
             return Ok(response);
         }
     }
