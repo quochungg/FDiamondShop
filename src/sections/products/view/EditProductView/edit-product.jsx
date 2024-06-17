@@ -140,8 +140,26 @@ const EditProductPage = () => {
 
     // Filter out unnecessary fields
     try {
-      const productFileUrls = await uploadFiles(product.productImages);
-      const GIAFileUrls = await uploadFiles(product.GIAImages);
+      const newProductFiles = product.productImages.filter((file) => !file.url);
+      const newGIAFiles = product.GIAImages.filter((file) => !file.url);
+
+      const productFileUrls = await uploadFiles(newProductFiles);
+      const GIAFileUrls = await uploadFiles(newGIAFiles);
+
+      const allProductFiles = [
+        ...product.productImages
+          .filter((file) => file.url)
+          .map((file) => ({ imageUrl: file.url, isGia: false })),
+        ...productFileUrls.map((url) => ({ imageUrl: url, isGia: false })),
+      ];
+
+      const allGIAFiles = [
+        ...product.GIAImages.filter((file) => file.url).map((file) => ({
+          imageUrl: file.url,
+          isGia: true,
+        })),
+        ...GIAFileUrls.map((url) => ({ imageUrl: url, isGia: true })),
+      ];
 
       const productVariantValues = product.productVariantValues.map((variant) => ({
         variantId: variant.variantId,
@@ -150,10 +168,7 @@ const EditProductPage = () => {
 
       const payload = {
         ...product,
-        productImages: [
-          ...productFileUrls.map((url) => ({ imageUrl: url, isGia: false })),
-          ...GIAFileUrls.map((url) => ({ imageUrl: url, isGia: true })),
-        ],
+        productImages: [...allProductFiles, ...allGIAFiles],
         productVariantValues,
       };
 

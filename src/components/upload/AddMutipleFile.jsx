@@ -54,12 +54,12 @@ function AddMutipleFile({ onImageSelect, initialFiles }) {
   const handleChange = ({ fileList: newFileList }) => {
     setFileList(
       newFileList.map((file) => {
-        if (file.originFileObj) {
+        if (!file.originFileObj && file.url) {
           return file;
         }
         return {
           ...file,
-          originFileObj: new File([file], file.name, { type: file.type }),
+          originFileObj: file.originFileObj || new File([file], file.name, { type: file.type }),
         };
       })
     );
@@ -85,10 +85,15 @@ function AddMutipleFile({ onImageSelect, initialFiles }) {
   );
 
   const handleUpload = async ({ file, onSuccess, onError }) => {
+    if (file.url) {
+      onSuccess(null, file);
+      return;
+    }
+
     try {
       const downloadURL = await uploadFile(file);
       onSuccess(null, file);
-      file.url = downloadURL; // Set URL for preview
+      file.url = downloadURL; // Đặt URL cho xem trước
       setFileList((prevList) => prevList.map((item) => (item.uid === file.uid ? file : item)));
     } catch (error) {
       onError(error);

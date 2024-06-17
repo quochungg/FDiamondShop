@@ -61,7 +61,7 @@ export default function ProductsView() {
 
   const handleClickAdd = () => {
     // Điều hướng đến một đường dẫn mới
-    navigate('/new');
+    navigate('/products/new');
   };
 
   useEffect(() => {

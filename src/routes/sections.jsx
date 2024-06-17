@@ -33,7 +33,7 @@ export default function Router() {
         { path: 'category', element: <CategoriesPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'voucher', element: <VoucherPage /> },
-        { path: 'new', element: <NewProductPage /> },
+        { path: '/products/new', element: <NewProductPage /> },
         { path: '/edit-product/:id', element: <EditProductPage /> },
       ],
     },

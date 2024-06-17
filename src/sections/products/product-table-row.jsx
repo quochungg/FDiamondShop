@@ -60,7 +60,7 @@ export default function ProductTableRow({
         </TableCell> */}
         <TableCell align="center">{productId}</TableCell>
 
-        <TableCell align="center">{productName}</TableCell>
+        <TableCell align="left">{productName}</TableCell>
 
         <TableCell align="center">{basePrice}</TableCell>
         <TableCell align="center">{quantity}</TableCell>
