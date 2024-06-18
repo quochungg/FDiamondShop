@@ -13,7 +13,6 @@ namespace FDiamondShop.API.Repository
         public ISubCategoryRepository SubCategoryRepository { get; }
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
-        public IDiscountRepository DiscountRepository { get; }
         public IVnPayRepository VnPayRepository { get; }        
         public IMomoRepository MomoRepository { get; }
         public IDiscountRepository DiscountCodeRepository { get; }

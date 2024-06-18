@@ -1,5 +1,6 @@
 ﻿using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace FDiamondShop.API.Repository
@@ -24,10 +25,16 @@ namespace FDiamondShop.API.Repository
                 exrateList = (ExrateList)serializer.Deserialize(reader);
             }
             var rate = exrateList.Exrates.FirstOrDefault(x => x.CurrencyCode == fromCurrency);
+            if (rate == null)
+            {
+                throw new ArgumentException($"Currency code '{fromCurrency}' not found.");
+            }
+
+           
 
             decimal result = amount * rate.Transfer;
 
             return result;
-        }
+        }      
     }
 }
