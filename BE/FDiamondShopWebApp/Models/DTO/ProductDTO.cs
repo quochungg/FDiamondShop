@@ -28,7 +28,7 @@
 
         public virtual ICollection<ProductVariantValueDTO> ProductVariantValues { get; set; } = new List<ProductVariantValueDTO>();
 
-        public virtual ICollection<Product> ProductVariants { get; set; } = new List<Product>();
+        public virtual ICollection<RecommendProductDTO> RecommendProducts { get; set; } = new List<RecommendProductDTO>();
 
     }
 }
