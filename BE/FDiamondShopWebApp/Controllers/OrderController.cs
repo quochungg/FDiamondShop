@@ -67,8 +67,10 @@ namespace FDiamondShop.API.Controllers
                 if (createDTO.DiscountName.Count()==0)
                 {
                     var discount = _db.DiscountCodes.SingleOrDefault(u => u.DiscountCodeName == createDTO.DiscountName);
+
                     if (discount == null)
                     {
+                        
                         return NotFound("Discount code not found");
                     }
                     if (discount != null)
