@@ -35,7 +35,7 @@ namespace FDiamondShop.Test
                         {
                             throw new Exception($"Duplicate DiscountCodeName: {dc.DiscountCodeName}");
                         }
-                        var foundData = _testdata.FirstOrDefault(d => d.DiscountCodeName == dc.DiscountCodeName);
+                        var foundData = _testdata.FirstOrDefault(d => d.DiscountCodeName.Equals(dc.DiscountCodeName));
                         if(foundData != null)
                         {
                             dc.DiscountId = foundData.DiscountId;
