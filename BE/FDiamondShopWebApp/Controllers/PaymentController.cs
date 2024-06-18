@@ -91,6 +91,10 @@ namespace FDiamondShop.API.Controllers
                 {
                     var product = _db.Products.Where(product=>product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
+                    if (product.Quantity == 0)
+                    {
+                        product.IsVisible = false;
+                    }
                 }
             }
             await _unitOfWork.SaveAsync();
@@ -154,6 +158,10 @@ namespace FDiamondShop.API.Controllers
                 {
                     var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
+                    if (product.Quantity == 0)
+                    {
+                        product.IsVisible = false;
+                    }
                 }
             }
             await _unitOfWork.SaveAsync();
@@ -217,6 +225,10 @@ namespace FDiamondShop.API.Controllers
                 {
                     var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
+                    if(product.Quantity==0)
+                    {
+                        product.IsVisible = false;
+                    }
                 }
             }
             await _unitOfWork.SaveAsync();

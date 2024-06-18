@@ -155,8 +155,8 @@ namespace FDiamondShop.API.Controllers
                         }
                         break;
                     case "paypal":
-                         amountVND = Convert.ToInt32(order.TotalPrice * 1000);
-                        paymentInfo.Amount = amountVND;
+                         
+                        
                         var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
