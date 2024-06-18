@@ -7,12 +7,7 @@ namespace FDiamondShop.API.Models
         [XmlAttribute("CurrencyCode")]
         public string CurrencyCode { get; set; }
 
-        [XmlAttribute("CurrencyName")]
-        public string CurrencyName { get; set; }
-
         [XmlAttribute("Transfer")]
         public decimal Transfer { get; set; }
-
-       
     }
 }

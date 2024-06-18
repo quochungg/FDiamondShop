@@ -64,7 +64,7 @@ namespace FDiamondShop.API.Controllers
                     UserId = user.Id
 
                 };
-                if (createDTO.DiscountName.Count()==0)
+                if (createDTO.DiscountName!=null)
                 {
                     var discount = _db.DiscountCodes.SingleOrDefault(u => u.DiscountCodeName == createDTO.DiscountName);
 
