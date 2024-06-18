@@ -47,25 +47,15 @@ namespace FDiamondShop.API.Controllers
                 var cartLines = await _db.CartLines
                                           .Include(cl => cl.CartLineItems)
                                           .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
-                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false && cl.IsOrdered == false) //delete this line
                                           .ToListAsync();
                 if (cartLines.Count == 0)
                 {
                     return NotFound();
 
                 }
-                foreach (var cartLine in cartLines)
-                {
 
-                    foreach (var cartLineItem in cartLine.CartLineItems)
-                    {
-                        var price = cartLineItem.Price;
-                        totalPrice += price;
-                    }
-
-                }
-                //totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
-                //      .Sum(cartLineItem => cartLineItem.Price);
+                totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
+                      .Sum(cartLineItem => cartLineItem.Price);
 
                 OrderDTO orderDTO = new()
                 {
@@ -77,12 +67,17 @@ namespace FDiamondShop.API.Controllers
                 if (createDTO.DiscountName != null)
                 {
                     var discount = _db.DiscountCodes.SingleOrDefault(u => u.DiscountCodeName == createDTO.DiscountName);
+
+                    if (discount == null)
+                    {
+                        
+                        return NotFound("Discount code not found");
+                    }
                     if (discount != null)
                     {
                         orderDTO.DiscountCodeId = discount.DiscountId;
                         orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);                      
-                    }
-                    //if discount == null => return BadRequest
+                    }                  
                 }
 
                 var order = _mapper.Map<Order>(orderDTO);
@@ -92,7 +87,7 @@ namespace FDiamondShop.API.Controllers
                 _response.StatusCode = HttpStatusCode.Created;
                 var paymentInfo = new PaymentInformationModel
                 {
-                    Amount = order.TotalPrice * 1000,
+                    Amount = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD"),
                     Name = user.UserName,
                     OrderDescription = "Thanh toan don hang",
                     OrderID = "",
@@ -105,7 +100,7 @@ namespace FDiamondShop.API.Controllers
                    
                     case "vnpay":
                         //sua link tren swagger
-                        var paymentApiUrl = new Uri(new Uri("https://fdiamond-api.azurewebsites.net/index.html"), "/api/checkout/vnpay");
+                        var paymentApiUrl = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/vnpay");
                         var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
                         if (paymentResponse.IsSuccessStatusCode)
                         {
@@ -131,8 +126,8 @@ namespace FDiamondShop.API.Controllers
                         break;
                     
                     case "momo":
-                        int amountVND = Convert.ToInt32(order.TotalPrice * 1000);
-                        paymentInfo.Amount = amountVND;
+                        decimal amountVND = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
+                        paymentInfo.Amount = (int)amountVND;
                         var paymentApiUrlMomo = new Uri(new Uri("https://fdiamond-api.azurewebsites.net/index.html"), "/api/checkout/momo");
                         var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
 

@@ -48,6 +48,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IPayPalRepository, PayPalRepository>();
 builder.Services.AddScoped<IOrderRepository , OrderRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IExchangeRepository, ExchangeRepository>();
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
