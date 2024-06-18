@@ -16,6 +16,13 @@ namespace FDiamondShop.API.Repository
             _db = db;
         }
 
+        public async Task<List<Product>> GetRecommendProducts(int productId)
+        {
+            var product = await _db.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            var recommendProducts = _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId).ToListAsync();
+            return await recommendProducts;
+        }
+
         public async Task<IEnumerable<Product>> SearchProductByName(string searchValue)
         {
             return await _db.Products.Include(p => p.ProductImages).
