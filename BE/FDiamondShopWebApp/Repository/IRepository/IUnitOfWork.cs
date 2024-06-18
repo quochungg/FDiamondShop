@@ -18,6 +18,8 @@
         IOrderRepository OrderRepository { get; }
         IPaymentRepository PaymentRepository { get; }
 
+        IExchangeRepository ExchangeRepository { get; }
+
 
         Task SaveAsync();
     }
