@@ -138,6 +138,9 @@ namespace FDiamondShop.API.Controllers
                     variant.VariantName  = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result
                     .ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
                 }
+                var recommendProducts = await _unitOfWork.ProductRepository.GetRecommendProducts(product.ProductId);
+                productDTO.RecommendProducts = _mapper.Map<List<RecommendProductDTO>>(recommendProducts);
+                _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = productDTO;
                 return Ok(_response);
@@ -316,7 +319,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Metal")] string metal = null
             )
         {
-            IEnumerable<Product> productList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
+            IEnumerable<Product> productList = await _unitOfWork.ProductRepository.GetAllAsync(p => p.IsVisible == true && p.IsDeleted == false, includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
 
             if (cateName != null)
             {

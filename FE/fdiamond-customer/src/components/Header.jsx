@@ -21,6 +21,8 @@ import {
 // }
 
 const Header = () => {
+    console.log('Header renders')
+
     return (
         <>
             <AppBar
