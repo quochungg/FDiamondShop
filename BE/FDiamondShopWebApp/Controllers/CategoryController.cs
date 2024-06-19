@@ -27,7 +27,7 @@ namespace FDiamondShop.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> GetCategory([FromQuery(Name = "Category Name")] string categoryName)
+        public async Task<ActionResult<APIResponse>> GetCategory([FromQuery(Name = "Category Name")] string categoryName)
         {
             var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.CategoryName.Equals(categoryName), includeProperties: "SubCategories.Products");
             if (category == null)
