@@ -91,6 +91,10 @@ namespace FDiamondShop.API.Controllers
                 {
                     var product = _db.Products.Where(product=>product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
+                    if (product.Quantity == 0)
+                    {
+                        product.IsVisible = false;
+                    }
                 }
             }
             await _unitOfWork.SaveAsync();
@@ -154,6 +158,10 @@ namespace FDiamondShop.API.Controllers
                 {
                     var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
+                    if (product.Quantity == 0)
+                    {
+                        product.IsVisible = false;
+                    }
                 }
             }
             await _unitOfWork.SaveAsync();
@@ -188,14 +196,7 @@ namespace FDiamondShop.API.Controllers
             var user = _userManager.Users.First();
             var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
-            if (response.OrderId == "0")
-            {
-                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
-                await _unitOfWork.SaveAsync();
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Payment failed");
-                return BadRequest(_response);
-            }
+           
             PaymentDTO payment = new PaymentDTO()
             {
                 TransactionId = response.OrderId,
@@ -217,6 +218,10 @@ namespace FDiamondShop.API.Controllers
                 {
                     var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
+                    if(product.Quantity==0)
+                    {
+                        product.IsVisible = false;
+                    }
                 }
             }
             await _unitOfWork.SaveAsync();

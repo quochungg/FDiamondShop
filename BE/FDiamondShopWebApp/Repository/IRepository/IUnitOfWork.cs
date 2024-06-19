@@ -8,7 +8,6 @@
         ISubCategoryRepository SubCategoryRepository { get; }
         IUserRepository UserRepository { get; }
         IEmailRepository EmailRepository { get; }
-        IDiscountRepository DiscountRepository { get; }
         IVnPayRepository VnPayRepository { get; }
         IMomoRepository MomoRepository { get; }
         ICartRepository CartRepository { get; }
@@ -17,6 +16,8 @@
         IPayPalRepository PayPalRepository { get; }        
         IOrderRepository OrderRepository { get; }
         IPaymentRepository PaymentRepository { get; }
+
+        IExchangeRepository ExchangeRepository { get; }
 
 
         Task SaveAsync();

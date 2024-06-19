@@ -24,5 +24,6 @@ namespace FDiamondShop.API.Repository
             _db.RemoveRange(cartLineItems);
         }
         
+       
     }
 }

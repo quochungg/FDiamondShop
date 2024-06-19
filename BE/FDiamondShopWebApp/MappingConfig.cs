@@ -13,6 +13,7 @@ namespace FDiamondShop.API
             CreateMap<Product,ProductCreateDTO>().ForMember(dest => dest.ProductImages, opt => opt.Ignore()) 
             .ForMember(dest => dest.ProductVariantValues, opt => opt.Ignore()).ReverseMap(); 
             CreateMap<Product,ProductUpdateDTO>().ReverseMap();
+            CreateMap<RecommendProductDTO, Product>().ReverseMap();
 
             CreateMap<ProductImage,ProductImageCreateDTO>().ReverseMap();
             CreateMap<ProductImage,ProductImageDTO>().ReverseMap();

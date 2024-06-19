@@ -13,7 +13,6 @@ namespace FDiamondShop.API.Repository
         public ISubCategoryRepository SubCategoryRepository { get; }
         public IUserRepository UserRepository { get; }
         public IEmailRepository EmailRepository { get; }
-        public IDiscountRepository DiscountRepository { get; }
         public IVnPayRepository VnPayRepository { get; }        
         public IMomoRepository MomoRepository { get; }
         public IDiscountRepository DiscountCodeRepository { get; }
@@ -22,13 +21,25 @@ namespace FDiamondShop.API.Repository
         public ICategoryRepository CategoryRepository { get; }
         public IOrderRepository OrderRepository { get; }
         public IPaymentRepository PaymentRepository { get; }
+        public IExchangeRepository ExchangeRepository { get; }
 
-
-        public UnitOfWork(FDiamondContext db, IProductRepository productRepository, IProductImageRepository productImageRepository, 
-            IProductVariantValueRepository productVariantValueRepository, ISubCategoryRepository subCategoryRepository, IUserRepository userRepository, 
-            IEmailRepository emailRepository, IDiscountRepository discountRepository, IVnPayRepository vnPayRepository, ICartRepository cartRepository,
-            IMomoRepository momoRepository,IOrderRepository orderRepository,IPaymentRepository paymentRepository,ICategoryRepository categoryRepository
-            ,IPayPalRepository payPalRepository)
+        public UnitOfWork(FDiamondContext db, 
+            IProductRepository productRepository, 
+            IProductImageRepository productImageRepository, 
+            IProductVariantValueRepository productVariantValueRepository, 
+            ISubCategoryRepository subCategoryRepository, 
+            IUserRepository userRepository, 
+            IEmailRepository emailRepository, 
+            IDiscountRepository discountRepository, 
+            IVnPayRepository vnPayRepository, 
+            ICartRepository cartRepository,
+            IMomoRepository momoRepository,
+            IOrderRepository orderRepository,
+            IPaymentRepository paymentRepository,
+            ICategoryRepository categoryRepository,
+            IPayPalRepository payPalRepository,
+            IExchangeRepository exchangeRepository
+            )
         {
             _db = db;
             ProductRepository = productRepository;
@@ -45,6 +56,7 @@ namespace FDiamondShop.API.Repository
             PayPalRepository = payPalRepository;
             OrderRepository = orderRepository;
             PaymentRepository = paymentRepository;
+            ExchangeRepository = exchangeRepository;    
         }
         public async Task SaveAsync()
         {

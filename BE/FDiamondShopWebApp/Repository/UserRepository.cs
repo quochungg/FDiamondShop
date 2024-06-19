@@ -198,6 +198,31 @@ namespace FDiamondShop.API.Repository
             };
             return dto;
         }
+        public async Task<List<UserDTO>> GetallUser()
+        {
+            
+                var users = _userManager.Users.ToList();
+                List<UserDTO> userDTOs = new List<UserDTO>();
+
+                foreach (var user in users)
+                {
+                    UserDTO userDTO = new UserDTO
+                    {
+                        UserName = user.UserName,
+                        Address = user.Address,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        PhoneNumber = user.PhoneNumber,
+                        
+                        
+                    };
+                    userDTOs.Add(userDTO);
+                }
+                return userDTOs;
+            
+
+
+        }
 
         public async Task SendEmailConfirmationAsync(ApplicationUser user, string confirmationLink)
         {
@@ -260,13 +285,13 @@ namespace FDiamondShop.API.Repository
                             Confirm Your Email Address
                         </div>
                         <div class='content'>
-                            <p>Hi {user.FirstName},</p>
+                            <p>Hi {user.LastName},</p>
                             <p>Thank you for signing up! To complete your registration, please confirm your email address by clicking the button below:</p>
                             <a href='{confirmationLink}' class='button'>Confirm Email</a>
                             <p>If you didn't sign up for an account, please ignore this email or let us know.</p>
                         </div>
                         <div class='footer'>
-                            <p>Best regards,<br>The [Your Company] Team</p>
+                            <p>Best regards,<br>The FDiamond Team</p>
                             <p>P.S. If you have any questions or need assistance, feel free to contact our support team.</p>
                         </div>
                     </div>
