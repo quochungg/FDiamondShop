@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace FDiamondShop.Test
 {
-    public class DiscountCodeTest
+    public class TestDiscount
     {
         private readonly IUnitOfWork _unitOfWorkMock;
         private readonly List<DiscountCodeData> _testdata;
@@ -21,7 +21,7 @@ namespace FDiamondShop.Test
                 return new List<DiscountCodeData>(csv.GetRecords<DiscountCodeData>());
             }
         }
-        public DiscountCodeTest()
+        public TestDiscount()
         {
             _testdata = LoadTestData("D:\\SE182972\\Summer2024\\SWP\\FDiamondShop\\BE\\FDiamondShop.Test\\discountcode.csv");
             _created = new List<DiscountCode>();
