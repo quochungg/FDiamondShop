@@ -169,6 +169,17 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
+        [HttpGet("getalluser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var users = await _unitOfWork.UserRepository.GetallUser();
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = users;
+
+            return Ok(_response);
+        }
 
         [HttpGet("confirmemail")]
         [ProducesResponseType(StatusCodes.Status200OK)]
