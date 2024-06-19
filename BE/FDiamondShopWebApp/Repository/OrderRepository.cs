@@ -5,6 +5,7 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
 using System.Net.Http;
 using System.Net;
+using FDiamondShop.API.Models.DTO;
 
 namespace FDiamondShop.API.Repository
 {
@@ -24,7 +25,26 @@ namespace FDiamondShop.API.Repository
         {
             _db.Update(order);
         }
-        
+        public async Task<List<OrderDTO>> GetAllOrderAsync()
+        {
+            var Orders = _db.Orders.ToList();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (var order in Orders)
+            {
+                OrderDTO orderDTO = new OrderDTO()
+                {
+                    
+                    BasePrice = order.BasePrice,
+                    OrderDate = order.OrderDate,
+                    DiscountCodeId = order.DiscountCodeId,
+                    TotalPrice = order.TotalPrice,
+                    PaymentId = order.PaymentId,
+
+                };
+                orderDTOs.Add(orderDTO);
+            }
+            return orderDTOs;
+        }
     }
 
 }

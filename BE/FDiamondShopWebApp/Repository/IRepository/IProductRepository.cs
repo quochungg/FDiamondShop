@@ -9,5 +9,6 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         Task<Product> UpdateProduct(ProductUpdateDTO dto);
         Task<List<Product>> GetRecommendProducts(int productId);
+        
     }
 }
