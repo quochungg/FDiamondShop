@@ -15,6 +15,7 @@
         public decimal Discount { get; set; } //(6)
 
         public decimal ActualIncome { get; set; } //(7) = (4) - (6)
+        public int TotalUser {  get; set; }
 
     }
 }

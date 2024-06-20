@@ -63,6 +63,7 @@ namespace FDiamondShop.API.Controllers
 
             //Actual Imcome
             var actualIncome = totalIncome - discount;
+            //number of order
 
             DashboardDTO dashboardDTO = new()
             {
