@@ -23,7 +23,7 @@ namespace FDiamondShop.API.Repository
         public IOrderRepository OrderRepository { get; }
         public IPaymentRepository PaymentRepository { get; }
         public IExchangeRepository ExchangeRepository { get; }
-
+        public IDashboardRepository DashboardRepository { get; }
         public UnitOfWork(FDiamondContext db, 
             IProductRepository productRepository, 
             IProductImageRepository productImageRepository, 
