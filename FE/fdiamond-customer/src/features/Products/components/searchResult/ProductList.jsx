@@ -6,16 +6,15 @@ import LinesEllipsis from 'react-lines-ellipsis'
 
 const ProductList = ({ productList, category }) => {
     console.log('ProductList renders')
+    const hover = 'cursor-pointer hover:border-blue-950 hover:border-[1px] hover:duration-150';
 
-    const hover = 'cursor-pointer hover:border-blue-950  hover:border-[1px] border-[1px]'
-    // flex items-center justify-center mt-10
     return (
         <>
             <div className="w-full flex items-center justify-center">
                 <div className="grid grid-cols-4 gap-x-3 gap-y-5">
                     {productList.map(product => (
-                        <div key={product.productId} className={`w-[350px] h-[400px] ${hover} `}>
-                            <Link to={`/product/product-details /${product.productId}`} className="flex flex-col justify-start h-full w-full">
+                        <div key={product.productId} className={`w-[350px] h-[400px] border-[1px] ${hover} `}>
+                            <Link to={`/product/product-details/${product.productId}`} className="flex flex-col justify-start h-full w-full">
                                 <div className="">
                                     <img
                                         className="object-cover"
@@ -35,7 +34,7 @@ const ProductList = ({ productList, category }) => {
                                         />
                                     </div>
                                     <p className="p-5 flex-1 content-center font-gantari text-2sm leading-5">
-                                        ${product.basePrice} {category === 'engagement ring' && '(Setting Price)'}
+                                        ${product.basePrice.toLocaleString()} {category === 'engagement ring' && '(Setting Price)'}
                                     </p>
                                 </div>
                             </Link>

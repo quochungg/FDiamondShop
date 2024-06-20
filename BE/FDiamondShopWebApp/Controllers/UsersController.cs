@@ -6,6 +6,7 @@ using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -29,8 +30,21 @@ namespace FDiamondShop.API.Controllers
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
+            ////neu nguoi dung chua verify email, gui lai email confirm
+            var user = await _userManager.FindByEmailAsync(model.UserName);
+            if (!user.EmailConfirmed)
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
+                await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
+                _response.StatusCode = HttpStatusCode.Forbidden;
+                _response.IsSuccess = true;
+                _response.ErrorMessages.Add("Please confirm your email before login.");
+                return StatusCode(StatusCodes.Status403Forbidden, _response);
+            }
             var loginResponse = await _unitOfWork.UserRepository.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
@@ -51,14 +65,25 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
 
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
-        {            
-           
-            var currentUser = await _userManager.FindByEmailAsync(model.UserName);
-            if(!ModelState.IsValid)
-            {                
-                return BadRequest(ModelState);
+        {
+
+            var User = _userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
+            if (User != null)
+            {
+                _response.StatusCode = HttpStatusCode.Conflict;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User already exists");
+                return Conflict(_response);
+            }
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.Result = ModelState;
+                return BadRequest(_response);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
@@ -77,7 +102,7 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
-       
+
         [HttpPatch("update")]
         //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -91,7 +116,8 @@ namespace FDiamondShop.API.Controllers
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                return BadRequest(ModelState);
+                _response.Result = ModelState;
+                return BadRequest(_response);
             }
             if (!string.IsNullOrEmpty(model.NewPassword))
             {
@@ -169,6 +195,17 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
+        [HttpGet("getalluser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var users = await _unitOfWork.UserRepository.GetallUser();
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = users;
+
+            return Ok(_response);
+        }
 
         [HttpGet("confirmemail")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -186,7 +223,7 @@ namespace FDiamondShop.API.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {               
-                return Ok("Your email is confirm successfully!");
+                return Redirect("http://localhost:5173/verified-email");
             }
             return BadRequest("Error confirming your email.");
         }

@@ -3,18 +3,18 @@ import Header from "../components/Header"
 import Hero from "../components/Hero"
 
 
-  
-  
+
+
 
 const Home = () => {
-  return (
-    <>
-        <Header />
-        <Hero />
-        {/* <ProductImages /> */}
-        {/* <Footer /> */}
-    </>
-  )
+    return (
+        <>
+            <Header />
+            <Hero />
+            {/* <ProductImages /> */}
+            {/* <Footer /> */}
+        </>
+    )
 };
 
 export default Home;

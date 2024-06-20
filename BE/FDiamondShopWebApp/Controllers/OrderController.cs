@@ -8,9 +8,6 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using FDiamondShop.API.Helper;
-using MailKit.Search;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -61,14 +58,16 @@ namespace FDiamondShop.API.Controllers
                 {
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
-                    UserId = user.Id
+                    
 
                 };
-                if (createDTO.DiscountName != null)
+                if (createDTO.DiscountName!=null)
                 {
                     var discount = _db.DiscountCodes.SingleOrDefault(u => u.DiscountCodeName == createDTO.DiscountName);
+
                     if (discount == null)
                     {
+                        
                         return NotFound("Discount code not found");
                     }
                     if (discount != null)
@@ -79,6 +78,7 @@ namespace FDiamondShop.API.Controllers
                 }
 
                 var order = _mapper.Map<Order>(orderDTO);
+                order.UserId = user.Id;
                 await _unitOfWork.OrderRepository.CreateAsync(order);
                 await _unitOfWork.SaveAsync();               
                 _response.Result = _mapper.Map<OrderDTO>(order);
@@ -153,8 +153,8 @@ namespace FDiamondShop.API.Controllers
                         }
                         break;
                     case "paypal":
-                         amountVND = Convert.ToInt32(order.TotalPrice * 1000);
-                        paymentInfo.Amount = amountVND;
+                         
+                        
                         var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
@@ -193,6 +193,16 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
                 return BadRequest(_response);
             }
+        }
+        [HttpGet("GetAllOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllOrder()
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderAsync();
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
         }
     }
 }

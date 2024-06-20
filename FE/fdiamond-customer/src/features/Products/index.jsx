@@ -1,11 +1,5 @@
-import SearchResultPage from "./pages/SearchResultPage";
+export { default as CategoryParent } from "./pages/CategoryParent";
+export { default as SearchResultPage } from "./pages/SearchResultPage";
+export { default as NotMatchResultPage } from './pages/NotMatchResultPage';
+export { default as ProductDetailsPage } from './pages/ProductDetailsPage';
 
-const ProductFeature = () => {
-  return (
-    <>
-      <SearchResultPage />
-    </>
-  );
-};
-
-export default ProductFeature;

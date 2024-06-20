@@ -36,8 +36,12 @@ namespace FDiamondShop.API.Controllers
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetAllProduct([FromQuery(Name = "Category Name")] string? cateName, [FromQuery(Name = "Subcategory Name")] string? Subcate,
-            [FromQuery(Name = "Is Visible")] bool? visible, [FromQuery(Name = "Is Deleted")] bool? delete, [FromQuery(Name = "Order By")] string? orderBy, 
+        public async Task<ActionResult<APIResponse>> GetAllProduct(
+            [FromQuery(Name = "Category Name")] string? cateName, 
+            [FromQuery(Name = "Subcategory Name")] string? Subcate,
+            [FromQuery(Name = "Is Visible")] bool? visible, 
+            [FromQuery(Name = "Is Deleted")] bool? delete, 
+            [FromQuery(Name = "Order By")] string? orderBy, 
             [FromQuery(Name = "Sort By")] string sortBy = "asc")           
         {
             
@@ -138,6 +142,9 @@ namespace FDiamondShop.API.Controllers
                     variant.VariantName  = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result
                     .ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
                 }
+                var recommendProducts = await _unitOfWork.ProductRepository.GetRecommendProducts(product.ProductId);
+                productDTO.RecommendProducts = _mapper.Map<List<RecommendProductDTO>>(recommendProducts);
+                _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = productDTO;
                 return Ok(_response);
@@ -316,7 +323,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Metal")] string metal = null
             )
         {
-            IEnumerable<Product> productList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
+            IEnumerable<Product> productList = await _unitOfWork.ProductRepository.GetAllAsync(p => p.IsVisible == true && p.IsDeleted == false, includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
 
             if (cateName != null)
             {
