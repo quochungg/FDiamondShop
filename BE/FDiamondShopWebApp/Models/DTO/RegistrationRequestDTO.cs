@@ -3,9 +3,9 @@
 namespace FDiamondShop.API.Models.DTO
 {
     public class RegistrationRequestDTO
-    {      
+    {
         [Required]
-        [RegularExpression(pattern: @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",ErrorMessage ="Email is not valid !")]
+        [RegularExpression(pattern: @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Email is not valid !")]
         public string UserName { get; set; }
         [Required]
         [RegularExpression(pattern: @"^[a-zA-Z\s]*$", ErrorMessage = "Only characters")]

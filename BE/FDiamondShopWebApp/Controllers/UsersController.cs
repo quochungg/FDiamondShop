@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -68,10 +67,20 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {            
            
-            var currentUser = await _userManager.FindByEmailAsync(model.UserName);
-            if(!ModelState.IsValid)
-            {                
-                return BadRequest(ModelState);
+            var User=_userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
+            if(User !=null)
+            {
+                _response.StatusCode = HttpStatusCode.Conflict;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User already exists");
+                return Conflict(_response);
+            }
+            if (!ModelState.IsValid)
+            {   
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.Result = ModelState;
+                return BadRequest(_response);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
