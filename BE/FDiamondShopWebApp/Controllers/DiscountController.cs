@@ -123,5 +123,33 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+        [HttpPut("UpdateAuto ", Name = "UpdateAuto")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> UpdateAuto()
+        {
+            try
+            {
+                DateTime dateTime = DateTime.Now;
+                var discount = await _unitOfWork.DiscountCodeRepository.GetAsync(u => u.EndDate.Equals(dateTime));
+                if (discount == null)
+                {
+                    return NotFound("DiscountCode not found");
+                }
+                discount.IsExpried = true;
+                await _unitOfWork.SaveAsync();
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
     }
 }

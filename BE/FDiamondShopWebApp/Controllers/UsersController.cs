@@ -69,18 +69,8 @@ namespace FDiamondShop.API.Controllers
         {            
            
             var currentUser = await _userManager.FindByEmailAsync(model.UserName);
-            if(currentUser != null)
-            {
-                _response.StatusCode = HttpStatusCode.Conflict;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("User already exists");
-                return Conflict(_response);
-            } 
             if(!ModelState.IsValid)
-            {            
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Invalid data");
+            {                
                 return BadRequest(ModelState);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
@@ -114,7 +104,8 @@ namespace FDiamondShop.API.Controllers
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                return BadRequest(ModelState);
+                _response.Result = ModelState;
+                return BadRequest(_response);
             }
             if (!string.IsNullOrEmpty(model.NewPassword))
             {
