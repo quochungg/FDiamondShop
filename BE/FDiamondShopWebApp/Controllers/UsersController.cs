@@ -6,6 +6,7 @@ using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -29,20 +30,21 @@ namespace FDiamondShop.API.Controllers
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
             ////neu nguoi dung chua verify email, gui lai email confirm
-            //var user = await _userManager.FindByEmailAsync(model.UserName);
-            //if (!user.EmailConfirmed) 
-            //{
-            //    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            //    var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
-            //    await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
-            //    _response.StatusCode = HttpStatusCode.OK;
-            //    _response.IsSuccess = true;
-            //    _response.ErrorMessages.Add("Please confirm your email before login.");
-            //    return Ok(_response);
-            //}
+            var user = await _userManager.FindByEmailAsync(model.UserName);
+            if (!user.EmailConfirmed)
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
+                await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
+                _response.StatusCode = HttpStatusCode.Forbidden;
+                _response.IsSuccess = true;
+                _response.ErrorMessages.Add("Please confirm your email before login.");
+                return StatusCode(StatusCodes.Status403Forbidden, _response);
+            }
             var loginResponse = await _unitOfWork.UserRepository.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
