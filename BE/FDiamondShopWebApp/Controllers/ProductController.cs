@@ -36,8 +36,12 @@ namespace FDiamondShop.API.Controllers
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetAllProduct([FromQuery(Name = "Category Name")] string? cateName, [FromQuery(Name = "Subcategory Name")] string? Subcate,
-            [FromQuery(Name = "Is Visible")] bool? visible, [FromQuery(Name = "Is Deleted")] bool? delete, [FromQuery(Name = "Order By")] string? orderBy, 
+        public async Task<ActionResult<APIResponse>> GetAllProduct(
+            [FromQuery(Name = "Category Name")] string? cateName, 
+            [FromQuery(Name = "Subcategory Name")] string? Subcate,
+            [FromQuery(Name = "Is Visible")] bool? visible, 
+            [FromQuery(Name = "Is Deleted")] bool? delete, 
+            [FromQuery(Name = "Order By")] string? orderBy, 
             [FromQuery(Name = "Sort By")] string sortBy = "asc")           
         {
             
