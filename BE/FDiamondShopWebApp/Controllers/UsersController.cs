@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -65,10 +66,10 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
 
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
-        {            
-           
-            var User=_userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
-            if(User !=null)
+        {
+
+            var User = _userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
+            if (User != null)
             {
                 _response.StatusCode = HttpStatusCode.Conflict;
                 _response.IsSuccess = false;
@@ -76,7 +77,7 @@ namespace FDiamondShop.API.Controllers
                 return Conflict(_response);
             }
             if (!ModelState.IsValid)
-            {   
+            {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.Result = ModelState;
@@ -99,7 +100,7 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
-       
+
         [HttpPatch("update")]
         //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -220,7 +221,7 @@ namespace FDiamondShop.API.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {               
-                return Redirect("http://localhost:5173/confirm-email?isConfirmed=true");
+                return Redirect("http://localhost:5173/verified-email");
             }
             return BadRequest("Error confirming your email.");
         }
