@@ -51,14 +51,25 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
 
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
-        {            
-           
-            var currentUser = await _userManager.FindByEmailAsync(model.UserName);
-            if(!ModelState.IsValid)
-            {                
-                return BadRequest(ModelState);
+        {
+
+            var userExist = _userManager.Users.FirstOrDefault(u => u.UserName == model.UserName);
+            if (userExist != null)
+            {
+                _response.StatusCode = HttpStatusCode.Conflict;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User already exists");
+                return BadRequest(_response);
+            }
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.Result = ModelState;
+                return BadRequest(_response);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
             if (user == null)
@@ -91,7 +102,8 @@ namespace FDiamondShop.API.Controllers
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                return BadRequest(ModelState);
+                _response.Result = ModelState;
+                return BadRequest(_response);
             }
             if (!string.IsNullOrEmpty(model.NewPassword))
             {
