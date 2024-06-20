@@ -51,7 +51,13 @@ export function applyFilter({ inputData, comparator, filterById }) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (filterById) {
-    inputData = inputData.filter((data) => data.id.indexOf(filterById) !== -1);
+    inputData = inputData.filter((data) => {
+      if (!data.productId) {
+        console.warn('Data item missing productId:', data);
+        return false;
+      }
+      return data.productId.toString().indexOf(filterById) !== -1;
+    });
   }
 
   return inputData;

@@ -26,12 +26,12 @@ function RingForm({ formData, handleInputChange }) {
       </Grid>
       <Grid item md={6}>
         <FormControl fullWidth required>
-          <InputLabel>Size</InputLabel>
+          <InputLabel>Width</InputLabel>
           <OutlinedInput
-            value={formData.Size}
+            value={formData.Width}
             onChange={handleInputChange}
-            label="Size"
-            name="Size"
+            label="Width"
+            name="Width"
           />
         </FormControl>
       </Grid>
@@ -54,7 +54,7 @@ function RingForm({ formData, handleInputChange }) {
 RingForm.propTypes = {
   formData: PropTypes.shape({
     subCategoryName: PropTypes.string,
-    Size: PropTypes.string,
+    Width: PropTypes.string,
     RingMetal: PropTypes.string,
   }).isRequired,
   handleInputChange: PropTypes.func.isRequired,

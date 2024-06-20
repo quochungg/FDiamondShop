@@ -15,8 +15,8 @@ function NecklaceForm({ formData, handleInputChange }) {
             label="Shape"
             name="subCategoryName"
           >
-            <MenuItem value="Solitaire">Solitaire</MenuItem>
-            <MenuItem value="Trilogy">Trilogy</MenuItem>
+            <MenuItem value="Gemstone">Gemstone</MenuItem>
+            <MenuItem value="Pearl">Pearl</MenuItem>
             <MenuItem value="Halo">Halo</MenuItem>
             <MenuItem value="Cross">Cross</MenuItem>
           </Select>

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -26,12 +27,16 @@ export default function VoucherTableRow({
 
   return (
     <>
-      <TableRow tabIndex={-1}>
-        <TableCell align="center">{discountId}</TableCell>
-        <TableCell align="center">{discountCodeName}</TableCell>
-        <TableCell align="center">{discountPercent}</TableCell>
-        <TableCell align="center">{startingDate}</TableCell>
-        <TableCell align="center">{endDate}</TableCell>
+      <TableRow hover tabIndex={-1}>
+        <TableCell align="center">{discountId || '-'}</TableCell>
+        <TableCell align="center">{discountCodeName || '-'}</TableCell>
+        <TableCell align="center">{discountPercent || '-'}</TableCell>
+        <TableCell align="center">
+          {startingDate ? dayjs(startingDate).format('DD/MM/YYYY HH:mm') : '-'}
+        </TableCell>
+        <TableCell align="center">
+          {endDate ? dayjs(endDate).format('DD/MM/YYYY HH:mm') : '-'}
+        </TableCell>
         <TableCell align="center">
           <Label color={isExpried ? 'success' : 'error'}>{isExpried ? 'Open' : 'Expired'}</Label>
         </TableCell>
@@ -48,8 +53,10 @@ export default function VoucherTableRow({
         onClose={handleCloseMenu}
         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: { width: 140 },
+        slotProps={{
+          paper: {
+            sx: { width: 140 },
+          },
         }}
       >
         <MenuItem>

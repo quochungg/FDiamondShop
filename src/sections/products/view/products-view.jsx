@@ -45,9 +45,9 @@ export default function ProductsView() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
+  // const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('productId');
 
   const [filterById, setFilterById] = useState('');
 
@@ -68,7 +68,7 @@ export default function ProductsView() {
     const getAll = async () => {
       try {
         const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Product');
-        console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
+        // console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
         if (response.data && Array.isArray(response.data.result)) {
           setData(response.data.result);
         } else {
@@ -93,14 +93,14 @@ export default function ProductsView() {
     setOpenSnackbar(false);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = data.map((n) => n.productId);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelecteds = data.map((n) => n.productId);
+  //     setSelected(newSelecteds);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
 
   const handleFilterByID = (event) => {
     setPage(0);
@@ -129,8 +129,6 @@ export default function ProductsView() {
     comparator: getComparator(order, orderBy),
     filterById,
   });
-
-  console.log('Filtered Data:', dataFiltered);
 
   // const handleClick = (event, productId) => {
   //   const selectedIndex = selected.indexOf(productId);
@@ -186,11 +184,7 @@ export default function ProductsView() {
       </Stack>
 
       <Card>
-        <ProductTableToolbar
-          numSelected={selected.length}
-          filterById={filterById}
-          onFilterById={handleFilterByID}
-        />
+        <ProductTableToolbar filterById={filterById} onFilterById={handleFilterByID} />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
@@ -198,9 +192,7 @@ export default function ProductsView() {
                 order={order}
                 orderBy={orderBy}
                 rowCount={data.length}
-                numSelected={selected.length}
                 onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'productId', label: 'ID' },
                   { id: 'productName', label: 'Name' },

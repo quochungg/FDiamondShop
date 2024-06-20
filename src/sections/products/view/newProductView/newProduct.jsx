@@ -49,7 +49,7 @@ export default function NewProductView() {
     Florescence: '', // Giá trị mặc định
     Length: '', // Giá trị mặc định
     Depth: '', // Giá trị mặc định
-    Size: '', // Giá tr
+    Width: '', // Giá tr
     RingMetal: '',
     EarringMetal: '',
     NecklaceMetal: '',
@@ -105,7 +105,7 @@ export default function NewProductView() {
     necklace: [{ variantId: 8, key: 'NecklaceMetal' }],
     ring: [
       { variantId: 9, key: 'RingMetal' },
-      { variantId: 10, key: 'Size' },
+      { variantId: 10, key: 'Width' },
     ],
     earring: [{ variantId: 11, key: 'EarringMetal' }],
   };
@@ -257,14 +257,7 @@ export default function NewProductView() {
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
-                <FormControl fullWidth required>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Upload GIA Report
-                  </Typography>
-                  <AddMutipleFile onImageSelect={(fileList) => handleImageSelect(fileList, true)} />
-                </FormControl>
-              </Grid>
+
               <Grid item xs={6}>
                 <FormControl fullWidth required>
                   <Typography variant="subtitle1" gutterBottom>
@@ -275,6 +268,20 @@ export default function NewProductView() {
                   />
                 </FormControl>
               </Grid>
+
+              {formData.category === 'diamond' && (
+                <Grid item xs={6}>
+                  <FormControl fullWidth required>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Upload GIA Report
+                    </Typography>
+                    <AddMutipleFile
+                      onImageSelect={(fileList) => handleImageSelect(fileList, true)}
+                    />
+                  </FormControl>
+                </Grid>
+              )}
+
               <Grid item xs={8}>
                 <FormControl component="fieldset">
                   <Grid container alignItems="center">

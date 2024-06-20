@@ -27,11 +27,11 @@ const navConfig = [
     path: '/category',
     icon: icon('ic_category'),
   },
-  {
-    title: 'order',
-    path: '/order',
-    icon: icon('ic_order'),
-  },
+  // {
+  //   title: 'order',
+  //   path: '/order',
+  //   icon: icon('ic_order'),
+  // },
   {
     title: 'voucher',
     path: '/voucher',

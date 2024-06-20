@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
+import PrivateRoute from 'src/routes/PrivateRoute';
+
 import DashboardLayout from 'src/layouts/dashboard';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
@@ -27,14 +29,70 @@ export default function Router() {
         </DashboardLayout>
       ),
       children: [
-        { element: <IndexPage />, index: true },
-        { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'category', element: <CategoriesPage /> },
-        { path: 'blog', element: <BlogPage /> },
-        { path: 'voucher', element: <VoucherPage /> },
-        { path: '/products/new', element: <NewProductPage /> },
-        { path: '/edit-product/:id', element: <EditProductPage /> },
+        {
+          element: (
+            <PrivateRoute>
+              <IndexPage />
+            </PrivateRoute>
+          ),
+          index: true,
+        },
+        {
+          path: 'user',
+          element: (
+            <PrivateRoute>
+              <UserPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: 'products',
+          element: (
+            <PrivateRoute>
+              <ProductsPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: 'category',
+          element: (
+            <PrivateRoute>
+              <CategoriesPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: 'blog',
+          element: (
+            <PrivateRoute>
+              <BlogPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: 'voucher',
+          element: (
+            <PrivateRoute>
+              <VoucherPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: '/products/new',
+          element: (
+            <PrivateRoute>
+              <NewProductPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: '/edit-product/:id',
+          element: (
+            <PrivateRoute>
+              <EditProductPage />
+            </PrivateRoute>
+          ),
+        },
       ],
     },
     {

@@ -22,6 +22,7 @@ import TableNoData from 'src/sections/table-no-data';
 import TableEmptyRows from 'src/sections/table-empty-rows';
 import { emptyRows, applyFilter, getComparator } from 'src/sections/utils';
 
+import AddVoucherModal from '../AddVoucherModal';
 import VoucherTableRow from '../voucher-table-row';
 import VoucherTableHead from '../voucher-table-head';
 import VoucherTableToolbar from '../voucher-table-toolbar';
@@ -37,7 +38,18 @@ export default function VoucherPage() {
 
   const [filterById, setFilterById] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const [newVoucher, setNewVoucher] = useState({
+    discountId: '',
+    discountCodeName: '',
+    discountPercent: '',
+    startingDate: null,
+    endDate: null,
+    isExpried: false,
+  });
 
   const dataFiltered = applyFilter({
     inputData: data,
@@ -46,27 +58,28 @@ export default function VoucherPage() {
   });
 
   useEffect(() => {
-    const getAll = async () => {
-      try {
-        const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Discount');
-        console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
-        if (response.data && Array.isArray(response.data.result)) {
-          setData(response.data.result);
-        } else {
-          console.error('Unexpected API response format:', response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    getAll();
+    fetchData();
   }, []);
 
-  const handleSort = (event, productId) => {
-    const isAsc = orderBy === productId && order === 'asc';
-    if (productId !== '') {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Discount');
+      console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
+      if (response.data && Array.isArray(response.data.result)) {
+        setData(response.data.result);
+      } else {
+        console.error('Unexpected API response format:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleSort = (event, discountId) => {
+    const isAsc = orderBy === discountId && order === 'asc';
+    if (discountId !== '') {
       setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(productId);
+      setOrderBy(discountId);
     }
   };
 
@@ -80,6 +93,28 @@ export default function VoucherPage() {
     setPage(0);
   };
 
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
+  const handleSubmit = async (voucher) => {
+    try {
+      const response = await axios.post('https://fdiamond-api.azurewebsites.net/api/Discount', {
+        ...voucher,
+        startingDate: voucher.startingDate.toISOString(),
+        endDate: voucher.endDate.toISOString(),
+      });
+      const responseData = response.data;
+      if (responseData.isSuccess && responseData.result) {
+        setData((prevData) => [...prevData, responseData.result]);
+        handleCloseModal();
+      } else {
+        console.error('Invalid response data:', responseData.result);
+      }
+    } catch (error) {
+      console.error('Error adding voucher:', error);
+    }
+  };
+
   const notFound = !dataFiltered.length && !!filterById;
   return (
     <Container>
@@ -87,7 +122,7 @@ export default function VoucherPage() {
         <Typography variant="h4">Vouchers</Typography>
 
         <Button
-          // onClick={handleClickAdd}
+          onClick={handleOpenModal}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="eva:plus-fill" />}
@@ -155,6 +190,13 @@ export default function VoucherPage() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
+      <AddVoucherModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        voucher={newVoucher}
+        setVoucher={setNewVoucher}
+        handleSubmit={handleSubmit}
+      />
     </Container>
   );
 }

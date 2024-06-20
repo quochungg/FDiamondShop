@@ -16,7 +16,7 @@ function EarringForm({ formData, handleInputChange }) {
             name="subCategoryName"
           >
             <MenuItem value="Hoop">Hoop</MenuItem>
-            <MenuItem value="Trilogy">Trilogy</MenuItem>
+            <MenuItem value="Gemstone">Gemstone</MenuItem>
             <MenuItem value="Drop">Drop</MenuItem>
             <MenuItem value="Stud">Stud</MenuItem>
           </Select>
