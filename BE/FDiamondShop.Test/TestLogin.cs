@@ -8,19 +8,19 @@ namespace FDiamondShop.Test
     {
         public class LoginTests
         {
-            private readonly Mock<UserManager<IdentityUser>> _userManagerMock;
-            private readonly Mock<SignInManager<IdentityUser>> _signInManagerMock;
+            private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
+            private readonly Mock<SignInManager<ApplicationUser>> _signInManagerMock;
             
 
             public LoginTests()
             {
-                var userStoreMock = new Mock<IUserStore<IdentityUser>>();
-                _userManagerMock = new Mock<UserManager<IdentityUser>>(
+                var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
+                _userManagerMock = new Mock<UserManager<ApplicationUser>>(
                     userStoreMock.Object, null, null, null, null, null, null, null, null);
 
                 var contextAccessorMock = new Mock<Microsoft.AspNetCore.Http.IHttpContextAccessor>();
-                var userClaimsPrincipalFactoryMock = new Mock<IUserClaimsPrincipalFactory<IdentityUser>>();
-                _signInManagerMock = new Mock<SignInManager<IdentityUser>>(
+                var userClaimsPrincipalFactoryMock = new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>();
+                _signInManagerMock = new Mock<SignInManager<ApplicationUser>>(
                     _userManagerMock.Object,
                     contextAccessorMock.Object,
                     userClaimsPrincipalFactoryMock.Object,
@@ -37,10 +37,10 @@ namespace FDiamondShop.Test
                 
                 var email = "Haduytung809@gmail.com";
                 var password = "Haduytung809@";
-                var user = new IdentityUser { UserName = email, Email = email };
+                var user = new ApplicationUser { UserName = email, Email = email };
 
-                _userManagerMock.Setup(um => um.FindByEmailAsync(email))
-                    .ReturnsAsync(user);
+                _userManagerMock.Setup(um => um.FindByEmailAsync(email)).ReturnsAsync(user);
+
                 _signInManagerMock.Setup(sm => sm.PasswordSignInAsync(email, password, false, false))
                     .ReturnsAsync(SignInResult.Success);
 
@@ -56,7 +56,7 @@ namespace FDiamondShop.Test
                 
                 var email = "haduytung809@gmail.com";
                 var password = "Haduytung809@";
-                var user = new IdentityUser { UserName = email, Email = email };
+                var user = new ApplicationUser { UserName = email, Email = email };
 
                 _userManagerMock.Setup(um => um.FindByEmailAsync(email))
                     .ReturnsAsync(user);
@@ -78,7 +78,7 @@ namespace FDiamondShop.Test
                
                 var email = "Haduytung809@gmail.com";
                 var password = "haduytung809@";
-                var user = new IdentityUser { UserName = email, Email = email };
+                var user = new ApplicationUser { UserName = email, Email = email };
 
                 _userManagerMock.Setup(um => um.FindByEmailAsync(email))
                     .ReturnsAsync(user);
