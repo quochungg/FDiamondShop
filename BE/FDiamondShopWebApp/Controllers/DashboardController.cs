@@ -5,6 +5,7 @@ using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit.Cryptography;
 using System.Net;
 
 namespace FDiamondShop.API.Controllers
@@ -42,7 +43,7 @@ namespace FDiamondShop.API.Controllers
                 o => o.OrderDate.Year == dateTime.Year && o.OrderDate.Month == dateTime.Month && o.OrderDate.Day == dateTime.Day,
                 includeProperties: "DiscountCode,CartLines"
             );
-
+            var users = await _unitOfWork.UserRepository.GetAllAsync();
             //Completed Order
             var completedOrder = orders.Count;
 
@@ -63,7 +64,14 @@ namespace FDiamondShop.API.Controllers
 
             //Actual Imcome
             var actualIncome = totalIncome - discount;
-
+            // total user
+            var totalUsers = users.Count();
+            //number of order
+            var orderperUser = await _unitOfWork.DashboardRepository.CountOrderOfUserAsync();
+            //number of payment
+            var countpayment = await _unitOfWork.DashboardRepository.CountPaymentMethodAsync();
+            //number user in each Role
+            var userinRole = await _unitOfWork.DashboardRepository.CountUserinRoleAsync();
             DashboardDTO dashboardDTO = new()
             {
                 ActualIncome = actualIncome,
@@ -72,7 +80,11 @@ namespace FDiamondShop.API.Controllers
                 DiscountUsed = discountUsed,
                 Discount = discount,
                 TotalIncome = totalIncome,
-                TotalSoldProduct = totalSoldProduct
+                TotalSoldProduct = totalSoldProduct,
+                TotalUser = totalUsers,
+                CountOrderOfUserAsync = orderperUser,
+                CountPaymentMethod = countpayment,
+                CountUserinRole = userinRole
             };
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;

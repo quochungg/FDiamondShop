@@ -18,7 +18,7 @@
         IPaymentRepository PaymentRepository { get; }
 
         IExchangeRepository ExchangeRepository { get; }
-
+        IDashboardRepository DashboardRepository { get; }
 
         Task SaveAsync();
     }

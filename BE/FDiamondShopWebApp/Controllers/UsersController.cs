@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -28,20 +30,21 @@ namespace FDiamondShop.API.Controllers
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
             ////neu nguoi dung chua verify email, gui lai email confirm
-            //var user = await _userManager.FindByEmailAsync(model.UserName);
-            //if (!user.EmailConfirmed) 
-            //{
-            //    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            //    var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
-            //    await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
-            //    _response.StatusCode = HttpStatusCode.OK;
-            //    _response.IsSuccess = true;
-            //    _response.ErrorMessages.Add("Please confirm your email before login.");
-            //    return Ok(_response);
-            //}
+            var user = await _userManager.FindByEmailAsync(model.UserName);
+            if (!user.EmailConfirmed)
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
+                await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
+                _response.StatusCode = HttpStatusCode.Forbidden;
+                _response.IsSuccess = true;
+                _response.ErrorMessages.Add("Please confirm your email before login.");
+                return StatusCode(StatusCodes.Status403Forbidden, _response);
+            }
             var loginResponse = await _unitOfWork.UserRepository.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
@@ -65,10 +68,10 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
 
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
-        {            
-           
-            var User=_userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
-            if(User !=null)
+        {
+
+            var User = _userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
+            if (User != null)
             {
                 _response.StatusCode = HttpStatusCode.Conflict;
                 _response.IsSuccess = false;
@@ -76,7 +79,7 @@ namespace FDiamondShop.API.Controllers
                 return Conflict(_response);
             }
             if (!ModelState.IsValid)
-            {   
+            {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.Result = ModelState;
@@ -99,7 +102,7 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
-       
+
         [HttpPatch("update")]
         //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -220,7 +223,7 @@ namespace FDiamondShop.API.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {               
-                return Redirect("http://localhost:5173/confirm-email?isConfirmed=true");
+                return Redirect("http://localhost:5173/verified-email");
             }
             return BadRequest("Error confirming your email.");
         }
