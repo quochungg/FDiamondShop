@@ -4,16 +4,22 @@ using Moq;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
+using FDiamondShop.API.Repository;
+using Org.BouncyCastle.Ocsp;
+using FDiamondShop.API.Models.DTO;
+using FDiamondShop.API.Data;
+using PayPal.v1.Payments;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace FDiamondShop.Test
 {
     public class TestDiscount
     {
-        private readonly IUnitOfWork _unitOfWorkMock;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly List<DiscountCodeData> _testdata;
         private readonly List<DiscountCode> _created;
 
-        private List<DiscountCodeData> LoadTestData(string filePath)
+        private List<DiscountCodeData> LoadTestDiscountData(string filePath)
         {
             using (var reader = new StreamReader(filePath))
             using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
@@ -21,13 +27,17 @@ namespace FDiamondShop.Test
                 return new List<DiscountCodeData>(csv.GetRecords<DiscountCodeData>());
             }
         }
+
         public TestDiscount()
         {
+
             _testdata = LoadTestData("D:\\Code\\C#\\FDiamondShop\\BE\\FDiamondShop.Test\\discountcode.csv");
             _created = new List<DiscountCode>();
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
-            var discountRepoMock = new Mock <IDiscountRepository>();
+            var discountRepoMock = new Mock<IDiscountRepository>();
+            var orderRepoMock = new Mock<IOrderRepository>();
+
             discountRepoMock.Setup(repo => repo.CreateAsync(It.IsAny<DiscountCode>()))
                     .ReturnsAsync((DiscountCode dc) =>
                     {
@@ -36,7 +46,7 @@ namespace FDiamondShop.Test
                             throw new Exception($"Duplicate DiscountCodeName: {dc.DiscountCodeName}");
                         }
                         var foundData = _testdata.FirstOrDefault(d => d.DiscountCodeName.Equals(dc.DiscountCodeName));
-                        if(foundData != null)
+                        if (foundData != null)
                         {
                             dc.DiscountId = foundData.DiscountId;
                             dc.DiscountPercent = foundData.DiscountPercent;
@@ -47,7 +57,8 @@ namespace FDiamondShop.Test
 
                     });
             unitOfWorkMock.Setup(unitOfWork => unitOfWork.DiscountCodeRepository).Returns(discountRepoMock.Object);
-            _unitOfWorkMock = unitOfWorkMock.Object;
+
+            _unitOfWork = unitOfWorkMock.Object;
         }
         public class DiscountCodeData
         {
@@ -56,23 +67,26 @@ namespace FDiamondShop.Test
             public int DiscountPercent { get; set; } = 0;
 
         }
+
+
         [Fact]
         public async Task Test_DiscountCode()
         {
             try
             {
-                if(_unitOfWorkMock == null)
+                if (_unitOfWork == null)
                 {
                     throw new NullReferenceException("UnitofWork null");
                 }
-                if(_unitOfWorkMock.DiscountCodeRepository == null)
+                if (_unitOfWork.DiscountCodeRepository == null)
                 {
                     throw new NullReferenceException("DiscounRepo null");
                 }
-                
+
                 foreach (var data in _testdata)
                 {
-                    var createDiscountCode = await _unitOfWorkMock.DiscountCodeRepository.CreateAsync(new DiscountCode{
+                    var createDiscountCode = await _unitOfWork.DiscountCodeRepository.CreateAsync(new DiscountCode
+                    {
                         DiscountCodeName = data.DiscountCodeName,
                         DiscountPercent = data.DiscountPercent,
                     });
@@ -86,7 +100,7 @@ namespace FDiamondShop.Test
             {
                 Console.WriteLine(ex.ToString());
             }
-            
+
         }
         
     }
