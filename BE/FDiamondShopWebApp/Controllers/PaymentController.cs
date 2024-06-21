@@ -60,7 +60,7 @@ namespace FDiamondShop.API.Controllers
             var user = _userManager.Users.First();
             var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.VnPayRepository.PaymentExecute(Request.Query);
-            if(response.PaymentId == "0")
+            if(response.PaymentId == "0" || response.VnPayResponseCode!= "00")
             {
                 await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                 await _unitOfWork.SaveAsync();
@@ -98,6 +98,8 @@ namespace FDiamondShop.API.Controllers
                 }
             }
             await _unitOfWork.SaveAsync();
+            var emailTo = user.Email; 
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
             return Ok(response);
         }
         [HttpPost("momo")]
@@ -129,7 +131,7 @@ namespace FDiamondShop.API.Controllers
             var user = _userManager.Users.First();
             var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response =_unitOfWork.MomoRepository.PaymentExecute(HttpContext.Request.Query);
-            if (response.OrderId == "0")
+            if (response.Status == "" || response.Message == "Bad Request")
             {
                 await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                 await _unitOfWork.SaveAsync();
@@ -165,6 +167,8 @@ namespace FDiamondShop.API.Controllers
                 }
             }
             await _unitOfWork.SaveAsync();
+            var emailTo = user.Email; 
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
             return Ok(response);
         }
         [HttpPost("PayPal")]
@@ -196,6 +200,14 @@ namespace FDiamondShop.API.Controllers
             var user = _userManager.Users.First();
             var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
+            if(!response.Success)
+            {
+                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                await _unitOfWork.SaveAsync();
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Payment failed");
+                return BadRequest(_response);
+            }
            
             PaymentDTO payment = new PaymentDTO()
             {
@@ -224,8 +236,13 @@ namespace FDiamondShop.API.Controllers
                     }
                 }
             }
+
             await _unitOfWork.SaveAsync();
+            var emailTo = user.Email;
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
+
             return Ok(response);
         }
+        
     }
 }

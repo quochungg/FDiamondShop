@@ -17,8 +17,6 @@ namespace FDiamondShop.API.Repository
             _configuration = configuration;
         }
 
-
-
         private string ComputeHmacSha256(string message, string secretKey)
         {
             var keyBytes = Encoding.UTF8.GetBytes(secretKey);
@@ -35,7 +33,8 @@ namespace FDiamondShop.API.Repository
 
             return hashString;
         }
-        public  async Task <Object> CreateMomoPaymentAsync(PaymentInformationModel model)
+
+        public async Task<string> CreateMomoPaymentAsync(PaymentInformationModel model)
         {
             model.OrderID = DateTime.UtcNow.Ticks.ToString();
             string rawData = $"partnerCode={_configuration["MomoAPI:PartnerCode"]}" +
@@ -47,7 +46,7 @@ namespace FDiamondShop.API.Repository
                 $"&returnUrl={_configuration["MomoAPI:ReturnUrl"]}" +
                 $"&notifyUrl={_configuration["MomoAPI:NotifyUrl"]}" +
                 $"&extraData=";
-                            
+
             string Signature = ComputeHmacSha256(rawData, _configuration["MomoAPI:SecretKey"]);
             var client = new RestClient(_configuration["MomoAPI:MomoApiUrl"]);
             var request = new RestRequest() { Method = Method.Post };
@@ -64,29 +63,42 @@ namespace FDiamondShop.API.Repository
                 amount = model.Amount.ToString(),
                 orderInfo = model.OrderDescription,
                 requestId = model.OrderID,
-                extraData="",
+                extraData = "",
                 signature = Signature,
-            };          
+            };
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
             var response = await client.ExecuteAsync(request);
             var jsonResponse = JsonConvert.DeserializeObject<JObject>(response.Content);
             string payUrl = jsonResponse["payUrl"].ToString();
             Console.WriteLine(payUrl);
-            return payUrl;          
-        }       
-        public  MomoExecuteResponseModel  PaymentExecute(IQueryCollection collection)
+            return payUrl;
+        }
+
+        public MomoExecuteResponseModel PaymentExecute(IQueryCollection collection)
         {
-            var amount = collection.First(s => s.Key == "amount").Value;
-            var orderInfo = collection.First(s => s.Key == "orderInfo").Value;
-            var orderId = collection.First(s => s.Key == "orderId").Value;
+            collection.TryGetValue("amount", out var amountValue);
+            collection.TryGetValue("orderInfo", out var orderInfoValue);
+            collection.TryGetValue("orderId", out var orderIdValue);
+            collection.TryGetValue("resultCode", out var statusValue); // Assumption: MoMo returns a resultCode for status
+            collection.TryGetValue("message", out var messageValue); // Assumption: MoMo returns a message
+
+            // Chuyển đổi giá trị sang chuỗi hoặc sử dụng chuỗi rỗng nếu không có giá trị
+            string amount = amountValue.Count > 0 ? amountValue.ToString() : string.Empty;
+            string orderInfo = orderInfoValue.Count > 0 ? orderInfoValue.ToString() : string.Empty;
+            string orderId = orderIdValue.Count > 0 ? orderIdValue.ToString() : string.Empty;
+            string status = statusValue.Count > 0 ? statusValue.ToString() : string.Empty;
+            string message = messageValue.Count > 0 ? messageValue.ToString() : string.Empty;
+
             return new MomoExecuteResponseModel()
             {
                 Amount = amount,
                 OrderId = orderId,
-                OrderInfo = orderInfo
+                OrderInfo = orderInfo,
+                Status = status,
+                Message = message
             };
         }
 
-
+        
     }
 }
