@@ -35,6 +35,15 @@ namespace FDiamondShop.API.Controllers
         {
             ////neu nguoi dung chua verify email, gui lai email confirm
             var user = await _userManager.FindByEmailAsync(model.UserName);
+            
+            var loginResponse = await _unitOfWork.UserRepository.Login(model);
+            if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Username or password is incorrect");
+                return BadRequest(_response);
+            }
             if (!user.EmailConfirmed)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -44,14 +53,6 @@ namespace FDiamondShop.API.Controllers
                 _response.IsSuccess = true;
                 _response.ErrorMessages.Add("Please confirm your email before login.");
                 return StatusCode(StatusCodes.Status403Forbidden, _response);
-            }
-            var loginResponse = await _unitOfWork.UserRepository.Login(model);
-            if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Username or password is incorrect");
-                return BadRequest(_response);
             }
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;

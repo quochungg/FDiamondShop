@@ -16,7 +16,7 @@ namespace FDiamondShop.API.Models.DTO
         [Required]
         public string Address { get; set; }
         [Required]
-        [RegularExpression(pattern: @"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$", ErrorMessage = "Password must be at least 6 characters  and contain at least 1 uppercase letter, 1 number, and 1 special character.")]
+        [RegularExpression(pattern: @"^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{6,}$", ErrorMessage = "Password must be at least 6 characters  and contain at least 1 uppercase letter, 1 number, and 1 special character.")]
         public string Password { get; set; }
         public string Role { get; set; }
         [Required]

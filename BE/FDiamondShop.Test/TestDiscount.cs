@@ -30,7 +30,8 @@ namespace FDiamondShop.Test
 
         public TestDiscount()
         {
-            _testdata = LoadTestDiscountData("D:\\SE182972\\Summer2024\\SWP\\FDiamondShop\\BE\\FDiamondShop.Test\\discountcode.csv");
+
+            _testdata = LoadTestData("D:\\Code\\C#\\FDiamondShop\\BE\\FDiamondShop.Test\\discountcode.csv");
             _created = new List<DiscountCode>();
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();

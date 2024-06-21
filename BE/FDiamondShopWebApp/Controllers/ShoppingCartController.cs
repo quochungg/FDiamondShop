@@ -32,7 +32,7 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpPost("CreateCart")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<APIResponse>> CreateCart( string UserName,[FromBody]List<CartLineItemCreateDTO> model)
+        public async Task<ActionResult<APIResponse>> CreateCart(string UserName,[FromBody]List<CartLineItemCreateDTO> model)
         {
 
             var user = _userManager.Users.First(u => u.UserName == UserName);
