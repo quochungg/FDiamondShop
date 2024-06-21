@@ -59,7 +59,6 @@ namespace FDiamondShop.API.Controllers
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
                     
-
                 };
                 if (createDTO.DiscountName!=null)
                 {
