@@ -98,6 +98,8 @@ namespace FDiamondShop.API.Controllers
                 }
             }
             await _unitOfWork.SaveAsync();
+            var emailTo = user.Email; 
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
             return Ok(response);
         }
         [HttpPost("momo")]
@@ -165,6 +167,8 @@ namespace FDiamondShop.API.Controllers
                 }
             }
             await _unitOfWork.SaveAsync();
+            var emailTo = user.Email; 
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
             return Ok(response);
         }
         [HttpPost("PayPal")]
@@ -232,8 +236,13 @@ namespace FDiamondShop.API.Controllers
                     }
                 }
             }
+
             await _unitOfWork.SaveAsync();
+            var emailTo = user.Email;
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
+
             return Ok(response);
         }
+        
     }
 }
