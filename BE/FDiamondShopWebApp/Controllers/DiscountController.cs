@@ -4,7 +4,9 @@ using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace FDiamondShop.API.Controllers
@@ -96,32 +98,36 @@ namespace FDiamondShop.API.Controllers
 
 
 
-        [HttpPut("Update", Name = "UpdateDiscountCodeStatus")]
+        [HttpPut("{id:int}", Name = "UpdateDiscountCodeStatus")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateDiscountCodeStatus(string codename, bool isexpried)
+        public async Task<ActionResult<APIResponse>> UpdateDiscountCodeStatus(int id, [FromBody] DiscountCodeUpdateDTO updateDTO)
         {
             try
             {
-                var discount = await _unitOfWork.DiscountCodeRepository.GetAsync(u => u.DiscountCodeName.Equals(codename));
+                var discount =  await _db.DiscountCodes.FirstOrDefaultAsync(u => u.DiscountId== id);
                 if (discount == null)
                 {
                     return NotFound("DiscountCode not found");
                 }
-                discount.IsExpried = isexpried;
+                discount.DiscountPercent = updateDTO.DiscountPercent;
+                discount.StartingDate = updateDTO.StartingDate;
+                discount.EndDate = updateDTO.EndDate;
+                discount.IsExpried = updateDTO.IsExpried;
+
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return NoContent();
-
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
-                return BadRequest(_response);
             }
+
+            return _response;  
         }
         [HttpPut("UpdateAuto ", Name = "UpdateAuto")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
