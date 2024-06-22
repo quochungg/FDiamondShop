@@ -35,8 +35,8 @@ namespace FDiamondShop.Test
             public async Task Login_Success()
             {
                 
-                var email = "Haduytung809@gmail.com";
-                var password = "Haduytung809@";
+                var email = "Testexample123@gmail.com";
+                var password = "Testexample123@";
                 var user = new ApplicationUser { UserName = email, Email = email };
 
                 _userManagerMock.Setup(um => um.FindByEmailAsync(email)).ReturnsAsync(user);
@@ -54,8 +54,8 @@ namespace FDiamondShop.Test
             public async Task Login_Fail_UserName()
             {
                 
-                var email = "haduytung809@gmail.com";
-                var password = "Haduytung809@";
+                var email = "testexample123@gmail.com";
+                var password = "Testexample123@";
                 var user = new ApplicationUser { UserName = email, Email = email };
 
                 _userManagerMock.Setup(um => um.FindByEmailAsync(email))
@@ -76,8 +76,8 @@ namespace FDiamondShop.Test
             public async Task Login_Fail_Password()
             {
                
-                var email = "Haduytung809@gmail.com";
-                var password = "haduytung809@";
+                var email = "Testexample123@gmail.com";
+                var password = "testexample123@";
                 var user = new ApplicationUser { UserName = email, Email = email };
 
                 _userManagerMock.Setup(um => um.FindByEmailAsync(email))
