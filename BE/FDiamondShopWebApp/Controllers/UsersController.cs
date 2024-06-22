@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Google.Apis.Auth;
+
 
 namespace FDiamondShop.API.Controllers
 {
@@ -245,7 +243,7 @@ namespace FDiamondShop.API.Controllers
             var user = await _userManager.FindByEmailAsync(payload.Email);
             if (user == null)
             {
-                var registrationRequest = new RegistrationRequestDTO
+                var registrationRequest = new GoogleRegistrationDTO
                 {
                     UserName = payload.Email,
                      
@@ -255,7 +253,7 @@ namespace FDiamondShop.API.Controllers
                     FirstName = payload.GivenName,
                     LastName = payload.FamilyName
                 };
-                user = await _unitOfWork.UserRepository.Register(registrationRequest);
+                user = await _unitOfWork.UserRepository.GoogleRegister(registrationRequest);
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
                 _response.Result = user;

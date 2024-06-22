@@ -1,9 +1,11 @@
 using Azure;
 using FDiamondShop.API;
 using FDiamondShop.API.Data;
+
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
+using Google.Apis.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +27,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedAccount = true;
+    
+
 })
+  
 .AddEntityFrameworkStores<FDiamondContext>().AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
 
 // Configure Email Settings

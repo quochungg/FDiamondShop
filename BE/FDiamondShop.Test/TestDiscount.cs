@@ -31,7 +31,7 @@ namespace FDiamondShop.Test
         public TestDiscount()
         {
 
-            _testdata = LoadTestData("D:\\Code\\csharp\\FDiamondShop\\BE\\FDiamondShop.Test\\discountcode.csv");
+            _testdata = LoadTestDiscountData("D:\\Code\\csharp\\FDiamondShop\\BE\\FDiamondShop.Test\\discountcode.csv");
             _created = new List<DiscountCode>();
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
