@@ -5,7 +5,7 @@ import LinesEllipsis from 'react-lines-ellipsis'
 
 
 const ProductList = ({ productList, category }) => {
-    console.log('ProductList renders')
+    // console.log('ProductList renders')
     const hover = 'cursor-pointer hover:border-blue-950 hover:border-[1px] hover:duration-150';
 
     return (

@@ -6,12 +6,13 @@ using FDiamondShop.API.Repository.IRepository;
 using System.Net.Http;
 using System.Net;
 using FDiamondShop.API.Models.DTO;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FDiamondShop.API.Repository
 {
     public class OrderRepository : Repository<Order>, IOrderRepository
     {
-        private readonly FDiamondContext _db;        
+        private readonly FDiamondContext _db;     
         public OrderRepository(FDiamondContext db) : base(db)
         {
             _db = db;
@@ -45,6 +46,7 @@ namespace FDiamondShop.API.Repository
             }
             return orderDTOs;
         }
+       
     }
 
 }

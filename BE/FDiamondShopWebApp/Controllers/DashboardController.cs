@@ -26,7 +26,7 @@ namespace FDiamondShop.API.Controllers
             _db = db;
         }
 
-        [HttpPost]
+        [HttpPost("Product")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -72,7 +72,7 @@ namespace FDiamondShop.API.Controllers
             var countpayment = await _unitOfWork.DashboardRepository.CountPaymentMethodAsync();
             //number user in each Role
             var userinRole = await _unitOfWork.DashboardRepository.CountUserinRoleAsync();
-            DashboardDTO dashboardDTO = new()
+            DashboardProductDTO dashboardDTO = new()
             {
                 ActualIncome = actualIncome,
                 AverageIncome = averageIncome,
@@ -81,6 +81,35 @@ namespace FDiamondShop.API.Controllers
                 Discount = discount,
                 TotalIncome = totalIncome,
                 TotalSoldProduct = totalSoldProduct,
+               
+            };
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = dashboardDTO;
+            return _response ;
+        }
+
+
+        [HttpPost("Account")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetAccountDashboard([FromBody] string? date)
+        {
+            
+            var users = await _unitOfWork.UserRepository.GetAllAsync();
+            //Completed Order
+            
+            // total user
+            var totalUsers = users.Count();
+            //number of order
+            var orderperUser = await _unitOfWork.DashboardRepository.CountOrderOfUserAsync();
+            //number of payment
+            var countpayment = await _unitOfWork.DashboardRepository.CountPaymentMethodAsync();
+            //number user in each Role
+            var userinRole = await _unitOfWork.DashboardRepository.CountUserinRoleAsync();
+            DashboardAccountDTO dashboardaccountDTO = new()
+            {               
                 TotalUser = totalUsers,
                 CountOrderOfUserAsync = orderperUser,
                 CountPaymentMethod = countpayment,
@@ -88,8 +117,8 @@ namespace FDiamondShop.API.Controllers
             };
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
-            _response.Result = dashboardDTO;
-            return _response ;
+            _response.Result = dashboardaccountDTO;
+            return _response;
         }
     }
 }

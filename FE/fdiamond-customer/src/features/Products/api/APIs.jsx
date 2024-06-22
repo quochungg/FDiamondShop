@@ -42,7 +42,13 @@ export const getProductByID = async (id) => {
     try {
         response = await axios.get(API_url)
     } catch (error) {
-        console.error("There was an error!", error);
+        //Handle 404 Status Code from server
+        if (error.response) {
+            response = error.response;
+        } else {
+            //such as network errors
+            console.error("There was an error!", error);
+        }
     }
     return response;
 }

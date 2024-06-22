@@ -1,6 +1,6 @@
 ﻿namespace FDiamondShop.API.Models.DTO
 {
-    public class DashboardDTO
+    public class DashboardProductDTO
     {
         public int CompletedOrder { get; set; } //(1)
 
@@ -15,10 +15,7 @@
         public decimal Discount { get; set; } //(6)
 
         public decimal ActualIncome { get; set; } //(7) = (4) - (6)
-        public int TotalUser {  get; set; }
-        public Dictionary<string, int> CountOrderOfUserAsync { get; set; }
-        public Dictionary<string, int> CountPaymentMethod {  get; set; }
-        public Dictionary<string, int> CountUserinRole { get; set; }
+        
 
     }
 }
