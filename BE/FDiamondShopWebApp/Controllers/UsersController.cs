@@ -105,7 +105,7 @@ namespace FDiamondShop.API.Controllers
             return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
 
-        [HttpPatch("update")]
+        [HttpPut("update")]
         //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
