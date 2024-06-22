@@ -35,12 +35,12 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateOrder(string userName, [FromBody] OrderCreateDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateOrder( [FromBody] OrderCreateDTO createDTO)
         {
             try
             {
                 decimal totalPrice = 0;
-                var user = _userManager.Users.First(u => u.UserName == userName);
+                var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                 var cartLines = await _db.CartLines
                                           .Include(cl => cl.CartLineItems)
                                           .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
