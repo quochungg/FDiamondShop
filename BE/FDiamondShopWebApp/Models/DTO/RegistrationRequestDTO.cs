@@ -9,15 +9,15 @@ namespace FDiamondShop.API.Models.DTO
         public string UserName { get; set; }
         [Required]
         [RegularExpression(pattern: @"^[a-zA-Z\s]*$", ErrorMessage = "Only characters")]
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; }
         [Required]
         [RegularExpression(pattern: @"^[a-zA-Z\s]*$", ErrorMessage = "Only characters")]
-        public string? LastName { get; set; }
+        public string LastName { get; set; }
         [Required]
         public string Address { get; set; }
         [Required]
         [RegularExpression(pattern: @"^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{6,}$", ErrorMessage = "Password must be at least 6 characters  and contain at least 1 uppercase letter, 1 number, and 1 special character.")]
-        public string? Password { get; set; }
+        public string Password { get; set; }
         public string Role { get; set; }
         [Required]
         [RegularExpression(pattern: @"^0\d{9}$", ErrorMessage = "Phone number must contain 10 digits and start with 0")]

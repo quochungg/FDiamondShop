@@ -9,12 +9,11 @@ using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Text.RegularExpressions;
 using MailKit.Net.Smtp;
-using FDiamondShop.API.Controllers;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using Google.Apis.Auth;
+using Google.Apis.Util;
 
 
 namespace FDiamondShop.API.Repository
@@ -25,7 +24,7 @@ namespace FDiamondShop.API.Repository
         private readonly EmailSetting _emailSetting;
         private string secretKey;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IMapper _mapper;
+        
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserRepository(FDiamondContext db, IConfiguration configuration, UserManager<ApplicationUser> userManager,
             IMapper mapper, RoleManager<IdentityRole> roleManager, IOptions<EmailSetting> options) : base(db)
@@ -324,6 +323,100 @@ namespace FDiamondShop.API.Repository
             var settings = new GoogleJsonWebSignature.ValidationSettings();
             var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
             return payload;
+        }
+
+        public async Task<ApplicationUser> GoogleRegister(GoogleRegistrationDTO registrationRequestDTO)
+        {
+            ApplicationUser user = new()
+            {
+                UserName = registrationRequestDTO.UserName,
+                Email = registrationRequestDTO.UserName,
+                NormalizedEmail = registrationRequestDTO.UserName.ToUpper(),
+                FirstName = registrationRequestDTO.FirstName,
+                LastName = registrationRequestDTO.LastName,
+                Address = registrationRequestDTO.Address,
+                PhoneNumber = registrationRequestDTO.PhoneNumber
+            };
+            try
+            {
+                var User = _userManager.Users.FirstOrDefault(u => u.UserName == user.UserName);
+                if (User != null)
+                {
+                    throw new Exception("User already exists");
+                }
+                var result = await _userManager.CreateAsync(user);
+                
+                
+                if (result.Succeeded || !result.Succeeded)
+
+                {
+                    string role = registrationRequestDTO.Role.ToLower();
+                    if (role == "admin" || role == "customer" || role == "manager")
+                    {
+                        if (!await _roleManager.RoleExistsAsync(role))
+                        {
+                            await _roleManager.CreateAsync(new IdentityRole(role));
+                        }
+
+                        await _userManager.AddToRoleAsync(user, role);
+                        var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
+                        return userToReturn;
+                    }
+                    else
+                    {
+                        throw new Exception("Wrong role");
+                    }
+
+                }
+                else
+                {
+                    // Log or handle the errors
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    throw new Exception($"User creation failed: {errors}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred during registration: {ex.Message}", ex);
+            }
+        }
+        public async Task<LoginResponseDTO> LoginGoogle(GoogleLoginDTO googleLoginDTO)
+        {
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == googleLoginDTO.UserName);          
+            //if user was found generate JWT Token
+            var roles = await _userManager.GetRolesAsync(user);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secretKey);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
+                    new Claim("TokenId",Guid.NewGuid().ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
+            {
+                //User = _mapper.Map<UserDTO>(user),
+                Token = tokenHandler.WriteToken(token),
+                User = new()
+                {
+                    Address = user.Address,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName
+                },
+                Role = roles.FirstOrDefault()
+
+            };
+            return loginResponseDTO;
         }
     }
 }

@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Google.Apis.Auth;
+
 
 namespace FDiamondShop.API.Controllers
 {
@@ -229,10 +227,13 @@ namespace FDiamondShop.API.Controllers
             }
             return BadRequest("Error confirming your email.");
         }
-        [HttpPost("GoogleRegister")]
+        
+            
+        
+        [HttpPost("GoogleLogin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GoogleRegister([FromBody] GoogleLoginDTO model)
+        public async Task<IActionResult> LoginGoogle([FromBody] GoogleRegisterDTO model)
         {
             var payload = await _unitOfWork.UserRepository.VerifyGoogleToken(model.IdToken);
             if (payload == null)
@@ -243,49 +244,37 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
             var user = await _userManager.FindByEmailAsync(payload.Email);
-            if (user == null)
+            
+            if (user == null )
             {
-                var registrationRequest = new RegistrationRequestDTO
+                var registrationRequest = new GoogleRegistrationDTO
                 {
                     UserName = payload.Email,
-                     
+
                     Password = "",
-                    Role="customer",
-                    
+                    Role = "customer",
+
                     FirstName = payload.GivenName,
                     LastName = payload.FamilyName
                 };
-                user = await _unitOfWork.UserRepository.Register(registrationRequest);
-                _response.StatusCode = HttpStatusCode.Created;
-                _response.IsSuccess = true;
-                _response.Result = user;
+                user = await _unitOfWork.UserRepository.GoogleRegister(registrationRequest);
+                user.EmailConfirmed = true;
                 await _unitOfWork.SaveAsync();
-
-                return CreatedAtRoute("searchuserbyusername", new { username = user.UserName }, _response);
-                
             }
-
-            else
+            if (user.PasswordHash != null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add("User already exists");
                 return BadRequest(_response);
             }
-            
-        }
-        [HttpPost("GoogleLogin")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> LoginGoogle([FromBody] LoginRequestDTO loginRequestDTO)
-        {
-            var user = await _userManager.FindByEmailAsync(loginRequestDTO.UserName);
-            var loginRequest = new LoginRequestDTO
+
+            var loginRequest = new GoogleLoginDTO
             {
                 UserName = user.UserName,
                 Password = "",
             };
-            var loginResponse = await _unitOfWork.UserRepository.Login(loginRequest);
+            var loginResponse = await _unitOfWork.UserRepository.LoginGoogle(loginRequest);
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
