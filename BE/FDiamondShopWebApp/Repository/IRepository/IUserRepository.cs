@@ -1,5 +1,6 @@
 ﻿using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
+using Google.Apis.Auth;
 
 namespace FDiamondShop.API.Repository.IRepository
 {
@@ -12,5 +13,6 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<UserDTO> GetUserByUsername(string username);
         Task SendEmailConfirmationAsync(ApplicationUser user, string confirmationLink);
         public Task<List<UserDTO>> GetallUser();
+        public Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string idToken);
     }
 }

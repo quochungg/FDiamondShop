@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Google.Apis.Auth;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -228,6 +229,57 @@ namespace FDiamondShop.API.Controllers
             }
             return BadRequest("Error confirming your email.");
         }
+        [HttpPost("googlelogin")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> LoginGoogle([FromBody] GoogleLoginDTO model)
+        {
+            var payload = await _unitOfWork.UserRepository.VerifyGoogleToken(model.IdToken);
+            if (payload == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Invalid google token");
+                return BadRequest(_response);
+            }
+            var user = await _userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                var registrationRequest = new RegistrationRequestDTO
+                {
+                    UserName = payload.Email,
+                     
+                    Password = "",
+                    Role="customer",
+                    
+                    FirstName = payload.GivenName,
+                    LastName = payload.FamilyName
+                };
+                user = await _unitOfWork.UserRepository.Register(registrationRequest);
+                _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.Result = user;
+                await _unitOfWork.SaveAsync();
+
+                return CreatedAtRoute("searchuserbyusername", new { username = user.UserName }, _response);
+                
+            }
+
+            
+            var loginRequest = new LoginRequestDTO
+            {
+                UserName = user.UserName,
+                Password = "",
+            };
+            var loginResponse = await _unitOfWork.UserRepository.Login(loginRequest);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = loginResponse;
+            return Ok(_response);
+        }      
+
+
     }
+    
 }
 

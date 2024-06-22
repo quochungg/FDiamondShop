@@ -14,6 +14,7 @@ using MailKit.Net.Smtp;
 using FDiamondShop.API.Controllers;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
+using Google.Apis.Auth;
 
 
 namespace FDiamondShop.API.Repository
@@ -318,6 +319,11 @@ namespace FDiamondShop.API.Repository
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
-
+        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string idToken)
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings();
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+            return payload;
+        }
     }
 }
