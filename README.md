@@ -1,11 +1,11 @@
 Diamond Shop System - SWP391 project
 ![screencapture-localhost-5174-product-diamond-2024-06-19-07_38_34](https://github.com/quochungg/FDiamondShop/assets/167979922/404aa80a-6696-403e-9ebb-b33c1487a5d7)
-Function Details
-https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
-usecase List
-https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
-Report 0
-https://docs.google.com/spreadsheets/d/1MmZ6rnhytbmFOeACCtkRoh_wIsNDfczx/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+-Function Details
+  https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+-usecase List
+  https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
+-Report 0
+  https://docs.google.com/spreadsheets/d/1MmZ6rnhytbmFOeACCtkRoh_wIsNDfczx/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 # Team's Member
 - Front - end 
   + Nguyen Thi Bich Duyen - SE183629
