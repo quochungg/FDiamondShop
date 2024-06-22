@@ -151,7 +151,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
                   <Switch
                     checked={voucher.isExpried}
                     onChange={handleSwitchChange}
-                    name="active"
+                    name="isExpried"
                     color="primary"
                   />
                 }

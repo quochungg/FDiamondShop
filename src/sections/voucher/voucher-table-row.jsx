@@ -14,6 +14,7 @@ export default function VoucherTableRow({
   startingDate,
   endDate,
   isExpried,
+  onEdit,
 }) {
   const [open, setOpen] = useState(null);
 
@@ -59,7 +60,12 @@ export default function VoucherTableRow({
           },
         }}
       >
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            onEdit();
+            handleCloseMenu();
+          }}
+        >
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
@@ -79,4 +85,5 @@ VoucherTableRow.propTypes = {
   startingDate: PropTypes.any,
   endDate: PropTypes.any,
   isExpried: PropTypes.any,
+  onEdit: PropTypes.func,
 };

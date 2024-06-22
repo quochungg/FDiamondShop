@@ -23,6 +23,7 @@ import TableEmptyRows from 'src/sections/table-empty-rows';
 import { emptyRows, applyFilter, getComparator } from 'src/sections/utils';
 
 import AddVoucherModal from '../AddVoucherModal';
+import EditVoucherModal from '../EditVoucherModal';
 import VoucherTableRow from '../voucher-table-row';
 import VoucherTableHead from '../voucher-table-head';
 import VoucherTableToolbar from '../voucher-table-toolbar';
@@ -34,15 +35,26 @@ export default function VoucherPage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('discountId');
 
   const [filterById, setFilterById] = useState('');
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [openModal, setOpenModal] = useState(false);
 
   const [newVoucher, setNewVoucher] = useState({
+    discountId: '',
+    discountCodeName: '',
+    discountPercent: '',
+    startingDate: null,
+    endDate: null,
+    isExpried: false,
+  });
+
+  const [currentVoucher, setCurrentVoucher] = useState({
     discountId: '',
     discountCodeName: '',
     discountPercent: '',
@@ -96,6 +108,24 @@ export default function VoucherPage() {
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
+  const handleOpenEditModal = (voucher) => {
+    setCurrentVoucher(voucher);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+  };
+
+  const handleEditVoucher = (updatedVoucher) => {
+    setData(
+      data.map((voucher) =>
+        voucher.discountId === updatedVoucher.discountId ? updatedVoucher : voucher
+      )
+    );
+    handleCloseEditModal();
+  };
+
   const handleSubmit = async (voucher) => {
     try {
       const response = await axios.post('https://fdiamond-api.azurewebsites.net/api/Discount', {
@@ -103,6 +133,7 @@ export default function VoucherPage() {
         startingDate: voucher.startingDate.toISOString(),
         endDate: voucher.endDate.toISOString(),
       });
+      console.log(voucher);
       const responseData = response.data;
       if (responseData.isSuccess && responseData.result) {
         setData((prevData) => [...prevData, responseData.result]);
@@ -170,6 +201,7 @@ export default function VoucherPage() {
                       startingDate={row.startingDate}
                       endDate={row.endDate}
                       isExpried={row.isExpried}
+                      onEdit={() => handleOpenEditModal(row)}
                     />
                   ))}
 
@@ -196,6 +228,14 @@ export default function VoucherPage() {
         voucher={newVoucher}
         setVoucher={setNewVoucher}
         handleSubmit={handleSubmit}
+      />
+
+      <EditVoucherModal
+        open={editModalOpen}
+        handleClose={handleCloseEditModal}
+        voucher={currentVoucher}
+        setVoucher={setCurrentVoucher}
+        handleSubmit={handleEditVoucher}
       />
     </Container>
   );
