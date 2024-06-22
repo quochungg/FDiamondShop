@@ -6,17 +6,14 @@ import AppLayout from "src/layout/AppLayout";
 
 
 const SearchResultPage = ({ category }) => {
-
-    console.log('SearchResultPage renders');
+    // console.log('SearchResultPage renders');
 
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams({
         pageNumber: 1,
     });
 
-    console.log(searchParams);
-
-    // console.log('pageNumber: ', Number(searchParams.get('pageNumber')))
+    // console.log(searchParams);
 
     const [isLoading, setIsLoading] = useState(true);
     const [productList, setProductList] = useState([]);
@@ -32,7 +29,6 @@ const SearchResultPage = ({ category }) => {
     }
 
     const validatePageNumber = () => {
-        // let isValid = true;
         const selectedPage = Number(searchParams.get("pageNumber"));
         if (selectedPage <= 0
             || isNaN(selectedPage)

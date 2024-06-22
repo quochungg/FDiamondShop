@@ -4,7 +4,6 @@
 
 
 const Footer = () => {
-    console.log('Footer renders')
 
     return (
         <>

@@ -1,7 +1,7 @@
 import ReactPaginate from 'react-paginate';
 
 const Pagination = ({ totalPage, handlePageClick, currentPage }) => {
-    console.log('Pagination renders')
+    // console.log('Pagination renders')
     const aTags = "px-5 py-2"
     const liTags = "flex items-center rounded-sm hover:bg-slate-200 transition hover:duration-150";
 
