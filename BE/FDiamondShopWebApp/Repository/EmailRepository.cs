@@ -1,10 +1,13 @@
-﻿using FDiamondShop.API.Models;
+﻿using Azure;
+using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using System.Net;
 
 namespace FDiamondShop.API.Repository
 {
@@ -33,6 +36,35 @@ namespace FDiamondShop.API.Repository
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
 
+        }
+        
+        public async Task SendEmailOrderAsync(string emailTo)
+        {
+            string subject = "Thank You for Shopping at FDIAMOND!";
+            string body = @"
+    <html>
+    <body>
+        <h1>Dear Valued Customer!</h1>
+        <p>We sincerely thank you for trusting and shopping at FDIAMOND.</p>
+        <p>Your order has been successfully processed.</p>
+        <p>If you have any questions, please feel free to contact us via email or our support phone number.</p>
+        <p>Once again, thank you for choosing FDIAMOND. Have a wonderful day!</p>
+        <br/>
+        <p>Sincerely,</p>
+        <p>The FDIAMOND Team</p>
+    </body>
+    </html>";
+
+            MailRequestDTO mailRequestDTO = new()
+            {
+                Body = body,
+                Subject = subject,
+                toEmail = emailTo
+            };
+
+            await SendEmailAsync(mailRequestDTO);
+            
+            
         }
     }
 }

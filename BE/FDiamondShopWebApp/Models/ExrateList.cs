@@ -2,6 +2,9 @@
 
 namespace FDiamondShop.API.Models
 {
+   
+    [XmlRoot("ExrateList")]
+
     public class ExrateList
     {
         [XmlElement("Exrate")]
