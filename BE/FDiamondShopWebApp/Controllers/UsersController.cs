@@ -227,10 +227,13 @@ namespace FDiamondShop.API.Controllers
             }
             return BadRequest("Error confirming your email.");
         }
-        [HttpPost("GoogleRegister")]
+        
+            
+        
+        [HttpPost("GoogleLogin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GoogleRegister([FromBody] GoogleRegisterDTO model)
+        public async Task<IActionResult> LoginGoogle([FromBody] GoogleRegisterDTO model)
         {
             var payload = await _unitOfWork.UserRepository.VerifyGoogleToken(model.IdToken);
             if (payload == null)
@@ -241,51 +244,31 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
             var user = await _userManager.FindByEmailAsync(payload.Email);
-            if (user == null)
+            
+            if (user == null )
             {
                 var registrationRequest = new GoogleRegistrationDTO
                 {
                     UserName = payload.Email,
-                     
+
                     Password = "",
-                    Role="customer",
-                    
+                    Role = "customer",
+
                     FirstName = payload.GivenName,
                     LastName = payload.FamilyName
                 };
                 user = await _unitOfWork.UserRepository.GoogleRegister(registrationRequest);
                 user.EmailConfirmed = true;
-                _response.StatusCode = HttpStatusCode.Created;
-                _response.IsSuccess = true;
-                _response.Result = user;
                 await _unitOfWork.SaveAsync();
-                
-                return CreatedAtRoute("searchuserbyusername", new { username = user.UserName }, _response);
-                
+            }
+            if (user.PasswordHash != null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User already exists");
+                return BadRequest(_response);
             }
 
-            else
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("User already exists");
-                return BadRequest(_response);
-            }
-            
-        }
-        [HttpPost("GoogleLogin")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> LoginGoogle([FromBody] GoogleLoginDTO googleLoginDTO)
-        {
-            var user = await _userManager.FindByEmailAsync(googleLoginDTO.UserName);
-            if(user.PasswordHash!= null)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("User already exists");
-                return BadRequest(_response);
-            }
             var loginRequest = new GoogleLoginDTO
             {
                 UserName = user.UserName,
