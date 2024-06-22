@@ -230,7 +230,7 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("GoogleRegister")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GoogleRegister([FromBody] GoogleLoginDTO model)
+        public async Task<IActionResult> GoogleRegister([FromBody] GoogleRegisterDTO model)
         {
             var payload = await _unitOfWork.UserRepository.VerifyGoogleToken(model.IdToken);
             if (payload == null)
@@ -254,11 +254,12 @@ namespace FDiamondShop.API.Controllers
                     LastName = payload.FamilyName
                 };
                 user = await _unitOfWork.UserRepository.GoogleRegister(registrationRequest);
+                user.EmailConfirmed = true;
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
                 _response.Result = user;
                 await _unitOfWork.SaveAsync();
-
+                
                 return CreatedAtRoute("searchuserbyusername", new { username = user.UserName }, _response);
                 
             }
@@ -275,15 +276,22 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("GoogleLogin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> LoginGoogle([FromBody] LoginRequestDTO loginRequestDTO)
+        public async Task<IActionResult> LoginGoogle([FromBody] GoogleLoginDTO googleLoginDTO)
         {
-            var user = await _userManager.FindByEmailAsync(loginRequestDTO.UserName);
-            var loginRequest = new LoginRequestDTO
+            var user = await _userManager.FindByEmailAsync(googleLoginDTO.UserName);
+            if(user.PasswordHash!= null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User already exists");
+                return BadRequest(_response);
+            }
+            var loginRequest = new GoogleLoginDTO
             {
                 UserName = user.UserName,
                 Password = "",
             };
-            var loginResponse = await _unitOfWork.UserRepository.Login(loginRequest);
+            var loginResponse = await _unitOfWork.UserRepository.LoginGoogle(loginRequest);
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;

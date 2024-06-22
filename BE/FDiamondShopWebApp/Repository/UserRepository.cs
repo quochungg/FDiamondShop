@@ -380,5 +380,43 @@ namespace FDiamondShop.API.Repository
                 throw new Exception($"An error occurred during registration: {ex.Message}", ex);
             }
         }
+        public async Task<LoginResponseDTO> LoginGoogle(GoogleLoginDTO googleLoginDTO)
+        {
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == googleLoginDTO.UserName);          
+            //if user was found generate JWT Token
+            var roles = await _userManager.GetRolesAsync(user);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secretKey);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
+                    new Claim("TokenId",Guid.NewGuid().ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
+            {
+                //User = _mapper.Map<UserDTO>(user),
+                Token = tokenHandler.WriteToken(token),
+                User = new()
+                {
+                    Address = user.Address,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName
+                },
+                Role = roles.FirstOrDefault()
+
+            };
+            return loginResponseDTO;
+        }
     }
 }
