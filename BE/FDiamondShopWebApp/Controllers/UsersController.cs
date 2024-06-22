@@ -229,10 +229,10 @@ namespace FDiamondShop.API.Controllers
             }
             return BadRequest("Error confirming your email.");
         }
-        [HttpPost("googlelogin")]
+        [HttpPost("GoogleRegister")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> LoginGoogle([FromBody] GoogleLoginDTO model)
+        public async Task<IActionResult> GoogleRegister([FromBody] GoogleLoginDTO model)
         {
             var payload = await _unitOfWork.UserRepository.VerifyGoogleToken(model.IdToken);
             if (payload == null)
@@ -265,7 +265,21 @@ namespace FDiamondShop.API.Controllers
                 
             }
 
+            else
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User already exists");
+                return BadRequest(_response);
+            }
             
+        }
+        [HttpPost("GoogleLogin")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> LoginGoogle([FromBody] LoginRequestDTO loginRequestDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(loginRequestDTO.UserName);
             var loginRequest = new LoginRequestDTO
             {
                 UserName = user.UserName,
@@ -276,7 +290,7 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             _response.Result = loginResponse;
             return Ok(_response);
-        }      
+        }
 
 
     }
