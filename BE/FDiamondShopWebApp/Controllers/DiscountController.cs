@@ -137,7 +137,7 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                DateTime dateTime = DateTime.Now;
+                DateTime dateTime = DateTime.UtcNow;
                 var discount = await _unitOfWork.DiscountCodeRepository.GetAsync(u => u.EndDate.Equals(dateTime));
                 if (discount == null)
                 {
