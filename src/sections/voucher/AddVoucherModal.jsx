@@ -60,7 +60,11 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    handleSubmit(voucher);
+    handleSubmit({
+      ...voucher,
+      startingDate: voucher.startingDate ? voucher.startingDate.format('YYYY-MM-DDTHH:mm') : null,
+      endDate: voucher.endDate ? voucher.endDate.format('YYYY-MM-DDTHH:mm') : null,
+    });
   };
 
   return (

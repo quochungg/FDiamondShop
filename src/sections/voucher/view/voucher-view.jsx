@@ -130,8 +130,8 @@ export default function VoucherPage() {
     try {
       const response = await axios.post('https://fdiamond-api.azurewebsites.net/api/Discount', {
         ...voucher,
-        startingDate: voucher.startingDate.toISOString(),
-        endDate: voucher.endDate.toISOString(),
+        startingDate: voucher.startingDate ? voucher.startingDate : null,
+        endDate: voucher.endDate ? voucher.endDate : null,
       });
       console.log(voucher);
       const responseData = response.data;

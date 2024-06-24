@@ -76,15 +76,21 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
         `https://fdiamond-api.azurewebsites.net/api/Discount/${localVoucher.discountId}`,
         {
           ...localVoucher,
-          startingDate: localVoucher.startingDate.toISOString(),
-          endDate: localVoucher.endDate.toISOString(),
+          startingDate: localVoucher.startingDate
+            ? localVoucher.startingDate.format('YYYY-MM-DDTHH:mm')
+            : null,
+          endDate: localVoucher.endDate ? localVoucher.endDate.format('YYYY-MM-DDTHH:mm') : null,
         }
       );
-
-      if (response.data.isSuccess) {
-        handleSubmit(localVoucher);
+      console.log('API Response:', response);
+      if (response.status === 204) {
+        handleSubmit(localVoucher); // Update the voucher state in the parent component
+        setVoucher(localVoucher);
       } else {
-        console.error('Failed to update voucher:', response.data.message);
+        console.error(
+          'Failed to update voucher:',
+          response.data.message || 'Unexpected response structure'
+        );
       }
     } catch (error) {
       console.error('Error updating voucher:', error);
@@ -134,6 +140,16 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid item xs={6}>
+                <MobileTimePicker
+                  label="Start Time"
+                  value={localVoucher.startingDate}
+                  ampm={false}
+                  inputFormat="HH:mm"
+                  onChange={handleTimeChange('startingDate')}
+                  slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
+                />
+              </Grid>
+              <Grid item xs={6}>
                 <DatePicker
                   label="Start Date"
                   value={localVoucher.startingDate}
@@ -141,27 +157,23 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
                   slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
                 />
               </Grid>
+
               <Grid item xs={6}>
                 <MobileTimePicker
-                  label="Start Time"
-                  value={localVoucher.startingDate}
-                  onChange={handleTimeChange('startingDate')}
+                  label="End Time"
+                  value={localVoucher.endDate}
+                  ampm={false}
+                  inputFormat="HH:mm"
+                  onChange={handleTimeChange('endDate')}
                   slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
                 />
               </Grid>
+
               <Grid item xs={6}>
                 <DatePicker
                   label="End Date"
                   value={localVoucher.endDate}
                   onChange={handleDateChange('endDate')}
-                  slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <MobileTimePicker
-                  label="End Time"
-                  value={localVoucher.endDate}
-                  onChange={handleTimeChange('endDate')}
                   slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
                 />
               </Grid>
