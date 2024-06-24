@@ -4,6 +4,7 @@ import { useAuth } from "src/context/AuthProvider";
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye'
+import { TailSpin } from 'react-loader-spinner'
 
 
 const LoginPage = () => {
@@ -14,7 +15,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
     const [type, setType] = useState('password');
     const [icon, setIcon] = useState(eyeOff);
-    // const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Handle password visibility
     const handleTogglePasword = () => {
@@ -70,15 +71,25 @@ const LoginPage = () => {
             userName: userName,
             password: password
         }
-        // setIsLoading(true);
+        setIsLoading(true);
         await login(loginCredentials)
-        // setIsLoading(false);
+        setIsLoading(false);
     }
 
 
     const handleRegisterClick = () => {
         navigate('/register', { state: { previousUrl: location.state.previousUrl } });
     }
+
+    const labelTags = "text-[16px] absolute top-1 left-2 z-10 origin-[0] -translate-y-4 scale-75 transform"
+        + " cursor-text select-none bg-white px-2 text-gray-400 duration-300 peer-placeholder-shown:top-1/2"
+        + " peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-1 "
+        + " peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600"
+
+    const inputTags = "border-1 peer block w-full appearance-none"
+        + " rounded-sm border border-gray-400 bg-transparent"
+        + " p-4 text-[16px] text-gray-900"
+        + " focus:border-blue-600 focus:outline-none focus:ring-0"
 
     return (
         <>
@@ -96,16 +107,34 @@ const LoginPage = () => {
                             <p className="font-gantari uppercase text-center text-5xl font-[600] tracking-wide mb-8">Login</p>
 
                             <form className="w-full" onSubmit={handleLogin}>
-                                <input
+                                {/* <input
                                     className='text-[16px] border-[1px] border-gray-400 w-full p-4 mb-5 rounded-sm'
                                     placeholder="Email Address"
                                     type='email'
                                     name='username'
                                     required
                                     maxLength={256}
-                                />
+                                /> */}
 
-                                <div className="relative">
+                                <div className="relative w-full mb-3 font-gantari">
+                                    <input
+                                        className={inputTags}
+                                        placeholder=" "
+                                        type="text"
+                                        id="username"
+                                        name='username'
+                                        maxLength={256}
+                                        required
+                                    />
+                                    <label
+                                        htmlFor="username"
+                                        className={labelTags}
+                                    >
+                                        Email Address
+                                    </label>
+                                </div>
+
+                                {/* <div className="relative">
                                     <input
                                         className='text-[16px] border-[1px] border-gray-400 w-full p-4 mb-5 rounded-sm'
                                         placeholder="Password"
@@ -118,8 +147,28 @@ const LoginPage = () => {
                                     <span onClick={handleTogglePasword}>
                                         <Icon class="absolute top-4 right-7 cursor-pointer" icon={icon} size={24} />
                                     </span>
-                                </div>
+                                </div> */}
 
+                                <div className="relative">
+                                    <div className="relative w-full mb-3 font-gantari">
+                                        <input
+                                            className={inputTags}
+                                            placeholder=" "
+                                            id="username"
+                                            value={password}
+                                            type={type}
+                                            name='password'
+                                            required
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+                                        <label
+                                            htmlFor="password"
+                                            className={labelTags}
+                                        >
+                                            Password
+                                        </label>
+                                    </div>
+                                </div>
                                 {errorMessage &&
                                     <div className="text-red-600 text-[17px] w-full mb-4 rounded-sm">
 
@@ -128,13 +177,41 @@ const LoginPage = () => {
                                         </p>
                                     </div>
                                 }
-
+                                {/* 
                                 <button
                                     type='submit'
                                     className="p-4 transition duration-300 ease-in-out hover:bg-[#26265c] bg-[#000035] text-white w-full text-center text-2xl rounded-sm"
                                 >
                                     Login
-                                </button>
+                                </button> */}
+
+                                {isLoading
+                                    ? (
+                                        <button
+                                            type='submit'
+                                            className="p-4 transition duration-300 ease-in-out bg-[#26265c] text-white w-full text-center text-2xl rounded-sm"
+                                            disabled
+                                        >
+                                            <TailSpin
+                                                visible={true}
+                                                height="30"
+                                                color="#f8fafc"
+                                                ariaLabel="tail-spin-loading"
+                                                radius="1"
+                                                wrapperStyle={{}}
+                                                wrapperClass="flex flex-row justify-center"
+                                            />
+                                        </button>
+                                    )
+                                    : (
+                                        <button
+                                            type='submit'
+                                            className="p-4 transition duration-300 ease-in-out hover:bg-[#26265c] bg-[#000035] text-white w-full text-center text-2xl rounded-sm mb-2"
+                                        >
+                                            Login
+                                        </button>
+                                    )
+                                }
 
 
                             </form>

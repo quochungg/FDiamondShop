@@ -42,6 +42,8 @@ export const registerAPI = async (data) => {
 
 
 
+
+
 //201 success
 /*400 validation
 - name: only characters
