@@ -38,6 +38,7 @@ builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("Email
 builder.Services.AddTransient<IEmailRepository, EmailRepository>();
 builder.Services.AddHttpClient();
 
+
 // Register Repositories
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

@@ -14,7 +14,7 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<UserDTO> GetUserByUsername(string username);
         Task SendEmailConfirmationAsync(ApplicationUser user, string confirmationLink);
         public Task<List<UserDTO>> GetallUser();
-        public Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string idToken);
+        public Task<GoogleUserInfo> ValidateGoogleAccessToken(string accessToken);
         public Task<LoginResponseDTO> LoginGoogle(GoogleLoginDTO googleLoginDTO);
     }
 }
