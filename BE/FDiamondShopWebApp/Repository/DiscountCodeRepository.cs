@@ -12,11 +12,6 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
-        public async Task<List<DiscountCode>> GetExpiredDiscounts(DateTime currentDate)
-        {
-            return await _db.DiscountCodes
-                .Where(d => d.EndDate <= currentDate && !d.IsExpried)
-                .ToListAsync();
-        }
+      
     }
 }

@@ -17,7 +17,7 @@ namespace FDiamondShop.API.Models
 
         public DateTime? EndDate { get; set; }
 
-        public bool IsExpried { get; set; }
+        public bool IsExpried { get; set; }=false;
         
         public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
