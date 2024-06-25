@@ -107,6 +107,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var discount =  await _db.DiscountCodes.FirstOrDefaultAsync(u => u.DiscountId== id);
+                var now = DateTime.UtcNow;
                 if (discount == null)
                 {
                     return NotFound("DiscountCode not found");
@@ -114,7 +115,7 @@ namespace FDiamondShop.API.Controllers
                 discount.DiscountPercent = updateDTO.DiscountPercent;
                 discount.StartingDate = updateDTO.StartingDate;
                 discount.EndDate = updateDTO.EndDate;
-                discount.IsExpried = updateDTO.IsExpried;
+                discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
 
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -138,11 +139,11 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 DateTime dateTime = DateTime.UtcNow;
-                var expiredDiscounts = await _unitOfWork.DiscountCodeRepository.GetExpiredDiscounts(dateTime);
-
-                foreach (var discount in expiredDiscounts)
+                var existDiscount = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
+                var now = DateTime.UtcNow;
+                foreach (var discount in existDiscount)
                 {
-                    discount.IsExpried = true;
+                    discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
                 }
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
