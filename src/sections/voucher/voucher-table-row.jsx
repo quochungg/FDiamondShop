@@ -39,7 +39,7 @@ export default function VoucherTableRow({
           {endDate ? dayjs(endDate).format('DD/MM/YYYY HH:mm') : '-'}
         </TableCell>
         <TableCell align="center">
-          <Label color={isExpried ? 'success' : 'error'}>{isExpried ? 'Open' : 'Expired'}</Label>
+          <Label color={isExpried ? 'error' : 'success'}>{isExpried ? 'Expired' : 'Open'}</Label>
         </TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
