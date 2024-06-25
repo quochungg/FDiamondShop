@@ -235,7 +235,8 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginGoogle([FromBody] GoogleRegisterDTO model)
         {
-            var payload = await _unitOfWork.UserRepository.VerifyGoogleToken(model.IdToken);
+            var payload = await _unitOfWork.UserRepository.ValidateGoogleAccessToken(model.IdToken);
+
             if (payload == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -243,19 +244,19 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Invalid google token");
                 return BadRequest(_response);
             }
-            var user = await _userManager.FindByEmailAsync(payload.Email);
+            var user = await _userManager.FindByEmailAsync(payload.email);
             
             if (user == null )
             {
                 var registrationRequest = new GoogleRegistrationDTO
                 {
-                    UserName = payload.Email,
+                    UserName = payload.email,
 
                     Password = "",
                     Role = "customer",
 
-                    FirstName = payload.GivenName,
-                    LastName = payload.FamilyName
+                    FirstName = payload.givenName,
+                    LastName = payload.familyName
                 };
                 user = await _unitOfWork.UserRepository.GoogleRegister(registrationRequest);
                 user.EmailConfirmed = true;

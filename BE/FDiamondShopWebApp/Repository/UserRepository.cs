@@ -14,6 +14,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using Google.Apis.Auth;
 using Google.Apis.Util;
+using System.Text.Json;
 
 
 namespace FDiamondShop.API.Repository
@@ -24,16 +25,22 @@ namespace FDiamondShop.API.Repository
         private readonly EmailSetting _emailSetting;
         private string secretKey;
         private readonly UserManager<ApplicationUser> _userManager;
-        
+        private readonly IHttpClientFactory _clientFactory;
+
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UserRepository(FDiamondContext db, IConfiguration configuration, UserManager<ApplicationUser> userManager,
-            IMapper mapper, RoleManager<IdentityRole> roleManager, IOptions<EmailSetting> options) : base(db)
+        public UserRepository(FDiamondContext db, IConfiguration configuration,
+            UserManager<ApplicationUser> userManager,
+            IMapper mapper,
+            RoleManager<IdentityRole> roleManager,
+            IOptions<EmailSetting> options,
+            IHttpClientFactory httpClientFactory) : base(db)
         {
             this._emailSetting = options.Value;
             _db = db;
             _userManager = userManager;            
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _roleManager = roleManager;
+            _clientFactory = httpClientFactory;
         }
 
 
@@ -318,11 +325,16 @@ namespace FDiamondShop.API.Repository
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
-        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string idToken)
+        public async Task<GoogleUserInfo> ValidateGoogleAccessToken(string accessToken)
         {
-            var settings = new GoogleJsonWebSignature.ValidationSettings();
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
-            return payload;
+            var client = _clientFactory.CreateClient();
+            var response = await client.GetStringAsync($"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={accessToken}");
+            var userInfo = JsonSerializer.Deserialize<GoogleUserInfo>(response);
+            if (userInfo == null || string.IsNullOrEmpty(userInfo.sub))
+            {
+                throw new Exception("Invalid access token.");
+            }
+            return userInfo;
         }
 
         public async Task<ApplicationUser> GoogleRegister(GoogleRegistrationDTO registrationRequestDTO)
