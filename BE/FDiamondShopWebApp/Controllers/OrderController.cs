@@ -99,7 +99,7 @@ namespace FDiamondShop.API.Controllers
                    
                     case "vnpay":
                         //sua link tren swagger
-                        var paymentApiUrl = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
+                        var paymentApiUrl = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/vnpay");
                         var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
                         if (paymentResponse.IsSuccessStatusCode)
                         {

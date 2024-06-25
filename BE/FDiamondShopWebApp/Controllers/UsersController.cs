@@ -233,9 +233,9 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("GoogleLogin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> LoginGoogle([FromBody] GoogleRegisterDTO model)
+        public async Task<IActionResult> LoginGoogle([FromBody] string idToken)
         {
-            var payload = await _unitOfWork.UserRepository.ValidateGoogleAccessToken(model.IdToken);
+            var payload = await _unitOfWork.UserRepository.ValidateGoogleAccessToken(idToken);
 
             if (payload == null)
             {
@@ -255,8 +255,8 @@ namespace FDiamondShop.API.Controllers
                     Password = "",
                     Role = "customer",
 
-                    FirstName = payload.givenName,
-                    LastName = payload.familyName
+                    FirstName = payload.given_name,
+                    LastName = payload.family_name
                 };
                 user = await _unitOfWork.UserRepository.GoogleRegister(registrationRequest);
                 user.EmailConfirmed = true;

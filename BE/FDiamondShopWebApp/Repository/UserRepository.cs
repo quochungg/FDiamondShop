@@ -328,8 +328,9 @@ namespace FDiamondShop.API.Repository
         public async Task<GoogleUserInfo> ValidateGoogleAccessToken(string accessToken)
         {
             var client = _clientFactory.CreateClient();
-            var response = await client.GetStringAsync($"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={accessToken}");
+            var response = await client.GetStringAsync($"https://www.googleapis.com/oauth2/v3/userinfo?access_token={accessToken}");
             var userInfo = JsonSerializer.Deserialize<GoogleUserInfo>(response);
+            
             if (userInfo == null || string.IsNullOrEmpty(userInfo.sub))
             {
                 throw new Exception("Invalid access token.");
