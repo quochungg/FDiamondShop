@@ -107,6 +107,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var discount =  await _db.DiscountCodes.FirstOrDefaultAsync(u => u.DiscountId== id);
+                var now = DateTime.Now;
                 if (discount == null)
                 {
                     return NotFound("DiscountCode not found");
@@ -114,7 +115,7 @@ namespace FDiamondShop.API.Controllers
                 discount.DiscountPercent = updateDTO.DiscountPercent;
                 discount.StartingDate = updateDTO.StartingDate;
                 discount.EndDate = updateDTO.EndDate;
-                discount.IsExpried = updateDTO.IsExpried;
+                discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
 
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -129,7 +130,7 @@ namespace FDiamondShop.API.Controllers
 
             return _response;  
         }
-        [HttpPut("UpdateAuto ", Name = "UpdateAuto")]
+        [HttpPut("UpdateAuto", Name = "UpdateAuto")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -138,12 +139,12 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 DateTime dateTime = DateTime.Now;
-                var discount = await _unitOfWork.DiscountCodeRepository.GetAsync(u => u.EndDate.Equals(dateTime));
-                if (discount == null)
+                var existDiscount = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
+                var now = DateTime.Now;
+                foreach (var discount in existDiscount)
                 {
-                    return NotFound("DiscountCode not found");
+                    discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
                 }
-                discount.IsExpried = true;
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;

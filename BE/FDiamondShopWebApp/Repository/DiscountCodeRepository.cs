@@ -1,6 +1,7 @@
 ﻿using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace FDiamondShop.API.Repository
 {
@@ -11,6 +12,6 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
-       
+      
     }
 }

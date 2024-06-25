@@ -127,7 +127,7 @@ namespace FDiamondShop.API.Controllers
                     case "momo":
                         decimal amountVND = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
                         paymentInfo.Amount = (int)amountVND;
-                        var paymentApiUrlMomo = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/momo");
+                        var paymentApiUrlMomo = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/momo");
                         var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
 
                         if (paymentResponseMomo.IsSuccessStatusCode)
@@ -156,7 +156,7 @@ namespace FDiamondShop.API.Controllers
                     case "paypal":
                          
                         
-                        var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger/index.html"), "/api/checkout/PayPal");
+                        var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                         if (paymentResponsePaypal.IsSuccessStatusCode)
