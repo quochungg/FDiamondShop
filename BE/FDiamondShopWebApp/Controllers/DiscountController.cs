@@ -129,7 +129,7 @@ namespace FDiamondShop.API.Controllers
 
             return _response;  
         }
-        [HttpPut("UpdateAuto ", Name = "UpdateAuto")]
+        [HttpPut("UpdateAuto", Name = "UpdateAuto")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -138,12 +138,12 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 DateTime dateTime = DateTime.UtcNow;
-                var discount = await _unitOfWork.DiscountCodeRepository.GetAsync(u => u.EndDate.Equals(dateTime));
-                if (discount == null)
+                var expiredDiscounts = await _unitOfWork.DiscountCodeRepository.GetExpiredDiscounts(dateTime);
+
+                foreach (var discount in expiredDiscounts)
                 {
-                    return NotFound("DiscountCode not found");
+                    discount.IsExpried = true;
                 }
-                discount.IsExpried = true;
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
