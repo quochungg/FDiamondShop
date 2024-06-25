@@ -107,7 +107,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var discount =  await _db.DiscountCodes.FirstOrDefaultAsync(u => u.DiscountId== id);
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now;
                 if (discount == null)
                 {
                     return NotFound("DiscountCode not found");
@@ -138,7 +138,7 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                DateTime dateTime = DateTime.UtcNow;
+                DateTime dateTime = DateTime.Now;
                 var existDiscount = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
                 var now = DateTime.UtcNow;
                 foreach (var discount in existDiscount)
