@@ -31,7 +31,6 @@ const Header = () => {
     const handleSignOut = (e) => {
         e.preventDefault();
         logout();
-
     }
 
     const iconSize = 25;
@@ -75,22 +74,22 @@ const Header = () => {
 
                     {user
                         ? (
-                            <div className="relative group w-[140px] px-2 hover:shadow hover:shadow-gray-400/50 py-3 rounded-t-md">
-                                <div className="flex gap-2 items-center w-full">
+                            <div className="relative group w-[120px] px-2 py-3 rounded-t-md hover:shadow hover:shadow-gray-400/50">
+                                <div className="flex gap-2 w-full">
                                     <Link title="Login" className="">
                                         <VscAccount size={iconSize} />
                                     </Link>
-                                    <p className="text-[14px] font-gantari w-full whitespace-nowrap overflow-hidden text-ellipsis">
+                                    <p className="text-[14px] font-gantari w-full whitespace-nowrap overflow-hidden text-ellipsis content-end">
                                         {user.firstName} {user.lastName}
                                     </p>
                                 </div>
 
                                 <div
-                                    className="mt-[12px] z-10 absolute left-0 w-full hidden group-hover:block group-hover:shadow group-hover:shadow-gray-400/50 bg-white rounded-b-md"
+                                    className="mt-[12px] z-10 absolute left-0 w-[120px] hidden group-hover:block group-hover:shadow group-hover:shadow-gray-400/50 bg-white rounded-b-md"
                                 >
-                                    <Link className="text-[14px] block pl-8 py-4 hover:text-slate-600">My Account</Link>
-                                    <Link className="text-[14px] block pl-8 py-4 hover:text-slate-600">My Orders</Link>
-                                    <Link onClick={handleSignOut} className="text-[14px] block pl-8 py-4 hover:font-[800] border-t-[1px] font-[700]">Sign Out</Link>
+                                    <Link className="text-[14px] block pl-6 py-4 hover:text-slate-600">My Account</Link>
+                                    <Link className="text-[14px] block pl-6 py-4 hover:text-slate-600">My Orders</Link>
+                                    <Link onClick={handleSignOut} className="text-[14px] block pl-6 py-4 hover:font-[800] border-t-[1px] font-[700]">Sign Out</Link>
                                 </div>
                             </div>
                         )

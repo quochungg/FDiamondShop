@@ -48,12 +48,10 @@ function App() {
                         <Route element={<GuestRoute />} >
                             <Route path='/login' element={<LoginPage />} />
                             <Route path='/register' element={<RegisterPage />} />
+                            <Route path='/verified-email' element={<SuccessfulVerificationPage />} />
+                            <Route path='/confirm-email-link' element={<EmailVerificationPage />} />
                         </Route>
 
-
-
-                        <Route path='/verified-email' element={<SuccessfulVerificationPage />} />
-                        <Route path='/confirm-email-link' element={<EmailVerificationPage />} />
 
                         <Route path="*" element={<PageNotFound />} />
                     </Routes>

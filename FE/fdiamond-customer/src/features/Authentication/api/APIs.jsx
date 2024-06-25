@@ -28,10 +28,8 @@ export const registerAPI = async (data) => {
 
     try {
         response = await axios.post(API_url, data)
-        console.log(response)
     } catch (error) {
         if (error.response) {
-            console.log(error.response)
             response = error.response;
         } else {
             console.error('There was an error!', error)
@@ -40,17 +38,26 @@ export const registerAPI = async (data) => {
     return response;
 }
 
+export const loginGoogleAPI = async (accessToken) => {
+    let response;
 
+    const API_url = API_ROOT + '/GoogleLogin'
+    console.log(API_url);
 
+    const headers = {
+        'Content-Type': 'application/json;charset=UTF-8',
+    }
 
-
-//201 success
-/*400 validation
-- name: only characters
-- address: string
-- phoneNum: Only 10 digits and start with 0
-- mail: @sdfd.comcom
-*/
-
-//500 trung gmail: ko co response body?
+    try {
+        response = await axios.post(API_url, accessToken, { headers: headers })
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+            console.log(error);
+        } else {
+            console.error('There was an error!', error)
+        }
+    }
+    return response;
+}
 

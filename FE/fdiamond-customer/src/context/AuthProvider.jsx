@@ -1,6 +1,6 @@
 import { useContext, createContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { loginAPI } from "src/features/Authentication/api/APIs";
+import { loginAPI, loginGoogleAPI } from "src/features/Authentication/api/APIs";
 
 const AuthContext = createContext();
 
@@ -13,13 +13,15 @@ const AuthProvider = ({ children }) => {
         await loginAPI(loginCredentials)
             .then(response => {
                 const account = response.data.result;
+
                 if (account && account.role === 'customer') { //if account exists, account must belong to a customer
                     setToken(account.token);
-                    localStorage.setItem('accessToken', account.token)
+                    localStorage.setItem('accessToken', account.token);
                     localStorage.setItem('user', JSON.stringify({
                         firstName: account.user.firstName,
                         lastName: account.user.lastName
-                    }))
+                    }));
+
                     navigate(
                         location?.state?.previousUrl
                             ? location.state.previousUrl
@@ -39,6 +41,30 @@ const AuthProvider = ({ children }) => {
             })
     }
 
+    const loginWithGoogle = async (accessToken) => {
+        const response = await loginGoogleAPI(accessToken);
+        const account = response.data.result;
+        console.log(response)
+
+        if (account) {
+            setToken(account.token);
+            localStorage.setItem('accessToken', account.token);
+            localStorage.setItem('user', JSON.stringify({
+                firstName: account.user.firstName,
+                lastName: account.user.lastName
+            }));
+
+            navigate(
+                location?.state?.previousUrl
+                    ? location.state.previousUrl
+                    : '/'
+                , { replace: true }     //replace current entry with previousUrl entry => prevent going back to login screen when clicking back button
+            )
+        } else {
+            console.log(response)
+        }
+    }
+
     const logout = () => {
         setToken("");
         localStorage.removeItem('user');
@@ -46,7 +72,7 @@ const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ token, login, logout }}>
+        <AuthContext.Provider value={{ token, login, loginWithGoogle, logout }}>
             {children}
         </AuthContext.Provider>)
 }
