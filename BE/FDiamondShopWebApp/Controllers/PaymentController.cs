@@ -22,7 +22,7 @@ namespace FDiamondShop.API.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly FDiamondContext _db;
-        public PaymentController(IUnitOfWork unitOfWork,IMapper mapper,UserManager<ApplicationUser> userManager,FDiamondContext db)
+        public PaymentController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, FDiamondContext db)
         {
             _unitOfWork = unitOfWork;
             _response = new();
@@ -55,12 +55,12 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepay")]
-        public async Task <IActionResult> PaymentExecute()
+        public async Task<IActionResult> PaymentExecute()
         {
             var user = _userManager.Users.First();
             var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.VnPayRepository.PaymentExecute(Request.Query);
-            if(response.PaymentId == "0" || response.VnPayResponseCode!= "00")
+            if (response.PaymentId == "0" || response.VnPayResponseCode != "00")
             {
                 await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                 await _unitOfWork.SaveAsync();
@@ -68,14 +68,14 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Payment failed");
                 return BadRequest(_response);
             }
-            
+
             PaymentDTO payment = new PaymentDTO()
             {
-               TransactionId  = response.OrderId,              
-               PaymentMethod=response.PaymentMethod,             
+                TransactionId = response.OrderId,
+                PaymentMethod = response.PaymentMethod,
             };
 
-            var model=_mapper.Map<Payment>(payment);
+            var model = _mapper.Map<Payment>(payment);
             await _unitOfWork.PaymentRepository.CreateAsync(model);
             await _unitOfWork.SaveAsync();
             order.PaymentId = model.PaymentId;
@@ -89,7 +89,7 @@ namespace FDiamondShop.API.Controllers
                 var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
                 foreach (var item in cartlineItems)
                 {
-                    var product = _db.Products.Where(product=>product.ProductId == item.ProductId).FirstOrDefault();
+                    var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
                     if (product.Quantity == 0)
                     {
@@ -98,7 +98,7 @@ namespace FDiamondShop.API.Controllers
                 }
             }
             await _unitOfWork.SaveAsync();
-            var emailTo = user.Email; 
+            var emailTo = user.Email;
             await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
             return Ok(response);
         }
@@ -110,7 +110,7 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                var paymentUrl =await _unitOfWork.MomoRepository.CreateMomoPaymentAsync(model);
+                var paymentUrl = await _unitOfWork.MomoRepository.CreateMomoPaymentAsync(model);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = paymentUrl;
@@ -126,11 +126,11 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepayMomo")]
-        public async Task <IActionResult> PaymentExecuteMomo()
+        public async Task<IActionResult> PaymentExecuteMomo()
         {
             var user = _userManager.Users.First();
             var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
-            var response =_unitOfWork.MomoRepository.PaymentExecute(HttpContext.Request.Query);
+            var response = _unitOfWork.MomoRepository.PaymentExecute(HttpContext.Request.Query);
             if (response.Status == "" || response.Message == "Bad Request")
             {
                 await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
@@ -142,7 +142,7 @@ namespace FDiamondShop.API.Controllers
             PaymentDTO payment = new PaymentDTO()
             {
                 TransactionId = response.OrderId,
-                PaymentMethod="Momo"               
+                PaymentMethod = "Momo"
             };
             var model = _mapper.Map<Payment>(payment);
             await _unitOfWork.PaymentRepository.CreateAsync(model);
@@ -167,7 +167,7 @@ namespace FDiamondShop.API.Controllers
                 }
             }
             await _unitOfWork.SaveAsync();
-            var emailTo = user.Email; 
+            var emailTo = user.Email;
             await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
             return Ok(response);
         }
@@ -195,12 +195,12 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepayPayPal")]
-        public async Task< IActionResult> PaymentExecutePayPal()
+        public async Task<IActionResult> PaymentExecutePayPal()
         {
             var user = _userManager.Users.First();
             var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
-            if(!response.Success)
+            if (!response.Success)
             {
                 await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                 await _unitOfWork.SaveAsync();
@@ -208,7 +208,7 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Payment failed");
                 return BadRequest(_response);
             }
-           
+
             PaymentDTO payment = new PaymentDTO()
             {
                 TransactionId = response.OrderId,
@@ -230,7 +230,7 @@ namespace FDiamondShop.API.Controllers
                 {
                     var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
                     product.Quantity--;
-                    if(product.Quantity==0)
+                    if (product.Quantity == 0)
                     {
                         product.IsVisible = false;
                     }
@@ -243,6 +243,6 @@ namespace FDiamondShop.API.Controllers
 
             return Ok(response);
         }
-        
+
     }
 }

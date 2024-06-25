@@ -233,8 +233,12 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("GoogleLogin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> LoginGoogle([FromBody] GoogleRegisterDTO model)
+        public async Task<IActionResult> LoginGoogle([FromBody] string token)
         {
+            GoogleRegisterDTO model = new()
+            {
+                IdToken = token
+            };
             var payload = await _unitOfWork.UserRepository.ValidateGoogleAccessToken(model.IdToken);
 
             if (payload == null)
