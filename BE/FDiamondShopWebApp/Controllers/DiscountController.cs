@@ -139,10 +139,13 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var existDiscount = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now;
                 foreach (var discount in existDiscount)
                 {
-                    discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
+                    if (now > discount.StartingDate && now < discount.EndDate)
+                    {
+                        discount.IsExpried = false;
+                    }                    
                 }
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
