@@ -138,9 +138,8 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                DateTime dateTime = DateTime.Now;
                 var existDiscount = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
-                var now = DateTime.Now;
+                var now = DateTime.UtcNow;
                 foreach (var discount in existDiscount)
                 {
                     discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
