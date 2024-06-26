@@ -1,3 +1,4 @@
+// import dayjs from 'dayjs';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -45,14 +46,14 @@ export default function VoucherPage() {
 
   const [openModal, setOpenModal] = useState(false);
 
-  const [newVoucher, setNewVoucher] = useState({
-    discountId: '',
-    discountCodeName: '',
-    discountPercent: '',
-    startingDate: null,
-    endDate: null,
-    isExpried: false,
-  });
+  // const [newVoucher, setNewVoucher] = useState({
+  //   discountId: '',
+  //   discountCodeName: '',
+  //   discountPercent: '',
+  //   startingDate: null,
+  //   endDate: null,
+  //   isExpried: false,
+  // });
 
   const [currentVoucher, setCurrentVoucher] = useState({
     discountId: '',
@@ -69,23 +70,27 @@ export default function VoucherPage() {
     filterById,
   });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // const checkIsExpired = (startingDate, endDate) => {
+  //   const now = dayjs();
+  //   return now.isBefore(dayjs(startingDate)) || now.isAfter(dayjs(endDate));
+  // };
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Discount');
-      console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
-      if (response.data && Array.isArray(response.data.result)) {
-        setData(response.data.result);
-      } else {
-        console.error('Unexpected API response format:', response.data);
+  useEffect(() => {
+    const getAll = async () => {
+      try {
+        const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Discount');
+        console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
+        if (response.data && Array.isArray(response.data.result)) {
+          setData(response.data.result);
+        } else {
+          console.error('Unexpected API response format:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+    };
+    getAll();
+  }, []);
 
   const handleSort = (event, discountId) => {
     const isAsc = orderBy === discountId && order === 'asc';
@@ -225,8 +230,6 @@ export default function VoucherPage() {
       <AddVoucherModal
         open={openModal}
         handleClose={handleCloseModal}
-        voucher={newVoucher}
-        setVoucher={setNewVoucher}
         handleSubmit={handleSubmit}
       />
 

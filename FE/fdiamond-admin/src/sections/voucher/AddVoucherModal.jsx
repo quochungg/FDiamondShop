@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import { React } from 'react';
 import PropTypes from 'prop-types';
+import { React, useState, useEffect } from 'react';
 
 // Import adapter ngày tháng (dayjs trong trường hợp này)
 
@@ -13,10 +13,10 @@ import {
   Grid,
   Modal,
   Button,
-  Switch,
+  // Switch,
   TextField,
   Typography,
-  FormControlLabel,
+  // FormControlLabel,
 } from '@mui/material';
 
 // import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -24,24 +24,41 @@ import {
 
 dayjs.extend(localizedFormat); // Kích hoạt plugin cho dayjs
 
-export default function AddVoucherModal({ open, handleClose, voucher, setVoucher, handleSubmit }) {
+export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
   // const [startingDate, setStartingDate] = useState(dayjs(voucher.startingDate));
   // const [endDate, setEndDate] = useState(dayjs(voucher.endDate));
+  const [newVoucher, setNewVoucher] = useState({
+    discountCodeName: '',
+    discountPercent: '',
+    startingDate: dayjs(),
+    endDate: dayjs(),
+    isExpried: false,
+  });
+
+  useEffect(() => {
+    const now = dayjs();
+    const isExpried =
+      newVoucher.startingDate && newVoucher.endDate
+        ? now.isBefore(newVoucher.startingDate) || now.isAfter(newVoucher.endDate)
+        : false;
+
+    setNewVoucher((prevVoucher) => ({ ...prevVoucher, isExpried }));
+  }, [newVoucher.startingDate, newVoucher.endDate]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setVoucher({ ...voucher, [name]: value });
+    setNewVoucher({ ...newVoucher, [name]: value });
   };
 
   const handleDateChange = (name) => (date) => {
-    setVoucher((prevVoucher) => ({
+    setNewVoucher((prevVoucher) => ({
       ...prevVoucher,
       [name]: date,
     }));
   };
 
   const handleTimeChange = (name) => (time) => {
-    setVoucher((prevVoucher) => {
+    setNewVoucher((prevVoucher) => {
       const currentDate = prevVoucher[name];
       if (currentDate) {
         return {
@@ -53,17 +70,19 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
     });
   };
 
-  const handleSwitchChange = (event) => {
-    const { name, checked } = event.target;
-    setVoucher({ ...voucher, [name]: checked });
-  };
+  // const handleSwitchChange = (event) => {
+  //   const { name, checked } = event.target;
+  //   setVoucher({ ...voucher, [name]: checked });
+  // };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
     handleSubmit({
-      ...voucher,
-      startingDate: voucher.startingDate ? voucher.startingDate.format('YYYY-MM-DDTHH:mm') : null,
-      endDate: voucher.endDate ? voucher.endDate.format('YYYY-MM-DDTHH:mm') : null,
+      ...newVoucher,
+      startingDate: newVoucher.startingDate
+        ? newVoucher.startingDate.format('YYYY-MM-DDTHH:mm')
+        : null,
+      endDate: newVoucher.endDate ? newVoucher.endDate.format('YYYY-MM-DDTHH:mm') : null,
     });
   };
 
@@ -95,7 +114,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
             fullWidth
             label="Name"
             name="discountCodeName"
-            value={voucher.discountCodeName}
+            value={newVoucher.discountCodeName}
             onChange={handleChange}
             sx={{ mb: 2 }}
           />
@@ -103,7 +122,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
             fullWidth
             label="Percent"
             name="discountPercent"
-            value={voucher.discountPercent}
+            value={newVoucher.discountPercent}
             onChange={handleChange}
             sx={{ mb: 2 }}
           />
@@ -114,7 +133,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
                   label="Start Time"
                   ampm={false}
                   inputFormat="HH:mm"
-                  value={voucher.startingDate}
+                  value={newVoucher.startingDate}
                   onChange={handleTimeChange('startingDate')}
                   slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
                 />
@@ -122,7 +141,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
               <Grid item xs={6}>
                 <DatePicker
                   label="Start Date"
-                  value={voucher.startingDate}
+                  value={newVoucher.startingDate}
                   onChange={handleDateChange('startingDate')}
                   slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
                 />
@@ -131,7 +150,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
               <Grid item xs={6}>
                 <MobileTimePicker
                   label="End Time"
-                  value={voucher.endDate}
+                  value={newVoucher.endDate}
                   ampm={false}
                   inputFormat="HH:mm"
                   onChange={handleTimeChange('endDate')}
@@ -141,7 +160,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
               <Grid item xs={6}>
                 <DatePicker
                   label="End Date"
-                  value={voucher.endDate}
+                  value={newVoucher.endDate}
                   onChange={handleDateChange('endDate')}
                   slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
                 />
@@ -150,7 +169,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
           </LocalizationProvider>
           <Grid container spacing={2} sx={{ mb: 1 }}>
             <Grid item xs={8}>
-              <FormControlLabel
+              {/* <FormControlLabel
                 control={
                   <Switch
                     checked={voucher.isExpried}
@@ -161,7 +180,7 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
                 }
                 label="Active"
                 sx={{ mb: 1 }}
-              />
+              /> */}
             </Grid>
             <Grid item xs={4}>
               <Box display="flex" justifyContent="flex-end">
@@ -183,7 +202,5 @@ export default function AddVoucherModal({ open, handleClose, voucher, setVoucher
 AddVoucherModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  voucher: PropTypes.object.isRequired,
-  setVoucher: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
 };
