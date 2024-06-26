@@ -48,6 +48,13 @@ namespace FDiamondShop.API.Controllers
             foreach (var item in model)
             {
                 var product = await _db.Products.FindAsync(item.ProductId);
+                if(product.Quantity == 0 || product.IsVisible == false)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.ErrorMessages.Add("Product is out of stock !");
+                    return BadRequest(_response);
+                }
 
                 decimal price = product.BasePrice;
 
@@ -103,8 +110,7 @@ namespace FDiamondShop.API.Controllers
             var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
             {
                 CartLineId = cl.CartLineId,
-                OrderId = cl.OrderId,
-                IsOrdered = cl.IsOrdered,
+                
                 CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
                 {
                     ProductId = cli.ProductId,
@@ -136,9 +142,8 @@ namespace FDiamondShop.API.Controllers
 
             var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
             {
-                OrderId = cl.OrderId,
+                CartLineId = cl.CartLineId,
                 
-                IsOrdered = cl.IsOrdered,
                 CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
                 {
                     ProductId = cli.ProductId,

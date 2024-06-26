@@ -98,8 +98,10 @@ namespace FDiamondShop.API.Controllers
                 {
                    
                     case "vnpay":
+                        decimal amount = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
+                        paymentInfo.Amount = (int)amount;
                         //sua link tren swagger
-                        var paymentApiUrl = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/vnpay");
+                        var paymentApiUrl = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
                         var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
                         if (paymentResponse.IsSuccessStatusCode)
                         {
@@ -154,8 +156,8 @@ namespace FDiamondShop.API.Controllers
                         }
                         break;
                     case "paypal":
-                         
-                        
+                         paymentInfo.Amount=orderDTO.TotalPrice;
+
                         var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
@@ -197,12 +199,39 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpGet("GetAllOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllOrder()
+        public async Task<IActionResult> GetAllOrder(string Username)
         {
-            var orders = await _unitOfWork.OrderRepository.GetAllOrderAsync();
+            var user = _userManager.Users.First(u => u.UserName == Username);
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "User not found" };
+                return NotFound(_response);
+
+            }
+
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderAsync(user.Id);
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = orders;
+            return Ok(_response);
+        }
+        [HttpGet("GetOrderDetails")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetOrderDetails(int orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.GetOrderDetails(orderId);
+            if (order == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Order not found" };
+                return NotFound(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = order;
             return Ok(_response);
         }
     }
