@@ -46,10 +46,52 @@ namespace FDiamondShop.API.Repository
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
+            bool isGoogle = false;
+            if(loginRequestDTO.Password == "")
+            {
+                isGoogle = true;
+            }
             var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == loginRequestDTO.UserName);
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
-            if (user == null || isValid == false)
+            
+            if((user!=null && isValid == true) || (user!=null && isValid==false && isGoogle == true))
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(secretKey);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
+                    new Claim("TokenId",Guid.NewGuid().ToString())
+                    }),
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
+                {
+                    //User = _mapper.Map<UserDTO>(user),
+                    Token = tokenHandler.WriteToken(token),
+                    User = new()
+                    {
+                        Address = user.Address,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        PhoneNumber = user.PhoneNumber,
+                        UserName = user.UserName
+                    },
+                    Role = roles.FirstOrDefault()
+
+                };
+                return loginResponseDTO;
+            }
+            else
             {
                 return new LoginResponseDTO()
                 {
@@ -58,40 +100,7 @@ namespace FDiamondShop.API.Repository
                     Role = null
                 };
             }
-            //if user was found generate JWT Token
-            var roles = await _userManager.GetRolesAsync(user);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(secretKey);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
-                    new Claim("TokenId",Guid.NewGuid().ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
-            {
-                //User = _mapper.Map<UserDTO>(user),
-                Token = tokenHandler.WriteToken(token),
-                User = new()
-                {
-                    Address = user.Address,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    PhoneNumber = user.PhoneNumber,
-                    UserName = user.UserName
-                },             
-                Role = roles.FirstOrDefault()
-
-            };
-            return loginResponseDTO;
         }
 
         public async Task<ApplicationUser> Register(RegistrationRequestDTO registerationRequestDTO)
@@ -420,8 +429,8 @@ namespace FDiamondShop.API.Repository
                 Token = tokenHandler.WriteToken(token),
                 User = new()
                 {
-                    Address = user.Address,
                     FirstName = user.FirstName,
+                    Address = user.Address,
                     LastName = user.LastName,
                     PhoneNumber = user.PhoneNumber,
                     UserName = user.UserName
