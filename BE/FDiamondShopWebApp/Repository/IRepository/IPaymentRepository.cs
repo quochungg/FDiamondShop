@@ -4,7 +4,7 @@ namespace FDiamondShop.API.Repository.IRepository
 {
     public interface IPaymentRepository : IRepository<Payment>
     {
-        public void UpdateStatus(Order order, Payment model, ApplicationUser user);
+        public Task UpdateStatus(Order order, Payment model, ApplicationUser user);
 
     }
 }
