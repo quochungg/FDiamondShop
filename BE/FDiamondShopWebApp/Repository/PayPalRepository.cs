@@ -11,7 +11,7 @@ namespace FDiamondShop.API.Repository
     public class PayPalRepository : IPayPalRepository
     {
         private readonly IConfiguration _configuration;
-        private const double ExchangeRate = 25_863.0;
+        
 
         public PayPalRepository(IConfiguration configuration)
         {
@@ -19,12 +19,7 @@ namespace FDiamondShop.API.Repository
         }
 
 
-        public static decimal ConvertVndToDollar(decimal vnd)
-        {
-            var total = Math.Round((double)vnd / ExchangeRate, 2);
-            var totalDecimal = (decimal)total;
-            return totalDecimal;
-        }
+        
 
         public async Task<string> CreatePaymentUrl(PaymentInformationModel model)
         {
@@ -45,13 +40,13 @@ namespace FDiamondShop.API.Repository
                     {
                         Amount = new Amount()
                         {
-                            Total = ConvertVndToDollar(model.Amount).ToString(),
+                            Total = model.Amount.ToString(),
                             Currency = "USD",
                             Details = new AmountDetails
                             {
                                 Tax = "0",
                                 Shipping = "0",
-                                Subtotal = ConvertVndToDollar(model.Amount).ToString(),
+                                Subtotal = model.Amount.ToString(),
                             }
                         },
                         ItemList = new ItemList()
@@ -62,7 +57,7 @@ namespace FDiamondShop.API.Repository
                                 {
                                     Name = " | Order: " + model.OrderDescription,
                                     Currency = "USD",
-                                    Price = ConvertVndToDollar(model.Amount).ToString(),
+                                    Price = model.Amount.ToString(),
                                     Quantity = 1.ToString(),
                                     Sku = "sku",
                                     Tax = "0",
