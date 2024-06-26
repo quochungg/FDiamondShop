@@ -46,15 +46,6 @@ export default function VoucherPage() {
 
   const [openModal, setOpenModal] = useState(false);
 
-  // const [newVoucher, setNewVoucher] = useState({
-  //   discountId: '',
-  //   discountCodeName: '',
-  //   discountPercent: '',
-  //   startingDate: null,
-  //   endDate: null,
-  //   isExpried: false,
-  // });
-
   const [currentVoucher, setCurrentVoucher] = useState({
     discountId: '',
     discountCodeName: '',
@@ -70,26 +61,42 @@ export default function VoucherPage() {
     filterById,
   });
 
-  // const checkIsExpired = (startingDate, endDate) => {
-  //   const now = dayjs();
-  //   return now.isBefore(dayjs(startingDate)) || now.isAfter(dayjs(endDate));
-  // };
+  // useEffect(() => {
+  //   const getAll = async () => {
+  //     try {
+  //       const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Discount');
+  //       console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
+  //       if (response.data && Array.isArray(response.data.result)) {
+  //         setData(response.data.result);
+  //       } else {
+  //         console.error('Unexpected API response format:', response.data);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+  //   getAll();
+  // }, []);
 
   useEffect(() => {
-    const getAll = async () => {
+    const updateAndGetAll = async () => {
       try {
+        await axios.put('https://fdiamond-api.azurewebsites.net/api/Discount/UpdateAuto');
+        console.log('Auto update successfully');
+
         const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Discount');
-        console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
+        console.log('API response:', response.data); // Ghi lại phản hồi để kiểm tra cấu trúc
         if (response.data && Array.isArray(response.data.result)) {
           setData(response.data.result);
         } else {
           console.error('Unexpected API response format:', response.data);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error update and fetching data:', error);
       }
     };
-    getAll();
+
+    updateAndGetAll();
   }, []);
 
   const handleSort = (event, discountId) => {
