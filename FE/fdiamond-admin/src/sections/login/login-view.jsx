@@ -49,13 +49,14 @@ export default function LoginView() {
         response.data &&
         response.data.isSuccess &&
         response.data.result &&
-        response.data.result.token
+        response.data.result.token &&
+        response.data.result.role === 'admin'
       ) {
         const { token } = response.data.result;
         localStorage.setItem('token', token);
         navigate('/');
       } else {
-        setError('Đăng nhập thất bại, vui lòng kiểm tra lại tên đăng nhập và mật khẩu.');
+        setError('You dont have permission to access this website');
       }
     } catch (err) {
       console.error('Error logging in:', err.response ? err.response.data : err.message);
