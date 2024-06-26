@@ -81,7 +81,7 @@ namespace FDiamondShop.API.Controllers
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-            _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+            await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
 
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
@@ -136,7 +136,7 @@ namespace FDiamondShop.API.Controllers
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-            _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+            await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
            
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
@@ -192,7 +192,7 @@ namespace FDiamondShop.API.Controllers
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-            _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+             await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
           
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
