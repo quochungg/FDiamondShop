@@ -3,7 +3,7 @@
     public class DiscountCodeUpdateDTO
     {
         public int DiscountPercent { get; set; }
-        public DateTime? StartingDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public string? StartingDate { get; set; }
+        public string? EndDate { get; set; }
     }
 }

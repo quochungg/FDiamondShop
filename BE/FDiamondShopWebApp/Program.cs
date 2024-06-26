@@ -1,7 +1,7 @@
 using Azure;
 using FDiamondShop.API;
 using FDiamondShop.API.Data;
-
+using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
@@ -30,6 +30,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     
 
 })
+
   
 .AddEntityFrameworkStores<FDiamondContext>().AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
 
@@ -38,6 +39,8 @@ builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("Email
 builder.Services.AddTransient<IEmailRepository, EmailRepository>();
 builder.Services.AddHttpClient();
 
+// Register the background service
+builder.Services.AddHostedService<TimedHostedService>();
 
 // Register Repositories
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -147,6 +150,10 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = "";
 });
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAllOrigins");

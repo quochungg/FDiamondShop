@@ -107,15 +107,18 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var discount =  await _db.DiscountCodes.FirstOrDefaultAsync(u => u.DiscountId== id);
+
                 var now = DateTime.Now;
+                TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
                 if (discount == null)
                 {
                     return NotFound("DiscountCode not found");
                 }
                 discount.DiscountPercent = updateDTO.DiscountPercent;
-                discount.StartingDate = updateDTO.StartingDate;
-                discount.EndDate = updateDTO.EndDate;
-                discount.IsExpried = now < updateDTO.StartingDate || now > updateDTO.EndDate;
+                discount.StartingDate = DateTime.Parse(updateDTO.StartingDate);
+                discount.EndDate = DateTime.Parse(updateDTO.EndDate);
+                discount.IsExpried = now7 < discount.StartingDate || now7 > discount.EndDate;
 
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -140,9 +143,11 @@ namespace FDiamondShop.API.Controllers
             {
                 var existDiscount = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
                 var now = DateTime.Now;
+                TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
                 foreach (var discount in existDiscount)
                 {
-                    discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
+                    discount.IsExpried = now7 < discount.StartingDate || now7 > discount.EndDate;
                     await _unitOfWork.SaveAsync();
                 }
                 
