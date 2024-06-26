@@ -28,6 +28,7 @@
             try
             {
                 var response = await client.PutAsync("https://fdiamond-api.azurewebsites.net/Discount/UpdateAuto", null);
+                
                 response.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException)
