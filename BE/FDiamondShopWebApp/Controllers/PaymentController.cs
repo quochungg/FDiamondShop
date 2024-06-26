@@ -80,23 +80,9 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
-            var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
-            && cartLineupdate.IsOrdered == false).ToList();
-            foreach (var line in cartLineupdate)
-            {
-                line.OrderId = order.OrderId;
-                line.IsOrdered = true;
-                var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
-                foreach (var item in cartlineItems)
-                {
-                    var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
-                    product.Quantity--;
-                    if (product.Quantity == 0)
-                    {
-                        product.IsVisible = false;
-                    }
-                }
-            }
+
+            _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
             await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
@@ -149,23 +135,9 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
-            var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
-            && cartLineupdate.IsOrdered == false).ToList();
-            foreach (var line in cartLineupdate)
-            {
-                line.OrderId = order.OrderId;
-                line.IsOrdered = true;
-                var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
-                foreach (var item in cartlineItems)
-                {
-                    var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
-                    product.Quantity--;
-                    if (product.Quantity == 0)
-                    {
-                        product.IsVisible = false;
-                    }
-                }
-            }
+
+            _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+           
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
             await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
@@ -219,24 +191,9 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
-            var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
-            && cartLineupdate.IsOrdered == false).ToList();
-            foreach (var line in cartLineupdate)
-            {
-                line.OrderId = order.OrderId;
-                line.IsOrdered = true;
-                var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
-                foreach (var item in cartlineItems)
-                {
-                    var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
-                    product.Quantity--;
-                    if (product.Quantity == 0)
-                    {
-                        product.IsVisible = false;
-                    }
-                }
-            }
 
+            _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+          
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
             await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
