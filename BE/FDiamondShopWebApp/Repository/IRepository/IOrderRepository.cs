@@ -7,6 +7,7 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         Task RemoveOrderAsync(Order order);
         Task UpdateOrderAsync(Order order);
-        public Task<List<OrderDTO>> GetAllOrderAsync();
+        public Task<List<OrderDTO>> GetAllOrderAsync(string userId);
+        public Task<OrderDTO> GetOrderDetails(int orderId);
     }
 }
