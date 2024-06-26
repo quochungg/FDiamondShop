@@ -54,11 +54,14 @@ namespace FDiamondShop.API.Controllers
                 totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
 
+                DateTime now = DateTime.Now;
+                TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
                 OrderDTO orderDTO = new()
                 {
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
-                    OrderDate= DateTime.Now,
+                    OrderDate= now7,
 
 
                 };
