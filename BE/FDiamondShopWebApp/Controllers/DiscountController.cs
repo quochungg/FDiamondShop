@@ -115,7 +115,7 @@ namespace FDiamondShop.API.Controllers
                 discount.DiscountPercent = updateDTO.DiscountPercent;
                 discount.StartingDate = updateDTO.StartingDate;
                 discount.EndDate = updateDTO.EndDate;
-                discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
+                discount.IsExpried = now < updateDTO.StartingDate || now > updateDTO.EndDate;
 
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -142,12 +142,10 @@ namespace FDiamondShop.API.Controllers
                 var now = DateTime.Now;
                 foreach (var discount in existDiscount)
                 {
-                    if (now > discount.StartingDate && now < discount.EndDate)
-                    {
-                        discount.IsExpried = false;
-                    }                    
+                    discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
+                    await _unitOfWork.SaveAsync();
                 }
-                await _unitOfWork.SaveAsync();
+                
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return NoContent();
