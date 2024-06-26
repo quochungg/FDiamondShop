@@ -142,7 +142,10 @@ namespace FDiamondShop.API.Controllers
                 var now = DateTime.Now;
                 foreach (var discount in existDiscount)
                 {
-                    discount.IsExpried = now < discount.StartingDate || now > discount.EndDate;
+                    if (now > discount.StartingDate && now < discount.EndDate)
+                    {
+                        discount.IsExpried = false;
+                    }                    
                 }
                 await _unitOfWork.SaveAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
