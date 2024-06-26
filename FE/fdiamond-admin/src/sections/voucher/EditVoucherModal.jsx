@@ -11,10 +11,10 @@ import {
   Grid,
   Modal,
   Button,
-  Switch,
+  // Switch,
   TextField,
   Typography,
-  FormControlLabel,
+  // FormControlLabel,
 } from '@mui/material';
 
 dayjs.extend(localizedFormat);
@@ -38,6 +38,18 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
       });
     }
   }, [voucher]);
+
+  useEffect(() => {
+    if (localVoucher.startingDate && localVoucher.endDate) {
+      const now = dayjs();
+      const isExpried =
+        now.isAfter(localVoucher.endDate) || now.isBefore(localVoucher.startingDate);
+      setLocalVoucher((prevVoucher) => ({
+        ...prevVoucher,
+        isExpried,
+      }));
+    }
+  }, [localVoucher.startingDate, localVoucher.endDate]);
 
   const handleChange = (field, value) => {
     setLocalVoucher({ ...localVoucher, [field]: value });
@@ -63,10 +75,10 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
     });
   };
 
-  const handleSwitchChange = (event) => {
-    const { name, checked } = event.target;
-    setLocalVoucher({ ...localVoucher, [name]: checked });
-  };
+  // const handleSwitchChange = (event) => {
+  //   const { name, checked } = event.target;
+  //   setLocalVoucher({ ...localVoucher, [name]: checked });
+  // };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -179,7 +191,7 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
               </Grid>
             </Grid>
           </LocalizationProvider>
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Switch
                 checked={localVoucher.isExpried}
@@ -190,16 +202,16 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
             }
             label="Active"
             sx={{ mb: 2 }}
-          />
+          /> */}
           <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Button variant="contained" type="submit" fullWidth>
-                Save Changes
-              </Button>
-            </Grid>
             <Grid item xs={6}>
               <Button variant="outlined" onClick={handleClose} fullWidth>
                 Cancel
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button variant="contained" type="submit" fullWidth>
+                Save Changes
               </Button>
             </Grid>
           </Grid>
