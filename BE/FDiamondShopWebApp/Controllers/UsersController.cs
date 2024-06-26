@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 
 namespace FDiamondShop.API.Controllers
@@ -24,7 +27,7 @@ namespace FDiamondShop.API.Controllers
             _mapper = mapper;
             _userManager = userManager;
         }
-       
+
         [HttpPost("login")]
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -34,7 +37,7 @@ namespace FDiamondShop.API.Controllers
         {
             ////neu nguoi dung chua verify email, gui lai email confirm
             var user = await _userManager.FindByEmailAsync(model.UserName);
-            
+
             var loginResponse = await _unitOfWork.UserRepository.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
@@ -110,8 +113,8 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
-        {                       
-            var currentUser= await _userManager.FindByEmailAsync(model.UserName);
+        {
+            var currentUser = await _userManager.FindByEmailAsync(model.UserName);
             if (!ModelState.IsValid)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -128,9 +131,9 @@ namespace FDiamondShop.API.Controllers
                     _response.IsSuccess = false;
                     _response.ErrorMessages.Add("New password and confirmation password do not match.");
                     return BadRequest(_response);
-                    
+
                 }
-            }           
+            }
             var user = await _unitOfWork.UserRepository.Update(model);
             if (user == null)
             {
@@ -145,7 +148,7 @@ namespace FDiamondShop.API.Controllers
             return NoContent();
 
         }
-        
+
         [HttpPost("sendemail")]
         //[AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -168,7 +171,7 @@ namespace FDiamondShop.API.Controllers
         //[Authorize("admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]             
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> SearchUserByUserName(string username)
         {
             try
@@ -222,19 +225,20 @@ namespace FDiamondShop.API.Controllers
             }
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
-            {               
+            {
                 return Redirect("http://localhost:5173/verified-email");
             }
             return BadRequest("Error confirming your email.");
         }
-        
-            
-        
+
+
+
         [HttpPost("GoogleLogin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginGoogle([FromBody] string idToken)
         {
+
             var payload = await _unitOfWork.UserRepository.ValidateGoogleAccessToken(idToken);
 
             if (payload == null)
@@ -245,8 +249,8 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
             var user = await _userManager.FindByEmailAsync(payload.email);
-            
-            if (user == null )
+
+            if (user == null)
             {
                 var registrationRequest = new GoogleRegistrationDTO
                 {
@@ -262,12 +266,18 @@ namespace FDiamondShop.API.Controllers
                 user.EmailConfirmed = true;
                 await _unitOfWork.SaveAsync();
             }
-            if (user.PasswordHash != null)
+            if (user.PasswordHash != null && user != null)
             {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("User already exists");
-                return BadRequest(_response);
+               LoginRequestDTO loginRequestDTO = new()
+               {
+                   UserName = user.UserName,
+                   Password = "",
+               };
+                 var result= await _unitOfWork.UserRepository.Login(loginRequestDTO);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = result;
+                return Ok(_response);
             }
 
             var loginRequest = new GoogleLoginDTO
@@ -284,6 +294,6 @@ namespace FDiamondShop.API.Controllers
 
 
     }
-    
+
 }
 
