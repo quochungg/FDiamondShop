@@ -3,12 +3,9 @@ using FDiamondShop.API.Data;
 using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
-using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Net;
 
 namespace FDiamondShop.API.Controllers
@@ -191,6 +188,7 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
+
 
              await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
           
