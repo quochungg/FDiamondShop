@@ -6,6 +6,7 @@ using System.Text;
 using RestSharp;
 using Newtonsoft.Json.Linq;
 using Azure;
+using PayPalCheckoutSdk.Orders;
 namespace FDiamondShop.API.Repository
 {
     public class MomoRepository : IMomoRepository
@@ -36,11 +37,13 @@ namespace FDiamondShop.API.Repository
 
         public async Task<string> CreateMomoPaymentAsync(PaymentInformationModel model)
         {
+            string result = "";
+            int responsecode = 0;
             model.OrderID = DateTime.UtcNow.Ticks.ToString();
             string rawData = $"partnerCode={_configuration["MomoAPI:PartnerCode"]}" +
                 $"&accessKey={_configuration["MomoAPI:AccessKey"]}" +
                 $"&requestId={model.OrderID}" +
-                $"&amount={model.Amount.ToString()}" +
+                $"&amount={model.Amount}" +
                 $"&orderId={model.OrderID}" +
                 $"&orderInfo={model.OrderDescription}" +
                 $"&returnUrl={_configuration["MomoAPI:ReturnUrl"]}" +
@@ -69,9 +72,18 @@ namespace FDiamondShop.API.Repository
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
             var response = await client.ExecuteAsync(request);
             var jsonResponse = JsonConvert.DeserializeObject<JObject>(response.Content);
-            string payUrl = jsonResponse["payUrl"].ToString();
-            Console.WriteLine(payUrl);
-            return payUrl;
+            string code = jsonResponse["errorCode"].ToString();
+            responsecode = Convert.ToInt32(code);
+            if(responsecode == 0)
+            {
+                result = jsonResponse["payUrl"].ToString();
+            }
+            else
+            {
+                string error = jsonResponse["message"].ToString();
+                result = error;
+            }                          
+            return result;
         }
 
         public MomoExecuteResponseModel PaymentExecute(IQueryCollection collection)

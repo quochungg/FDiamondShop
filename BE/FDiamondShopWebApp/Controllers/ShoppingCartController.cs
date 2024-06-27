@@ -35,11 +35,11 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> AddToCartLine([FromQuery]string UserName,[FromBody]List<CartLineItemCreateDTO> model)
         {
-
+            
             var user = _userManager.Users.First(u => u.UserName == UserName);
-
+            var cartlines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
             var cartLine = new CartLine();
-
+            var count = 0;
             cartLine.UserId = user.Id;
 
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
@@ -49,13 +49,14 @@ namespace FDiamondShop.API.Controllers
             foreach (var item in model)
             {
                 var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
-                if(product.Quantity == 0 || product.IsVisible == false)
+                if (product.Quantity == 0 || product.IsVisible == false)
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.ErrorMessages.Add("Product is out of stock !");
                     return BadRequest(_response);
                 }
+
 
                 var cartLineItem = new CartLineItem
                 {
@@ -66,15 +67,44 @@ namespace FDiamondShop.API.Controllers
                     Product = product
                 };
                 await _unitOfWork.CartRepository.CreateCartlineItem(cartLineItem);
-            }
-
-
-            await _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
+            }      
             _response.StatusCode = HttpStatusCode.Created;
             _response.IsSuccess = true;
 
             return CreatedAtAction(nameof(GetAllCartLines), new { username = user.UserName }, _response);
 
+        }
+        [HttpPost("CheckDiamondExistInCart")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CheckDiamondExistInCart([FromBody]DiamondCart diamondCart)
+        {
+            bool isExist = false;
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == diamondCart.userName);
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x=>x.CartLineItems.Count()==1);
+            var cartLineItem = cartLines.SelectMany(cl => cl.CartLineItems);
+            foreach (var item in cartLines)
+            {
+                
+                foreach (var cli in cartLineItem)
+                {
+                    var checkCartLineItem = cartLineItem.SingleOrDefault(cli => cli.ProductId == diamondCart.productId);
+                    if (checkCartLineItem == null)
+                    {
+                        _response.IsSuccess = true;
+                        _response.StatusCode = HttpStatusCode.OK;
+                        _response.Result = isExist;
+                        return Ok(_response);
+                    }
+                }
+            
+            }
+            
+            isExist = true;
+            _response.Result = isExist;
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
         }
         //[HttpPost("AddItemToCartLineItem")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
@@ -99,65 +129,18 @@ namespace FDiamondShop.API.Controllers
         //}
         [HttpGet("GetAllCartLines")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        
         public async Task<IActionResult> GetAllCartLines(string userName)
         {
-            var user = await _db.Users.SingleOrDefaultAsync(u => u.UserName == userName);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
-            
-            var cartLineDTOs = _mapper.Map<List<CartLineDTO>>(cartLines);
-
-            foreach (var item in cartLineDTOs)
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+            var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
+            if (cartLines.Count == 0)
             {
-                item.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(cartLines.SelectMany(cl => cl.CartLineItems));
-                foreach (var cli in item.CartLineItems)
-                {
-                    cli.Product = _mapper.Map<ProductDTO>(cartLines.SelectMany(cl => cl.CartLineItems).Select(cli => cli.Product).FirstOrDefault());                   
-                }
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.ErrorMessages.Add("Empty Cart here !");
+                return Ok(_response);
             }
-
-            //cartLineDTOs.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(cartLines.SelectMany(cl => cl.CartLineItems));
-            //foreach (var item in cartLineDTOs.CartLineItems)
-            //{
-            //    item.Product = _mapper.Map<ProductDTO>(cartLines.SelectMany(cl => cl.CartLineItems).Select(cli => cli.Product).FirstOrDefault());
-            //}
-
-            //var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
-            //{
-            //    CartLineId = cl.CartLineId,
-
-            //    CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
-            //    {
-
-            //        ProductId = cli.ProductId,
-            //        RingSize = cli.RingSize,
-            //        Price = cli.Price,
-            //        Product = _mapper.Map<ProductDTO>(cli.Product)
-            //    }).ToList()
-            //}).ToList();
-
-
-            //if(cartLineDTOs == null)
-            //{
-            //    _response.IsSuccess = false;
-            //    _response.StatusCode=HttpStatusCode.NotFound;
-            //    _response.ErrorMessages.Add("Empty Cart here !");
-            //    return NotFound();
-            //}
-            _response.IsSuccess = true;
-            _response.StatusCode= HttpStatusCode.OK;
-            _response.Result = cartLineDTOs;
-            return Ok(_response);
-        }
-        [HttpGet("GetAllCartLinesOrdered")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllCartLinesOrdered(string userName)
-        {
-            var user = await _db.Users.SingleOrDefaultAsync(u => u.UserName == userName);
-            var cartLines = await _db.CartLines
-                                          .Include(cl => cl.CartLineItems)
-                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == true)
-                                          .ToListAsync();
-
             var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
             {
                 CartLineId = cl.CartLineId,
@@ -170,18 +153,45 @@ namespace FDiamondShop.API.Controllers
                     Product = _mapper.Map<ProductDTO>(cli.Product)
                 }).ToList()
             }).ToList();
-            if (cartLineDTOs == null)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.NotFound;
-                _response.ErrorMessages.Add("Empty Cart here !");
-                return NotFound();
-            }
+            
             _response.IsSuccess = true;
-            _response.StatusCode = HttpStatusCode.OK;
+            _response.StatusCode= HttpStatusCode.OK;
             _response.Result = cartLineDTOs;
             return Ok(_response);
         }
+        //[HttpGet("GetAllCartLinesOrdered")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<IActionResult> GetAllCartLinesOrdered(string userName)
+        //{
+        //    var user = await _db.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+        //    var cartLines = await _db.CartLines
+        //                                  .Include(cl => cl.CartLineItems)
+        //                                  .Where(cl => cl.UserId == user.Id && cl.IsOrdered == true)
+        //                                  .ToListAsync();
+
+        //    var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
+        //    {
+        //        CartLineId = cl.CartLineId,
+                
+        //        CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
+        //        {
+        //            ProductId = cli.ProductId,
+        //            RingSize = cli.RingSize,
+        //            Price = cli.Price
+        //        }).ToList()
+        //    }).ToList();
+        //    if (cartLineDTOs == null)
+        //    {
+        //        _response.IsSuccess = false;
+        //        _response.StatusCode = HttpStatusCode.NotFound;
+        //        _response.ErrorMessages.Add("Empty Cart here !");
+        //        return NotFound();
+        //    }
+        //    _response.IsSuccess = true;
+        //    _response.StatusCode = HttpStatusCode.OK;
+        //    _response.Result = cartLineDTOs;
+        //    return Ok(_response);
+        //}
 
         [HttpDelete("RemoveCartLine")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]    
@@ -189,8 +199,8 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> RemoveCartLine(int cartLineId)
         {
             
-            var cartLine = await _db.CartLines.FindAsync(cartLineId);
-            var cartLineItems = await _db.CartLineItems.Where(cli => cli.CartLineId == cartLineId).ToListAsync();
+            var cartLine = await _unitOfWork.CartRepository.FindCartlineId(cartLineId);
+            var cartLineItems = await _unitOfWork.CartRepository.GetCartLineItems(cartLineId);
             await _unitOfWork.CartRepository.RemoveRange(cartLineItems);
             await _unitOfWork.CartRepository.RemoveAsync(cartLine);
             await _unitOfWork.SaveAsync();
@@ -200,12 +210,12 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpDelete("RemoveCartLineItem")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> RemoveCartLineItem(int cartLineId,int ProductId)
+        public async Task<IActionResult> RemoveCartLineItem(int cartLineItemId)
         {
-            var cartLine = await _db.CartLines.FindAsync(cartLineId);
-            var cartLineItem = await _db.CartLineItems.Where(cli=>cli.CartLineId==cartLineId && cli.ProductId==ProductId).ToListAsync();
-
-            await _unitOfWork.CartRepository.RemoveRange(cartLineItem);
+            
+            var cartLineItems = await _unitOfWork.CartRepository.GetCartLineItems(cartLineItemId);
+            var cartLine= await _unitOfWork.CartRepository.FindCartlineId(cartLineItems.First().CartLineId);
+            await _unitOfWork.CartRepository.RemoveRange(cartLineItems);
             await _unitOfWork.SaveAsync();
             if (cartLine.CartLineItems.Count == 0)
             {

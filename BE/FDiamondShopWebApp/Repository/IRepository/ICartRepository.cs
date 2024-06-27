@@ -6,5 +6,8 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         Task CreateCartlineItem(CartLineItem cartLineItem);
         Task RemoveRange(List<CartLineItem> cartLineItems);
+        public Task<List<CartLine>> GetAllCartlineExist(ApplicationUser user);
+        public Task<CartLine> FindCartlineId(int cartLineId);
+        public Task<List<CartLineItem>> GetCartLineItems(int cartLineId);
     }
 }
