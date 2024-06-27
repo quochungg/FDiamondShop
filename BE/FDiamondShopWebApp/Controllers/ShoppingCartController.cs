@@ -36,10 +36,9 @@ namespace FDiamondShop.API.Controllers
         public async Task<ActionResult<APIResponse>> AddToCartLine([FromBody] CreateCartDTO createDTO)
         {
             var model = createDTO.CartLineItems;
-            var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
-            var cartlines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
+            var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);           
             var cartLine = new CartLine();
-            var count = 0;
+            
             cartLine.UserId = user.Id;
 
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
@@ -131,21 +130,26 @@ namespace FDiamondShop.API.Controllers
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == userName);
 
             var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
-
-            var cartLineDTOs = _mapper.Map<List<CartLineDTO>>(cartLines);
             if (cartLines.Count == 0)
             {
-                _response.IsSuccess = false;
+                _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.ErrorMessages.Add("Empty Cart here !");
+                _response.ErrorMessages.Add("EMPTY");
                 return Ok(_response);
             }
+            var cartLineDTOs = _mapper.Map<List<CartLineDTO>>(cartLines);
+            
             foreach (var item in cartLineDTOs)
             {
-                item.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(cartLines.SelectMany(cl => cl.CartLineItems));
+                item.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(cartLines
+                    .Where(cl => cl.CartLineId == item.CartLineId)
+                    .SelectMany(cl => cl.CartLineItems));
                 foreach (var cli in item.CartLineItems)
                 {
-                    cli.Product = _mapper.Map<ProductDTO>(cartLines.SelectMany(cl => cl.CartLineItems).Select(cli => cli.Product).FirstOrDefault());
+                    cli.Product = _mapper.Map<ProductDTO>(cartLines
+                        .SelectMany(cl => cl.CartLineItems)
+                        .Select(cli => cli.Product)
+                        .FirstOrDefault());
                 }
             }
 
