@@ -54,11 +54,14 @@ namespace FDiamondShop.API.Controllers
                 totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
 
+                DateTime now = DateTime.Now;
+                TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
                 OrderDTO orderDTO = new()
                 {
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
-                    OrderDate= DateTime.Now,
+                    OrderDate= now7,
 
 
                 };
@@ -129,7 +132,7 @@ namespace FDiamondShop.API.Controllers
                     case "momo":
                         decimal amountVND = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
                         paymentInfo.Amount = (int)amountVND;
-                        var paymentApiUrlMomo = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/momo");
+                        var paymentApiUrlMomo = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/momo");
                         var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
                         var respose = paymentResponseMomo.Content.ToString();
                         if (paymentResponseMomo.IsSuccessStatusCode)

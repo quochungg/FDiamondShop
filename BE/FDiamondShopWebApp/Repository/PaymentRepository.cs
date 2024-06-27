@@ -2,6 +2,7 @@
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FDiamondShop.API.Repository
 {
@@ -15,7 +16,7 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
-        public void UpdateStatus(Order order,Payment model,ApplicationUser user)
+        public async Task UpdateStatus(Order order,Payment model,ApplicationUser user)
         {
             
             var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
@@ -27,7 +28,7 @@ namespace FDiamondShop.API.Repository
                 var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
                 foreach (var item in cartlineItems)
                 {
-                    var product = _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefault();
+                    var product = await _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefaultAsync();
                     product.Quantity--;
                     if (product.Quantity == 0)
                     {

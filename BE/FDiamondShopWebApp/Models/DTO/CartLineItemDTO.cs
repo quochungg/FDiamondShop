@@ -6,5 +6,8 @@
 
         public double? RingSize { get; set; }
         public decimal Price { get; set; }
+
+        public ProductDTO Product { get; set; }
+        
     }
 }
