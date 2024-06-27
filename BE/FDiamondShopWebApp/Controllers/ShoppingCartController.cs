@@ -79,28 +79,24 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CheckDiamondExistInCart([FromBody] DiamondCart diamondCart)
         {
-            bool isExist = false;
+            Boolean isExist = false;
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == diamondCart.userName);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x => x.CartLineItems.Count() == 1);
-            var cartLineItem = cartLines.SelectMany(cl => cl.CartLineItems);
-            foreach (var item in cartLines)
-            {
 
-                foreach (var cli in cartLineItem)
-                {
-                    var checkCartLineItem = cartLineItem.SingleOrDefault(cli => cli.ProductId == diamondCart.productId);
-                    if (checkCartLineItem == null)
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x=>x.CartLineItems.Count()==1,includeProperties: "CartLineItems");
+            var cartLineItems= cartLines.SelectMany(x => x.CartLineItems).ToList();
+            var product = cartLineItems.FirstOrDefault(x => x.ProductId == diamondCart.productId);
+
+            
+                    if (product != null)
+
                     {
+                        isExist = true;
                         _response.IsSuccess = true;
                         _response.StatusCode = HttpStatusCode.OK;
                         _response.Result = isExist;
                         return Ok(_response);
                     }
-                }
 
-            }
-
-            isExist = true;
             _response.Result = isExist;
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
