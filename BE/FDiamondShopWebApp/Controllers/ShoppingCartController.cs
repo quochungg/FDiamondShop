@@ -82,12 +82,11 @@ namespace FDiamondShop.API.Controllers
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == diamondCart.userName);
             var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x=>x.CartLineItems.Count()==1);
             var cartLineItem = cartLines.SelectMany(cl => cl.CartLineItems);
-            foreach (var item in cartLines)
-            {
+            
                 
                 foreach (var cli in cartLineItem)
                 {
-                    var checkCartLineItem = cartLineItem.SingleOrDefault(cli => cli.ProductId == diamondCart.productId);
+                    var checkCartLineItem = cartLineItem.FirstOrDefault(cli => cli.ProductId == diamondCart.productId);
                     if (checkCartLineItem == null)
                     {
                         _response.IsSuccess = true;
@@ -97,7 +96,7 @@ namespace FDiamondShop.API.Controllers
                     }
                 }
             
-            }
+            
             
             isExist = true;
             _response.Result = isExist;
