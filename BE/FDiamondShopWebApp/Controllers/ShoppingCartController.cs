@@ -47,7 +47,7 @@ namespace FDiamondShop.API.Controllers
 
             foreach (var item in model)
             {
-                var product = await _db.Products.FindAsync(item.ProductId);
+                var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
                 if(product.Quantity == 0 || product.IsVisible == false)
                 {
                     _response.IsSuccess = false;
@@ -56,14 +56,13 @@ namespace FDiamondShop.API.Controllers
                     return BadRequest(_response);
                 }
 
-                decimal price = product.BasePrice;
-
                 var cartLineItem = new CartLineItem
                 {
                     CartLineId = cartLine.CartLineId,
                     ProductId = item.ProductId,
                     RingSize = item.RingSize,
-                    Price = price
+                    Price = product.BasePrice,
+                    Product = product
                 };
                 await _unitOfWork.CartRepository.CreateCartlineItem(cartLineItem);
             }
@@ -102,29 +101,47 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> GetAllCartLines(string userName)
         {
             var user = await _db.Users.SingleOrDefaultAsync(u => u.UserName == userName);
-            var cartLines = await _db.CartLines
-                                          .Include(cl => cl.CartLineItems)
-                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
-                                          .ToListAsync();
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
+            
+            var cartLineDTOs = _mapper.Map<List<CartLineDTO>>(cartLines);
 
-            var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
+            foreach (var item in cartLineDTOs)
             {
-                CartLineId = cl.CartLineId,
-                
-                CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
+                item.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(cartLines.SelectMany(cl => cl.CartLineItems));
+                foreach (var cli in item.CartLineItems)
                 {
-                    ProductId = cli.ProductId,
-                    RingSize = cli.RingSize,
-                    Price = cli.Price
-                }).ToList()
-            }).ToList();
-            if(cartLineDTOs == null)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode=HttpStatusCode.NotFound;
-                _response.ErrorMessages.Add("Empty Cart here !");
-                return NotFound();
+                    cli.Product = _mapper.Map<ProductDTO>(cartLines.SelectMany(cl => cl.CartLineItems).Select(cli => cli.Product).FirstOrDefault());                   
+                }
             }
+
+            //cartLineDTOs.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(cartLines.SelectMany(cl => cl.CartLineItems));
+            //foreach (var item in cartLineDTOs.CartLineItems)
+            //{
+            //    item.Product = _mapper.Map<ProductDTO>(cartLines.SelectMany(cl => cl.CartLineItems).Select(cli => cli.Product).FirstOrDefault());
+            //}
+
+            //var cartLineDTOs = cartLines.Select(cl => new CartLineDTO
+            //{
+            //    CartLineId = cl.CartLineId,
+
+            //    CartLineItems = cl.CartLineItems.Select(cli => new CartLineItemDTO
+            //    {
+
+            //        ProductId = cli.ProductId,
+            //        RingSize = cli.RingSize,
+            //        Price = cli.Price,
+            //        Product = _mapper.Map<ProductDTO>(cli.Product)
+            //    }).ToList()
+            //}).ToList();
+
+
+            //if(cartLineDTOs == null)
+            //{
+            //    _response.IsSuccess = false;
+            //    _response.StatusCode=HttpStatusCode.NotFound;
+            //    _response.ErrorMessages.Add("Empty Cart here !");
+            //    return NotFound();
+            //}
             _response.IsSuccess = true;
             _response.StatusCode= HttpStatusCode.OK;
             _response.Result = cartLineDTOs;
@@ -148,7 +165,8 @@ namespace FDiamondShop.API.Controllers
                 {
                     ProductId = cli.ProductId,
                     RingSize = cli.RingSize,
-                    Price = cli.Price
+                    Price = cli.Price,
+                    Product = _mapper.Map<ProductDTO>(cli.Product)
                 }).ToList()
             }).ToList();
             if (cartLineDTOs == null)
