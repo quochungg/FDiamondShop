@@ -61,12 +61,10 @@ namespace FDiamondShop.API.Controllers
                         }
                     }
                 }
-                for(int i= 0; i < products.Count; i++)
-                {
-                    HashSet<int> productIds = new HashSet<int>();
-                    var productId = products[i].ProductId;
-                    if (productIds.Add(productId))
-                    {
+                var duplicateProducts = products.GroupBy(p => p.ProductId)
+                                        .Where(g => g.Count() > 1).ToList();
+                
+                    if(duplicateProducts.Count()>0){
                         _response.StatusCode = HttpStatusCode.BadRequest;
                         _response.IsSuccess = false;
                         _response.ErrorMessages = new List<string> { "There have some duplicate Diamond" };
@@ -75,7 +73,7 @@ namespace FDiamondShop.API.Controllers
                     }
                     
                     
-                }
+                
                 
                 totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
