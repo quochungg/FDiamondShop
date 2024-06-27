@@ -32,10 +32,11 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpPost("AddToCartLine")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<APIResponse>> AddToCartLine(string UserName,[FromBody]List<CartLineItemCreateDTO> model)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> AddToCartLine([FromBody]CreateCartDTO createDTO)
         {
-            
-            var user = _userManager.Users.First(u => u.UserName == UserName);
+            var model = createDTO.CartLineItems;
+            var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
             var cartlines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
             var cartLine = new CartLine();
             var count = 0;
