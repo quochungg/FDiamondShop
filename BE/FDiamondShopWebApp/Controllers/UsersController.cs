@@ -53,6 +53,8 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Please confirm your email before login.");
                 return StatusCode(StatusCodes.Status403Forbidden, _response);
             }
+            var id = user.Id;
+            loginResponse.UserId = id;
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
@@ -283,6 +285,8 @@ namespace FDiamondShop.API.Controllers
                 Password = "",
             };
             var loginResponse = await _unitOfWork.UserRepository.LoginGoogle(loginRequest);
+            var id = user.Id;
+            loginResponse.UserId = id;
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
