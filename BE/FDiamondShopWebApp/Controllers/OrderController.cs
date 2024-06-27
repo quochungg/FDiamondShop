@@ -37,20 +37,46 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateOrder( [FromBody] OrderCreateDTO createDTO)
         {
+            List<Product> products = new();
             try
             {
                 decimal totalPrice = 0;
                 var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
-                var cartLines = await _db.CartLines
-                                          .Include(cl => cl.CartLineItems)
-                                          .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
-                                          .ToListAsync();
+                var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
+
                 if (cartLines.Count == 0)
                 {
                     return NotFound();
 
                 }
-
+                foreach(var cl in cartLines)
+                {
+                   foreach(var item in cl.CartLineItems)
+                    {
+                        var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
+                        var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.CategoryId == product.SubCategory.CategoryId);
+                        if(category.CategoryId== 1)
+                        {
+                            products.Add(product);
+                        }
+                    }
+                }
+                for(int i= 0; i < products.Count; i++)
+                {
+                    HashSet<int> productIds = new HashSet<int>();
+                    var productId = products[i].ProductId;
+                    if (productIds.Add(productId))
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages = new List<string> { "There have some duplicate Diamond" };
+                        return BadRequest(_response);
+                        
+                    }
+                    
+                    
+                }
+                
                 totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
 
