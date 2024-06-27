@@ -131,7 +131,7 @@ namespace FDiamondShop.API.Controllers
                         paymentInfo.Amount = (int)amountVND;
                         var paymentApiUrlMomo = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/momo");
                         var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
-
+                        var respose = paymentResponseMomo.Content.ToString();
                         if (paymentResponseMomo.IsSuccessStatusCode)
                         {
 
@@ -153,6 +153,12 @@ namespace FDiamondShop.API.Controllers
                                 _response.ErrorMessages = paymentResult.ErrorMessages;
                                 return BadRequest(_response);
                             }
+                        }
+                        else
+                        {
+                            await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                            await _unitOfWork.SaveAsync();
+                            return BadRequest(respose);
                         }
                         break;
                     case "paypal":

@@ -115,7 +115,8 @@ namespace FDiamondShop.API.Controllers
                 {
                     ProductId = cli.ProductId,
                     RingSize = cli.RingSize,
-                    Price = cli.Price
+                    Price = cli.Price,
+                    
                 }).ToList()
             }).ToList();
             if(cartLineDTOs == null)

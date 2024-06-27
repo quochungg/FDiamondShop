@@ -5,8 +5,6 @@
         public int ProductId { get; set; }
 
         public double? RingSize { get; set; }
-
         public decimal Price { get; set; }
-        
     }
 }

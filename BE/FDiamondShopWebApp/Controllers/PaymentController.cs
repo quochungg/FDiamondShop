@@ -97,6 +97,13 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var paymentUrl = await _unitOfWork.MomoRepository.CreateMomoPaymentAsync(model);
+                if (!paymentUrl.Contains("http"))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.Result = paymentUrl;
+                    return BadRequest(_response);
+                }
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = paymentUrl;
