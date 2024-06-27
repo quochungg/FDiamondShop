@@ -47,7 +47,7 @@ namespace FDiamondShop.API.Controllers
 
             foreach (var item in model)
             {
-                var product = await _db.Products.FindAsync(item.ProductId);
+                var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
                 if(product.Quantity == 0 || product.IsVisible == false)
                 {
                     _response.IsSuccess = false;
@@ -56,14 +56,13 @@ namespace FDiamondShop.API.Controllers
                     return BadRequest(_response);
                 }
 
-                decimal price = product.BasePrice;
-
                 var cartLineItem = new CartLineItem
                 {
                     CartLineId = cartLine.CartLineId,
                     ProductId = item.ProductId,
                     RingSize = item.RingSize,
-                    Price = price
+                    Price = product.BasePrice,
+                    Product = product
                 };
                 await _unitOfWork.CartRepository.CreateCartlineItem(cartLineItem);
             }
@@ -119,7 +118,8 @@ namespace FDiamondShop.API.Controllers
                 {
                     ProductId = cli.ProductId,
                     RingSize = cli.RingSize,
-                    Price = cli.Price
+                    Price = cli.Price,
+                    Product = _mapper.Map<ProductDTO>(cli.Product)
                 }).ToList()
             }).ToList();
             

@@ -94,6 +94,13 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var paymentUrl = await _unitOfWork.MomoRepository.CreateMomoPaymentAsync(model);
+                if (!paymentUrl.Contains("http"))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.Result = paymentUrl;
+                    return BadRequest(_response);
+                }
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = paymentUrl;
@@ -184,9 +191,21 @@ namespace FDiamondShop.API.Controllers
                 PaymentMethod = "PayPal"
             };
             var model = _mapper.Map<Payment>(payment);
+
+            DateTime now = DateTime.Now;
+
+            TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+            DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
+
+            model.CreatedDate = now7;
+
             await _unitOfWork.PaymentRepository.CreateAsync(model);
+
             await _unitOfWork.SaveAsync();
+
             order.PaymentId = model.PaymentId;
+
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
 
