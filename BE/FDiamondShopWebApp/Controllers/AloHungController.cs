@@ -1,9 +1,7 @@
 ﻿using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FDiamondShop.API.Controllers
 {
