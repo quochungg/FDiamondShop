@@ -74,7 +74,7 @@ const EmailVerificationPage = () => {
 
                 {/* BEGIN LEFT SECTION */}
 
-                <div className="flex justify-center items-start">
+                <div className="flex justify-center items-start ">
 
                     <div className="font-lora flex flex-col items-center justify-center mt-44">
                         {/* 
@@ -100,6 +100,7 @@ const EmailVerificationPage = () => {
 
                         {/* <p className="text-4xl font-serif font-[550] mt-7 ">Verify your email</p> */}
                         <div className="flex flex-col text-center mt-12 gap-y-7 text-xl font-[500]">
+                            <p>Verify your email</p>
                             <p>Thank you for signing up with FDIAMOND!</p>
                             <p>Please confirm your email address to complete your registration.</p>
 

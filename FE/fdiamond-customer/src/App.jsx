@@ -2,26 +2,22 @@ import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import PageNotFound from './pages/PageNotFound';
-import { ProductNotFound } from 'src/features/Products/index';
-import { LoginPage, RegisterPage } from 'src/features/Authentication/index'
 import AuthProvider from './context/AuthProvider';
-import CartPage from './features/Order/pages/CartPage';
-// import CartItemPage from './features/Order/pages/CartItemPage';
 import ProtectedRoute from './routes/ProtectedRoute';
-import SuccessfulVerificationPage from './features/Authentication/pages/SuccessfulVerificationPage';
-import EmailVerificationPage from './features/Authentication/pages/EmailVerificationPage';
 import GuestRoute from './routes/GuestRoute';
+import { LoginPage, RegisterPage, SuccessfulVerificationPage, EmailVerificationPage } from 'src/features/Authentication/index'
+import { ProductNotFound } from 'src/features/Products/index';
+import { LoadingSpinner } from './components/index';
+import { CartPage } from './features/Order/index';
 
 function App() {
 
     const ProductDetailsPage = React.lazy(() => import("./features/Products/pages/ProductDetailsPage"));
     const CategoryParent = React.lazy(() => import("./features/Products/pages/CategoryParent"));
 
-    // loginAPI().then(res => { console.log(res) })
-
     return (
         <>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingSpinner />}>
                 <AuthProvider>
                     <Routes>
                         <Route path="/" element={<Home />} />
@@ -33,13 +29,6 @@ function App() {
                         </Route>
                         <Route path='/product-not-found' element={<ProductNotFound />} />
                         <Route />
-
-                        {/* 
-                        <Route path='/cart' element={
-                            <ProtectedRoute>
-                                <CartPage />
-                            </ProtectedRoute>
-                        } /> */}
 
                         <Route element={<ProtectedRoute />} >
                             <Route path='/cart' element={<CartPage />} />

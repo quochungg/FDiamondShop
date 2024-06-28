@@ -29,6 +29,7 @@ const ImageCarousel = ({ product }) => {
                             <>
                                 {image.isGia === false ? (
                                     <div
+                                        key={index}
                                         className=
                                         {
                                             isActive(image.imageUrl) ?
@@ -36,7 +37,7 @@ const ImageCarousel = ({ product }) => {
                                                 :
                                                 ('h-full w-full border-[1px] hover:border-gray-400 cursor-pointer')
                                         }
-                                        key={index}>
+                                    >
                                         <img
                                             className="object-cover h-[80px] p-2"
                                             src={image.imageUrl}

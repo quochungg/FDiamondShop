@@ -23,7 +23,7 @@ const Header = () => {
     }, [token]);
 
 
-    const handleLogin = (e) => {
+    const handleClickLogin = (e) => {
         e.preventDefault();
         navigate('/login', { state: { previousUrl: location.pathname } })
     }
@@ -31,6 +31,11 @@ const Header = () => {
     const handleSignOut = (e) => {
         e.preventDefault();
         logout();
+    }
+
+    const handleClickCart = (e) => {
+        e.preventDefault();
+        navigate('/cart', { state: { previousUrl: location.pathname } })
     }
 
     const iconSize = 25;
@@ -58,7 +63,7 @@ const Header = () => {
                 </div>
 
 
-                <div className="flex flex-1 justify-center text-[40px] font-[550] tracking-wider pl-12">
+                <div className="flex flex-1 justify-center text-[40px] font-[600] tracking-wider pl-12">
                     <Link to='/'>
                         <div className="font-playfair">FDIAMOND</div>
                     </Link>
@@ -95,7 +100,7 @@ const Header = () => {
                         )
                         : (
                             <div>
-                                <Link onClick={handleLogin} title="Login">
+                                <Link onClick={handleClickLogin} title="Login">
                                     <VscAccount size={iconSize} />
                                 </Link>
                             </div>
@@ -103,7 +108,7 @@ const Header = () => {
                     }
 
                     <div >
-                        <Link title="Cart">
+                        <Link onClick={handleClickCart} title="Cart">
                             <AiOutlineShopping size={iconSize} />
                         </Link>
                     </div>

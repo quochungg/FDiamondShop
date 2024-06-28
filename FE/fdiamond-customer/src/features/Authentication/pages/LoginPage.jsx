@@ -8,7 +8,6 @@ import { TailSpin } from 'react-loader-spinner'
 import { IoHome } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 
 
 const LoginPage = () => {
@@ -54,9 +53,8 @@ const LoginPage = () => {
     //Checking error code
     useEffect(() => {
         // 400: Account not found
-        // 401: Account is admin
         // 403: Email has not verified
-        if (location?.state?.errorCode === 400 || location?.state?.errorCode === 401) {
+        if (location?.state?.errorCode === 400) {
             setErrorMessage('Invalid username or password.')
         }
         else if (location?.state?.errorCode === 403) {
@@ -90,7 +88,7 @@ const LoginPage = () => {
 
     const loginGoogle = useGoogleLogin({
         onSuccess: async googleResponse => {
-            // console.log(googleResponse);
+            console.log(googleResponse);
             loginWithGoogle(googleResponse.access_token)
         },
     });
@@ -248,7 +246,6 @@ const LoginPage = () => {
                                                 color="#f8fafc"
                                                 ariaLabel="tail-spin-loading"
                                                 radius="1"
-                                                wrapperStyle={{}}
                                                 wrapperClass="flex flex-row justify-center"
                                             />
                                         </button>
@@ -309,7 +306,7 @@ const LoginPage = () => {
                 </div>
                 {/* END LEFT SECTION */}
 
-            </div>
+            </div >
         </>
     )
 };

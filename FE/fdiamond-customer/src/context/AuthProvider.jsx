@@ -14,12 +14,14 @@ const AuthProvider = ({ children }) => {
             .then(response => {
                 const account = response.data.result;
 
-                if (account && account.role === 'customer') { //if account exists, account must belong to a customer
+                if (account) { //if account exists, account must belong to a customer
                     setToken(account.token);
                     localStorage.setItem('accessToken', account.token);
                     localStorage.setItem('user', JSON.stringify({
+                        userName: account.user.userName,
                         firstName: account.user.firstName,
-                        lastName: account.user.lastName
+                        lastName: account.user.lastName,
+                        userId: account.userId
                     }));
 
                     navigate(
@@ -30,11 +32,6 @@ const AuthProvider = ({ children }) => {
                     )
                 } else {
                     let statusCode = response.status;
-                    if (account) {
-                        if (account.role === 'admin' || account.role === 'manager') {
-                            statusCode = 401;   //temporarily acceptable for users without permissions to access customer site
-                        }
-                    }
                     const errorCode = { errorCode: statusCode }
                     navigate('/login', { state: { ...location.state, ...errorCode } });
                 }
@@ -50,8 +47,10 @@ const AuthProvider = ({ children }) => {
             setToken(account.token);
             localStorage.setItem('accessToken', account.token);
             localStorage.setItem('user', JSON.stringify({
+                userName: account.user.userName,
                 firstName: account.user.firstName,
-                lastName: account.user.lastName
+                lastName: account.user.lastName,
+                userId: account.userId
             }));
 
             navigate(

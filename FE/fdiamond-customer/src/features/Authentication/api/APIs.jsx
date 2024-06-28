@@ -6,7 +6,7 @@ export const loginAPI = async (loginCredentials) => {
     let response;
 
     const API_url = API_ROOT + '/login';
-    console.log(API_url);
+    // console.log(API_url);
 
     try {
         response = await axios.post(API_url, loginCredentials)
@@ -24,7 +24,7 @@ export const registerAPI = async (data) => {
     let response;
 
     const API_url = API_ROOT + '/register';
-    console.log(API_url);
+    // console.log(API_url);
 
     try {
         response = await axios.post(API_url, data)
@@ -42,7 +42,7 @@ export const loginGoogleAPI = async (accessToken) => {
     let response;
 
     const API_url = API_ROOT + '/GoogleLogin'
-    console.log(API_url);
+    // console.log(API_url);
 
     const headers = {
         'Content-Type': 'application/json;charset=UTF-8',

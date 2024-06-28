@@ -7,7 +7,11 @@ const ProtectedRoute = () => {
     const { token } = useAuth();
 
     if (!token) {
-        return <Navigate to='/login' state={{ previousUrl: location.state.previousUrl }} />
+        return <Navigate to='/login' state={{
+            previousUrl: location?.state?.previousUrl
+                ? location.state.previousUrl
+                : '/'
+        }} />
     }
     return <Outlet />
 

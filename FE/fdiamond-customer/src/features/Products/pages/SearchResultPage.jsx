@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { getProducts, getCategory } from "../api/APIs";
 import { CategoryHero, Pagination, ProductList } from '../components/index'
 import AppLayout from "src/layout/AppLayout";
+import { LoadingSpinner } from "src/components";
 
 
 const SearchResultPage = ({ category }) => {
@@ -75,7 +76,7 @@ const SearchResultPage = ({ category }) => {
 
     if (isLoading) {
         validatePageNumber();
-        return <div>Loading...</div>;
+        return <LoadingSpinner />
     }
 
     return (

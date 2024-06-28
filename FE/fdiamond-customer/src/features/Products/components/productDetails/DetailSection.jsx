@@ -1,15 +1,30 @@
-import { Link, useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
-// import { Accordion, AccordionItem } from '@szhsin/react-accordion';
 import chevron from "../../../../assets/chevron.svg";
+import { useState } from "react";
 
 
-const DetailSection = ({ product }) => {
+const DetailSection = ({ product, isAppendable }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const handleAddToCart = () => {
-        navigate('/cart', { state: { previousUrl: location.pathname } });
+    const [selectedSize, setSelectedSize] = useState(0);
+
+    const handleAddToCart = async () => {
+        const addedItemArr = [
+            {
+                productId: product.productId,
+                ringSize: selectedSize
+            },
+        ]
+
+        navigate('/cart', {
+            state: {
+                ...location.state,
+                previousUrl: location.pathname,
+                addedItemArr: addedItemArr
+            }
+        });
     }
 
     const AccordionItem = ({ header, ...rest }) => (
@@ -111,7 +126,13 @@ const DetailSection = ({ product }) => {
                     {product.categoryName === 'Engagement Ring' &&
                         <div className="flex flex-row gap-5">
                             <label htmlFor="size" className="text-[19px] cursor-pointer">Select ring size</label>
-                            <select name="size" id="size" className="cursor-pointer block text-center text-sm bg-transparent  border-b-2 border-gray-200 text-gray-600 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <select
+                                name="size"
+                                id="size"
+                                className="cursor-pointer block text-center text-sm bg-transparent  border-b-2 border-gray-200 text-gray-600 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+                                value={selectedSize}
+                                onChange={(e) => setSelectedSize(e.target.value)}
+                            >
                                 <option value="Ring size">Ring size</option>
                                 <option value="3">3</option>
                                 <option value="4">4</option>
@@ -139,11 +160,14 @@ const DetailSection = ({ product }) => {
                             </p>
                         </button>
 
-                        <button className="flex-1" to="">
-                            <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
-                                APPEND
-                            </p>
-                        </button>
+                        {isAppendable &&
+                            <button className="flex-1" to="">
+                                <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
+                                    APPEND
+                                </p>
+                            </button>
+                        }
+
                     </div>
 
                 </div>

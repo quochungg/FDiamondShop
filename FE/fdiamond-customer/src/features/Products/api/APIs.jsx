@@ -7,7 +7,7 @@ export const getCategory = async (category) => {
     const URL_str = API_ROOT + `/api/category?category Name=${category}`
     const API_url = URL_str.replace(/ /g, '+');
 
-    console.log(API_url)
+    // console.log(API_url)
 
     try {
         response = await axios.get(API_url);
@@ -20,10 +20,10 @@ export const getCategory = async (category) => {
 export const getProducts = async (category, searchParams) => {
     let response;
     const queryStr = searchParams.toString();
-    const URL_str = API_ROOT + `/api/product/GetProductWithFilter?categoryName=${category}&${queryStr}`;
+    const URL_str = API_ROOT + `/api/product/GetProductWithFilter?CategoryName=${category}&${queryStr}`;
     const API_url = URL_str.replace(/ /g, '+');
 
-    console.log(API_url);
+    // console.log(API_url);
 
     try {
         response = await axios.get(API_url);
@@ -37,7 +37,7 @@ export const getProductByID = async (id) => {
     let response;
     const API_url = API_ROOT + `/api/product/${id}`;
 
-    console.log(API_url);
+    // console.log(API_url);
 
     try {
         response = await axios.get(API_url)
