@@ -149,7 +149,7 @@ namespace FDiamondShop.API.Controllers
                     cli.Product = _mapper.Map<ProductDTO>(cartLines
                         .SelectMany(cl => cl.CartLineItems)
                         .Select(cli => cli.Product)
-                        .FirstOrDefault());
+                        .FirstOrDefault(p => p.ProductId == cli.ProductId));
                 }
             }
 
