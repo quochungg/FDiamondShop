@@ -38,7 +38,9 @@ export default function VoucherPage() {
 
   const [orderBy, setOrderBy] = useState('discountId');
 
-  const [filterById, setFilterById] = useState('');
+  // const [filterById, setFilterById] = useState('');
+
+  const [filterName, setFilterName] = useState('');
 
   const [editModalOpen, setEditModalOpen] = useState(false);
 
@@ -58,7 +60,7 @@ export default function VoucherPage() {
   const dataFiltered = applyFilter({
     inputData: data,
     comparator: getComparator(order, orderBy),
-    filterById,
+    filterName,
   });
 
   // useEffect(() => {
@@ -107,9 +109,9 @@ export default function VoucherPage() {
     }
   };
 
-  const handleFilterByID = (event) => {
+  const handleFilterName = (event) => {
     setPage(0);
-    setFilterById(event.target.value);
+    setFilterName(event.target.value);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -158,7 +160,7 @@ export default function VoucherPage() {
     }
   };
 
-  const notFound = !dataFiltered.length && !!filterById;
+  const notFound = !dataFiltered.length && !!filterName;
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -175,7 +177,7 @@ export default function VoucherPage() {
       </Stack>
 
       <Card>
-        <VoucherTableToolbar filterById={filterById} onFilterById={handleFilterByID} />
+        <VoucherTableToolbar filterName={filterName} onFilterName={handleFilterName} />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
@@ -190,7 +192,7 @@ export default function VoucherPage() {
                   { id: 'discountPercent', label: 'Percent' },
                   { id: 'startingDate', label: 'Start' },
                   { id: 'endDate', label: 'End' },
-                  { id: 'isExpried', label: 'Expired' },
+                  { id: 'isExpried', label: 'Open' },
                   { id: '' },
                 ]}
               />
@@ -218,7 +220,7 @@ export default function VoucherPage() {
                   ))}
 
                 <TableEmptyRows height={77} emptyRows={emptyRows(page, rowsPerPage, data.length)} />
-                {notFound && <TableNoData query={filterById} />}
+                {notFound && <TableNoData query={filterName} />}
               </TableBody>
             </Table>
           </TableContainer>
