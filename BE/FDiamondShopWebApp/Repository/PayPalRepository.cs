@@ -108,21 +108,12 @@ namespace FDiamondShop.API.Repository
         }
 
 
-        public PaymentResponseModel PaymentExecute(IQueryCollection collections)
+        public PayPalResponseModel PaymentExecute(IQueryCollection collections)
         {
-            var response = new PaymentResponseModel();
+            var response = new PayPalResponseModel();
 
             foreach (var (key, value) in collections)
-            {
-                if (!string.IsNullOrEmpty(key) && key.ToLower().Equals("order_description"))
-                {
-                    response.OrderDescription = value;
-                }
-
-                if (!string.IsNullOrEmpty(key) && key.ToLower().Equals("transaction_id"))
-                {
-                    response.TransactionId = value;
-                }
+            {             
 
                 if (!string.IsNullOrEmpty(key) && key.ToLower().Equals("order_id"))
                 {
