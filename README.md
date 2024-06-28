@@ -91,10 +91,9 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 |-------------|---------------|------------------------|
 | Nguyen Huu Quoc Hung     | UC-19   | View Cart                |
 | Nguyen Huu Quoc Hung     | UC-06   | Filter Search Option                 |
-| Nguyen Thi Bich Duyen     | UC-00   |        |
+| Nguyen Thi Bich Duyen     | UC-17   | Add Products to Cart       |
 | Nguyen Thi Ngoc Thu   | UC-16    | Update Discount Code                    |
 | Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |
-| Tran Nguyen Thu An       | UC-17    | Add Products to Cart           |
 | Tran Nguyen Thu An       | UC-18    | Remove Products From Cart           |
 | Doan Dang Thien Bao       | UC-12    | Create Discount Code            |
 | Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |
