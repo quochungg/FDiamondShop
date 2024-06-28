@@ -12,14 +12,14 @@ namespace FDiamondShop.API.Controllers
 {
     [Route("api/checkout")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class CheckoutController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly APIResponse _response;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly FDiamondContext _db;
-        public PaymentController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, FDiamondContext db)
+        public CheckoutController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, FDiamondContext db)
         {
             _unitOfWork = unitOfWork;
             _response = new();
@@ -74,6 +74,13 @@ namespace FDiamondShop.API.Controllers
 
             var model = _mapper.Map<Payment>(payment);
             await _unitOfWork.PaymentRepository.CreateAsync(model);
+            DateTime now = DateTime.Now;
+
+            TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+            DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
+
+            model.CreatedDate = now7;
             await _unitOfWork.SaveAsync();
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);

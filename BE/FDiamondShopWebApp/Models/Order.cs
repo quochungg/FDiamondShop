@@ -11,7 +11,7 @@ namespace FDiamondShop.API.Models
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
         public int? PaymentId { get; set; }
-        public Payment Payment { get; set; }
+        public Payment? Payment { get; set; }
 
         public decimal BasePrice { get; set; }
 
@@ -19,7 +19,7 @@ namespace FDiamondShop.API.Models
         [ForeignKey("DiscountCode")]
         public int? DiscountCodeId { get; set; }
 
-        public DiscountCode DiscountCode { get; set; }
+        public DiscountCode? DiscountCode { get; set; }
 
         public ApplicationUser User { get; set; }
 
