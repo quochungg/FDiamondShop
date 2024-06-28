@@ -52,7 +52,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 |          | UC-08    | Delete Product                 |
 |          | UC-09    | Search Product               |
 |          | UC-10    | Update Product               |
-|          | UC-11    | View ProductDetails                |
+|          | UC-11    | View Product Details                |
 | Sprint2  | UC-12    | Create Discount Code              |
 |          | UC-13    | Search Discoust Code by Name            |
 |          | UC-14    | View All Discount Code            |
@@ -77,6 +77,8 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
 | Nguyen Huu Quoc Hung     | UC-06   |  Filter Search Option                 |
+| Nguyen Huu Quoc Hung     | UC-03   |  Forgot Password                 |
+| Nguyen Huu Quoc Hung     | UC-11   |  View Product Details               |
 | Nguyen Thi Bich Duyen     | UC-01   | Register       |
 | Nguyen Thi Ngoc Thu   | UC-02    | Login (Customer)                    |
 | Ha Duy Tung    | UC-05    | Add Product                   |
@@ -87,7 +89,8 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 ### Table 2: Member Assignment for Sprint 2
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-00   |                  |
+| Nguyen Huu Quoc Hung     | UC-19   | View Cart                |
+| Nguyen Huu Quoc Hung     | UC-06   | Filter Search Option                 |
 | Nguyen Thi Bich Duyen     | UC-00   |        |
 | Nguyen Thi Ngoc Thu   | UC-16    | Update Discount Code                    |
 | Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |
