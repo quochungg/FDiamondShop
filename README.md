@@ -45,8 +45,8 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 ### Table 1: User Stories of Each Sprint
 | Sprint   | User Story ID | Description                |
 |----------|----------------|----------------------------|
-| Sprint 1 | UC-01    | Login                      |
-|          | UC-02    | Register                     |
+| Sprint 1 | UC-01    | Register                      |
+|          | UC-02    | LoginLogin                     |
 |          | UC-03    | Forgot Password           |
 |          | UC-04    | Manage Personal Information            |
 |          | UC-05    | Add Product           |
@@ -79,13 +79,27 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 ### Table 2: Member Assignment for Sprint 1
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-00   |                   |
-| Nguyen Thi Bich Duyen     | UC-00   |        |
-| Nguyen Thi Ngoc Thu   | UC-00    |                     |
-| Ha Duy Tung    | UC-00    |                    |
-| Tran Nguyen Thu An       | UC-00    |            |
+| Nguyen Huu Quoc Hung     | UC-06   |  Filter Search Option                 |
+| Nguyen Thi Bich Duyen     | UC-01   | Register       |
+| Nguyen Thi Ngoc Thu   | UC-02    | Login (Customer)                    |
+| Ha Duy Tung    | UC-05    | Add Product                   |
+| Ha Duy Tung    | UC-10    | Update Product                  |
+| Tran Nguyen Thu An       | UC-02    | Login (Admin)           |
 | Doan Dang Thien Bao       | UC-00    |            |
-   
+
+### Table 2: Member Assignment for Sprint 2
+| Member Name | User Story ID | Description            |
+|-------------|---------------|------------------------|
+| Nguyen Huu Quoc Hung     | UC-00   |                  |
+| Nguyen Thi Bich Duyen     | UC-00   |        |
+| Nguyen Thi Ngoc Thu   | UC-16    | Update Discount Code                    |
+| Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |
+| Tran Nguyen Thu An       | UC-17    | Add Products to Cart           |
+| Tran Nguyen Thu An       | UC-18    | Remove Products From Cart           |
+| Doan Dang Thien Bao       | UC-12    | Create Discount Code            |
+| Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |
+| Doan Dang Thien Bao       | UC-16    | Update Discount Code           |
+      
 <!-- ## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
