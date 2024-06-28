@@ -251,9 +251,9 @@ namespace FDiamondShop.API.Controllers
         }
         [HttpGet("GetAllOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllOrder(string Username)
+        public async Task<IActionResult> GetAllOrder(string UserId)
         {
-            var user = _userManager.Users.First(u => u.UserName == Username);
+            var user = _userManager.Users.First(u => u.Id == UserId);
             if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
