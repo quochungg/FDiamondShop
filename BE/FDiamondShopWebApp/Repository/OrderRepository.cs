@@ -32,12 +32,16 @@ namespace FDiamondShop.API.Repository
         {
             
             var Orders = _db.Orders.Where(x=>x.UserId==userId).ToList();
-            var order = _db.Orders.FirstOrDefault(x => x.UserId == userId);
-            var payment = _db.Payments.FirstOrDefault(x=>x.PaymentId== order.PaymentId);
-            var paymentDTO = _mapper.Map<PaymentDTO>(payment);
+            if(Orders.Count == 0)
+            {
+                return null;
+            }
+            
             List<OrderDTO> orderDTOs = new List<OrderDTO>();
             foreach (var model in Orders)
             {
+                var payment = _db.Payments.FirstOrDefault(x => x.PaymentId == model.PaymentId);
+                var paymentDTO = _mapper.Map<PaymentDTO>(payment);
                 OrderDTO orderDTO = new OrderDTO()
                 {
                     OrderId= model.OrderId,
@@ -56,7 +60,11 @@ namespace FDiamondShop.API.Repository
         public async Task<OrderDTO> GetOrderDetails(int orderId)
         {
             var order = _db.Orders.FirstOrDefault(x=>x.OrderId == orderId);
-          
+            if(order == null)
+            {
+                return null;
+            }
+
             var cartlineDTOs= new List<CartLineDTO>();
             var cartlines = _db.CartLines.Where(x => x.OrderId == orderId).ToList();
             foreach(var cartline in cartlines)
