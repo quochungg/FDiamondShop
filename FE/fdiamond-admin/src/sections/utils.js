@@ -35,7 +35,7 @@ export function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export function applyFilter({ inputData, comparator, filterById }) {
+export function applyFilter({ inputData, comparator, filterById, filterName }) {
   if (!Array.isArray(inputData)) {
     console.error('applyFilter expects inputData to be an array, but received:', inputData);
     return [];
@@ -58,6 +58,19 @@ export function applyFilter({ inputData, comparator, filterById }) {
       }
       return data.productId.toString().indexOf(filterById) !== -1;
     });
+  }
+
+  if (filterName) {
+    inputData = inputData.filter(
+      (data) => {
+        if (!data.discountCodeName) {
+          console.warn('Data item missing discountCodeName:', data);
+          return false;
+        }
+        return data.discountCodeName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1;
+      }
+      // (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+    );
   }
 
   return inputData;

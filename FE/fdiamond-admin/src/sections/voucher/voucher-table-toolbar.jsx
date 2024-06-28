@@ -9,7 +9,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from 'src/components/iconify';
 
-export default function VoucherTableToolbar({ filterById, onFilterById }) {
+export default function VoucherTableToolbar({ filterName, onFilterName }) {
   return (
     <Toolbar
       sx={{
@@ -24,9 +24,9 @@ export default function VoucherTableToolbar({ filterById, onFilterById }) {
       }}
     >
       <OutlinedInput
-        value={filterById}
-        onChange={onFilterById}
-        placeholder="Search voucher by ID"
+        value={filterName}
+        onChange={onFilterName}
+        placeholder="Search voucher by name..."
         startAdornment={
           <InputAdornment position="start">
             <Iconify
@@ -47,6 +47,6 @@ export default function VoucherTableToolbar({ filterById, onFilterById }) {
 }
 
 VoucherTableToolbar.propTypes = {
-  filterById: PropTypes.string,
-  onFilterById: PropTypes.func,
+  filterName: PropTypes.string,
+  onFilterName: PropTypes.func,
 };
