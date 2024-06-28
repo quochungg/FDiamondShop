@@ -33,10 +33,12 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("AddToCartLine")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         public async Task<ActionResult<APIResponse>> AddToCartLine([FromBody] CreateCartDTO createDTO)
         {
             var model = createDTO.CartLineItems;
             var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);           
+
             var cartLine = new CartLine();
             
             cartLine.UserId = user.Id;
@@ -123,12 +125,10 @@ namespace FDiamondShop.API.Controllers
         //    return Ok(_response);
         //}
         [HttpGet("GetAllCartLines")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-
-        public async Task<IActionResult> GetAllCartLines(string userName)
+        [ProducesResponseType(StatusCodes.Status200OK)]   
+        public async Task<IActionResult> GetAllCartLines(string UserId)
         {
-            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == userName);
-
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == UserId);
             var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
             if (cartLines.Count == 0)
             {
@@ -149,7 +149,7 @@ namespace FDiamondShop.API.Controllers
                     cli.Product = _mapper.Map<ProductDTO>(cartLines
                         .SelectMany(cl => cl.CartLineItems)
                         .Select(cli => cli.Product)
-                        .FirstOrDefault());
+                        .FirstOrDefault(p => p.ProductId == cli.ProductId));
                 }
             }
 
