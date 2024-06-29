@@ -2,15 +2,15 @@ Diamond Shop System - SWP391 project
 ![screencapture-localhost-5174-product-diamond-2024-06-19-07_38_34](https://github.com/quochungg/FDiamondShop/assets/167979922/404aa80a-6696-403e-9ebb-b33c1487a5d7)
 -Function Details
 
-- https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+  -https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 
 -usecase List
 
-- https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
+  -https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
 
 -Report 0
 
-- https://docs.google.com/spreadsheets/d/1MmZ6rnhytbmFOeACCtkRoh_wIsNDfczx/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+  -https://docs.google.com/spreadsheets/d/1BQvEpAOgzN8YQgIGbiRbuI6_ncsvz-kn/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 
 # Team's Member
 
@@ -45,8 +45,8 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 ### Table 1: User Stories of Each Sprint
 | Sprint   | User Story ID | Description                |
 |----------|----------------|----------------------------|
-| Sprint 1 | UC-01    | Login                      |
-|          | UC-02    | Register                     |
+| Sprint 1 | UC-01    | Register                      |
+|          | UC-02    | LoginLogin                     |
 |          | UC-03    | Forgot Password           |
 |          | UC-04    | Manage Personal Information            |
 |          | UC-05    | Add Product           |
@@ -55,7 +55,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 |          | UC-08    | Delete Product                 |
 |          | UC-09    | Search Product               |
 |          | UC-10    | Update Product               |
-|          | UC-11    | View ProductDetails                |
+|          | UC-11    | View Product Details                |
 | Sprint2  | UC-12    | Create Discount Code              |
 |          | UC-13    | Search Discoust Code by Name            |
 |          | UC-14    | View All Discount Code            |
@@ -79,13 +79,29 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 ### Table 2: Member Assignment for Sprint 1
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-00   |                   |
-| Nguyen Thi Bich Duyen     | UC-00   |        |
-| Nguyen Thi Ngoc Thu   | UC-00    |                     |
-| Ha Duy Tung    | UC-00    |                    |
-| Tran Nguyen Thu An       | UC-00    |            |
+| Nguyen Huu Quoc Hung     | UC-06   |  Filter Search Option                 |
+| Nguyen Huu Quoc Hung     | UC-03   |  Forgot Password                 |
+| Nguyen Huu Quoc Hung     | UC-11   |  View Product Details               |
+| Nguyen Thi Bich Duyen     | UC-01   | Register       |
+| Nguyen Thi Ngoc Thu   | UC-02    | Login (Customer)                    |
+| Ha Duy Tung    | UC-05    | Add Product                   |
+| Ha Duy Tung    | UC-10    | Update Product                  |
+| Tran Nguyen Thu An       | UC-02    | Login (Admin)           |
 | Doan Dang Thien Bao       | UC-00    |            |
-   
+
+### Table 2: Member Assignment for Sprint 2
+| Member Name | User Story ID | Description            |
+|-------------|---------------|------------------------|
+| Nguyen Huu Quoc Hung     | UC-19   | View Cart                |
+| Nguyen Huu Quoc Hung     | UC-06   | Filter Search Option                 |
+| Nguyen Thi Bich Duyen     | UC-17   | Add Products to Cart       |
+| Nguyen Thi Ngoc Thu   | UC-16    | Update Discount Code                    |
+| Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |
+| Tran Nguyen Thu An       | UC-18    | Remove Products From Cart           |
+| Doan Dang Thien Bao       | UC-12    | Create Discount Code            |
+| Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |
+| Doan Dang Thien Bao       | UC-16    | Update Discount Code           |
+      
 <!-- ## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
