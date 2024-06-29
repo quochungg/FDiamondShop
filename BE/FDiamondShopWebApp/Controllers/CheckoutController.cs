@@ -180,8 +180,10 @@ namespace FDiamondShop.API.Controllers
         [HttpGet("executepayPayPal")]
         public async Task<IActionResult> PaymentExecutePayPal()
         {
-            var user = _userManager.Users.First();
-            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
+            var order = _db.Orders.OrderBy(o => o.OrderId).Last();
+            var user = _userManager.Users.FirstOrDefault(u => u.Id == order.UserId);
+            
+             //= await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
             if (!response.Success)
             {
