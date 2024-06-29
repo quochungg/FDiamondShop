@@ -1,14 +1,15 @@
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useLocation, Link } from "react-router-dom"
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
 import chevron from "../../../../assets/chevron.svg";
 import { useState } from "react";
 
 
-const DetailSection = ({ product, isAppendable }) => {
+const DetailSection = ({ product, isAppendable, isDiamondInCart }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
     const [selectedSize, setSelectedSize] = useState(0);
+
 
     const handleAddToCart = async () => {
         const addedItemArr = [
@@ -26,6 +27,7 @@ const DetailSection = ({ product, isAppendable }) => {
             }
         });
     }
+
 
     const AccordionItem = ({ header, ...rest }) => (
         <Item
@@ -154,11 +156,23 @@ const DetailSection = ({ product, isAppendable }) => {
                     {/* ADD TO CART BUTTON*/}
                     {/* APPEND BUTTON*/}
                     <div className="flex flex-row gap-3 font-gantari">
-                        <button onClick={handleAddToCart} className="flex-1" to="/cart">
-                            <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
-                                ADD TO CARD
-                            </p>
-                        </button>
+                        {isDiamondInCart ?
+                            (
+                                <Link to='/cart' className="flex-1">
+                                    <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
+                                        GO TO CART
+                                    </p>
+                                </Link>
+                            ) : (
+                                product.categoryName !== 'Engagement Ring' && (
+                                    <button onClick={handleAddToCart} className="flex-1" >
+                                        <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
+                                            ADD TO CART
+                                        </p>
+                                    </button>
+                                )
+                            )
+                        }
 
                         {isAppendable &&
                             <button className="flex-1" to="">
