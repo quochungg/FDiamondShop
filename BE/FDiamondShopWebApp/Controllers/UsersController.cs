@@ -55,6 +55,7 @@ namespace FDiamondShop.API.Controllers
             }
             var id = user.Id;
             loginResponse.UserId = id;
+            loggedUser = user;
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
