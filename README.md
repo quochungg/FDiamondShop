@@ -99,9 +99,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 | Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |
 | Tran Nguyen Thu An       | UC-18    | Remove Products From Cart           |
 | Doan Dang Thien Bao       | UC-12    | Create Discount Code            |
-| Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |
-| Doan Dang Thien Bao       | UC-16    | Update Discount Code           |
-      
+| Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |      
 <!-- ## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
