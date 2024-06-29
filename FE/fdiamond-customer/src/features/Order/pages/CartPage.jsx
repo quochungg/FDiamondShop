@@ -4,8 +4,8 @@ import { getAllCartLines } from "../api/APIs";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { addToCartLine } from "src/features/Order/api/APIs";
-import { c } from "vite/dist/node/types.d-aGj9QkWt";
-
+import { EmptyCart, MainCartSection } from "../components/index";
+import { LoadingSpinner } from "src/components";
 
 //This page can only be accessed after log in
 const CartPage = () => {
@@ -16,7 +16,7 @@ const CartPage = () => {
 
     // Handle new added item
     useEffect(() => {
-        const addedItemArr = location.state.addedItemArr;
+        const addedItemArr = location?.state?.addedItemArr;
         if (addedItemArr) {
             const addToCart = async () => {
                 await addToCartLine(addedItemArr);
@@ -57,47 +57,70 @@ const CartPage = () => {
 
     }
 
+    if (cartLineArr === null) {
+        return <LoadingSpinner />
+    }
+
     return (
         <>
-            <AppLayout>
-                <div className="h-auto">
-                    CART PAGE
-                </div>
-                {cartLineArr && (
-                    cartLineArr.length > 0 ? (
-                        <div>
-                            <div>
-                                {cartLineArr.map((cartLine) => (
-                                    cartLine.cartLineItems.map((cartLineItem) => (
-                                        <div
-                                            key={cartLine.cartLineId}
-                                        >
-                                            ProductID: {cartLineItem.productId}
-                                            CartLineID: {cartLine.cartLineId}
-                                        </div>
-                                    )
-
-
-
-                                    )))}
+            {cartLineArr && (
+                <AppLayout>
+                    {cartLineArr.length > 0 ?
+                        (
+                            <div className="h-auto w-screen bg-white">
+                                <div className="h-full w-full max-w-7xl mx-auto bg-white">
+                                    <MainCartSection />
+                                </div>
                             </div>
-
-                            <button
-                                className="p-3 bg-slate-400"
-                                onClick={handleCheckout}
-                            >
-                                Checkout
-                            </button>
-                        </div>
-                    ) : (
-                        <div>
-                            <p>Your cart is empty</p>
-                        </div>
-                    )
-                )}
-            </AppLayout>
+                        ) : (
+                            <EmptyCart />
+                        )
+                    }
+                </AppLayout>
+            )}
         </>
     )
 };
 
 export default CartPage;
+
+
+// {cartLineArr && (
+//     cartLineArr.length > 0 ? (
+//         <div>
+//             <div>
+//                 {cartLineArr.map((cartLine) => (
+//                     <div
+//                         className="p-3 bg-slate-200 border-[1px] border-black"
+//                         key={cartLine.cartLineId}
+//                     >
+//                         CartLineID: {cartLine.cartLineId}
+
+//                         {cartLine.cartLineItems.map((cartLineItem, index) => (
+//                             <ul
+//                                 className="list-disc px-10 border-[1px] border-black"
+//                                 key={index}
+//                             >
+//                                 <li>Product ID: {cartLineItem.productId}</li>
+//                                 <li>Price: {cartLineItem.price}</li>
+//                             </ul>
+//                         ))}
+//                     </div>
+
+//                 )
+//                 )}
+//             </div>
+
+//             <button
+//                 className="p-3 bg-slate-400"
+//                 onClick={handleCheckout}
+//             >
+//                 Checkout
+//             </button>
+//         </div>
+//     ) : (
+//         <div>
+//             <p>Your cart is empty</p>
+//         </div>
+//     )
+// )}

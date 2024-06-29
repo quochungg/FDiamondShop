@@ -55,6 +55,7 @@ namespace FDiamondShop.API.Controllers
             }
             var id = user.Id;
             loginResponse.UserId = id;
+            loggedUser = user;
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
@@ -272,7 +273,9 @@ namespace FDiamondShop.API.Controllers
                    UserName = user.UserName,
                    Password = "",
                };
-                 var result= await _unitOfWork.UserRepository.Login(loginRequestDTO);
+                var result= await _unitOfWork.UserRepository.Login(loginRequestDTO);
+                var id1 = user.Id;
+                result.UserId = id1;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = result;

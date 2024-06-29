@@ -2,12 +2,15 @@ Diamond Shop System - SWP391 project
 ![screencapture-localhost-5174-product-diamond-2024-06-19-07_38_34](https://github.com/quochungg/FDiamondShop/assets/167979922/404aa80a-6696-403e-9ebb-b33c1487a5d7)
 -Function Details
 
+  -https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 
 -usecase List
 
+  -https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
 
 -Report 0
 
+  -https://docs.google.com/spreadsheets/d/1BQvEpAOgzN8YQgIGbiRbuI6_ncsvz-kn/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 
 # Team's Member
 
@@ -96,9 +99,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 | Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |
 | Tran Nguyen Thu An       | UC-18    | Remove Products From Cart           |
 | Doan Dang Thien Bao       | UC-12    | Create Discount Code            |
-| Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |
-| Doan Dang Thien Bao       | UC-16    | Update Discount Code           |
-      
+| Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |      
 <!-- ## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)

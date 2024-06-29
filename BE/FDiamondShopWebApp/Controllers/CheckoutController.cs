@@ -4,6 +4,7 @@ using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -155,6 +156,7 @@ namespace FDiamondShop.API.Controllers
             return Ok(response);
         }
         [HttpPost("PayPal")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
@@ -178,6 +180,7 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepayPayPal")]
+        [AllowAnonymous]
         public async Task<IActionResult> PaymentExecutePayPal()
         {
             var order = _db.Orders.OrderBy(o => o.OrderId).Last();

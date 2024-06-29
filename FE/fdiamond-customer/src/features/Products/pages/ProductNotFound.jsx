@@ -8,7 +8,12 @@ const ProductNotFound = () => {
     return (
         <>
             <h1>Product Not Found</h1>
-            <button onClick={handleClick}>Go back Home</button>
+            <button
+                className="bg-blue-950 hover:bg-[#34427b] text-white font-bold py-2 px-4 rounded-sm"
+                onClick={handleClick}
+            >
+                Go back Home
+            </button>
         </>
     )
 };
