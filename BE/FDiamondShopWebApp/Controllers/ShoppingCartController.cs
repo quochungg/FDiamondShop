@@ -129,7 +129,7 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> GetAllCartLines(string UserId)
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == UserId);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id && c.IsOrdered ==false, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
             if (cartLines.Count == 0)
             {
                 _response.IsSuccess = true;
@@ -137,6 +137,7 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("EMPTY");
                 return Ok(_response);
             }
+           
             var cartLineDTOs = _mapper.Map<List<CartLineDTO>>(cartLines);
             
             foreach (var item in cartLineDTOs)
