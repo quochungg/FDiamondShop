@@ -7,9 +7,9 @@ import { SlLocationPin } from "react-icons/sl";
 import { PiHeadphones } from "react-icons/pi";
 import { useAuth } from "src/context/AuthProvider";
 
+
 const Header = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     const { logout, token } = useAuth();
     const [user, setUser] = useState(null);
 
@@ -23,20 +23,11 @@ const Header = () => {
     }, [token]);
 
 
-    const handleClickLogin = (e) => {
-        e.preventDefault();
-        navigate('/login', { state: { previousUrl: location.pathname } })
-    }
-
     const handleSignOut = (e) => {
         e.preventDefault();
         logout();
     }
 
-    const handleClickCart = (e) => {
-        e.preventDefault();
-        navigate('/cart', { state: { previousUrl: location.pathname } })
-    }
 
     const iconSize = 25;
 
@@ -100,7 +91,10 @@ const Header = () => {
                         )
                         : (
                             <div>
-                                <Link onClick={handleClickLogin} title="Login">
+                                <Link
+                                    to='/login'
+                                    state={{ previousUrl: location.pathname }}
+                                    title="Login">
                                     <VscAccount size={iconSize} />
                                 </Link>
                             </div>
@@ -108,9 +102,14 @@ const Header = () => {
                     }
 
                     <div >
-                        <Link onClick={handleClickCart} title="Cart">
+
+                        <Link
+                            to='/cart'
+                            state={{ previousUrl: location.pathname }}
+                            title="Cart">
                             <AiOutlineShopping size={iconSize} />
                         </Link>
+
                     </div>
 
                 </div>
