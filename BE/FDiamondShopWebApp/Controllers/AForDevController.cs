@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FDiamondShop.API.Controllers
 {
-    [Route("api/alo-hung")]
+    [Route("api/for-dev")]
     [ApiController]
-    public class AloHungController : ControllerBase
+    public class AForDevController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly FDiamondContext _db;
         private readonly APIResponse _response;
-        public AloHungController(IUnitOfWork unitOfWork, FDiamondContext db)
+        public AForDevController(IUnitOfWork unitOfWork, FDiamondContext db)
         {
             _db = db;
             _unitOfWork = unitOfWork;
@@ -49,6 +49,30 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> DeleteCartline()
         {
             _db.CartLines.RemoveRange(_db.CartLines);
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpGet("reset-product-quantity")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> ResetProductQuantity()
+        {
+            var products = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "SubCategory,SubCategory.Category");
+            foreach (var product in products)
+            {
+                if( 1 <=  product.SubCategoryId && product.SubCategoryId <= 9)
+                {
+                    product.Quantity = 1;
+                    product.IsVisible = true;
+                    product.IsDeleted = false;
+                }
+                else
+                {
+                    product.Quantity = 1000;
+                    product.IsVisible = true;
+                    product.IsDeleted = false;
+                }
+            }
             await _db.SaveChangesAsync();
             return NoContent();
         }

@@ -32,9 +32,10 @@ namespace FDiamondShop.API.Controllers
             _httpClient = httpClient;
         }
         [HttpPost(Name = "CreateOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateOrder( [FromBody] OrderCreateDTO createDTO)
         {
             List<Product> products = new();
@@ -210,7 +211,7 @@ namespace FDiamondShop.API.Controllers
                     case "paypal":
                          paymentInfo.Amount=orderDTO.TotalPrice;
 
-                        var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/PayPal");
+                        var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                         if (paymentResponsePaypal.IsSuccessStatusCode)

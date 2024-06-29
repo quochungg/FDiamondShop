@@ -183,7 +183,7 @@ namespace FDiamondShop.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> PaymentExecutePayPal()
         {
-            var order = _db.Orders.OrderBy(o => o.OrderId).Last();
+            var order = _db.Orders.OrderBy(o => o.OrderDate).Last();
             var user = _userManager.Users.FirstOrDefault(u => u.Id == order.UserId);
             
              //= await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));

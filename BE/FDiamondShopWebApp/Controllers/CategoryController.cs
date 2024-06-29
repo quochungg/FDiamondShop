@@ -39,7 +39,7 @@ namespace FDiamondShop.API.Controllers
             var productCount = _db.Categories
             .Where(c => c.CategoryName == categoryName)
             .SelectMany(c => c.SubCategories)
-            .SelectMany(sc => sc.Products)
+            .SelectMany(sc => sc.Products).Where(p => p.IsVisible == true)
             .Count();
 
             model.ProductCount = productCount;
