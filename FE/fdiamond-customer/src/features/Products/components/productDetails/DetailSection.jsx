@@ -177,7 +177,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart }) => {
                         {isAppendable &&
                             <button className="flex-1" to="">
                                 <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
-                                    APPEND
+                                    {product.categoryName === 'Diamond' ? 'APPEND TO RING' : 'APPEND TO DIAMOND'}
                                 </p>
                             </button>
                         }
