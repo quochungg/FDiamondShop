@@ -4,6 +4,7 @@ using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -155,6 +156,7 @@ namespace FDiamondShop.API.Controllers
             return Ok(response);
         }
         [HttpPost("PayPal")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
@@ -178,10 +180,13 @@ namespace FDiamondShop.API.Controllers
 
         }
         [HttpGet("executepayPayPal")]
+        [AllowAnonymous]
         public async Task<IActionResult> PaymentExecutePayPal()
         {
-            var user = _userManager.Users.First();
-            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
+            var order = _db.Orders.OrderBy(o => o.OrderDate).Last();
+            var user = _userManager.Users.FirstOrDefault(u => u.Id == order.UserId);
+            
+             //= await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
             if (!response.Success)
             {

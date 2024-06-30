@@ -32,9 +32,10 @@ namespace FDiamondShop.API.Controllers
             _httpClient = httpClient;
         }
         [HttpPost(Name = "CreateOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateOrder( [FromBody] OrderCreateDTO createDTO)
         {
             List<Product> products = new();
