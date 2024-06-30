@@ -17,12 +17,14 @@ namespace FDiamondShop.API.Controllers
         private readonly FDiamondContext _db;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public DiscountController(IUnitOfWork unitOfWork, FDiamondContext db, IMapper mapper)
+        private readonly IHttpClientFactory _httpClientFactory;
+        public DiscountController(IUnitOfWork unitOfWork, FDiamondContext db, IMapper mapper, IHttpClientFactory httpClientFactory)
         {
             this._response = new();
             _unitOfWork = unitOfWork;
             _db = db;
             _mapper = mapper;
+            _httpClientFactory = httpClientFactory;
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -70,7 +72,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var discount = _mapper.Map<DiscountCode>(createDTO);
-                var recent = _db.DiscountCodes.FirstOrDefault(u=>u.DiscountCodeName.Equals(createDTO.DiscountCodeName));
+                var recent = _db.DiscountCodes.FirstOrDefault(u => u.DiscountCodeName.Equals(createDTO.DiscountCodeName));
                 if (recent != null)
                 {
                     _response.IsSuccess = false;
@@ -83,7 +85,7 @@ namespace FDiamondShop.API.Controllers
                     _response.Result = _mapper.Map<DiscountCodeDTO>(discount);
                     _response.StatusCode = HttpStatusCode.Created;
                 }
-               
+
                 //return CreatedAtRoute("GetProductById", new { id = discount.DiscountId }, _response);
             }
             catch (Exception ex)
@@ -104,7 +106,7 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                var discount =  await _db.DiscountCodes.FirstOrDefaultAsync(u => u.DiscountId== id);
+                var discount = await _db.DiscountCodes.FirstOrDefaultAsync(u => u.DiscountId == id);
 
                 var now = DateTime.Now;
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -129,7 +131,7 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
             }
 
-            return _response;  
+            return _response;
         }
         [HttpPut("UpdateAuto", Name = "UpdateAuto")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -148,7 +150,7 @@ namespace FDiamondShop.API.Controllers
                     discount.IsExpried = now7 < discount.StartingDate || now7 > discount.EndDate;
                     await _unitOfWork.SaveAsync();
                 }
-                
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return NoContent();
@@ -161,5 +163,37 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+
+        [HttpPut("ApplyDiscount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> ApplyDiscount([FromBody]ApplyDiscountDTO applyDiscountDTO)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PutAsync("https://fdiamond-api.azurewebsites.net/api/discount/updateauto", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Cannot update discount code" };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                return StatusCode(500,_response);
+            }
+            try
+            {
+                var returnDTO = await _unitOfWork.DiscountCodeRepository.ApplyDiscount(applyDiscountDTO);
+                _response.IsSuccess = true;
+                _response.Result = returnDTO;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
     }
 }
+
