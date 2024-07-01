@@ -31,6 +31,15 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAllDiscounCode([FromQuery] string? discountcode, [FromQuery] bool? isexpried)
         {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PutAsync("https://fdiamond-api.azurewebsites.net/api/discount/updateauto", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Cannot update discount code" };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                return StatusCode(500, _response);
+            }
             IEnumerable<DiscountCode> DiscountList = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
             if (discountcode != null)
             {
