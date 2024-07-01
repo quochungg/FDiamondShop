@@ -69,15 +69,30 @@ namespace FDiamondShop.API.Controllers
             }
             try
             {
+                var now = DateTime.Now;
+                TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
                 var discount = _mapper.Map<DiscountCode>(createDTO);
-                var recent = _unitOfWork.DiscountCodeRepository.GetAsync(dc=>dc.DiscountCodeName.Equals(createDTO.DiscountCodeName));
+                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(createDTO);
                 if (recent != null)
                 {
-                    _response.IsSuccess = false;
                     return BadRequest("Dublicate Code is not required");
+                }
+                if (createDTO.DiscountPercent<0)
+                {
+                    return BadRequest("Percent must be the postive number");
+                }
+                if (DateTime.Compare(now7, createDTO.StartingDate) > 0) //Ngay hien tai lon hon ngay start
+                {
+                    return BadRequest("Starting date must be in future");
+                }
+                if (DateTime.Compare(createDTO.EndDate,createDTO.StartingDate) < 0)// ngay end nho hon ngay start
+                {
+                    return BadRequest("End date must be in after Starting date");
                 }
                 else
                 {
+                    discount.IsExpried = now7 < discount.StartingDate || now7 > discount.EndDate;
                     await _unitOfWork.DiscountCodeRepository.CreateAsync(discount);
                     await _unitOfWork.SaveAsync();
                     _response.Result = _mapper.Map<DiscountCodeDTO>(discount);

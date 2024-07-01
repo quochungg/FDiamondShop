@@ -104,7 +104,7 @@ namespace FDiamondShop.API.Controllers
                 };
                 if (createDTO.DiscountName!=null)
                 {
-                    var discount = _unitOfWork.DiscountCodeRepository.Find(createDTO);
+                    var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
 
                     if (discount == null)
                     {

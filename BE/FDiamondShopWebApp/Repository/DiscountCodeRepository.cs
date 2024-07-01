@@ -13,10 +13,13 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
-        public DiscountCode Find (OrderCreateDTO createDTO)
+        public DiscountCode FindinOrder(OrderCreateDTO createDTO)
         {
             return _db.DiscountCodes.SingleOrDefault (dc=>dc.DiscountCodeName == createDTO.DiscountName);
         }
-      
+        public DiscountCode CheckDuplicate (DiscountCodeCreateDTO discountCodeCreateDTO)
+        {
+            return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName == discountCodeCreateDTO.DiscountCodeName);
+        }
     }
 }
