@@ -38,15 +38,10 @@ namespace FDiamondShop.API.Controllers
         {
             var model = createDTO.CartLineItems;
             var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);           
-
             var cartLine = new CartLine();
-            
             cartLine.UserId = user.Id;
-
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
-
             await _unitOfWork.SaveAsync();
-
             foreach (var item in model)
             {
                 var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
@@ -55,9 +50,9 @@ namespace FDiamondShop.API.Controllers
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.ErrorMessages.Add("Product is out of stock !");
+                    await _unitOfWork.CartRepository.RemoveAsync(cartLine);
                     return BadRequest(_response);
-                }
-
+                }          
 
                 var cartLineItem = new CartLineItem
                 {
