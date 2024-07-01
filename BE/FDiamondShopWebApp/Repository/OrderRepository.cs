@@ -32,7 +32,9 @@ namespace FDiamondShop.API.Repository
         public async Task<List<OrderDTO>> GetAllOrderAsync(string userId)
         {
             
-            var Orders = await _db.Orders.Select(x => x).Where(x => x.UserId == userId).Include(o => o.CartLines).ToListAsync();
+
+            var Orders = await _db.Orders.Where(x=>x.UserId==userId).ToListAsync();
+
             if(Orders.Count == 0)
             {
                 return null;
@@ -41,6 +43,7 @@ namespace FDiamondShop.API.Repository
             List<OrderDTO> orderDTOs = new List<OrderDTO>();
             foreach (var model in Orders)
             {
+                model.CartLines = await _db.CartLines.Where(cl => cl.OrderId == model.OrderId).ToListAsync();
                 var payment = _db.Payments.FirstOrDefault(x => x.PaymentId == model.PaymentId);
                 var paymentDTO = _mapper.Map<PaymentDTO>(payment);
                 OrderDTO orderDTO = new OrderDTO()
@@ -53,6 +56,10 @@ namespace FDiamondShop.API.Repository
                     PaymentInfo = paymentDTO,
                     CartLines = _mapper.Map<List<CartLineDTO>>(model.CartLines)
                 };
+                foreach(var item in orderDTO.CartLines)
+                {
+                    item.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(_db.CartLineItems.Where(cli => cli.CartLineId == item.CartLineId).ToList());
+                }
                 orderDTOs.Add(orderDTO);
             }
             return orderDTOs;
