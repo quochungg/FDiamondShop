@@ -10,7 +10,7 @@ namespace FDiamondShop.API.Models.DTO
         [Required]
         public string DiscountCodeName { get; set; }
         public int DiscountPercent { get; set; } = 0;
-        public DateTime? StartingDate { get; set; }
-        public DateTime? EndDate { get; set; } 
+        public DateTime StartingDate { get; set; }
+        public DateTime EndDate { get; set; } 
     }
 }
