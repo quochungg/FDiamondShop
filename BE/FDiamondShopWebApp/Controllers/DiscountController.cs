@@ -3,6 +3,7 @@ using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -84,7 +85,7 @@ namespace FDiamondShop.API.Controllers
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
                 var discount = _mapper.Map<DiscountCode>(createDTO);
-                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(createDTO);
+                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(createDTO.DiscountCodeName);
 
                 if (recent != null)
                 {
@@ -94,10 +95,10 @@ namespace FDiamondShop.API.Controllers
                 {
                     return BadRequest("Percent must be the postive number");
                 }
-                if (DateTime.Compare(now7, createDTO.StartingDate) > 0) //Ngay hien tai lon hon ngay start
-                {
-                    return BadRequest("Starting date must be in future");
-                }
+                //if (DateTime.Compare(now7, createDTO.StartingDate) > 0) //Ngay hien tai lon hon ngay start
+                //{
+                //    return BadRequest("Starting date must be in future");
+                //}
                 if (DateTime.Compare(createDTO.EndDate,createDTO.StartingDate) < 0)// ngay end nho hon ngay start
                 {
                     return BadRequest("End date must be in after Starting date");
@@ -140,15 +141,32 @@ namespace FDiamondShop.API.Controllers
                 {
                     return NotFound("DiscountCode not found");
                 }
-                discount.DiscountPercent = updateDTO.DiscountPercent;
-                discount.StartingDate = DateTime.Parse(updateDTO.StartingDate);
-                discount.EndDate = DateTime.Parse(updateDTO.EndDate);
-                discount.IsExpried = now7 < discount.StartingDate || now7 > discount.EndDate;
+                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(updateDTO.DiscountCodeName);
 
-                await _unitOfWork.SaveAsync();
-                _response.StatusCode = HttpStatusCode.NoContent;
-                _response.IsSuccess = true;
-                return NoContent();
+                if (recent != null)
+                {
+                    return BadRequest("Dublicate Code is not required");
+                }               
+                if (updateDTO.DiscountPercent < 0)
+                {
+                    return BadRequest("Percent must be the postive number");
+                }              
+                if (DateTime.Compare(DateTime.Parse(updateDTO.EndDate), DateTime.Parse(updateDTO.StartingDate)) < 0)// ngay end nho hon ngay start
+                {
+                    return BadRequest("End date must be in after Starting date");
+                }
+                else
+                {
+                    discount.DiscountCodeName = updateDTO.DiscountCodeName;
+                    discount.DiscountPercent = updateDTO.DiscountPercent;
+                    discount.StartingDate = DateTime.Parse(updateDTO.StartingDate);
+                    discount.EndDate = DateTime.Parse(updateDTO.EndDate);
+                    discount.IsExpried = now7 < discount.StartingDate || now7 > discount.EndDate;
+                    await _unitOfWork.SaveAsync();
+                    _response.StatusCode = HttpStatusCode.NoContent;
+                    _response.IsSuccess = true;
+                    return NoContent();
+                }               
             }
             catch (Exception ex)
             {

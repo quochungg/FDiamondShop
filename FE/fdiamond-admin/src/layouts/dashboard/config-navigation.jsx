@@ -22,11 +22,11 @@ const navConfig = [
     path: '/products',
     icon: icon('ic_product'),
   },
-  {
-    title: 'category',
-    path: '/category',
-    icon: icon('ic_category'),
-  },
+  // {
+  //   title: 'category',
+  //   path: '/category',
+  //   icon: icon('ic_category'),
+  // },
   {
     title: 'order',
     path: '/order',
