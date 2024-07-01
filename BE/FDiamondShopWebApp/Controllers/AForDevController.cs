@@ -2,6 +2,7 @@
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -73,6 +74,27 @@ namespace FDiamondShop.API.Controllers
                     product.IsDeleted = false;
                 }
             }
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpPut("update-visibility-to-true/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        //endpoint to update product's visibility
+        public async Task<IActionResult> UpdateProductVisibilityToTrue(int id)
+        {
+            var product = await _unitOfWork.ProductRepository.GetAsync(u => u.ProductId == id);
+            product.IsVisible = true;
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
+        [HttpPut("update-visibility-to-false/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        //endpoint to update product's visibility
+        public async Task<IActionResult> UpdateProductVisibilityToFalse(int id)
+        {
+            var product = await _unitOfWork.ProductRepository.GetAsync(u => u.ProductId == id);
+            product.IsVisible = false;
             await _db.SaveChangesAsync();
             return NoContent();
         }

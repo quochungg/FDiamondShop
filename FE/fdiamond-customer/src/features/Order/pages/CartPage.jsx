@@ -61,15 +61,19 @@ const CartPage = () => {
         return <LoadingSpinner />
     }
 
+
+
     return (
         <>
             {cartLineArr && (
                 <AppLayout>
                     {cartLineArr.length > 0 ?
                         (
-                            <div className="h-auto w-screen bg-white">
-                                <div className="h-full w-full max-w-7xl mx-auto bg-white">
-                                    <MainCartSection />
+                            <div className="h-auto w-screen bg-white overflow-visible">
+                                <div className="h-auto w-full max-w-7xl mx-auto bg-white">
+                                    <MainCartSection
+                                        cartLineArr={cartLineArr}
+                                    />
                                 </div>
                             </div>
                         ) : (

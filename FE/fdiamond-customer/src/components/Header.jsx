@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { VscAccount } from "react-icons/vsc";
 import { IoIosSearch } from "react-icons/io";
 import { AiOutlineShopping } from "react-icons/ai";
@@ -56,7 +56,7 @@ const Header = () => {
 
                 <div className="flex flex-1 justify-center text-[40px] font-[600] tracking-wider pl-12">
                     <Link to='/'>
-                        <div className="font-playfair">FDIAMOND</div>
+                        <div className="font-playfair text-[#000035]">FDIAMOND</div>
                     </Link>
                 </div>
 
@@ -83,7 +83,12 @@ const Header = () => {
                                 <div
                                     className="mt-[12px] z-10 absolute left-0 w-[120px] hidden group-hover:block group-hover:shadow group-hover:shadow-gray-400/50 bg-white rounded-b-md"
                                 >
-                                    <Link className="text-[14px] block pl-6 py-4 hover:text-slate-600">My Account</Link>
+                                    <Link
+                                        className="text-[14px] block pl-6 py-4 hover:text-slate-600"
+                                        to='/account-details'
+                                    >
+                                        My Account
+                                    </Link>
                                     <Link className="text-[14px] block pl-6 py-4 hover:text-slate-600">My Orders</Link>
                                     <Link onClick={handleSignOut} className="text-[14px] block pl-6 py-4 hover:font-[800] border-t-[1px] font-[700]">Sign Out</Link>
                                 </div>

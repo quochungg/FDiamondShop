@@ -6,6 +6,7 @@ using FDiamondShop.API.Repository.IRepository;
 
 using FDiamondShop.API.Models.DTO;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace FDiamondShop.API.Repository
@@ -31,7 +32,7 @@ namespace FDiamondShop.API.Repository
         public async Task<List<OrderDTO>> GetAllOrderAsync(string userId)
         {
             
-            var Orders = _db.Orders.Where(x=>x.UserId==userId).ToList();
+            var Orders = await _db.Orders.Select(x => x).Where(x => x.UserId == userId).Include(o => o.CartLines).ToListAsync();
             if(Orders.Count == 0)
             {
                 return null;
@@ -50,7 +51,7 @@ namespace FDiamondShop.API.Repository
                     DiscountCodeId = model.DiscountCodeId,
                     TotalPrice = model.TotalPrice,
                     PaymentInfo = paymentDTO,
-
+                    CartLines = _mapper.Map<List<CartLineDTO>>(model.CartLines)
                 };
                 orderDTOs.Add(orderDTO);
             }
@@ -59,8 +60,9 @@ namespace FDiamondShop.API.Repository
 
         public async Task<OrderDTO> GetOrderDetails(int orderId)
         {
-            var order = _db.Orders.FirstOrDefault(x=>x.OrderId == orderId);
-            if(order == null)
+            var order = _db.Orders.FirstOrDefault(x => x.OrderId == orderId);
+
+            if (order == null)
             {
                 return null;
             }

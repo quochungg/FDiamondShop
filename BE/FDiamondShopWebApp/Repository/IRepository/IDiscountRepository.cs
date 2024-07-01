@@ -7,5 +7,6 @@ namespace FDiamondShop.API.Repository.IRepository
     {
         public DiscountCode FindinOrder(OrderCreateDTO createDTO);
         public DiscountCode CheckDuplicate(DiscountCodeCreateDTO discountCodeCreateDTO);
+        public Task<DiscountReturnDTO> ApplyDiscount(ApplyDiscountDTO applyDiscountDTO);
     }
 }

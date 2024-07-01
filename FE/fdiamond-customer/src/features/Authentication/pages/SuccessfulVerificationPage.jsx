@@ -22,7 +22,7 @@ const SuccessfulVerificationPage = () => {
             ) : (
                 <div className="h-screen bg-gray-50 flex justify-center items-center">
                     <div className="w-[50%] pt-6 pb-14 flex flex-col justify-center items-center 
-                bg-white rounded-sm shadow-md border-t-[1px]">
+                bg-white rounded-md shadow-cartline">
                         <PiCheckCircleThin size={170} color="green" />
                         <p className="text-[2.4rem] font-gantari font-[600] leading-none mt-2">Email Verified!</p>
 
