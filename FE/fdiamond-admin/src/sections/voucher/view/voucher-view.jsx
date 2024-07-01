@@ -6,11 +6,14 @@ import {
   Card,
   Stack,
   Table,
+  Alert,
   Button,
   TableRow,
+  Snackbar,
   Container,
   TableBody,
   TableCell,
+  AlertTitle,
   Typography,
   TableContainer,
   TablePagination,
@@ -47,6 +50,10 @@ export default function VoucherPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [openModal, setOpenModal] = useState(false);
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const [ErrSnackbar, setErrSnackbar] = useState(false);
 
   const [currentVoucher, setCurrentVoucher] = useState({
     discountId: '',
@@ -101,6 +108,11 @@ export default function VoucherPage() {
     updateAndGetAll();
   }, []);
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+    setErrSnackbar(false);
+  };
+
   const handleSort = (event, discountId) => {
     const isAsc = orderBy === discountId && order === 'asc';
     if (discountId !== '') {
@@ -138,6 +150,7 @@ export default function VoucherPage() {
       )
     );
     handleCloseEditModal();
+    setOpenSnackbar(true);
   };
 
   const handleSubmit = async (voucher) => {
@@ -152,17 +165,41 @@ export default function VoucherPage() {
       if (responseData.isSuccess && responseData.result) {
         setData((prevData) => [...prevData, responseData.result]);
         handleCloseModal();
+        setOpenSnackbar(true);
       } else {
         console.error('Invalid response data:', responseData.result);
       }
     } catch (error) {
       console.error('Error adding voucher:', error);
+      setErrSnackbar(true);
     }
   };
 
   const notFound = !dataFiltered.length && !!filterName;
   return (
     <Container>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          <AlertTitle>Success</AlertTitle>
+          Success submitting discount data!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={ErrSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          <AlertTitle>Error</AlertTitle>
+          Discount code is duplicated!
+        </Alert>
+      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Vouchers</Typography>
 

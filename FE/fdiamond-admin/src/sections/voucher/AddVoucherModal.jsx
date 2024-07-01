@@ -7,17 +7,8 @@ import { React, useState, useEffect } from 'react';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Box, Grid, Modal, Button, TextField, Typography } from '@mui/material';
 import { DatePicker, MobileTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import {
-  Box,
-  Grid,
-  Modal,
-  Button,
-  // Switch,
-  TextField,
-  Typography,
-  // FormControlLabel,
-} from '@mui/material';
 
 // import AdapterDateFns from '@mui/lab/AdapterDateFns';
 // import localizationEn from '@mui/x-date-pickers/AdapterDayjs/locale/en';
@@ -35,6 +26,11 @@ export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
     isExpried: false,
   });
 
+  const [errors, setErrors] = useState({
+    discountPercent: '',
+    endDate: '',
+  });
+
   useEffect(() => {
     const now = dayjs();
     const isExpried =
@@ -48,6 +44,12 @@ export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setNewVoucher({ ...newVoucher, [name]: value });
+    if (name === 'discountPercent' || name === 'endDate') {
+      setErrors({
+        ...errors,
+        [name]: '',
+      });
+    }
   };
 
   const handleDateChange = (name) => (date) => {
@@ -77,6 +79,22 @@ export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
+
+    const validationErrors = {};
+
+    if (newVoucher.discountPercent < 0 || newVoucher.discountPercent > 100) {
+      validationErrors.discountPercent =
+        '* Percent cannot be negative and cannot be greater than 100!';
+    }
+
+    if (newVoucher.endDate.isBefore(newVoucher.startingDate)) {
+      validationErrors.endDate = '* The end date cannot occur before the start date!';
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     handleSubmit({
       ...newVoucher,
       startingDate: newVoucher.startingDate
@@ -122,12 +140,18 @@ export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
             fullWidth
             label="Percent"
             name="discountPercent"
+            type="number"
             value={newVoucher.discountPercent}
             onChange={handleChange}
             sx={{ mb: 2 }}
           />
+          {errors.discountPercent && (
+            <Typography variant="caption" color="error">
+              {errors.discountPercent}
+            </Typography>
+          )}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container spacing={2} sx={{ mb: 1 }}>
+            <Grid container spacing={2} sx={{ mb: 1, mt: 0 }}>
               <Grid item xs={6}>
                 <MobileTimePicker
                   label="Start Time"
@@ -165,6 +189,11 @@ export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
                   slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
                 />
               </Grid>
+              {errors.endDate && (
+                <Typography variant="caption" color="error">
+                  {errors.endDate}
+                </Typography>
+              )}
             </Grid>
           </LocalizationProvider>
           <Grid container spacing={2} sx={{ mb: 1 }}>

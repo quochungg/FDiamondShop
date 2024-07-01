@@ -7,11 +7,14 @@ import {
   Box,
   Card,
   Grid,
+  Alert,
   Button,
   Switch,
   // Checkbox,
+  Snackbar,
   TextField,
   Container,
+  AlertTitle,
   Typography,
   InputLabel,
   CardHeader,
@@ -27,7 +30,9 @@ import { AddMutipleFile } from 'src/components/upload';
 
 const EditProductPage = () => {
   const { id } = useParams();
+
   const navigate = useNavigate();
+
   const [product, setProduct] = useState({
     productId: 0,
     productName: '',
@@ -38,7 +43,19 @@ const EditProductPage = () => {
     GIAImages: [],
     productVariantValues: [],
   });
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const [loading, setLoading] = useState(true);
+
+  const [errors, setErrors] = useState({
+    basePrice: '',
+    quantity: '',
+  });
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const variantMapping = useCallback(
     () => ({
@@ -94,6 +111,12 @@ const EditProductPage = () => {
       ...product,
       [name]: type === 'checkbox' ? checked : value,
     });
+    if (name === 'basePrice' || name === 'quantity') {
+      setErrors({
+        ...errors,
+        [name]: '',
+      });
+    }
   };
 
   const handleVariantChange = (event, variantId) => {
@@ -135,6 +158,22 @@ const EditProductPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const validationErrors = {};
+
+    if (product.basePrice < 0) {
+      validationErrors.basePrice = 'Price cannot be negative';
+    }
+
+    if (product.quantity < 0) {
+      validationErrors.quantity = 'Quantity cannot be negative';
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setOpenSnackbar(true);
+      return;
+    }
     // Log the product object to see what is being sent
     console.log('Submitting product:', product);
 
@@ -177,11 +216,12 @@ const EditProductPage = () => {
         payload
       );
       console.log('Product updated:', response.data);
-      navigate('/products');
+      navigate('/products', { state: { showSnackbar: true } });
     } catch (error) {
       console.error('Error updating product:', error);
       if (error.response) {
         console.error('Error response data:', error.response.data);
+        setOpenSnackbar(true);
       }
     }
   };
@@ -221,6 +261,11 @@ const EditProductPage = () => {
                     name="basePrice"
                     type="number"
                   />
+                  {errors.basePrice && (
+                    <Typography variant="caption" color="error">
+                      {errors.basePrice}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
@@ -233,6 +278,11 @@ const EditProductPage = () => {
                     name="quantity"
                     type="number"
                   />
+                  {errors.quantity && (
+                    <Typography variant="caption" color="error">
+                      {errors.quantity}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
               {product.productVariantValues.map((variant, index) => (
@@ -316,6 +366,17 @@ const EditProductPage = () => {
           </CardContent>
         </Card>
       </form>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          <AlertTitle>Error</AlertTitle>
+          Error submitting product data. Please try again.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

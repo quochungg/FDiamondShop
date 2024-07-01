@@ -1,10 +1,11 @@
+import AppLayout from "src/layout/AppLayout";
 
 const AccountDetailsPage = () => {
-    return (
-        <>
-            <h1>Account Details Page</h1>
-        </>
-    )
+  return (
+    <>
+      <AppLayout></AppLayout>
+    </>
+  );
 };
 
 export default AccountDetailsPage;
