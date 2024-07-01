@@ -1,13 +1,15 @@
 import { CartLinesList, SummarySection } from "../index";
 
-const MainCartSection = () => {
+const MainCartSection = ({ cartLineArr }) => {
+
     return (
         <>
-            <main className="h-auto w-full grid grid-cols-3 gap-x-10 py-10 px-16 mb-20">
-
+            <main className="h-auto w-full grid grid-cols-3 gap-x-10 py-10 px-10 mb-20">
 
                 <div className="bg-[#fbfbfb] h-full col-span-2">
-                    <CartLinesList />
+                    <CartLinesList
+                        cartLineArr={cartLineArr}
+                    />
                 </div>
 
                 <div className="bg-[#fbfbfb] h-full col-span-1">
@@ -15,6 +17,7 @@ const MainCartSection = () => {
                 </div>
 
             </main>
+
 
         </>
     )

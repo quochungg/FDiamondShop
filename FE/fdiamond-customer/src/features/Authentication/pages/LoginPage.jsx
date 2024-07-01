@@ -306,7 +306,8 @@ const LoginPage = () => {
                 </div>
                 {/* END LEFT SECTION */}
 
-            </div >
+            </div>
+
         </>
     )
 };

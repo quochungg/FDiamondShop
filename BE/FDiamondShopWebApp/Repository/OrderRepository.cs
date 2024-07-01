@@ -32,7 +32,9 @@ namespace FDiamondShop.API.Repository
         public async Task<List<OrderDTO>> GetAllOrderAsync(string userId)
         {
             
+
             var Orders = await _db.Orders.Where(x=>x.UserId==userId).ToListAsync();
+
             if(Orders.Count == 0)
             {
                 return null;
@@ -65,8 +67,9 @@ namespace FDiamondShop.API.Repository
 
         public async Task<OrderDTO> GetOrderDetails(int orderId)
         {
-            var order = _db.Orders.FirstOrDefault(x=>x.OrderId == orderId);
-            if(order == null)
+            var order = _db.Orders.FirstOrDefault(x => x.OrderId == orderId);
+
+            if (order == null)
             {
                 return null;
             }

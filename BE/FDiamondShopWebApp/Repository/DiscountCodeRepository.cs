@@ -1,5 +1,6 @@
 ﻿using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
+using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,11 +17,13 @@ namespace FDiamondShop.API.Repository
         {
             return _db.DiscountCodes.SingleOrDefault (dc=>dc.DiscountCodeName == createDTO.DiscountName);
         }
+
         public DiscountCode CheckDuplicate(DiscountCodeCreateDTO discountCodeCreateDTO)
         {
             return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName == discountCodeCreateDTO.DiscountCodeName);
 
         }
+
         public async Task<DiscountReturnDTO> ApplyDiscount(ApplyDiscountDTO applyDiscountDTO)
         {
             var discountCode = await _db.DiscountCodes.FirstOrDefaultAsync(x => x.DiscountCodeName == applyDiscountDTO.DiscountCode) ?? throw new Exception("Discount code is invalid");

@@ -82,22 +82,17 @@ namespace FDiamondShop.API.Controllers
                 var duplicateProducts = products.GroupBy(p => p.ProductId)
                                         .Where(g => g.Count() > 1).ToList();
                 
-                    if(duplicateProducts.Count()>0){
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages = new List<string> { "There have some duplicate Diamond" };
+                if(duplicateProducts.Count()>0){
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "There have some duplicate Diamond" };
                     
-                        return BadRequest(_response);
+                    return BadRequest(_response);
                         
-                    }
+                }
                    
-
-
-
-
                 totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
-
                 DateTime now = DateTime.Now;
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
@@ -106,12 +101,10 @@ namespace FDiamondShop.API.Controllers
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
                     OrderDate= now7,
-
-
                 };
                 if (createDTO.DiscountName!=null)
                 {
-                    var discount = _db.DiscountCodes.SingleOrDefault(u => u.DiscountCodeName == createDTO.DiscountName);
+                    var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
 
                     if (discount == null)
                     {
