@@ -127,7 +127,6 @@ namespace FDiamondShop.API.Controllers
                 var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
                     totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
-
                 DateTime now = DateTime.Now;
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
@@ -136,12 +135,10 @@ namespace FDiamondShop.API.Controllers
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
                     OrderDate= now7,
-
-
                 };
                 if (createDTO.DiscountName!=null)
                 {
-                    var discount = _db.DiscountCodes.SingleOrDefault(u => u.DiscountCodeName == createDTO.DiscountName);
+                    var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
 
                     if (discount == null)
                     {

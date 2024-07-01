@@ -8,8 +8,8 @@ namespace FDiamondShop.API.Models.DTO
 
         public string DiscountCodeName { get; set; }
         public int DiscountPercent { get; set; } = 0;
-        public DateTime? StartingDate { get; set; } = DateTime.Now;
-        public DateTime? EndDate { get; set; } = DateTime.Now;
+        public DateTime StartingDate { get; set; } 
+        public DateTime EndDate { get; set; }
         public bool IsExpried { get; set; } = false;
     }
 }

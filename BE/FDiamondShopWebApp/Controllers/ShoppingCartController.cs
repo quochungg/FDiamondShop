@@ -124,7 +124,7 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> GetAllCartLines(string UserId)
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == UserId);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id && c.IsOrdered ==false, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id && c.IsOrdered ==false, includeProperties: "CartLineItems,CartLineItems.Product,CartLineItems.Product.ProductImages");
             if (cartLines.Count == 0)
             {
                 _response.IsSuccess = true;
@@ -145,7 +145,10 @@ namespace FDiamondShop.API.Controllers
                     cli.Product = _mapper.Map<ProductDTO>(cartLines
                         .SelectMany(cl => cl.CartLineItems)
                         .Select(cli => cli.Product)
-                        .FirstOrDefault(p => p.ProductId == cli.ProductId));
+                        .FirstOrDefault(p => p.ProductId == cli.ProductId));                    
+                    cli.Product.SubCategoryName = (await _unitOfWork.SubCategoryRepository.GetAsync(sc => sc.SubCategoryId == cli.Product.SubCategoryId)).SubcategoryName;
+                    cli.Product.CategoryId = (await _unitOfWork.SubCategoryRepository.GetAsync(ct => ct.SubCategoryId == cli.Product.SubCategoryId)).CategoryId;
+                    cli.Product.CategoryName = (await _unitOfWork.CategoryRepository.GetAsync(ct => ct.CategoryId == cli.Product.CategoryId)).CategoryName;
                 }
             }
 

@@ -7,7 +7,8 @@ const Footer = () => {
 
     return (
         <>
-            <div className="flex items-center justify-center h-72 border-t-[1px] bg-white border-[1px] border-black">
+            <div className="flex items-center justify-center h-72 border-t-[1px] bg-white border-[1px] border-gray-400">
+                {/* <div className="flex items-center justify-center h-72 border-t-[1px] bg-blue-950 text-white"> */}
                 <p className="text-5xl font-serif">
                     Footer
                 </p>

@@ -8,12 +8,13 @@ import GuestRoute from './routes/GuestRoute';
 import { LoginPage, RegisterPage, SuccessfulVerificationPage, EmailVerificationPage } from 'src/features/Authentication/index'
 import { ProductNotFound } from 'src/features/Products/index';
 import { LoadingSpinner } from './components/index';
-import { CartPage } from './features/Order/index';
 
 function App() {
 
     const ProductDetailsPage = React.lazy(() => import("./features/Products/pages/ProductDetailsPage"));
     const CategoryParent = React.lazy(() => import("./features/Products/pages/CategoryParent"));
+    const CartPage = React.lazy(() => import("./features/Order/pages/CartPage"));
+    const AccountDetailsPage = React.lazy(() => import("./features/Authentication/pages/AccountDetailsPage"));
 
     return (
         <>
@@ -32,6 +33,7 @@ function App() {
 
                         <Route element={<ProtectedRoute />} >
                             <Route path='/cart' element={<CartPage />} />
+                            <Route path='/account-details' element={<AccountDetailsPage />} />
                         </Route>
 
                         <Route element={<GuestRoute />} >
