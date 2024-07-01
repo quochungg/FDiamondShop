@@ -1,4 +1,5 @@
 ﻿using FDiamondShop.API.Models;
+using FDiamondShop.API.Models.DTO;
 
 namespace FDiamondShop.API.Repository.IRepository
 {
@@ -9,5 +10,6 @@ namespace FDiamondShop.API.Repository.IRepository
         public Task<List<CartLine>> GetAllCartlineExist(ApplicationUser user);
         public Task<CartLine> FindCartlineId(int cartLineId);
         public Task<List<CartLineItem>> GetCartLineItems(int cartLineId);
+        public Task<ValidCartLineDTO> ValidCartLine(string userId);
     }
 }

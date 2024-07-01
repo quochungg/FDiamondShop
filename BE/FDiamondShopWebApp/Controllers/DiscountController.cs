@@ -30,6 +30,7 @@ namespace FDiamondShop.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetAllDiscounCode([FromQuery] string? discountcode, [FromQuery] bool? isexpried)
         {
             var client = _httpClientFactory.CreateClient();
@@ -42,9 +43,16 @@ namespace FDiamondShop.API.Controllers
                 return StatusCode(500, _response);
             }
             IEnumerable<DiscountCode> DiscountList = await _unitOfWork.DiscountCodeRepository.GetAllAsync();
+            if(DiscountList == null)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Discount Code Not Found" };
+                _response.StatusCode = HttpStatusCode.NotFound;
+                return StatusCode(404, _response);
+            }
             if (discountcode != null)
             {
-                DiscountList = DiscountList.Where(u => u.DiscountCodeName.Equals(discountcode));
+                DiscountList = DiscountList.Where(u => u.DiscountCodeName.ToLower().Equals(discountcode.ToLower()));
             }
             if (isexpried != null)
             {

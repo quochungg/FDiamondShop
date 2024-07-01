@@ -33,7 +33,6 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("AddToCartLine")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         public async Task<ActionResult<APIResponse>> AddToCartLine([FromBody] CreateCartDTO createDTO)
         {
             var model = createDTO.CartLineItems;
@@ -77,22 +76,17 @@ namespace FDiamondShop.API.Controllers
         {
             Boolean isExist = false;
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == diamondCart.userName);
-
             var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x=>x.CartLineItems.Count()==1,includeProperties: "CartLineItems");
             var cartLineItems= cartLines.SelectMany(x => x.CartLineItems).ToList();
             var product = cartLineItems.FirstOrDefault(x => x.ProductId == diamondCart.productId);
-
-            
-                    if (product != null)
-
-                    {
-                        isExist = true;
-                        _response.IsSuccess = true;
-                        _response.StatusCode = HttpStatusCode.OK;
-                        _response.Result = isExist;
-                        return Ok(_response);
-                    }
-
+            if (product != null)
+            {
+                isExist = true;
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = isExist;
+                return Ok(_response);
+            }
             _response.Result = isExist;
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
@@ -223,5 +217,109 @@ namespace FDiamondShop.API.Controllers
 
             return NoContent();
         }
+        //[HttpGet("CheckValidOrder")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> CheckValidOrder(string userId)
+        //{
+        //    List<Product> products = new();
+        //    var user = _userManager.Users.First(u => u.Id == userId);
+        //    if (user == null)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.NotFound;
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string> { "User not found" };
+        //        return NotFound(_response);
+        //    }
+        //    var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
+        //    if (cartLines.Count == 0)
+        //    {
+        //        return NotFound();
+
+        //    }
+        //    foreach (var cl in cartLines)
+        //    {
+        //        foreach (var item in cl.CartLineItems)
+        //        {
+        //            var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
+        //            var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.CategoryId == product.SubCategory.CategoryId);
+        //            if (category.CategoryId == 1)
+        //            {
+        //                products.Add(product);
+        //            }
+        //            if (category.CategoryId != 1)
+        //            {
+        //                var checkQuantity = cartLines.ToArray().SelectMany(cartLine => cartLine.CartLineItems)
+        //                    .Where(cartLineItem => cartLineItem.ProductId == item.ProductId).Count();
+        //                var checkProductQuantity = product.Quantity;
+        //                if (checkQuantity > checkProductQuantity)
+        //                {
+        //                    ProductCheck productCheck = new ProductCheck();
+        //                    productCheck.ProductId = product.ProductId;
+        //                    productCheck.Quantity = product.Quantity;
+        //                    _response.StatusCode = HttpStatusCode.BadRequest;
+        //                    _response.IsSuccess = false;
+        //                    _response.ErrorMessages.Add("Out Of Quantity");
+        //                    _response.Result = productCheck;
+        //                    return BadRequest(_response);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    var duplicateProducts = products.GroupBy(p => p.ProductId)
+        //                            .Where(g => g.Count() > 1).ToList();
+
+        //    if (duplicateProducts.Count() > 0)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.BadRequest;
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string> { "There have some duplicate Diamond" };
+
+        //        return BadRequest(_response);
+        //    }
+
+        //    var checkStatusProduct = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
+        //        .Where(cartLineItem => cartLineItem.Product.IsVisible == false).ToList();
+        //    if (checkStatusProduct.Count > 0)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.BadRequest;
+        //        _response.IsSuccess = false;
+
+        //        foreach (var item in checkStatusProduct)
+        //        {
+        //            ProductCheck productCheck = new ProductCheck();
+        //            productCheck.ProductId = item.ProductId;
+        //            _response.ErrorMessages.Add("Product " + productCheck.ProductId + " is out of stock now");
+        //        }
+        //        return BadRequest(_response);
+        //    }
+        //    _response.StatusCode = HttpStatusCode.OK;
+        //    _response.IsSuccess = true;
+        //    return Ok(_response);
+        //}
+
+        [HttpGet("ValidShoppingCart")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> ValidShoppingCart(string userId)
+        {
+            try
+            {
+                var result = await _unitOfWork.CartRepository.ValidCartLine(userId);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = result;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add(ex.Message);
+                return BadRequest(_response);
+            }
+        }
+
+        
     }
 }
