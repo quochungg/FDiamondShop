@@ -1,5 +1,6 @@
 ﻿using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
+using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,10 @@ namespace FDiamondShop.API.Repository
         public DiscountCodeRepository(FDiamondContext db) : base(db)
         {
             _db = db;
+        }
+        public DiscountCode Find (OrderCreateDTO createDTO)
+        {
+            return _db.DiscountCodes.SingleOrDefault (dc=>dc.DiscountCodeName == createDTO.DiscountName);
         }
       
     }

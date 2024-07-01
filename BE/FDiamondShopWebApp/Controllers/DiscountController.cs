@@ -70,7 +70,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var discount = _mapper.Map<DiscountCode>(createDTO);
-                var recent = _db.DiscountCodes.FirstOrDefault(u=>u.DiscountCodeName.Equals(createDTO.DiscountCodeName));
+                var recent = _unitOfWork.DiscountCodeRepository.GetAsync(dc=>dc.DiscountCodeName.Equals(createDTO.DiscountCodeName));
                 if (recent != null)
                 {
                     _response.IsSuccess = false;
