@@ -38,15 +38,10 @@ namespace FDiamondShop.API.Controllers
         {
             var model = createDTO.CartLineItems;
             var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);           
-
             var cartLine = new CartLine();
-            
             cartLine.UserId = user.Id;
-
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
-
             await _unitOfWork.SaveAsync();
-
             foreach (var item in model)
             {
                 var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
@@ -55,9 +50,9 @@ namespace FDiamondShop.API.Controllers
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.ErrorMessages.Add("Product is out of stock !");
+                    await _unitOfWork.CartRepository.RemoveAsync(cartLine);
                     return BadRequest(_response);
-                }
-
+                }          
 
                 var cartLineItem = new CartLineItem
                 {
@@ -129,7 +124,7 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> GetAllCartLines(string UserId)
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == UserId);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id && c.IsOrdered ==false, includeProperties: "CartLineItems, CartLineItems.Product,CartLineItems.Product.ProductImages");
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id && c.IsOrdered ==false, includeProperties: "CartLineItems,CartLineItems.Product,CartLineItems.Product.ProductImages");
             if (cartLines.Count == 0)
             {
                 _response.IsSuccess = true;
@@ -150,7 +145,10 @@ namespace FDiamondShop.API.Controllers
                     cli.Product = _mapper.Map<ProductDTO>(cartLines
                         .SelectMany(cl => cl.CartLineItems)
                         .Select(cli => cli.Product)
-                        .FirstOrDefault(p => p.ProductId == cli.ProductId));
+                        .FirstOrDefault(p => p.ProductId == cli.ProductId));                    
+                    cli.Product.SubCategoryName = (await _unitOfWork.SubCategoryRepository.GetAsync(sc => sc.SubCategoryId == cli.Product.SubCategoryId)).SubcategoryName;
+                    cli.Product.CategoryId = (await _unitOfWork.SubCategoryRepository.GetAsync(ct => ct.SubCategoryId == cli.Product.SubCategoryId)).CategoryId;
+                    cli.Product.CategoryName = (await _unitOfWork.CategoryRepository.GetAsync(ct => ct.CategoryId == cli.Product.CategoryId)).CategoryName;
                 }
             }
 

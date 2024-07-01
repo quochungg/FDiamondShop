@@ -167,7 +167,7 @@ export default function ProductsView() {
       >
         <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
           <AlertTitle>Success</AlertTitle>
-          Product created successfully!
+          Success submitting product data!
         </Alert>
       </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>

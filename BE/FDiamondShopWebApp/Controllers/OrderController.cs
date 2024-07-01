@@ -31,6 +31,87 @@ namespace FDiamondShop.API.Controllers
             _userManager = userManager;
             _httpClient = httpClient;
         }
+        [HttpGet("CheckValidOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> checkValidOrder(string userId)
+        {
+            List<Product> products = new();
+            var user = _userManager.Users.First(u => u.Id==userId);
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "User not found" };
+                return NotFound(_response);
+            }
+            var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
+            if (cartLines.Count == 0)
+            {
+                return NotFound();
+
+            }
+            foreach (var cl in cartLines)
+            {
+                foreach (var item in cl.CartLineItems)
+                {
+                    var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
+                    var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.CategoryId == product.SubCategory.CategoryId);
+                    if (category.CategoryId == 1)
+                    {
+                        products.Add(product);
+                    }
+                    if (category.CategoryId != 1)
+                    {
+                        var checkQuantity = cartLines.ToArray().SelectMany(cartLine => cartLine.CartLineItems)
+                            .Where(cartLineItem => cartLineItem.ProductId == item.ProductId).Count();
+                        var checkProductQuantity = product.Quantity;
+                        if (checkQuantity > checkProductQuantity)
+                        {
+                            ProductCheck productCheck = new ProductCheck();
+                            productCheck.ProductId = product.ProductId;
+                            productCheck.Quantity = product.Quantity;
+                            _response.StatusCode = HttpStatusCode.BadRequest;
+                            _response.IsSuccess = false;
+                            _response.ErrorMessages.Add("Out Of Quantity");
+                            _response.Result = productCheck;
+                            return BadRequest(_response);
+                        }
+                    }
+                }
+            }
+            var duplicateProducts = products.GroupBy(p => p.ProductId)
+                                    .Where(g => g.Count() > 1).ToList();
+
+            if (duplicateProducts.Count() > 0)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "There have some duplicate Diamond" };
+
+                return BadRequest(_response);
+
+            }
+
+            var checkStatusProduct = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
+                .Where(cartLineItem => cartLineItem.Product.IsVisible == false).ToList();
+            if (checkStatusProduct.Count > 0)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+
+                foreach (var item in checkStatusProduct)
+                {
+                    ProductCheck productCheck = new ProductCheck();
+                    productCheck.ProductId = item.ProductId;
+                    _response.ErrorMessages.Add("Product " + productCheck.ProductId + " is out of stock now");
+                }
+                return BadRequest(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            return Ok(_response);
+        }
         [HttpPost(Name = "CreateOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -44,54 +125,7 @@ namespace FDiamondShop.API.Controllers
                 decimal totalPrice = 0;
                 var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                 var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
-
-                if (cartLines.Count == 0)
-                {
-                    return NotFound();
-
-                }
-                foreach(var cl in cartLines)
-                {
-                    foreach (var item in cl.CartLineItems)
-                    {
-                        var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
-                        var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.CategoryId == product.SubCategory.CategoryId);
-                        if (category.CategoryId == 1)
-                        {
-                            products.Add(product);
-                        }
-                        if (category.CategoryId != 1)
-                        {
-                            var checkQuantity = cartLines.ToArray().SelectMany(cartLine => cartLine.CartLineItems)
-                                .Where(cartLineItem => cartLineItem.ProductId == item.ProductId).Count();
-                            var checkProductQuantity = product.Quantity;
-                            if (checkQuantity > checkProductQuantity)
-                            {
-                                ProductCheck productCheck = new ProductCheck();
-                                productCheck.ProductId = product.ProductId;
-                                productCheck.Quantity = product.Quantity;
-                                _response.StatusCode = HttpStatusCode.BadRequest;
-                                _response.IsSuccess = false;
-                                _response.ErrorMessages.Add("Out Of Quantity");
-                                _response.Result = productCheck;
-                                return BadRequest(_response);
-                            }
-                        }
-                    }
-                }
-                var duplicateProducts = products.GroupBy(p => p.ProductId)
-                                        .Where(g => g.Count() > 1).ToList();
-                
-                if(duplicateProducts.Count()>0){
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages = new List<string> { "There have some duplicate Diamond" };
-                    
-                    return BadRequest(_response);
-                        
-                }
-                   
-                totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
+                    totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
                 DateTime now = DateTime.Now;
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -204,7 +238,7 @@ namespace FDiamondShop.API.Controllers
                     case "paypal":
                          paymentInfo.Amount=orderDTO.TotalPrice;
 
-                        var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
+                        var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net/"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                         if (paymentResponsePaypal.IsSuccessStatusCode)

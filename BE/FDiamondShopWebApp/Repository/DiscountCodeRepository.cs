@@ -21,6 +21,7 @@ namespace FDiamondShop.API.Repository
         {
             return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName.Equals(code));
 
+
         }
         public async Task<DiscountReturnDTO> ApplyDiscount(ApplyDiscountDTO applyDiscountDTO)
         {
