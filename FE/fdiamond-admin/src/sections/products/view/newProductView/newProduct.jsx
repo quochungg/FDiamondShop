@@ -6,15 +6,15 @@ import {
   Box,
   Card,
   Grid,
-  // Alert,
+  Alert,
   Button,
   Select,
   Switch,
   MenuItem,
-  // Snackbar,
+  Snackbar,
   Container,
   TextField,
-  // AlertTitle,
+  AlertTitle,
   CardHeader,
   InputLabel,
   Typography,
@@ -54,13 +54,19 @@ export default function NewProductView() {
     EarringMetal: '',
     NecklaceMetal: '',
   });
+
+  const [errors, setErrors] = useState({
+    basePrice: '',
+    quantity: '',
+  });
+
   // const [selectedImage, setSelectedImage] = useState(null);
-  // const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
 
-  // const handleCloseSnackbar = () => {
-  //   setOpenSnackbar(false);
-  // };
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const handleInputChange = (event) => {
     const { name, value, checked } = event.target;
@@ -69,6 +75,12 @@ export default function NewProductView() {
       ...formData,
       [name]: newValue,
     });
+    if (name === 'basePrice' || name === 'quantity') {
+      setErrors({
+        ...errors,
+        [name]: '',
+      });
+    }
   };
 
   const handleImageSelect = (fileList, isGia = false) => {
@@ -126,6 +138,22 @@ export default function NewProductView() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const validationErrors = {};
+
+    if (formData.basePrice < 0) {
+      validationErrors.basePrice = 'Price cannot be negative!';
+    }
+
+    if (formData.quantity < 0) {
+      validationErrors.quantity = 'Quantity cannot be negative!';
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setOpenSnackbar(true);
+      return;
+    }
+
     try {
       // Upload files to Firebase Storage
       const productFileUrls = await uploadFiles(formData.productImages);
@@ -164,6 +192,7 @@ export default function NewProductView() {
       if (error.response) {
         console.error('Error details:', error.response.data);
       }
+      setOpenSnackbar(true);
     }
   };
 
@@ -218,6 +247,11 @@ export default function NewProductView() {
                     name="basePrice"
                     type="number"
                   />
+                  {errors.basePrice && (
+                    <Typography variant="caption" color="error">
+                      {errors.basePrice}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
@@ -230,6 +264,11 @@ export default function NewProductView() {
                     name="quantity"
                     type="number"
                   />
+                  {errors.quantity && (
+                    <Typography variant="caption" color="error">
+                      {errors.quantity}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
               {formData.category === 'diamond' && (
@@ -317,17 +356,17 @@ export default function NewProductView() {
           </CardContent>
         </Card>
       </form>
-      {/* <Snackbar
+      <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          <AlertTitle>Success</AlertTitle>
-          Product created successfully!
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          <AlertTitle>Error</AlertTitle>
+          Error submitting product data. Please try again.
         </Alert>
-      </Snackbar> */}
+      </Snackbar>
     </Container>
   );
 }

@@ -10,11 +10,13 @@ import {
   Box,
   Grid,
   Modal,
+  Alert,
   Button,
-  // Switch,
+  Snackbar,
   TextField,
+  Container,
+  AlertTitle,
   Typography,
-  // FormControlLabel,
 } from '@mui/material';
 
 dayjs.extend(localizedFormat);
@@ -27,6 +29,13 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
     startingDate: null,
     endDate: null,
     isExpried: false,
+  });
+
+  const [ErrSnackbar, setErrSnackbar] = useState(false);
+
+  const [errors, setErrors] = useState({
+    discountPercent: '',
+    endDate: '',
   });
 
   useEffect(() => {
@@ -51,8 +60,16 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
     }
   }, [localVoucher.startingDate, localVoucher.endDate]);
 
+  const handleCloseSnackbar = () => {
+    setErrSnackbar(false);
+  };
+
   const handleChange = (field, value) => {
     setLocalVoucher({ ...localVoucher, [field]: value });
+    setErrors({
+      ...errors,
+      [field]: '',
+    });
   };
 
   const handleDateChange = (name) => (date) => {
@@ -82,6 +99,23 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+
+    const validationErrors = {};
+
+    if (localVoucher.discountPercent < 0 || localVoucher.discountPercent > 100) {
+      validationErrors.discountPercent =
+        '* Percent cannot be negative  and cannot be greater than 100!';
+    }
+
+    if (localVoucher.endDate.isBefore(localVoucher.startingDate)) {
+      validationErrors.endDate = '* The end date cannot occur before the start date!';
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
       // Gửi yêu cầu cập nhật đến API
       const response = await axios.put(
@@ -103,95 +137,120 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
           'Failed to update voucher:',
           response.data.message || 'Unexpected response structure'
         );
+        setErrSnackbar(true);
       }
     } catch (error) {
       console.error('Error updating voucher:', error);
+      setErrSnackbar(true);
     }
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
-        }}
+    <Container>
+      <Snackbar
+        open={ErrSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Typography variant="h6" component="h2" mb={2}>
-          Edit Voucher
-        </Typography>
-        <form onSubmit={handleFormSubmit}>
-          <TextField
-            fullWidth
-            label="Name"
-            name="discountCodeName"
-            value={localVoucher.discountCodeName}
-            onChange={(e) => handleChange('discountCodeName', e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Percent"
-            name="discountPercent"
-            value={localVoucher.discountPercent}
-            onChange={(e) => handleChange('discountPercent', e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-              <Grid item xs={6}>
-                <MobileTimePicker
-                  label="Start Time"
-                  value={localVoucher.startingDate}
-                  ampm={false}
-                  inputFormat="HH:mm"
-                  onChange={handleTimeChange('startingDate')}
-                  slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <DatePicker
-                  label="Start Date"
-                  value={localVoucher.startingDate}
-                  onChange={handleDateChange('startingDate')}
-                  slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
-                />
-              </Grid>
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          <AlertTitle>Error</AlertTitle>
+          Discount code is duplicated!
+        </Alert>
+      </Snackbar>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          <Typography variant="h6" component="h2" mb={2}>
+            Edit Voucher
+          </Typography>
+          <form onSubmit={handleFormSubmit}>
+            <TextField
+              fullWidth
+              label="Name"
+              name="discountCodeName"
+              value={localVoucher.discountCodeName}
+              onChange={(e) => handleChange('discountCodeName', e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Percent"
+              name="discountPercent"
+              type="number"
+              value={localVoucher.discountPercent}
+              onChange={(e) => handleChange('discountPercent', e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            {errors.discountPercent && (
+              <Typography variant="caption" color="error">
+                {errors.discountPercent}
+              </Typography>
+            )}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Grid container spacing={2} sx={{ mb: 2, mt: 0 }}>
+                <Grid item xs={6}>
+                  <MobileTimePicker
+                    label="Start Time"
+                    value={localVoucher.startingDate}
+                    ampm={false}
+                    inputFormat="HH:mm"
+                    onChange={handleTimeChange('startingDate')}
+                    slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <DatePicker
+                    label="Start Date"
+                    value={localVoucher.startingDate}
+                    onChange={handleDateChange('startingDate')}
+                    slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
+                  />
+                </Grid>
 
-              <Grid item xs={6}>
-                <MobileTimePicker
-                  label="End Time"
-                  value={localVoucher.endDate}
-                  ampm={false}
-                  inputFormat="HH:mm"
-                  onChange={handleTimeChange('endDate')}
-                  slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
-                />
-              </Grid>
+                <Grid item xs={6}>
+                  <MobileTimePicker
+                    label="End Time"
+                    value={localVoucher.endDate}
+                    ampm={false}
+                    inputFormat="HH:mm"
+                    onChange={handleTimeChange('endDate')}
+                    slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
+                  />
+                </Grid>
 
-              <Grid item xs={6}>
-                <DatePicker
-                  label="End Date"
-                  value={localVoucher.endDate}
-                  onChange={handleDateChange('endDate')}
-                  slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
-                />
+                <Grid item xs={6}>
+                  <DatePicker
+                    label="End Date"
+                    value={localVoucher.endDate}
+                    onChange={handleDateChange('endDate')}
+                    slots={{ textField: (params) => <TextField {...params} sx={{ mb: 1 }} /> }}
+                  />
+                </Grid>
+                {errors.endDate && (
+                  <Typography variant="caption" color="error">
+                    {errors.endDate}
+                  </Typography>
+                )}
               </Grid>
-            </Grid>
-          </LocalizationProvider>
-          {/* <FormControlLabel
+            </LocalizationProvider>
+            {/* <FormControlLabel
             control={
               <Switch
                 checked={localVoucher.isExpried}
@@ -203,21 +262,22 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
             label="Active"
             sx={{ mb: 2 }}
           /> */}
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Button variant="outlined" onClick={handleClose} fullWidth>
-                Cancel
-              </Button>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Button variant="outlined" onClick={handleClose} fullWidth>
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item xs={6}>
+                <Button variant="contained" type="submit" fullWidth>
+                  Save Changes
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <Button variant="contained" type="submit" fullWidth>
-                Save Changes
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </Box>
-    </Modal>
+          </form>
+        </Box>
+      </Modal>
+    </Container>
   );
 }
 
