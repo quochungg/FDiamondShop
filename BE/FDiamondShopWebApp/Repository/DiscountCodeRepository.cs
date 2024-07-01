@@ -15,15 +15,14 @@ namespace FDiamondShop.API.Repository
         }
         public DiscountCode FindinOrder(OrderCreateDTO createDTO)
         {
-            return _db.DiscountCodes.SingleOrDefault (dc=>dc.DiscountCodeName == createDTO.DiscountName);
+            return _db.DiscountCodes.SingleOrDefault (dc=>dc.DiscountCodeName.ToLower() == createDTO.DiscountName.ToLower());
         }
-
-        public DiscountCode CheckDuplicate(DiscountCodeCreateDTO discountCodeCreateDTO)
+        public DiscountCode CheckDuplicate(string code)
         {
-            return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName == discountCodeCreateDTO.DiscountCodeName);
+            return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName.Equals(code));
+
 
         }
-
         public async Task<DiscountReturnDTO> ApplyDiscount(ApplyDiscountDTO applyDiscountDTO)
         {
             var discountCode = await _db.DiscountCodes.FirstOrDefaultAsync(x => x.DiscountCodeName == applyDiscountDTO.DiscountCode) ?? throw new Exception("Discount code is invalid");
@@ -39,5 +38,6 @@ namespace FDiamondShop.API.Repository
             return returnDTO;
 
         }
+        
     }
 }

@@ -75,5 +75,6 @@ namespace FDiamondShop.API.Repository
 
             return Remove.Entity;
         }
+        
     }
 }
