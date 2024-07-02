@@ -178,6 +178,7 @@ namespace FDiamondShop.API.Controllers
                 var user = await _unitOfWork.UserRepository.GetUserByUsername(username);
 
                 var returnDTO = _mapper.Map<UserDTO>(user);
+                
                 if (user == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
