@@ -10,5 +10,6 @@
 @layer base {
     * {
         @apply box-border;
+
     }
 }

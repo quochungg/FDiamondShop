@@ -1,13 +1,34 @@
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
 import ringSvg from 'src/features/Order/assets/ringSvg.svg';
 
-const AvailableLine = () => {
+const AvailableLine = ({ cartLine, onRemoveCartline }) => {
+    const [selectedSize, setSelectedSize] = useState(
+        cartLine.cartLineItems.find((item) => {
+            return item.product.categoryName === 'Engagement Ring';
+        }).ringSize
+    );
+
+    const diamondItem = cartLine.cartLineItems.find((item) => (
+        item.product.categoryName === 'Diamond'
+    ))
+
+    const ringItem = cartLine.cartLineItems.find((item) => (
+        item.product.categoryName === 'Engagement Ring'
+    ))
+
+    const totalPrice = useMemo(() => {
+        return cartLine.cartLineItems.reduce((total, item) => {
+            return total + item.product.basePrice;
+        }, 0);
+    }, [cartLine]);
+
+
     return (
         <>
-
-            {/* AVAILABLE PRODUCTS */}
             <div>
+
                 {/* BEGIN ONE CART LINE */}
                 <ul>
                     <li className='shadow-cartline bg-white mb-7 rounded-md relative'>
@@ -15,9 +36,10 @@ const AvailableLine = () => {
 
                             {/*BEGIN CART NUMBER && REMOVE BUTTON */}
                             <div className='flex justify-between items-center mb-4'>
-                                <p className='text-base font-[500] text-[#656565]'>CART 10</p>
+                                <p className='text-base font-[500] text-[#656565]'>CART {cartLine.cartLineId}</p>
                                 <button
                                     className='text-[#656565] font-[400] text-xs uppercase transition-colors duration-400 hover:underline hover:text-black'
+                                    onClick={() => onRemoveCartline(cartLine.cartLineId)}
                                 >
                                     Remove
                                 </button>
@@ -30,26 +52,29 @@ const AvailableLine = () => {
 
                                     {/* Product Image */}
                                     <div className='w-[40%] relative'>
-                                        <div className='w-full max-w-[420px] text-center'>
+
+                                        <div className='w-full max-w-[420px] text-center absolute top-4'>
                                             <img
-                                                src='https://ion.bluenile.com/sets/Jewelry-bn/195402/RND/Images/stage.jpg'
+                                                src={ringItem.product.productImages[0].imageUrl}
                                                 className='w-full object-cover rounded-md'
                                             />
                                         </div>
 
                                         <div className='w-full max-w-[30%] text-center absolute top-2'>
                                             <img
-                                                src='https://ion.bluenile.com/sgmdirect/photoID/33951933/Diamond/20816136/nl/Diamond-princess-1-Carat_4_first_.jpg'
+                                                src={diamondItem.product.productImages[0].imageUrl}
                                                 className='w-full object-cover rounded-md'
                                             />
                                         </div>
 
                                     </div>
 
+
                                     {/* Product Information */}
                                     <div className=' w-full flex flex-col items-start'>
 
                                         <ul className='flex flex-col space-y-4 mb-7'>
+
                                             {/* Ring */}
                                             <li className='flex flex-row space-x-3'>
                                                 <span>
@@ -58,24 +83,23 @@ const AvailableLine = () => {
 
                                                 <div className='flex flex-col'>
                                                     <Link
-                                                        to=""
+                                                        to={`/product/product-details/${ringItem.product.productId}`}
                                                         className='hover:underline underline-offset-4 text-base'
                                                     >
-                                                        Petite Micropavé Diamond Engagement Ring in 14k White Gold (1/10 ct. tw.)
+                                                        {ringItem.product.productName}
                                                     </Link>
                                                     <div className='flex items-center gap-x-8'>
-                                                        <p className='text-sm mt-3 text-[#343434] tracking-wide'>PID-1</p>
-                                                        <p className='text-sm mt-3 mr-2 font-[600]'>$580</p>
+                                                        <p className='text-sm mt-3 text-[#343434] tracking-wide'>PID-{ringItem.product.productId}</p>
+                                                        <p className='text-sm mt-3 mr-2 font-[600]'>${ringItem.product.basePrice.toLocaleString()}</p>
 
                                                         {/* Ring size */}
                                                         <select
                                                             name="size"
                                                             id="size"
                                                             className="self-end w-16 cursor-pointer block text-center  text-sm bg-transparent border-b-[1px] border-gray-200 text-gray-600 dark:border-gray-700  focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-                                                        // value={selectedSize}
-                                                        // onChange={(e) => setSelectedSize(e.target.value)}
+                                                            value={selectedSize}
+                                                            onChange={(e) => setSelectedSize(e.target.value)}
                                                         >
-                                                            {/* <option value="Ring size">Ring size</option> */}
                                                             <option value="3">3</option>
                                                             <option value="4">4</option>
                                                             <option value="5">5</option>
@@ -99,27 +123,26 @@ const AvailableLine = () => {
 
                                                 <div className='flex flex-col w-full'>
                                                     <Link
-                                                        to=""
+                                                        to={`/product/product-details/${diamondItem.product.productId}`}
                                                         className='hover:underline underline-offset-4 text-base'
                                                     >
-                                                        1.00 Carat I-SI1 Princess Cut Diamond
+                                                        {diamondItem.product.productName}
                                                     </Link>
                                                     <div className='flex items-center gap-x-8'>
-                                                        <p className='text-sm mt-3 text-[#343434] tracking-wide'>PID-1</p>
-                                                        <p className='text-sm mt-3 mr-2 font-[600]'>$580</p>
+                                                        <p className='text-sm mt-3 text-[#343434] tracking-wide'>PID-{diamondItem.product.productId}</p>
+                                                        <p className='text-sm mt-3 mr-2 font-[600]'>${diamondItem.product.basePrice.toLocaleString()}</p>
                                                     </div>
                                                 </div>
                                             </li>
 
-                                        </ul>
 
+                                        </ul>
 
                                     </div>
 
                                     {/* Price */}
-                                    {/* to locale string */}
                                     <div className='absolute bottom-4 right-7'>
-                                        <span className='font-[620] text-[1.07rem]'>$1650</span>
+                                        <span className='font-[620] text-[1.07rem]'>${totalPrice.toLocaleString()}</span>
                                     </div>
 
                                 </div>
@@ -131,6 +154,12 @@ const AvailableLine = () => {
                 </ul>
                 {/* BEGIN ONE CART LINE */}
             </div>
+
+
+
+
+
+
         </>
     )
 };

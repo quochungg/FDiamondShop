@@ -2,6 +2,10 @@ import axios from "axios";
 
 const API_root = 'https://fdiamond-api.azurewebsites.net/api';
 
+// =======================================================================
+//                                  CART                         
+// =======================================================================
+
 // Add a product to the cart
 export const addToCartLine = async (addedItemArr) => {
     const userName = JSON.parse(localStorage.getItem('user')).userName;
@@ -84,6 +88,7 @@ export const checkExistingDiamondInCart = async (productId) => {
 
 // Remove cart line
 export const removeCartLine = async (cartLineId) => {
+
     const accessToken = localStorage.getItem('accessToken');
 
     let API_url = API_root + `/ShoppingCart/RemoveCartLine?cartLineId=${cartLineId}`;
@@ -104,8 +109,9 @@ export const removeCartLine = async (cartLineId) => {
 }
 
 
-// =====================================================================================
-// =====================================================================================
+// =======================================================================
+//                                  ORDER                         
+// =======================================================================
 
 // Order all cart lines
 export const order = async (paymentMethod) => {
@@ -174,6 +180,32 @@ export const getOrderDetails = async (orderId) => {
     } catch (error) {
         console.error('There was an error', error);
 
+    }
+    return response;
+}
+
+
+// =======================================================================
+//                                  DISCOUNT
+// =======================================================================
+export const getPromoCode = async (promoCode) => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    let API_url = API_root + `/Discount/GetDiscountCodeByCodeName?discountCode=${promoCode}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.get(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response)
+            response = error.response;
+        else
+            console.error('There was an error', error);
     }
     return response;
 }
