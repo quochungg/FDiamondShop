@@ -73,6 +73,7 @@ namespace FDiamondShop.API.Controllers
                 }
 
                 var order = _mapper.Map<Order>(orderDTO);
+                order.Status = "Pending";
                 order.UserId = user.Id;
                 await _unitOfWork.OrderRepository.CreateAsync(order);
                 await _unitOfWork.SaveAsync();               
@@ -158,7 +159,7 @@ namespace FDiamondShop.API.Controllers
                     case "paypal":
                          paymentInfo.Amount=orderDTO.TotalPrice;
 
-                        var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net/"), "/api/checkout/PayPal");
+                        var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger/"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                         if (paymentResponsePaypal.IsSuccessStatusCode)
@@ -239,6 +240,33 @@ namespace FDiamondShop.API.Controllers
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = order;
+            return Ok(_response);
+        }
+
+        [HttpPost("CancelOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.GetOrderDetails(orderId);
+            if (order == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Order not found" };
+                return NotFound(_response);
+            }
+            if (order.Status == "Completed")
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Order has been completed" };
+                return BadRequest(_response);
+            }
+            order.Status = "Cancelled";
+            await _unitOfWork.SaveAsync();
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
             return Ok(_response);
         }
     }

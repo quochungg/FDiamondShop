@@ -96,7 +96,6 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("momo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         public async Task<IActionResult> CreateMomoPaymentUrl(PaymentInformationModel model)
         {
             try
@@ -190,8 +189,6 @@ namespace FDiamondShop.API.Controllers
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
             if (!response.Success)
             {
-                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
-                await _unitOfWork.SaveAsync();
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add("Payment failed");
                 return BadRequest(_response);
@@ -218,10 +215,11 @@ namespace FDiamondShop.API.Controllers
 
             order.PaymentId = model.PaymentId;
 
+            order.Status = "Ordered";
+
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-
-             await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+            await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
           
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;

@@ -27,7 +27,7 @@ namespace FDiamondShop.API.Repository
         }
         public async Task UpdateOrderAsync(Order order)
         {
-            _db.Update(order);
+            _db.Orders.Update(order);
         }
         public async Task<List<OrderDTO>> GetAllOrderAsync(string userId)
         {
