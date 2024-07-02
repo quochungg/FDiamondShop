@@ -17,6 +17,6 @@
 
         public virtual List<CartLineDTO> CartLines { get; set; } = new List<CartLineDTO>();
 
-        public string Status { get; set; } = "Pending";
+        public string Status { get; set; }
     }
 }

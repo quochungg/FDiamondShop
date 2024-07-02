@@ -55,6 +55,7 @@ namespace FDiamondShop.API.Controllers
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
                     OrderDate= now7,
+                    Status = createDTO.Status
                 };
                 if (createDTO.DiscountName!=null)
                 {
@@ -68,7 +69,7 @@ namespace FDiamondShop.API.Controllers
                     if (discount != null)
                     {
                         orderDTO.DiscountCodeId = discount.DiscountId;
-                        orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);                      
+                        orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);      
                     }                  
                 }
 
@@ -246,24 +247,28 @@ namespace FDiamondShop.API.Controllers
         [HttpPost("CancelOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CancelOrder(int orderId)
         {
-            var order = await _unitOfWork.OrderRepository.GetOrderDetails(orderId);
-            if (order == null)
+            var orderDTO = await _unitOfWork.OrderRepository.GetOrderDetails(orderId);
+            if (orderDTO == null)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Order not found" };
                 return NotFound(_response);
             }
-            if (order.Status == "Completed")
+            if (orderDTO.Status == "Completed")
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Order has been completed" };
                 return BadRequest(_response);
             }
-            order.Status = "Cancelled";
+            await _unitOfWork.OrderRepository.CancelOrder(orderId);
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == order.UserId);
+            await _unitOfWork.EmailRepository.SendEmailCancelAsync(user.Email, user.LastName);
             await _unitOfWork.SaveAsync();
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;

@@ -5,6 +5,6 @@
         public string UserName { get; set; }
         public string? DiscountName { get; set; } = null;
         public string? PaymentMethod { get; set; }
-        public string Status { get; set; } = "Pending";
+        public string Status { get; } = "Pending";
     }
 }
