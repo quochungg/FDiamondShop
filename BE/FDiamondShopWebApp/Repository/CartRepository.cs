@@ -64,10 +64,15 @@ namespace FDiamondShop.API.Repository
             {
                 foreach (var cartItem in cartline.CartLineItems)
                 {
-                    if (idList.Contains(cartItem.Product.ProductId))
+                    if (idList.Contains(cartItem.ProductId))
                     {
+                        var duplicateCartLine = cartlines.FirstOrDefault(cl => cl.CartLineItems.Any(cli => cli.ProductId == cartItem.ProductId));
                         validCartLineDTO.IsValid = false;
-                        validCartLineDTO.DuplicateCartLine.Add(cartline.CartLineId);
+                        if (!validCartLineDTO.DuplicateCartLine.Contains(cartline.CartLineId))
+                        {
+                            validCartLineDTO.DuplicateCartLine.Add(duplicateCartLine.CartLineId);
+                            validCartLineDTO.DuplicateCartLine.Add(cartline.CartLineId);                           
+                        }
                     }
                     else
                     {
@@ -77,7 +82,10 @@ namespace FDiamondShop.API.Repository
                     if (cartItem.Product.Quantity == 0 || !cartItem.Product.IsVisible)
                     {
                         validCartLineDTO.IsValid = false;
-                        validCartLineDTO.InvisibleCartLine.Add(cartItem.CartLineId);
+                        if (!validCartLineDTO.InvisibleCartLine.Contains(cartline.CartLineId))
+                        {
+                            validCartLineDTO.InvisibleCartLine.Add(cartItem.CartLineId);
+                        }
                     }
                 }
             }
