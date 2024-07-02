@@ -1,5 +1,5 @@
 import AppLayout from "src/layout/AppLayout";
-import { getAllCartLines } from "../api/APIs";
+import { getAllCartLines, removeCartLine } from "../api/APIs";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -13,6 +13,17 @@ const CartPage = () => {
     const navigate = useNavigate();
     const [cartLineArr, setCartLineArr] = useState(null);
     const [handleAddedItem, setHandleAddedItem] = useState(false);
+
+    const getCartLines = async () => {
+        const response = await getAllCartLines();
+        const cartLines = response.data.result;
+        if (cartLines) {
+            setCartLineArr(cartLines);
+        } else {    //if cartLines = null => cart is empty
+            setCartLineArr([]);
+        }
+    }
+
 
     // Handle new added item
     useEffect(() => {
@@ -39,29 +50,31 @@ const CartPage = () => {
 
     useEffect(() => {
         if (handleAddedItem) {
-            const getCartLines = async () => {
-                const response = await getAllCartLines();
-                const cartLines = response.data.result;
-                if (cartLines) {
-                    setCartLineArr(cartLines);
-                } else {    //if cartLines = null => cart is empty
-                    setCartLineArr([]);
-                }
-            }
             getCartLines();
         }
     }, [handleAddedItem])
 
 
-    const handleCheckout = () => {
+    const handleRemoveCartline = async (cartLineId) => {
+        await removeCartLine(cartLineId);
+        getCartLines();
+    }
+
+
+
+    const handleCheckout = (promoCode, totalPayment) => {
+
+        //check if all cart lines is valid
+
+        //check if promo code is valid: empty/invalid (none) or valid
+
+        //check if totalPayment exceeds 50,000$
 
     }
 
     if (cartLineArr === null) {
         return <LoadingSpinner />
     }
-
-
 
     return (
         <>
@@ -73,6 +86,7 @@ const CartPage = () => {
                                 <div className="h-auto w-full max-w-7xl mx-auto bg-white">
                                     <MainCartSection
                                         cartLineArr={cartLineArr}
+                                        onRemoveCartline={handleRemoveCartline}
                                     />
                                 </div>
                             </div>

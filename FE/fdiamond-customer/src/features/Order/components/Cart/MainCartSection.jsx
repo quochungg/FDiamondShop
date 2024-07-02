@@ -1,6 +1,6 @@
 import { CartLinesList, SummarySection } from "../index";
 
-const MainCartSection = ({ cartLineArr }) => {
+const MainCartSection = ({ cartLineArr, onRemoveCartline }) => {
 
     return (
         <>
@@ -9,11 +9,15 @@ const MainCartSection = ({ cartLineArr }) => {
                 <div className="bg-[#fbfbfb] h-full col-span-2">
                     <CartLinesList
                         cartLineArr={cartLineArr}
+                        onRemoveCartline={onRemoveCartline}
                     />
                 </div>
 
                 <div className="bg-[#fbfbfb] h-full col-span-1">
-                    <SummarySection />
+                    <SummarySection
+                        key={cartLineArr}
+                        cartLineArr={cartLineArr}
+                    />
                 </div>
 
             </main>

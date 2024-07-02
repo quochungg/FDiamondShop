@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { ImageCarousel, SelectionBar, DetailSection } from '../components/index';
 import { getProductByID } from '../api/APIs'
 import AppLayout from "src/layout/AppLayout";
@@ -9,6 +9,7 @@ import { checkExistingDiamondInCart } from 'src/features/Order/api/APIs';
 const ProductDetailsPage = () => {
     // console.log('ProductDetails renders')
     const navigate = useNavigate();
+    const location = useLocation();
     const { productId } = useParams();
     const [product, setProduct] = useState(null);
 
@@ -19,7 +20,7 @@ const ProductDetailsPage = () => {
     useEffect(() => {
         //productId is not a number
         if (isNaN(Number.parseInt(productId))) {
-            navigate('/product-not-found')
+            navigate('/product-not-found', { replace: true });
             return;
         }
 
@@ -29,7 +30,7 @@ const ProductDetailsPage = () => {
                     setProduct(response.data.result)
                     window.scrollTo(0, 0)
                 } else {
-                    navigate('/product-not-found')
+                    navigate('/product-not-found', { replace: true });
                     return;
                 }
             })
@@ -56,7 +57,7 @@ const ProductDetailsPage = () => {
     }
 
     if (product && !product.isVisible) {
-        return <Navigate to='/product-not-found' />;
+        return <Navigate to='/product-not-found' replace={true} />;
     }
 
     const appendableLayout = "grid grid-cols-2 gap-10 px-28 mb-10 py-6";

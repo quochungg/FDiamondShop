@@ -1,29 +1,34 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
-import ringSvg from 'src/features/Order/assets/ringSvg.svg';
 import { AttachmentAvailableLine, AttachmentUnavailableLine } from 'src/features/Order/components/index';
 
 
-const AttachmentLineItem = ({ cartLine }) => {
-
+const AttachmentLineItem = ({ cartLine, onRemoveCartline }) => {
     const [isAvailable, setIsAvailable] = useState(null);
 
-    console.log(cartLine)
-
-    // useEffect(() => {
-    //     const isAvailable = cartLine.map(item => {
-    //         if (!item.product.isVisible)
-    //     })
-    // }, [])
-
+    useEffect(() => {
+        let isAvailable = true;
+        for (const item of cartLine.cartLineItems) {
+            if (!item.product.isVisible) {
+                isAvailable = false;
+                break;
+            }
+        }
+        setIsAvailable(isAvailable);
+    }, [])
 
     return (
         <>
-            {/* {isAvailable &&} */}
-            <AttachmentAvailableLine />
-            <AttachmentUnavailableLine />
-
+            {isAvailable && isAvailable ? (
+                <AttachmentAvailableLine
+                    cartLine={cartLine}
+                    onRemoveCartline={onRemoveCartline}
+                />
+            ) : (
+                <AttachmentUnavailableLine
+                    cartLine={cartLine}
+                    onRemoveCartline={onRemoveCartline}
+                />
+            )}
         </>
     )
 };
