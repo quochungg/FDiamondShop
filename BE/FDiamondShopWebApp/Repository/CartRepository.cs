@@ -103,5 +103,15 @@ namespace FDiamondShop.API.Repository
 
             return validCartLineDTO;
         }
+
+        public async Task UpdateRingSize(CartUpdateDTO updateDTO)
+        {
+            var cartLineItem = await _db.CartLineItems.FirstOrDefaultAsync(cli => cli.CartLineId.Equals(updateDTO.CartLineId) && cli.ProductId == updateDTO.ProductId);
+            if (cartLineItem == null)
+            {
+                throw new Exception("Item not found");
+            }
+            cartLineItem.RingSize = updateDTO.RingSize;
+        }
     }
 }

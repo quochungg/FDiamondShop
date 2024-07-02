@@ -11,5 +11,6 @@ namespace FDiamondShop.API.Repository.IRepository
         public Task<CartLine> FindCartlineId(int cartLineId);
         public Task<List<CartLineItem>> GetCartLineItems(int cartLineId);
         public Task<ValidCartLineDTO> ValidCartLine(string userId);
+        public Task UpdateRingSize(CartUpdateDTO updateDTO);
     }
 }
