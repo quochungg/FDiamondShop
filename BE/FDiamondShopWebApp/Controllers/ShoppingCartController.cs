@@ -36,7 +36,7 @@ namespace FDiamondShop.API.Controllers
         public async Task<ActionResult<APIResponse>> AddToCartLine([FromBody] CreateCartDTO createDTO)
         {
             var model = createDTO.CartLineItems;
-            var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);           
+            var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
             var cartLine = new CartLine();
             cartLine.UserId = user.Id;
             await _unitOfWork.CartRepository.CreateAsync(cartLine);
@@ -51,7 +51,7 @@ namespace FDiamondShop.API.Controllers
                     _response.ErrorMessages.Add("Product is out of stock !");
                     await _unitOfWork.CartRepository.RemoveAsync(cartLine);
                     return BadRequest(_response);
-                }          
+                }
 
                 var cartLineItem = new CartLineItem
                 {
@@ -76,8 +76,8 @@ namespace FDiamondShop.API.Controllers
         {
             Boolean isExist = false;
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == diamondCart.userName);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x=>x.CartLineItems.Count()==1,includeProperties: "CartLineItems");
-            var cartLineItems= cartLines.SelectMany(x => x.CartLineItems).ToList();
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x => x.CartLineItems.Count() == 1, includeProperties: "CartLineItems");
+            var cartLineItems = cartLines.SelectMany(x => x.CartLineItems).ToList();
             var product = cartLineItems.FirstOrDefault(x => x.ProductId == diamondCart.productId);
             if (product != null)
             {
@@ -114,11 +114,11 @@ namespace FDiamondShop.API.Controllers
         //    return Ok(_response);
         //}
         [HttpGet("GetAllCartLines")]
-        [ProducesResponseType(StatusCodes.Status200OK)]   
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllCartLines(string UserId)
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == UserId);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id && c.IsOrdered ==false, includeProperties: "CartLineItems,CartLineItems.Product,CartLineItems.Product.ProductImages");
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(c => c.UserId == user.Id && c.IsOrdered == false, includeProperties: "CartLineItems,CartLineItems.Product,CartLineItems.Product.ProductImages");
             if (cartLines.Count == 0)
             {
                 _response.IsSuccess = true;
@@ -126,9 +126,9 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("EMPTY");
                 return Ok(_response);
             }
-           
+
             var cartLineDTOs = _mapper.Map<List<CartLineDTO>>(cartLines);
-            
+
             foreach (var item in cartLineDTOs)
             {
                 item.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(cartLines
@@ -139,7 +139,7 @@ namespace FDiamondShop.API.Controllers
                     cli.Product = _mapper.Map<ProductDTO>(cartLines
                         .SelectMany(cl => cl.CartLineItems)
                         .Select(cli => cli.Product)
-                        .FirstOrDefault(p => p.ProductId == cli.ProductId));                    
+                        .FirstOrDefault(p => p.ProductId == cli.ProductId));
                     cli.Product.SubCategoryName = (await _unitOfWork.SubCategoryRepository.GetAsync(sc => sc.SubCategoryId == cli.Product.SubCategoryId)).SubcategoryName;
                     cli.Product.CategoryId = (await _unitOfWork.SubCategoryRepository.GetAsync(ct => ct.SubCategoryId == cli.Product.SubCategoryId)).CategoryId;
                     cli.Product.CategoryName = (await _unitOfWork.CategoryRepository.GetAsync(ct => ct.CategoryId == cli.Product.CategoryId)).CategoryName;
@@ -320,6 +320,32 @@ namespace FDiamondShop.API.Controllers
             }
         }
 
-        
+        [HttpPut("UpdateRingSize")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> UpdateRingSize(CartUpdateDTO dto)
+        {
+            if (dto == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Invalid data");
+            }
+            try
+            {
+                await _unitOfWork.CartRepository.UpdateRingSize(dto);
+                await _unitOfWork.SaveAsync();
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add(ex.Message);
+                return BadRequest(_response);
+            }
+        }
     }
 }

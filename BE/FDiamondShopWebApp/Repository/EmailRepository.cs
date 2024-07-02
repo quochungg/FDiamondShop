@@ -37,23 +37,45 @@ namespace FDiamondShop.API.Repository
             smtp.Disconnect(true);
 
         }
-        
+
+        public async Task SendEmailCancelAsync(string mailTo, string lastName)
+        {
+            await SendEmailAsync(new MailRequestDTO
+            {
+                Body = $@"<html>
+                <body>
+                    <h1>Dear{lastName},</h1>
+                    <p>We regret to inform you that your recent order with FDIAMOND has been successfully cancelled as per your request.</p>
+                    <p>We apologize for any inconvenience this may have caused.</p>
+                    <p>If you have any questions or need further assistance, please feel free to contact us via email or our support phone number.</p>
+                    <p>Thank you for understanding. We hope to serve you again in the future. Have a wonderful day!</p>
+                    <br/>
+                    <p>Sincerely,</p>
+                    <p>The FDIAMOND Team</p>
+                </body>
+                </html>
+                ",
+                Subject = "Your Order has been Cancelled",
+                toEmail = mailTo
+            });
+        }
+
         public async Task SendEmailOrderAsync(string emailTo)
         {
             string subject = "Thank You for Shopping at FDIAMOND!";
             string body = @"
-    <html>
-    <body>
-        <h1>Dear Valued Customer!</h1>
-        <p>We sincerely thank you for trusting and shopping at FDIAMOND.</p>
-        <p>Your order has been successfully processed.</p>
-        <p>If you have any questions, please feel free to contact us via email or our support phone number.</p>
-        <p>Once again, thank you for choosing FDIAMOND. Have a wonderful day!</p>
-        <br/>
-        <p>Sincerely,</p>
-        <p>The FDIAMOND Team</p>
-    </body>
-    </html>";
+                <html>
+                <body>
+                    <h1>Dear Valued Customer!</h1>
+                    <p>We sincerely thank you for trusting and shopping at FDIAMOND.</p>
+                    <p>Your order has been successfully processed.</p>
+                    <p>If you have any questions, please feel free to contact us via email or our support phone number.</p>
+                    <p>Once again, thank you for choosing FDIAMOND. Have a wonderful day!</p>
+                    <br/>
+                    <p>Sincerely,</p>
+                    <p>The FDIAMOND Team</p>
+                </body>
+                </html>";
 
             MailRequestDTO mailRequestDTO = new()
             {
