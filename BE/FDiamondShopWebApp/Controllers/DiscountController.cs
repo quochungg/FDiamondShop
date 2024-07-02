@@ -76,6 +76,33 @@ namespace FDiamondShop.API.Controllers
             }
         }
 
+        [HttpGet(("GetDiscountCodeByCodeName"), Name = "GetDiscountCodeByCodeName")]
+        public async Task<ActionResult<APIResponse>> GetDiscountCode(string discountCode)
+        {
+            var discount = await _unitOfWork.DiscountCodeRepository.GetAsync(d => d.DiscountCodeName.ToLower().Equals(discountCode.ToLower()));
+            if (discount == null)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Discount Code Not Found" };
+                _response.StatusCode = HttpStatusCode.NotFound;
+                return StatusCode(404, _response);
+            }
+            try
+            {
+                var model = _mapper.Map<DiscountCodeDTO>(discount);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = model;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
         [HttpPost(Name = "CreateDiscountCode")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

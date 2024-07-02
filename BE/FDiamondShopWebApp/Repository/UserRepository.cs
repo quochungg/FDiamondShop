@@ -234,7 +234,7 @@ namespace FDiamondShop.API.Repository
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         PhoneNumber = user.PhoneNumber,
-                        
+                        IsGoogleAccount = (user.PasswordHash == null)
                         
                     };
                     userDTOs.Add(userDTO);
