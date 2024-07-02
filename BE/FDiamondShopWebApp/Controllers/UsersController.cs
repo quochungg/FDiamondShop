@@ -177,6 +177,8 @@ namespace FDiamondShop.API.Controllers
             {
                 var user = await _unitOfWork.UserRepository.GetUserByUsername(username);
 
+                var returnDTO = _mapper.Map<UserDTO>(user);
+                
                 if (user == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
@@ -185,7 +187,7 @@ namespace FDiamondShop.API.Controllers
                     return NotFound(_response);
                 }
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = user;
+                _response.Result = returnDTO;
                 return Ok(_response);
             }
             catch (Exception ex)

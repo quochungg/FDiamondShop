@@ -8,7 +8,7 @@ public partial class Product
 {
     public int ProductId { get; set; }
 
-    public int? SubCategoryId { get; set; }
+    public int SubCategoryId { get; set; }
 
     [MaxLength(100)]
     public string ProductName { get; set; }

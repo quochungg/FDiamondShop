@@ -15,6 +15,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { bgGradient } from 'src/theme/css';
+import { updateAccount } from 'src/_mock/account';
 
 import Iconify from 'src/components/iconify';
 
@@ -54,6 +55,8 @@ export default function LoginView() {
       ) {
         const { token } = response.data.result;
         localStorage.setItem('token', token);
+        localStorage.setItem('username', userName);
+        await fetchUserData(userName);
         navigate('/');
       } else {
         setError('You dont have permission to access this website');
@@ -64,13 +67,33 @@ export default function LoginView() {
         setError(
           err.response.data.errorMessages
             ? err.response.data.errorMessages.join(', ')
-            : 'Đã có lỗi xảy ra, vui lòng thử lại sau.'
+            : 'Error, try again!'
         );
       } else {
-        setError('Đã có lỗi xảy ra, vui lòng thử lại sau.');
+        setError('Error, try again!');
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUserData = async (username) => {
+    try {
+      const response = await axios.get(
+        `https://fdiamond-api.azurewebsites.net/api/Users/${username}`
+      );
+      const userInfo = response.data.result;
+      console.log(userInfo);
+      // Cập nhật thông tin vào object account
+      updateAccount({
+        displayName: `${userInfo.lastName} ${userInfo.firstName}`,
+        email: userInfo.userName,
+        // Bạn có thể thêm các thông tin khác nếu cần, ví dụ:
+        // address: userInfo.address,
+        // phoneNumber: userInfo.phoneNumber,
+      });
+    } catch (err) {
+      console.error('Error fetching user data:', err);
     }
   };
 
