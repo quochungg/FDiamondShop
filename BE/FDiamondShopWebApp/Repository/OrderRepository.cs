@@ -27,12 +27,10 @@ namespace FDiamondShop.API.Repository
         }
         public async Task UpdateOrderAsync(Order order)
         {
-            _db.Update(order);
+            _db.Orders.Update(order);
         }
         public async Task<List<OrderDTO>> GetAllOrderAsync(string userId)
         {
-            
-
             var Orders = await _db.Orders.Where(x=>x.UserId==userId).ToListAsync();
 
             if(Orders.Count == 0)
@@ -44,7 +42,7 @@ namespace FDiamondShop.API.Repository
             foreach (var model in Orders)
             {
                 model.CartLines = await _db.CartLines.Where(cl => cl.OrderId == model.OrderId).ToListAsync();
-                var payment = _db.Payments.FirstOrDefault(x => x.PaymentId == model.PaymentId);
+                var payment = await _db.Payments.FirstOrDefaultAsync(x => x.PaymentId == model.PaymentId);
                 var paymentDTO = _mapper.Map<PaymentDTO>(payment);
                 OrderDTO orderDTO = new OrderDTO()
                 {
@@ -67,7 +65,7 @@ namespace FDiamondShop.API.Repository
 
         public async Task<OrderDTO> GetOrderDetails(int orderId)
         {
-            var order = _db.Orders.FirstOrDefault(x => x.OrderId == orderId);
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
 
             if (order == null)
             {
@@ -105,6 +103,28 @@ namespace FDiamondShop.API.Repository
             
             return model;
         }
+
+        public async Task CancelOrder(int orderId)
+        {
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
+            var cartlines = await _db.CartLines.Where(x => x.OrderId == orderId).ToListAsync();
+            foreach (var cartline in cartlines)
+            {
+                cartline.IsOrdered = false;
+                foreach (var cartlineItem in cartline.CartLineItems)
+                {
+                    var product = await _db.Products.FirstOrDefaultAsync(x => x.ProductId == cartlineItem.ProductId);
+                    product.Quantity += 1;
+                    product.IsVisible = true;
+                    _db.Products.Update(product);
+                }
+            }
+
+            order.Status = "Cancelled";
+            _db.Orders.Update(order);
+        }
+
+        
     }
 
 }

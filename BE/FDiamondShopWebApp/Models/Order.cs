@@ -25,5 +25,6 @@ namespace FDiamondShop.API.Models
 
         public ICollection<CartLine> CartLines { get; set; }
 
+        public string Status { get; set; } = "Ordered";
     }
 }
