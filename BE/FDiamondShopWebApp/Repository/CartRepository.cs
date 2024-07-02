@@ -49,7 +49,7 @@ namespace FDiamondShop.API.Repository
         {
             var user = await _db.Users.FindAsync(userId) ?? throw new Exception("User not found");
 
-            var cartlines = _db.CartLines.Include(cl => cl.CartLineItems).ThenInclude(cli => cli.Product)
+            var cartlines = _db.CartLines.Include(cl => cl.CartLineItems).ThenInclude(cli => cli.Product).ThenInclude(p => p.SubCategory).ThenInclude(sc => sc.Category)
                 .Where(cl => cl.UserId == userId && cl.IsOrdered == false);
 
             if (!cartlines.Any())
@@ -58,31 +58,60 @@ namespace FDiamondShop.API.Repository
             }
 
             ValidCartLineDTO validCartLineDTO = new();
-            List<int> idList = new List<int>();
+            Dictionary<int,int> idList = new Dictionary<int, int>();
 
             foreach (var cartline in cartlines)
             {
                 foreach (var cartItem in cartline.CartLineItems)
                 {
-                    if (idList.Contains(cartItem.Product.ProductId))
-                    {
-                        validCartLineDTO.IsValid = false;
-                        validCartLineDTO.DuplicateCartLine.Add(cartline.CartLineId);
-                    }
-                    else
-                    {
-                        idList.Add(cartItem.Product.ProductId);
-                    }
-
                     if (cartItem.Product.Quantity == 0 || !cartItem.Product.IsVisible)
                     {
                         validCartLineDTO.IsValid = false;
-                        validCartLineDTO.InvisibleCartLine.Add(cartItem.CartLineId);
+                        if (!validCartLineDTO.InvisibleCartLine.Contains(cartline.CartLineId))
+                        {
+                            validCartLineDTO.InvisibleCartLine.Add(cartItem.CartLineId);
+                        }
                     }
+                    if (!cartItem.Product.SubCategory.Category.CategoryName.Equals("Diamond"))
+                    {
+                        continue;
+                    }
+                    if (!idList.ContainsKey(cartItem.ProductId))
+                    {
+                        idList.Add(cartItem.Product.ProductId, 1);                       
+                    }
+                    else
+                    {
+                        idList[cartItem.Product.ProductId] += 1;
+                    }                   
+                }
+            }
+            List<int> cartLineDuplicate = new List<int>();
+            foreach (var pair in idList)
+            {
+                if (pair.Value > 1)
+                {
+                    validCartLineDTO.IsValid = false;
+                    
+                    cartLineDuplicate.AddRange(_db.CartLines.Include(cl => cl.CartLineItems)
+                        .Where(cl => cl.UserId == userId && cl.IsOrdered == false && cl.CartLineItems.Any(cli => cli.ProductId == pair.Key))
+                        .Select(cl => cl.CartLineId).ToList());
                 }
             }
 
+            validCartLineDTO.DuplicateCartLine = cartLineDuplicate;
+
             return validCartLineDTO;
+        }
+
+        public async Task UpdateRingSize(CartUpdateDTO updateDTO)
+        {
+            var cartLineItem = await _db.CartLineItems.FirstOrDefaultAsync(cli => cli.CartLineId.Equals(updateDTO.CartLineId) && cli.ProductId == updateDTO.ProductId);
+            if (cartLineItem == null)
+            {
+                throw new Exception("Item not found");
+            }
+            cartLineItem.RingSize = updateDTO.RingSize;
         }
     }
 }

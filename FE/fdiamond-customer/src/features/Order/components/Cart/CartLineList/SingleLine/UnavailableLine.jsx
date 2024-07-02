@@ -3,7 +3,9 @@ import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
 import earringSvg from 'src/features/Order/assets/earringSvg.svg';
 import necklaceSvg from 'src/features/Order/assets/necklaceSvg.svg';
 
-const UnavailableLine = ({ cartLine }) => {
+const UnavailableLine = ({ cartLine, onRemoveCartline }) => {
+    const symbol = cartLine.cartLineItems[0].product.categoryName === 'Earring' ? earringSvg :
+        cartLine.cartLineItems[0].product.categoryName === 'Necklace' ? necklaceSvg : diamondSvg;
 
     return (
         <>
@@ -19,6 +21,7 @@ const UnavailableLine = ({ cartLine }) => {
                                 <p className='text-base font-[500] text-[#656565]'>CART {cartLine.cartLineId}</p>
                                 <button
                                     className='text-[#656565] font-[400] text-xs uppercase transition-colors duration-400 hover:underline hover:text-black'
+                                    onClick={() => onRemoveCartline(cartLine.cartLineId)}
                                 >
                                     Remove
                                 </button>
@@ -49,7 +52,7 @@ const UnavailableLine = ({ cartLine }) => {
                                         <ul className='flex flex-col space-y-5 mb-6'>
                                             <li className='flex flex-row space-x-3'>
                                                 <span>
-                                                    <img src={diamondSvg} />
+                                                    <img src={symbol} />
                                                 </span>
 
                                                 <div className='flex flex-col w-full'>

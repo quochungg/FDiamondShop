@@ -73,11 +73,19 @@ namespace FDiamondShop.API.Controllers
         {
 
             var User = _userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
+            var recentPhone = _userManager.Users.FirstOrDefault(x=>x.PhoneNumber.Equals(model.PhoneNumber));
             if (User != null)
             {
                 _response.StatusCode = HttpStatusCode.Conflict;
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add("User already exists");
+                return Conflict(_response);
+            }
+            if (recentPhone != null)
+            {
+                _response.StatusCode = HttpStatusCode.Conflict;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Phonenumber already exists");
                 return Conflict(_response);
             }
             if (!ModelState.IsValid)
@@ -178,6 +186,7 @@ namespace FDiamondShop.API.Controllers
                 var user = await _unitOfWork.UserRepository.GetUserByUsername(username);
 
                 var returnDTO = _mapper.Map<UserDTO>(user);
+                
                 if (user == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
