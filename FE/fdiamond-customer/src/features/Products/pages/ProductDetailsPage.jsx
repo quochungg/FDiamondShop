@@ -17,6 +17,9 @@ const ProductDetailsPage = () => {
     const [isAppendable, setIsAppendable] = useState(null);
     const [isDiamondInCart, setIsDiamondInCart] = useState(false);
 
+    const [showAddToCart, setShowAddToCart] = useState(null);
+    const [hasHandleAppend, setHasHandleAppend] = useState(false);
+
     useEffect(() => {
         //productId is not a number
         if (isNaN(Number.parseInt(productId))) {
@@ -52,6 +55,23 @@ const ProductDetailsPage = () => {
     }, [product])
 
 
+    useEffect(() => {
+        const handleShowAddToCart = () => {
+            const selectionBar = JSON.parse(localStorage.getItem('selectionBar') || '{}');
+            const numOfItems = Object.keys(selectionBar).length;
+            if (numOfItems === 2) {
+                setShowAddToCart(true);
+            } else {
+                setShowAddToCart(false);
+            }
+        }
+
+        handleShowAddToCart();
+
+    }, [hasHandleAppend])
+
+
+
     if (!product) {
         return <LoadingSpinner />
     }
@@ -67,10 +87,19 @@ const ProductDetailsPage = () => {
         <>
             {product &&
                 <AppLayout>
-                    {isAppendable && <SelectionBar />}
+                    {isAppendable &&
+                        <SelectionBar
+                            showAddToCart={showAddToCart}
+                        />
+                    }
                     <div className={isAppendable ? appendableLayout : notAppendableLayout}>
                         <ImageCarousel product={product} />
-                        <DetailSection product={product} isAppendable={isAppendable} isDiamondInCart={isDiamondInCart} />
+                        <DetailSection
+                            product={product}
+                            isAppendable={isAppendable}
+                            isDiamondInCart={isDiamondInCart}
+                            setHasHandleAppend={setHasHandleAppend}
+                        />
                     </div>
                     {/* <SimilarItems/> */}
                 </AppLayout>

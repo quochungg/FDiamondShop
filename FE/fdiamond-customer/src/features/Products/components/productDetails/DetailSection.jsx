@@ -4,9 +4,10 @@ import chevron from "../../../../assets/chevron.svg";
 import { useState } from "react";
 
 
-const DetailSection = ({ product, isAppendable, isDiamondInCart }) => {
+const DetailSection = ({ product, isAppendable, isDiamondInCart, setHasHandleAppend }) => {
     const location = useLocation();
     const navigate = useNavigate();
+    const [errorSize, setErrorSize] = useState(false)
 
     const [selectedSize, setSelectedSize] = useState(0);
 
@@ -27,6 +28,55 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart }) => {
             }
         });
     }
+
+    const handleAppend = async () => {
+        //if there are two products in selection bar, don't direct. Append tai cho
+        //else if, there is one, direct to diamond/or ring
+
+        //check if selectedSize != null if product is Ring
+        if (product.categoryName === 'Engagement Ring') {
+            if (selectedSize === 0 || isNaN(parseInt(selectedSize))) {
+                setErrorSize(true);
+                return;
+            } else {
+                setErrorSize(false);
+            }
+        }
+
+
+        const selectionBar = JSON.parse(localStorage.getItem('selectionBar') || '{}');
+
+        //save appended product to local storage
+        if (product.categoryName === 'Engagement Ring') {
+            const engagementRing = {
+                item: product,
+                size: selectedSize
+            }
+            selectionBar.engagementRing = engagementRing;
+            // selectionBar.engagementRing.size = selectedSize;
+            localStorage.setItem('selectionBar', JSON.stringify(selectionBar))
+        } else {
+            selectionBar.diamond = product;
+            localStorage.setItem('selectionBar', JSON.stringify(selectionBar))
+        }
+
+        //direct to diamond or ring or none
+        if (selectionBar.engagementRing && !selectionBar.diamond) {
+            //direct to diamond
+            navigate('/product/diamond')
+        }
+        else if (selectionBar.diamond && !selectionBar.engagementRing) {
+            //direct to ring
+            navigate('/product/engagement ring')
+        }
+        else {
+            //won't direct, just append to selection bar
+
+        }
+
+        setHasHandleAppend(true);
+    }
+
 
 
     const AccordionItem = ({ header, ...rest }) => (
@@ -126,12 +176,13 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart }) => {
                 {/* RING SIZE */}
                 <div className="font-gantari mt-4 border-t-[1px] border-blue-950 py-5 flex flex-col gap-8">
                     {product.categoryName === 'Engagement Ring' &&
-                        <div className="flex flex-row gap-5">
+                        <div className="flex flex-row gap-6">
                             <label htmlFor="size" className="text-[19px] cursor-pointer">Select ring size</label>
                             <select
                                 name="size"
                                 id="size"
-                                className="cursor-pointer block text-center text-sm bg-transparent  border-b-2 border-gray-200 text-gray-600 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+                                className="cursor-pointer block text-center text-sm bg-transparent  
+                                border-b-2 border-gray-200 text-gray-600 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
                                 value={selectedSize}
                                 onChange={(e) => setSelectedSize(e.target.value)}
                             >
@@ -144,8 +195,16 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart }) => {
                                 <option value="8">8</option>
                                 <option value="9">9</option>
                             </select>
+
+                            {errorSize &&
+                                <div className="self-end ml-4">
+                                    <p className="text-red-700 text-base font-[550]">Please select a ring size</p>
+                                </div>
+                            }
+
                         </div>
                     }
+
 
                     {/* PRICE */}
                     <p className="font-gantari text-[14px]">
@@ -175,11 +234,13 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart }) => {
                         }
 
                         {isAppendable &&
-                            <button className="flex-1" to="">
-                                <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
+                            <div className="flex-1">
+                                <button
+                                    onClick={handleAppend}
+                                    className="w-full bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
                                     {product.categoryName === 'Diamond' ? 'APPEND TO RING' : 'APPEND TO DIAMOND'}
-                                </p>
-                            </button>
+                                </button>
+                            </div>
                         }
 
                     </div>
