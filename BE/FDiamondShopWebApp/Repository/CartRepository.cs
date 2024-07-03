@@ -116,9 +116,19 @@ namespace FDiamondShop.API.Repository
 
         public async Task<Boolean> CheckCompletedRing(CreateCartDTO dto)
         {
-            //var user = _db.CartLines.
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName) ?? throw new Exception("User not found");
 
-            Boolean result = true;
+            var cartlines = await _db.CartLines.Include(cl => cl.CartLineItems).ThenInclude(cli => cli.Product)
+                .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false ).ToListAsync();
+            Boolean result = false;
+            foreach (var cartline in cartlines)
+            {
+                if (cartline.CartLineItems.Equals(dto.CartLineItems))
+                {
+                    result = true;
+                    break;
+                }
+            }         
             return result;
         }
     }

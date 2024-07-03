@@ -357,6 +357,21 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Invalid Data");
                 return _response;
             }
-
+            try
+            {
+                var result = await _unitOfWork.CartRepository.CheckCompletedRing(dto);
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = result;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add(ex.Message);
+                return BadRequest(_response);
+            }
+        }
     }
 }
