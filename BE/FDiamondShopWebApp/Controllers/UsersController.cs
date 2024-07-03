@@ -128,19 +128,7 @@ namespace FDiamondShop.API.Controllers
                 _response.IsSuccess = false;
                 _response.Result = ModelState;
                 return BadRequest(_response);
-            }
-            if (!string.IsNullOrEmpty(model.NewPassword))
-            {
-
-                if (model.NewPassword != model.ConfimPassword)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("New password and confirmation password do not match.");
-                    return BadRequest(_response);
-
-                }
-            }
+            }           
             var user = await _unitOfWork.UserRepository.Update(model);
             if (user == null)
             {
@@ -174,18 +162,16 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("{username}", Name = "searchuserbyusername")]
+        [HttpGet(Name = "searchuserbyusername")]
         //[Authorize("admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> SearchUserByUserName(string username)
+        public async Task<ActionResult<APIResponse>> SearchUserByUserName([FromQuery]string userId)
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetUserByUsername(username);
-
-                var returnDTO = _mapper.Map<UserDTO>(user);
+                var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId, tracked: false);
                 
                 if (user == null)
                 {
@@ -194,6 +180,11 @@ namespace FDiamondShop.API.Controllers
                     _response.ErrorMessages = new List<string> { $"User was not found." };
                     return NotFound(_response);
                 }
+
+                var returnDTO = _mapper.Map<UserDTO>(user);
+
+                if (user.PasswordHash == null) returnDTO.IsGoogleAccount = true;
+
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = returnDTO;
                 return Ok(_response);
