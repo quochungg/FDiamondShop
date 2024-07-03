@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { account } from 'src/_mock/account';
+import { AccountContext } from 'src/_mock/AccountContext';
 
 // ----------------------------------------------------------------------
 
@@ -23,16 +23,14 @@ const MENU_OPTIONS = [
     label: 'Profile',
     icon: 'eva:person-fill',
   },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+
+  const { account } = useContext(AccountContext);
 
   const navigate = useNavigate();
 
@@ -87,7 +85,7 @@ export default function AccountPopover() {
             p: 0,
             mt: 1,
             ml: 0.75,
-            width: 200,
+            width: 250,
           },
         }}
       >

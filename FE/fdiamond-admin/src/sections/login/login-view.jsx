@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -15,7 +15,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { bgGradient } from 'src/theme/css';
-import { updateAccount } from 'src/_mock/account';
+import { AccountContext } from 'src/_mock/AccountContext';
 
 import Iconify from 'src/components/iconify';
 
@@ -27,6 +27,8 @@ export default function LoginView() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const { updateAccount } = useContext(AccountContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -53,10 +55,14 @@ export default function LoginView() {
         response.data.result.token &&
         response.data.result.role === 'admin'
       ) {
-        const { token } = response.data.result;
+        const { token, userId } = response.data.result;
         localStorage.setItem('token', token);
         localStorage.setItem('username', userName);
-        await fetchUserData(userName);
+        localStorage.setItem('userId', userId);
+        console.log(token);
+        console.log(userName);
+        console.log(userId);
+        await fetchUserData(userId);
         navigate('/');
       } else {
         setError('You dont have permission to access this website');
@@ -77,10 +83,10 @@ export default function LoginView() {
     }
   };
 
-  const fetchUserData = async (username) => {
+  const fetchUserData = async (userId) => {
     try {
       const response = await axios.get(
-        `https://fdiamond-api.azurewebsites.net/api/Users/${username}`
+        `https://fdiamond-api.azurewebsites.net/api/Users?userId=${userId}`
       );
       const userInfo = response.data.result;
       console.log(userInfo);
