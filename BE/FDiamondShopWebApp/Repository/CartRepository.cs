@@ -113,5 +113,13 @@ namespace FDiamondShop.API.Repository
             }
             cartLineItem.RingSize = updateDTO.RingSize;
         }
+
+        public async Task<Boolean> CheckCompletedRing(CreateCartDTO dto)
+        {
+            //var user = _db.CartLines.
+
+            Boolean result = true;
+            return result;
+        }
     }
 }

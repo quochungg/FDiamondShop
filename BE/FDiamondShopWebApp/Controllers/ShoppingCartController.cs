@@ -347,5 +347,16 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+        [HttpPost("CheckCompletedRing")]
+        public async Task<ActionResult<APIResponse>> CheckCompleteRing(CreateCartDTO dto)
+        {
+            if (dto == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Invalid Data");
+                return _response;
+            }
+
     }
 }
