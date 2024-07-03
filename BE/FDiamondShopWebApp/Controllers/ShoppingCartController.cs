@@ -347,8 +347,8 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
-        [HttpPost("CheckCompletedRing")]
-        public async Task<ActionResult<APIResponse>> CheckCompleteRing(CreateCartDTO dto)
+        [HttpPost("CheckAttachmentExistInCart")]
+        public async Task<ActionResult<APIResponse>> CheckAttachmentExistInCart(CreateCartDTO dto)
         {
             if (dto == null)
             {

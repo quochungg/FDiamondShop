@@ -1,19 +1,23 @@
-﻿using FDiamondShop.API.Data;
+﻿using AutoMapper;
+using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Utilities;
+using System.Linq;
 
 namespace FDiamondShop.API.Repository
 {
     public class CartRepository : Repository<CartLine>, ICartRepository
     {
         private readonly FDiamondContext _db;
-        public CartRepository(FDiamondContext db) : base(db)
+        private readonly IMapper _mapper;
+        public CartRepository(FDiamondContext db, IMapper mapper) : base(db)
         {
             _db = db;
+            _mapper = mapper;
         }
 
         public async Task CreateCartlineItem(CartLineItem cartLineItem)
@@ -123,7 +127,9 @@ namespace FDiamondShop.API.Repository
             Boolean result = false;
             foreach (var cartline in cartlines)
             {
-                if (cartline.CartLineItems.Equals(dto.CartLineItems))
+                var cartLineItemDTO = _mapper.Map<List<CartLineItemCreateDTO>>(cartline.CartLineItems);
+                var cartLineItem = cartline.CartLineItems.ToList();
+                if (cartLineItemDTO[0].ProductId == cartLineItem[0].ProductId && cartLineItemDTO[1].ProductId == cartLineItem[1].ProductId)
                 {
                     result = true;
                     break;
