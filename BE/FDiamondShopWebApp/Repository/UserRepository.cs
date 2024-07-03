@@ -179,12 +179,21 @@ namespace FDiamondShop.API.Repository
                 }
 
 
+
                 if (accountUpdateDTO.NewPassword != accountUpdateDTO.ConfimPassword)
                 {
                     throw new Exception("New password and confirmation password do not match.");
                 }
             }
-            var passwordChange = await _userManager.ChangePasswordAsync(user, accountUpdateDTO.Password, accountUpdateDTO.NewPassword);
+            if(accountUpdateDTO.Password == null)
+            {
+               var currentPassword = await _userManager.ChangePasswordAsync(user, user.PasswordHash, user.PasswordHash);
+            }
+            else { 
+                var passwordChange = await _userManager.ChangePasswordAsync(user, accountUpdateDTO.Password, accountUpdateDTO.NewPassword); 
+            }
+             
+            
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -200,6 +209,7 @@ namespace FDiamondShop.API.Repository
                 UserName= updatedUser.UserName,
                 Address = updatedUser.Address,
                 PhoneNumber = updatedUser.PhoneNumber,
+            
             };
 
             return userDTO;
