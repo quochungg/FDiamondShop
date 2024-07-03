@@ -113,5 +113,23 @@ namespace FDiamondShop.API.Repository
             }
             cartLineItem.RingSize = updateDTO.RingSize;
         }
+
+        public async Task<Boolean> CheckCompletedRing(CreateCartDTO dto)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName) ?? throw new Exception("User not found");
+
+            var cartlines = await _db.CartLines.Include(cl => cl.CartLineItems).ThenInclude(cli => cli.Product)
+                .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false ).ToListAsync();
+            Boolean result = false;
+            foreach (var cartline in cartlines)
+            {
+                if (cartline.CartLineItems.Equals(dto.CartLineItems))
+                {
+                    result = true;
+                    break;
+                }
+            }         
+            return result;
+        }
     }
 }

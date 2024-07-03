@@ -12,5 +12,6 @@ namespace FDiamondShop.API.Repository.IRepository
         public Task<List<CartLineItem>> GetCartLineItems(int cartLineId);
         public Task<ValidCartLineDTO> ValidCartLine(string userId);
         public Task UpdateRingSize(CartUpdateDTO updateDTO);
+        public Task<Boolean> CheckCompletedRing(CreateCartDTO dto);
     }
 }
