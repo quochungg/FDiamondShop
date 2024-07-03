@@ -128,7 +128,7 @@ namespace FDiamondShop.API.Repository
             foreach (var cartline in cartlines)
             {
                 var cartLineItemDTO = _mapper.Map<List<CartLineItemCreateDTO>>(cartline.CartLineItems);
-                var cartLineItem = cartline.CartLineItems.ToList();
+                var cartLineItem = dto.CartLineItems.OrderBy(u => u.ProductId).ToList();
                 if (cartLineItemDTO[0].ProductId == cartLineItem[0].ProductId && cartLineItemDTO[1].ProductId == cartLineItem[1].ProductId)
                 {
                     result = true;
