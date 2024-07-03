@@ -17,9 +17,11 @@ namespace FDiamondShop.API.Models.DTO
         [Required]
         [RegularExpression(pattern: @"^0\d{9}$", ErrorMessage = "Phone number must contain 10 digits and start with 0")]
         public string PhoneNumber { get; set; }
+
         public string? Password { get; set; }
         [RegularExpression(pattern: @"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$", ErrorMessage = "Password must be at least 6 characters  and contain at least 1 uppercase letter, 1 number, and 1 special character.")]
         public string? NewPassword { get; set; }
+
         public string? ConfimPassword { get; set; }
     }
 }

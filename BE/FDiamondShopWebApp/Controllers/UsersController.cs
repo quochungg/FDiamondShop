@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using System.Text.RegularExpressions;
 
 
 namespace FDiamondShop.API.Controllers
@@ -121,14 +122,63 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
         {
+            const string Pattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$";
             var currentUser = await _userManager.FindByEmailAsync(model.UserName);
+            if(currentUser == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User not found");
+                return NotFound(_response);
+            }
+            
             if (!ModelState.IsValid)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.Result = ModelState;
                 return BadRequest(_response);
-            }           
+            }
+            if(model.Password != null)
+            {
+                if(! await _userManager.CheckPasswordAsync(currentUser, model.Password))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Password is incorrect");
+                    return BadRequest(_response);
+                }
+                if(model.NewPassword != null && !Regex.IsMatch(model.NewPassword, Pattern))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Password must be at least 6 characters  and contain at least 1 uppercase letter, 1 number, and 1 special character.");
+                    return BadRequest(_response);
+                }
+                if(model.NewPassword == model.Password)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("New password must be different from the old password");
+                    return BadRequest(_response);
+                }
+                if ( model.NewPassword != model.ConfimPassword)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Password and Confirm Password do not match");
+                    return BadRequest(_response);
+                }
+            }else
+            {
+                if(model.NewPassword != null || model.ConfimPassword != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Please enter your current password");
+                    return BadRequest(_response);
+                }
+            }
             var user = await _unitOfWork.UserRepository.Update(model);
             if (user == null)
             {
