@@ -8,6 +8,7 @@ export const AccountProvider = ({ children }) => {
   const [account, setAccount] = useState({
     displayName: '',
     email: '',
+    UserID: '',
     photoURL: '/assets/images/avatars/avtdf.jpg',
   });
 

@@ -88,16 +88,17 @@ export default function LoginView() {
       const response = await axios.get(
         `https://fdiamond-api.azurewebsites.net/api/Users?userId=${userId}`
       );
-      const userInfo = response.data.result;
-      console.log(userInfo);
-      // Cập nhật thông tin vào object account
-      updateAccount({
-        displayName: `${userInfo.lastName} ${userInfo.firstName}`,
-        email: userInfo.userName,
-        // Bạn có thể thêm các thông tin khác nếu cần, ví dụ:
-        // address: userInfo.address,
-        // phoneNumber: userInfo.phoneNumber,
-      });
+      const userInfo = response.data.result; // Đúng định dạng lấy dữ liệu từ result
+      if (userInfo) {
+        updateAccount({
+          displayName: `${userInfo.lastName} ${userInfo.firstName}`,
+          email: userInfo.userName,
+          UserID: userId,
+        });
+      } else {
+        console.error('User info is undefined:', response.data.result);
+        setError('User info not found');
+      }
     } catch (err) {
       console.error('Error fetching user data:', err);
     }
