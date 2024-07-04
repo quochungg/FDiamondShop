@@ -1,16 +1,16 @@
 Diamond Shop System - SWP391 project
 ![screencapture-localhost-5174-product-diamond-2024-06-19-07_38_34](https://github.com/quochungg/FDiamondShop/assets/167979922/404aa80a-6696-403e-9ebb-b33c1487a5d7)
--Function Details
+- Function Details
 
-  -https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+  https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 
--usecase List
+- Usecase List
 
-  -https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
+  https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
 
--Report 0
+- Report 0
 
-  -https://docs.google.com/spreadsheets/d/1BQvEpAOgzN8YQgIGbiRbuI6_ncsvz-kn/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+  https://docs.google.com/spreadsheets/d/1BQvEpAOgzN8YQgIGbiRbuI6_ncsvz-kn/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 
 # Team's Member
 
@@ -31,23 +31,23 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 
 # Epic
 
--Product Management
+- Product Management
 
--Discount Management
+- Discount Management
 
--Order Management
+- Order Management
 
--Account Management
+- Account Management
 
--Admin site Management
+- Admin site Management
 
--Other
+- Other
 ### Table 1: User Stories of Each Sprint
 | Sprint   | User Story ID | Description                |
 |----------|----------------|----------------------------|
 | Sprint 1 | UC-01    | Register                      |
-|          | UC-02    | LoginLogin                     |
-|          | UC-03    | Forgot Password           |
+|          | UC-02    | Login                     |
+|          | UC-03    | Login With Google           |
 |          | UC-04    | Manage Personal Information            |
 |          | UC-05    | Add Product           |
 |          | UC-06    | Filter Search Option                    |
@@ -80,8 +80,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
 | Nguyen Huu Quoc Hung     | UC-06   |  Filter Search Option                 |
-| Nguyen Huu Quoc Hung     | UC-03   |  Forgot Password                 |
-| Nguyen Huu Quoc Hung     | UC-11   |  View Product Details               |
+| Nguyen Huu Quoc Hung     | UC-03   |  Login With Google                 |
 | Nguyen Thi Bich Duyen     | UC-01   | Register       |
 | Nguyen Thi Ngoc Thu   | UC-02    | Login (Customer)                    |
 | Ha Duy Tung    | UC-05    | Add Product                   |
@@ -92,7 +91,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 ### Table 2: Member Assignment for Sprint 2
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-19   | View Cart                |
+| Nguyen Huu Quoc Hung     | UC-24   | Cancel Order                |
 | Nguyen Huu Quoc Hung     | UC-06   | Filter Search Option                 |
 | Nguyen Thi Bich Duyen     | UC-17   | Add Products to Cart       |
 | Nguyen Thi Ngoc Thu   | UC-16    | Update Discount Code                    |
