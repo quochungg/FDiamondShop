@@ -187,7 +187,7 @@ namespace FDiamondShop.API.Repository
                 {
                     throw new Exception("New password and current password are the same.");
                 }
-                if (accountUpdateDTO.NewPassword != accountUpdateDTO.ConfimPassword)
+                if (accountUpdateDTO.NewPassword != accountUpdateDTO.ConfirmPassword)
                 {
                     throw new Exception("New password and confirmation password do not match.");
                 }
@@ -195,7 +195,7 @@ namespace FDiamondShop.API.Repository
             } 
             else 
             {
-                if(accountUpdateDTO.NewPassword !=null || accountUpdateDTO.ConfimPassword != null)
+                if(accountUpdateDTO.NewPassword !=null || accountUpdateDTO.ConfirmPassword != null)
                 {
                     throw new Exception("Current password is required");
                 }

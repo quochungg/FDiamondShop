@@ -162,7 +162,7 @@ namespace FDiamondShop.API.Controllers
                     _response.ErrorMessages.Add("New password must be different from the old password");
                     return BadRequest(_response);
                 }
-                if ( model.NewPassword != model.ConfimPassword)
+                if ( model.NewPassword != model.ConfirmPassword)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
@@ -171,7 +171,7 @@ namespace FDiamondShop.API.Controllers
                 }
             }else
             {
-                if(model.NewPassword != null || model.ConfimPassword != null)
+                if(model.NewPassword != null || model.ConfirmPassword != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;

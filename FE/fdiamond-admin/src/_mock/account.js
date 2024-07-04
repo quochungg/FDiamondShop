@@ -8,4 +8,12 @@ export const account = {
 
 export const updateAccount = (newData) => {
   Object.assign(account, newData);
+  localStorage.setItem('account', JSON.stringify(account));
+};
+
+export const loadAccount = () => {
+  const storedAccount = localStorage.getItem('account');
+  if (storedAccount) {
+    Object.assign(account, JSON.parse(storedAccount));
+  }
 };
