@@ -81,7 +81,6 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 |-------------|---------------|------------------------|
 | Nguyen Huu Quoc Hung     | UC-06   |  Filter Search Option                 |
 | Nguyen Huu Quoc Hung     | UC-03   |  Forgot Password                 |
-| Nguyen Huu Quoc Hung     | UC-11   |  View Product Details               |
 | Nguyen Thi Bich Duyen     | UC-01   | Register       |
 | Nguyen Thi Ngoc Thu   | UC-02    | Login (Customer)                    |
 | Ha Duy Tung    | UC-05    | Add Product                   |
