@@ -44,14 +44,14 @@ namespace FDiamondShop.API.Controllers
             foreach (var item in model)
             {
                 var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
-                if (product.Quantity == 0 || product.IsVisible == false)
-                {
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages.Add("Product is out of stock !");
-                    await _unitOfWork.CartRepository.RemoveAsync(cartLine);
-                    return BadRequest(_response);
-                }
+                //if (product.Quantity == 0 )
+                //{
+                //    _response.IsSuccess = false;
+                //    _response.StatusCode = HttpStatusCode.BadRequest;
+                //    _response.ErrorMessages.Add("Product is out of stock !");
+                //    await _unitOfWork.CartRepository.RemoveAsync(cartLine);
+                //    return BadRequest(_response);
+                //}
 
                 var cartLineItem = new CartLineItem
                 {
@@ -76,7 +76,7 @@ namespace FDiamondShop.API.Controllers
         {
             Boolean isExist = false;
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == diamondCart.userName);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x => x.CartLineItems.Count() == 1, includeProperties: "CartLineItems");
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x => x.CartLineItems.Count() == 1 && x.UserId == user.Id, includeProperties: "CartLineItems");
             var cartLineItems = cartLines.SelectMany(x => x.CartLineItems).ToList();
             var product = cartLineItems.FirstOrDefault(x => x.ProductId == diamondCart.productId);
             if (product != null)
@@ -143,6 +143,10 @@ namespace FDiamondShop.API.Controllers
                     cli.Product.SubCategoryName = (await _unitOfWork.SubCategoryRepository.GetAsync(sc => sc.SubCategoryId == cli.Product.SubCategoryId)).SubcategoryName;
                     cli.Product.CategoryId = (await _unitOfWork.SubCategoryRepository.GetAsync(ct => ct.SubCategoryId == cli.Product.SubCategoryId)).CategoryId;
                     cli.Product.CategoryName = (await _unitOfWork.CategoryRepository.GetAsync(ct => ct.CategoryId == cli.Product.CategoryId)).CategoryName;
+                    if(cli.Product.CategoryId == 1)
+                    {
+                        cli.Product.ProductImages = cli.Product.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") && u.IsGia == false).ToList();
+                    }
                 }
             }
 
