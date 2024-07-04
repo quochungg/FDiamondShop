@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "react-icons-kit";
+// import { useLocation, useNavigate, Link } from "react-router-dom";
 import { updateUserAPI, loginAPI, loginGoogleAPI, getUser } from "../api/APIs";
 import { eyeOff } from "react-icons-kit/feather/eyeOff";
 import { eye } from "react-icons-kit/feather/eye";
@@ -19,10 +20,13 @@ const AccountDetailsPage = () => {
     confirmPassword: "",
   });
   const [isGoogleAccount, setIsGoogleAccount] = useState(false);
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [errors, setErrors] = useState({});
   const [type, setType] = useState("password");
   const [icon, setIcon] = useState(eyeOff);
   const [isLoading, setIsLoading] = useState(false);
+  // const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     // Lấy dữ liệu người dùng từ getUser trong API
@@ -91,14 +95,40 @@ const AccountDetailsPage = () => {
 
     const newErrors = {};
 
-    // Kiểm tra mật khẩu mới và xác nhận mật khẩu nếu không phải tài khoản Google
-    if (!isGoogleAccount) {
+    if (!isGoogleAccount && showPasswordFields) {
+      const newPassword = formData.newPassword;
+      const NewPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{6,}$/;
+      if (!NewPasswordRegex.test(newPassword)) {
+        newErrors.newPassword = `Password
+            must be at least 6 characters long,
+            include at least one uppercase letter, one digit, and one special character,
+            and must not contain spaces.`;
+      }
       if (
         formData.newPassword &&
         formData.newPassword !== formData.confirmPassword
       ) {
-        newErrors.password = "Mật khẩu xác nhận không khớp";
+        newErrors.confirmPassword = "Confirmation password does not match!";
       }
+    }
+
+    const phoneNumber = formData.phoneNumber;
+    const phoneNumberRegex = /^0\d{9}$/;
+    if (!phoneNumberRegex.test(phoneNumber)) {
+      newErrors.phoneNumber = `Phone number
+            must be 10 digits long, start with 0,
+            and contain no spaces.`;
+    }
+
+    const nameRegex = /^[A-Za-z\s]+$/;
+    const firstName = formData.firstName.trim().replace(/\s+/g, " ");
+    if (!nameRegex.test(firstName)) {
+      newErrors.name = "Name can only contain alphabetic characters.";
+    }
+
+    const lastName = formData.lastName.trim().replace(/\s+/g, " ");
+    if (!nameRegex.test(lastName)) {
+      newErrors.name = "Name can only contain alphabetic characters.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -116,13 +146,13 @@ const AccountDetailsPage = () => {
       phoneNumber: formData.phoneNumber,
     };
 
-    if (!isGoogleAccount) {
+    if (!isGoogleAccount && showPasswordFields) {
       if (formData.password) {
         dataToSend.password = formData.password;
       }
       if (formData.newPassword) {
         dataToSend.newPassword = formData.newPassword;
-        dataToSend.confimPassword = formData.confirmPassword;
+        dataToSend.confirmPassword = formData.confirmPassword;
       }
     }
 
@@ -134,19 +164,31 @@ const AccountDetailsPage = () => {
         const updatedUser = response.data.result;
         // localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
-        alert("Cập nhật thông tin thành công!");
+        setSuccessMessage("Updated account details successfully.");
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 6000);
       } else {
         const errorData = response.data;
-        setErrors(errorData.errors || {});
-        alert("Đã xảy ra lỗi trong quá trình cập nhật. Vui lòng thử lại.");
+        console.log("Error response data:", errorData);
+        // Assuming the server sends an `errorMessages` field with an array of errors
+        setErrors({ serverError: errorData.errorMessages.join(", ") });
       }
     } catch (error) {
-      if (error.response) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.errorMessages
+      ) {
         console.error("Error updating account:", error.response.data);
-        alert(`Đã xảy ra lỗi: ${error.response.data.message}`);
+        setErrors({
+          serverError: error.response.data.errorMessages.join(", "),
+        });
       } else {
         console.error("Error updating account:", error);
-        alert("Đã xảy ra lỗi trong quá trình cập nhật. Vui lòng thử lại.");
+        setErrors({
+          serverError: "An error occurred during the update. Please try again.",
+        });
       }
     } finally {
       setIsLoading(false);
@@ -247,60 +289,91 @@ const AccountDetailsPage = () => {
             </div>
             {!isGoogleAccount && (
               <>
-                <div className="relative w-full mb-3 font-gantari">
-                  <input
-                    className={inputTags}
-                    placeholder=" "
-                    type={type}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                  />
-                  <label htmlFor="password" className={labelTags}>
-                    Password
-                  </label>
-                  <span onClick={handleTogglePassword}>
-                    <Icon
-                      className="absolute top-4 right-7 cursor-pointer"
-                      icon={icon}
-                      size={24}
-                    />
-                  </span>
-                </div>
-                <div className="relative w-full mb-3 font-gantari">
-                  <input
-                    className={inputTags}
-                    placeholder=" "
-                    type={type}
-                    id="newPassword"
-                    name="newPassword"
-                    value={formData.newPassword}
-                    onChange={handleInputChange}
-                  />
-                  <label htmlFor="newPassword" className={labelTags}>
-                    New Password
-                  </label>
-                </div>
-                <div className="relative w-full mb-3 font-gantari">
-                  <input
-                    className={inputTags}
-                    placeholder=" "
-                    type={type}
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                  />
-                  <label htmlFor="confirmPassword" className={labelTags}>
-                    Confirm Password
-                  </label>
-                </div>
+                <button
+                  type="button"
+                  className="w-full text-white font-[600] text-center text-2xl rounded-sm p-4
+                                        hover:bg-[#26265c] bg-[#000035] transition duration-300 ease-in-out mb-3"
+                  onClick={() => setShowPasswordFields(!showPasswordFields)}
+                >
+                  {showPasswordFields
+                    ? "Cancel Change Password"
+                    : "Change Password"}
+                </button>
+                {showPasswordFields && (
+                  <>
+                    <div className="relative w-full mb-3 font-gantari">
+                      <input
+                        className={inputTags}
+                        placeholder=" "
+                        type={type}
+                        id="password"
+                        name="password"
+                        required
+                        value={formData.password}
+                        onChange={handleInputChange}
+                      />
+                      <label htmlFor="password" className={labelTags}>
+                        Password
+                      </label>
+                      <span onClick={handleTogglePassword}>
+                        <Icon
+                          className="absolute top-4 right-7 cursor-pointer"
+                          icon={icon}
+                          size={24}
+                        />
+                      </span>
+                    </div>
+                    <div className="relative w-full mb-3 font-gantari">
+                      <input
+                        className={inputTags}
+                        placeholder=" "
+                        type={type}
+                        id="newPassword"
+                        name="newPassword"
+                        required
+                        value={formData.newPassword}
+                        onChange={handleInputChange}
+                      />
+                      <label htmlFor="newPassword" className={labelTags}>
+                        New Password
+                      </label>
+                    </div>
+                    {errors.newPassword && (
+                      <div className={errorTags}>{errors.newPassword}</div>
+                    )}
+                    <div className="relative w-full mb-3 font-gantari">
+                      <input
+                        className={inputTags}
+                        placeholder=" "
+                        type={type}
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        required
+                        onChange={handleInputChange}
+                      />
+                      <label htmlFor="confirmPassword" className={labelTags}>
+                        Confirm Password
+                      </label>
+                    </div>
+                    {errors.confirmPassword && (
+                      <div className={errorTags}>{errors.confirmPassword}</div>
+                    )}
+                    {errors.serverError && (
+                      <div className={errorTags}>{errors.serverError}</div>
+                    )}
+                    {/* {Object.keys(errors).length > 0 && (
+                      <div className={errorTags}>
+                        {Object.values(errors).map((error, index) => (
+                          <div key={index}>{error}</div>
+                        ))}
+                      </div>
+                    )} */}
+                  </>
+                )}
               </>
             )}
-            {errors.password && (
-              <div className={errorTags}>{errors.password}</div>
-            )}
+
             {isLoading ? (
               <button
                 type="submit"
@@ -327,6 +400,9 @@ const AccountDetailsPage = () => {
               </button>
             )}
           </form>
+          {successMessage && (
+            <div className="mt-4 text-green-600 text-lg">{successMessage}</div>
+          )}
         </div>
       </div>
     </AppLayout>
