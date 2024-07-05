@@ -41,7 +41,7 @@ namespace FDiamondShop.API.Repository
             List<OrderDTO> orderDTOs = new List<OrderDTO>();
             foreach (var model in Orders)
             {
-                model.CartLines = await _db.CartLines.Where(cl => cl.OrderId == model.OrderId).ToListAsync();
+                model.CartLines = await _db.CartLines.Include(c => c.CartLineItems).ThenInclude(cli => cli.Product).Where(cl => cl.OrderId == model.OrderId).ToListAsync();
                 var payment = await _db.Payments.FirstOrDefaultAsync(x => x.PaymentId == model.PaymentId);
                 var paymentDTO = _mapper.Map<PaymentDTO>(payment);
                 OrderDTO orderDTO = new OrderDTO()
@@ -65,7 +65,7 @@ namespace FDiamondShop.API.Repository
 
         public async Task<OrderDTO> GetOrderDetails(int orderId)
         {
-            var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
+            var order = await _db.Orders.Include(o => o.CartLines).ThenInclude(c => c.CartLineItems).ThenInclude(cli => cli.Product).FirstOrDefaultAsync(x => x.OrderId == orderId);
 
             if (order == null)
             {
@@ -73,15 +73,16 @@ namespace FDiamondShop.API.Repository
             }
 
             var cartlineDTOs= new List<CartLineDTO>();
-            var cartlines = _db.CartLines.Where(x => x.OrderId == orderId).ToList();
+            var cartlines = _db.CartLines.Include(c => c.CartLineItems).ThenInclude(cli => cli.Product).Where(x => x.OrderId == orderId).ToList();
             foreach(var cartline in cartlines)
             {
                 var cartlineDTO = _mapper.Map<CartLineDTO>(cartline);
                 cartlineDTO.CartLineItems = new List<CartLineItemDTO>();
-                var cartlineItems = _db.CartLineItems.Where(x => x.CartLineId == cartline.CartLineId).ToList();
+                var cartlineItems = _db.CartLineItems.Include(cli => cli.Product).Where(x => x.CartLineId == cartline.CartLineId).ToList();
                 foreach (var cartlineItem in cartlineItems)
                 {
                     var cartlineItemDTO = _mapper.Map<CartLineItemDTO>(cartlineItem);
+                    cartlineItemDTO.Product = _mapper.Map<ProductDTO>(cartlineItem.Product);
                     cartlineDTO.CartLineItems.Add(cartlineItemDTO);
                 }
                 cartlineDTOs.Add(cartlineDTO);
