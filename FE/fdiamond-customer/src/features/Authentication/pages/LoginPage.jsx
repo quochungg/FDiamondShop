@@ -131,15 +131,9 @@ const LoginPage = () => {
                         {/* FDIAMOND logo */}
                         <div className="h-full w-full flex flex-col items-center justify-start mt-9">
 
-                            {/* <div className="w-64 h-64 font-playfair text-white text-[10rem] font-[650] 
-                            rounded-full  outline outline-4 outline-white outline-offset-8 border-2 border-solid border-white
-                            flex justify-center items-center mb-5"> */}
                             <div className="w-64 h-64 font-playfair text-[#000035] text-[10rem] font-[650] 
                             rounded-full bg-white ring ring-inset ring-[#000035] outline outline-4 outline-white outline-offset-[0.4rem] border-2 border-solid border-white
                             flex justify-center items-center mb-5">
-                                {/* <div className="w-64 h-64 font-playfair text-[#000035] text-[10rem] font-[650] 
-                            rounded-full bg-white outline outline-4 outline-white outline-offset-8 border-2 border-solid border-white
-                            flex justify-center items-center mb-5"> */}
                                 F
                             </div>
 

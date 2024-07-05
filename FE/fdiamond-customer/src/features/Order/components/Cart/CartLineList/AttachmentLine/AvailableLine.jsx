@@ -1,14 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
 import ringSvg from 'src/features/Order/assets/ringSvg.svg';
 
-const AvailableLine = ({ cartLine, onRemoveCartline }) => {
-    const [selectedSize, setSelectedSize] = useState(
-        cartLine.cartLineItems.find((item) => {
-            return item.product.categoryName === 'Engagement Ring';
-        }).ringSize
-    );
+const AvailableLine = ({ cartLine, onRemoveCartline, onUpdateRingSize, checkoutErrors }) => {
+
+    const selectedSize = cartLine.cartLineItems.find((item) => {
+        return item.product.categoryName === 'Engagement Ring';
+    }).ringSize
+
 
     const diamondItem = cartLine.cartLineItems.find((item) => (
         item.product.categoryName === 'Diamond'
@@ -25,13 +25,22 @@ const AvailableLine = ({ cartLine, onRemoveCartline }) => {
     }, [cartLine]);
 
 
+    const handleUpdateRingSize = (e) => {
+        const newRingSize = e.target.value;
+        onUpdateRingSize(cartLine.cartLineId, ringItem.product.productId, newRingSize);
+    }
+
+
+    const isErrorCartline = checkoutErrors.errorCartlinesId?.includes(cartLine.cartLineId);
+
+
     return (
         <>
-            <div>
+            <div className={isErrorCartline ? 'border-[1px] border-red-500 mb-7 rounded-md' : 'mb-7'}>
 
                 {/* BEGIN ONE CART LINE */}
                 <ul>
-                    <li className='shadow-cartline bg-white mb-7 rounded-md relative'>
+                    <li className='shadow-cartline bg-white rounded-md relative'>
                         <div className='px-6 pt-4 pb-6'>
 
                             {/*BEGIN CART NUMBER && REMOVE BUTTON */}
@@ -98,7 +107,7 @@ const AvailableLine = ({ cartLine, onRemoveCartline }) => {
                                                             id="size"
                                                             className="self-end w-16 cursor-pointer block text-center  text-sm bg-transparent border-b-[1px] border-gray-200 text-gray-600 dark:border-gray-700  focus:outline-none focus:ring-0 focus:border-gray-200 peer"
                                                             value={selectedSize}
-                                                            onChange={(e) => setSelectedSize(e.target.value)}
+                                                            onChange={handleUpdateRingSize}
                                                         >
                                                             <option value="3">3</option>
                                                             <option value="4">4</option>

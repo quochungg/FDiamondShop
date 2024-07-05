@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 import { getPromoCode } from 'src/features/Order/api/APIs'
 
-const SummarySection = ({ cartLineArr }) => {
+
+const SummarySection = ({ cartLineArr, onCheckout }) => {
     const [isVisibleAll, setIsVisibleAll] = useState(null);
     const [promoCode, setPromoCode] = useState(null);
     const [invalidPromoCode, setInvalidPromoCode] = useState(false)
     const [subTotal, setSubtotal] = useState(null);
     const [amountOff, setAmountOff] = useState(null);
     const [totalPayment, setTotalPayment] = useState(null);
+
+
+    const handleCheckout = () => {
+        onCheckout(promoCode);
+    }
+
 
     useEffect(() => {
         checkIsVisibleAll();
@@ -28,10 +35,6 @@ const SummarySection = ({ cartLineArr }) => {
         }
     }, [subTotal, promoCode])
 
-
-    const handleCheckout = () => {
-
-    }
 
     const checkIsVisibleAll = () => {
         let isValid = true;
@@ -198,10 +201,11 @@ const SummarySection = ({ cartLineArr }) => {
                                 ) : (
                                     <p>Not Available</p>
                                 )}
-
                             </li>
+
                         </ul>
                     </div>
+
 
 
                     {/* Checkout button */}
@@ -215,7 +219,6 @@ const SummarySection = ({ cartLineArr }) => {
                     </div>
 
                 </section>
-
 
 
             </div>

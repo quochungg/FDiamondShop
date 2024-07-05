@@ -3,17 +3,21 @@ import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
 import earringSvg from 'src/features/Order/assets/earringSvg.svg';
 import necklaceSvg from 'src/features/Order/assets/necklaceSvg.svg';
 
-const UnavailableLine = ({ cartLine, onRemoveCartline }) => {
+const UnavailableLine = ({ cartLine, onRemoveCartline, onReplaceCartline, checkoutErrors }) => {
     const symbol = cartLine.cartLineItems[0].product.categoryName === 'Earring' ? earringSvg :
         cartLine.cartLineItems[0].product.categoryName === 'Necklace' ? necklaceSvg : diamondSvg;
 
+    const isErrorCartline = checkoutErrors.errorCartlinesId?.includes(cartLine.cartLineId);
+
     return (
         <>
+
             {/* UNAVAILABLE PRODUCT */}
-            <div>
+            <div className={isErrorCartline ? 'border-[1px] border-red-500 mb-7 rounded-md' : 'mb-7'}>
+
                 {/* BEGIN ONE CART LINE */}
                 <ul>
-                    <li className='shadow-cartline bg-white mb-7 rounded-md relative'>
+                    <li className='shadow-cartline bg-white rounded-md relative'>
                         <div className='px-6 pt-4 pb-6'>
 
                             {/*BEGIN CART NUMBER && REMOVE BUTTON */}
@@ -87,7 +91,7 @@ const UnavailableLine = ({ cartLine, onRemoveCartline }) => {
                                     {/* to locale string */}
                                     <div className='absolute bottom-11 right-11 flex flex-col space-y-1'>
                                         <button
-                                            // onClick={handleReplace}
+                                            onClick={() => onReplaceCartline(cartLine)}
                                             className='bg-blue-950 hover:bg-[#34427b] w-full text-white rounded-lg py-1 px-3 transition-colors duration-200'
                                         >
                                             Replace

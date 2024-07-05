@@ -3,7 +3,7 @@ import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
 import ringSvg from 'src/features/Order/assets/ringSvg.svg';
 
 
-const UnavailableLine = ({ cartLine, onRemoveCartline }) => {
+const UnavailableLine = ({ cartLine, onRemoveCartline, onReplaceCartline, checkoutErrors }) => {
 
     const selectedSize = cartLine.cartLineItems.find((item) => (
         item.product.categoryName === 'Engagement Ring'
@@ -18,13 +18,29 @@ const UnavailableLine = ({ cartLine, onRemoveCartline }) => {
         item.product.categoryName === 'Engagement Ring'
     ))
 
+    const checkIfOneItemIsAvailable = (ringItem, diamondItem) => {
+        let result = false;
+        if (ringItem.product.isVisible && !diamondItem.product.isVisible) {
+            result = true;
+        }
+        else if (!ringItem.product.isVisible && diamondItem.product.isVisible) {
+            result = true;
+        }
+        return result;
+    }
+
+    const showReplace = checkIfOneItemIsAvailable(ringItem, diamondItem);
+
+    const isErrorCartline = checkoutErrors.errorCartlinesId?.includes(cartLine.cartLineId);
+
 
     return (
         <>
-            <div>
+            <div className={isErrorCartline ? 'border-[1px] border-red-500 mb-7 rounded-md' : 'mb-7'}>
+
                 {/* BEGIN ONE CART LINE */}
                 <ul>
-                    <li className='shadow-cartline bg-white mb-7 rounded-md relative'>
+                    <li className='shadow-cartline bg-white rounded-md relative'>
                         <div className='px-6 pt-4 pb-6'>
 
                             {/*BEGIN CART NUMBER && REMOVE BUTTON */}
@@ -174,15 +190,16 @@ const UnavailableLine = ({ cartLine, onRemoveCartline }) => {
                                     </div>
 
                                     {/* Price */}
-                                    <div className='absolute bottom-11 right-11 flex flex-col space-y-1'>
-                                        <button
-                                            // onClick={handleReplace}
-                                            className='bg-blue-950 hover:bg-[#34427b] w-full text-white rounded-lg py-1 px-3 transition-colors duration-200'
-                                        >
-                                            Replace
-                                        </button>
-                                    </div>
-
+                                    {showReplace &&
+                                        <div className='absolute bottom-11 right-11 flex flex-col space-y-1'>
+                                            <button
+                                                onClick={() => onReplaceCartline(cartLine, selectedSize)}
+                                                className='bg-blue-950 hover:bg-[#34427b] w-full text-white rounded-lg py-1 px-3 transition-colors duration-200'
+                                            >
+                                                Replace
+                                            </button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                             {/*BEGIN PRODUCT IMAGE && INFORMATION */}

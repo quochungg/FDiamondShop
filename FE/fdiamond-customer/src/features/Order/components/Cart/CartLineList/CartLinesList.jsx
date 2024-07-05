@@ -1,6 +1,8 @@
 import { SingleLine, AttachmentLine } from '../../index';
 
-const CartLinesList = ({ cartLineArr, onRemoveCartline }) => {
+const CartLinesList = ({ cartLineArr, checkoutErrors,
+    onRemoveCartline, onUpdateRingSize, onReplaceCartline
+}) => {
 
     return (
         <>
@@ -14,12 +16,17 @@ const CartLinesList = ({ cartLineArr, onRemoveCartline }) => {
                             key={cartLine.cartLineId}
                             cartLine={cartLine}
                             onRemoveCartline={onRemoveCartline}
+                            onUpdateRingSize={onUpdateRingSize}
+                            onReplaceCartline={onReplaceCartline}
+                            checkoutErrors={checkoutErrors}
                         />
                     ) : (
                         <SingleLine
                             key={cartLine.cartLineId}
                             cartLine={cartLine}
                             onRemoveCartline={onRemoveCartline}
+                            onReplaceCartline={onReplaceCartline}
+                            checkoutErrors={checkoutErrors}
                         />
                     )
                 ))}

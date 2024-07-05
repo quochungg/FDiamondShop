@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getProducts, getCategory } from "../api/APIs";
-import { CategoryHero, Pagination, ProductList } from '../components/index'
+import { CategoryHero, Pagination, ProductList, SelectionBar } from '../components/index'
 import AppLayout from "src/layout/AppLayout";
 import { LoadingSpinner } from "src/components";
 
@@ -10,6 +10,7 @@ const SearchResultPage = ({ category }) => {
     // console.log('SearchResultPage renders');
 
     const navigate = useNavigate();
+
     const [searchParams, setSearchParams] = useSearchParams({
         pageNumber: 1,
     });
@@ -20,6 +21,10 @@ const SearchResultPage = ({ category }) => {
     const [productList, setProductList] = useState([]);
     const [categoryInfo, setCategoryInfo] = useState({});
     const [totalPage, setTotalPage] = useState(null);
+
+    const [resetSelectionBar, setResetSelectionBar] = useState(false);
+
+
 
     const isValidCategory = () => {
         const categoryParams = ['diamond', 'engagement ring', 'necklace', 'earring'];
@@ -49,7 +54,6 @@ const SearchResultPage = ({ category }) => {
     }
 
     useEffect(() => {
-        // console.log('useEffect Category')
         if (!isValidCategory()) {
             navigate('*');
         }
@@ -79,15 +83,26 @@ const SearchResultPage = ({ category }) => {
         return <LoadingSpinner />
     }
 
+    const appendableCategory = ['Diamond', 'Engagement Ring']
+
     return (
         <>
             {validatePageNumber()}
             <AppLayout>
+
                 <CategoryHero categoryInfo={categoryInfo} />
+
+                {appendableCategory.includes(categoryInfo.categoryName) &&
+                    <SelectionBar
+                        key={resetSelectionBar}
+                        setResetSelectionBar={setResetSelectionBar}
+                    />
+                }
+
 
                 {/* <Filter /> */}
 
-                <div className="h-auto flex flex-col justify-start my-10">
+                <div className="h-auto flex flex-col justify-start mt-12">
                     <ProductList
                         productList={productList}
                         category={category}

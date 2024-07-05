@@ -3,17 +3,19 @@ import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
 import earringSvg from 'src/features/Order/assets/earringSvg.svg';
 import necklaceSvg from 'src/features/Order/assets/necklaceSvg.svg';
 
-const AvailableLine = ({ cartLine, onRemoveCartline }) => {
+const AvailableLine = ({ cartLine, onRemoveCartline, checkoutErrors }) => {
     const symbol = cartLine.cartLineItems[0].product.categoryName === 'Earring' ? earringSvg :
         cartLine.cartLineItems[0].product.categoryName === 'Necklace' ? necklaceSvg : diamondSvg;
 
+    const isErrorCartline = checkoutErrors.errorCartlinesId?.includes(cartLine.cartLineId);
 
     return (
         <>
-            <div>
+
+            <div className={isErrorCartline ? 'border-[1px] border-red-500 mb-7 rounded-md' : 'mb-7'}>
                 {/* BEGIN ONE CART LINE */}
                 <ul>
-                    <li className='shadow-cartline bg-white mb-7 rounded-md relative'>
+                    <li className='shadow-cartline bg-white rounded-md relative'>
                         <div className='px-6 pt-4 pb-7'>
 
                             {/*BEGIN CART NUMBER && REMOVE BUTTON */}
@@ -63,17 +65,6 @@ const AvailableLine = ({ cartLine, onRemoveCartline }) => {
                                                 </div>
                                             </li>
                                         </ul>
-
-
-
-                                        {/* Add to ring button */}
-                                        <div className='w-full px-5'>
-                                            <button
-                                                className='w-[40%] h-12 text-[#343434] text-sm font-[400]
-                                                rounded-full border-2 border-dotted border-[#c7c7c7] hover:border-[#939393] transition-colors duration-200'>
-                                                + Add a Ring
-                                            </button>
-                                        </div>
 
                                     </div>
 

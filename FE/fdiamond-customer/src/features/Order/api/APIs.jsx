@@ -86,6 +86,60 @@ export const checkExistingDiamondInCart = async (productId) => {
     return response;
 }
 
+
+// Check if attachment items in selection bar have existed in cart
+export const checkExistingAttachmentInCart = async (attachmentItemsArr) => {
+    const userName = JSON.parse(localStorage.getItem('user')).userName;
+    const accessToken = localStorage.getItem('accessToken');
+
+    let API_url = API_root + `/ShoppingCart/CheckAttachmentExistInCart`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    const reqData = {
+        userName: userName,
+        cartLineItems: attachmentItemsArr
+    }
+
+    let response;
+
+    try {
+        response = await axios.post(API_url, reqData, { headers: headers })
+    } catch (error) {
+        console.error('There was an error', error);
+    }
+    return response;
+}
+
+
+export const checkValidAllCartLines = async () => {
+    const userId = JSON.parse(localStorage.getItem('user')).userId;
+    const accessToken = localStorage.getItem('accessToken');
+
+    let API_url = API_root + `/ShoppingCart/ValidShoppingCart?userId=${userId}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.get(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        }
+        console.error('There was an error', error);
+    }
+    return response;
+}
+
+
+
+
 // Remove cart line
 export const removeCartLine = async (cartLineId) => {
 
@@ -107,6 +161,40 @@ export const removeCartLine = async (cartLineId) => {
     return response;
 
 }
+
+
+// Update Ring Size in Cartline
+export const updateRingSize = async (cartLineId, productId, newRingSize) => {
+    const API_url = API_root + '/ShoppingCart/UpdateRingSize';
+
+    const accessToken = localStorage.getItem('accessToken');
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    const reqData = {
+        cartLineId: cartLineId,
+        productId: productId,
+        ringSize: newRingSize
+    }
+
+    let response;
+
+    try {
+        response = axios.put(API_url, reqData, { headers: headers });
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
+    }
+
+    return response;
+}
+
+
 
 
 // =======================================================================

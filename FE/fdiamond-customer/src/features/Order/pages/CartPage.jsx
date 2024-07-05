@@ -1,11 +1,12 @@
 import AppLayout from "src/layout/AppLayout";
-import { getAllCartLines, removeCartLine } from "../api/APIs";
+import { getAllCartLines, removeCartLine, updateRingSize, checkValidAllCartLines } from "../api/APIs";
 
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { addToCartLine } from "src/features/Order/api/APIs";
-import { EmptyCart, MainCartSection } from "../components/index";
+import { EmptyCart, MainCartSection, ErrorCheckoutModal } from "../components/index";
 import { LoadingSpinner } from "src/components";
+
 
 //This page can only be accessed after log in
 const CartPage = () => {
@@ -14,6 +15,61 @@ const CartPage = () => {
     const [cartLineArr, setCartLineArr] = useState(null);
     const [handleAddedItem, setHandleAddedItem] = useState(false);
 
+    // Handle new added item
+    useEffect(() => {
+
+        const addedSingleItem = location?.state?.addedSingleItem;
+
+        const addedAttachmentItems = location?.state?.addedAttachmentItems;
+
+        if (addedSingleItem) {
+            const addToCart = async () => {
+                await addToCartLine(addedSingleItem);
+
+                const newState = location.state = {
+                    ...location.state,
+                    addedSingleItem: null
+                }
+
+                setHandleAddedItem(true);
+
+                navigate('/cart', { state: newState, replace: true });  //reset location.state right after adding new items to cart by rerendering. This won't unmount and remount the component.
+            }
+            addToCart();
+        }
+        else if (addedAttachmentItems) {
+            const addToCart = async () => {
+                await addToCartLine(addedAttachmentItems);
+
+                const newState = location.state = {
+                    ...location.state,
+                    addedAttachmentItems: null
+                }
+
+                setHandleAddedItem(true);
+
+                navigate('/cart', { state: newState, replace: true });  //reset location.state right after adding new items to cart by rerendering. This won't unmount and remount the component.
+
+                localStorage.removeItem('selectionBar'); // set null for local storage after adding to cart
+
+            }
+            addToCart();
+        }
+        else {
+            setHandleAddedItem(true);
+        }
+    }, [])
+
+
+    // Get all cart lines after handling newly added item
+    useEffect(() => {
+        if (handleAddedItem) {
+            getCartLines();
+        }
+    }, [handleAddedItem])
+
+
+    // Call API to get all cart lines
     const getCartLines = async () => {
         const response = await getAllCartLines();
         const cartLines = response.data.result;
@@ -24,53 +80,131 @@ const CartPage = () => {
         }
     }
 
-
-    // Handle new added item
-    useEffect(() => {
-        const addedItemArr = location?.state?.addedItemArr;
-        if (addedItemArr) {
-            const addToCart = async () => {
-                await addToCartLine(addedItemArr);
-
-                const newState = location.state = {
-                    ...location.state,
-                    addedItemArr: null
-                }
-
-                setHandleAddedItem(true);
-
-                navigate('/cart', { state: newState, replace: true });  //reset location.state right after adding new items to cart by rerendering. This won't unmount and remount the component.
-            }
-            addToCart();
-        } else {
-            setHandleAddedItem(true);
-        }
-    }, [])
-
-
-    useEffect(() => {
-        if (handleAddedItem) {
-            getCartLines();
-        }
-    }, [handleAddedItem])
-
-
+    // Handle remove cart line
     const handleRemoveCartline = async (cartLineId) => {
         await removeCartLine(cartLineId);
         getCartLines();
     }
 
 
+    // Handle update ring size
+    const handleUpdateRingSize = async (cartLineId, productId, newRingSize) => {
+        await updateRingSize(cartLineId, productId, newRingSize);
+        getCartLines();
+    }
 
-    const handleCheckout = (promoCode, totalPayment) => {
 
-        //check if all cart lines is valid
+    // Handle replace unavailable cart lines
+    const handleReplaceCartline = (cartLine, ringSize) => {
 
-        //check if promo code is valid: empty/invalid (none) or valid
+        removeCartLine(cartLine.cartLineId);
 
-        //check if totalPayment exceeds 50,000$
+        if (cartLine.cartLineItems.length === 1) {
+            const categoryName = cartLine.cartLineItems[0].product.categoryName.toLowerCase();
+            navigate(`/product/${categoryName}`)
+        }
+
+        if (cartLine.cartLineItems.length === 2) {
+
+            const diamond = cartLine.cartLineItems.find((item) => item.product.categoryName === 'Diamond');
+
+            const engagementRing = cartLine.cartLineItems.find((item) => item.product.categoryName === 'Engagement Ring');
+
+            if (diamond.product.isVisible && !engagementRing.product.isVisible) {
+
+                const newSelectionBar = {
+                    diamond: {
+                        productId: diamond.productId,
+                    }
+                }
+                localStorage.setItem('selectionBar', JSON.stringify(newSelectionBar));
+                navigate(`/product/engagement ring`)
+
+            }
+            else if (engagementRing.product.isVisible && !diamond.product.isVisible) {
+
+                const newSelectionBar = {
+                    engagementRing: {
+                        productId: engagementRing.productId,
+                        size: ringSize
+                    }
+                }
+                localStorage.setItem('selectionBar', JSON.stringify(newSelectionBar));
+                navigate(`/product/diamond`)
+
+            }
+        }
 
     }
+
+    const [checkoutErrors, setCheckoutErrors] = useState({});
+
+
+    const handleCheckout = async (promoCode) => {
+        // CART LINES : Check if all cart lines are valid. Invalid if there are DUPLICATED or UNAVAILABLE cart lines
+        const response = await checkValidAllCartLines();
+
+        const areAllCartLinesValid = response.data.result.isValid;
+
+        let errorCartlines = {};
+
+        if (areAllCartLinesValid) {
+            //navigate to Checkout page
+            const directFromCartPage = true;
+            navigate('/checkout', { state: { promoCode, directFromCartPage } });
+
+        } else {
+
+            let errorCartlinesId = [];
+            let errorMsg = [];
+
+            const duplicatedCartLines = response.data.result.duplicateCartLine;
+            const unavailableCartLines = response.data.result.invisibleCartLine;
+
+            if (duplicatedCartLines.length > 0 && unavailableCartLines.length > 0) {
+                errorCartlinesId = [...duplicatedCartLines, ...unavailableCartLines];
+                errorMsg[0] = 'Duplicated diamonds and Unavailable items in your shopping cart';
+                errorMsg[1] = 'You are trying to checkout with both duplicate diamonds and unavailable items.' +
+                    ' Please remove or replace them and try again. Or contact Customer Service for assistance.';
+
+            }
+            else if (duplicatedCartLines.length > 0) {
+                errorCartlinesId = duplicatedCartLines;
+                errorMsg[0] = 'Duplicate diamonds in your shopping cart';
+                errorMsg[1] = 'You are trying to checkout with several identical diamonds.' +
+                    ' Diamonds are unique, please remove duplicates and try again. Or contact Customer Service for assistance.'
+            }
+            else if (unavailableCartLines.length > 0) {
+                errorCartlinesId = unavailableCartLines;
+                errorMsg[0] = 'One or more items in your shopping cart has become unavailable.';
+                errorMsg[1] = 'Please replace all unavailable items and continue, or contact Customer Service for assistance.'
+            }
+
+            errorCartlines.errorCartlinesId = errorCartlinesId;
+            errorCartlines.errorMsg = errorMsg;
+
+            setCheckoutErrors(errorCartlines);
+
+            //reset cart line array to display implicit errors
+            setCartLineArr(null);
+            getCartLines();
+
+            openModal();
+        }
+    }
+
+
+    const [showModal, setShowModal] = useState(false);
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
+
 
     if (cartLineArr === null) {
         return <LoadingSpinner />
@@ -78,8 +212,18 @@ const CartPage = () => {
 
     return (
         <>
+
             {cartLineArr && (
+
                 <AppLayout>
+                    <>
+                        <ErrorCheckoutModal
+                            show={showModal}
+                            onClose={closeModal}
+                            checkoutErrors={checkoutErrors}
+                        />
+                    </>
+
                     {cartLineArr.length > 0 ?
                         (
                             <div className="h-auto w-screen bg-white overflow-visible">
@@ -87,6 +231,10 @@ const CartPage = () => {
                                     <MainCartSection
                                         cartLineArr={cartLineArr}
                                         onRemoveCartline={handleRemoveCartline}
+                                        onUpdateRingSize={handleUpdateRingSize}
+                                        onReplaceCartline={handleReplaceCartline}
+                                        checkoutErrors={checkoutErrors}
+                                        onCheckout={handleCheckout}
                                     />
                                 </div>
                             </div>
@@ -102,43 +250,3 @@ const CartPage = () => {
 
 export default CartPage;
 
-
-// {cartLineArr && (
-//     cartLineArr.length > 0 ? (
-//         <div>
-//             <div>
-//                 {cartLineArr.map((cartLine) => (
-//                     <div
-//                         className="p-3 bg-slate-200 border-[1px] border-black"
-//                         key={cartLine.cartLineId}
-//                     >
-//                         CartLineID: {cartLine.cartLineId}
-
-//                         {cartLine.cartLineItems.map((cartLineItem, index) => (
-//                             <ul
-//                                 className="list-disc px-10 border-[1px] border-black"
-//                                 key={index}
-//                             >
-//                                 <li>Product ID: {cartLineItem.productId}</li>
-//                                 <li>Price: {cartLineItem.price}</li>
-//                             </ul>
-//                         ))}
-//                     </div>
-
-//                 )
-//                 )}
-//             </div>
-
-//             <button
-//                 className="p-3 bg-slate-400"
-//                 onClick={handleCheckout}
-//             >
-//                 Checkout
-//             </button>
-//         </div>
-//     ) : (
-//         <div>
-//             <p>Your cart is empty</p>
-//         </div>
-//     )
-// )}

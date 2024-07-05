@@ -1,6 +1,8 @@
 import { CartLinesList, SummarySection } from "../index";
 
-const MainCartSection = ({ cartLineArr, onRemoveCartline }) => {
+const MainCartSection = ({ cartLineArr, checkoutErrors,
+    onRemoveCartline, onUpdateRingSize, onReplaceCartline, onCheckout
+}) => {
 
     return (
         <>
@@ -10,6 +12,9 @@ const MainCartSection = ({ cartLineArr, onRemoveCartline }) => {
                     <CartLinesList
                         cartLineArr={cartLineArr}
                         onRemoveCartline={onRemoveCartline}
+                        onUpdateRingSize={onUpdateRingSize}
+                        onReplaceCartline={onReplaceCartline}
+                        checkoutErrors={checkoutErrors}
                     />
                 </div>
 
@@ -17,6 +22,7 @@ const MainCartSection = ({ cartLineArr, onRemoveCartline }) => {
                     <SummarySection
                         key={cartLineArr}
                         cartLineArr={cartLineArr}
+                        onCheckout={onCheckout}
                     />
                 </div>
 

@@ -4,7 +4,7 @@ import necklaceSvg from 'src/features/Order/assets/necklaceSvg.svg';
 import { SingleAvailableLine, SingleUnavailableLine } from 'src/features/Order/components/index';
 
 
-const SingleLineItem = ({ cartLine, onRemoveCartline }) => {
+const SingleLineItem = ({ cartLine, onRemoveCartline, onReplaceCartline, checkoutErrors }) => {
 
     const handleReplace = () => {
         // Remove first 
@@ -17,11 +17,14 @@ const SingleLineItem = ({ cartLine, onRemoveCartline }) => {
                 <SingleAvailableLine
                     cartLine={cartLine}
                     onRemoveCartline={onRemoveCartline}
+                    checkoutErrors={checkoutErrors}
                 />
             ) : (
                 <SingleUnavailableLine
                     cartLine={cartLine}
                     onRemoveCartline={onRemoveCartline}
+                    onReplaceCartline={onReplaceCartline}
+                    checkoutErrors={checkoutErrors}
                 />
             )}
         </>

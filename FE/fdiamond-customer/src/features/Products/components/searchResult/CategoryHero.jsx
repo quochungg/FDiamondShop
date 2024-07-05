@@ -1,4 +1,3 @@
-//check thua thieu s
 
 const CategoryHero = ({ categoryInfo }) => {
     // console.log('CategoryInfo renders')

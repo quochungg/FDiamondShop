@@ -3,6 +3,7 @@ import { GIAModal } from "../index";
 
 const ImageCarousel = ({ product }) => {
     const [activeImage, setActiveImage] = useState(product.productImages[0].imageUrl)
+
     const [open, setOpen] = useState(false);
 
     const handleClose = () => {

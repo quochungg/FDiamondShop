@@ -1,8 +1,8 @@
 import { SearchResultPage } from '../index'
 import { useParams } from "react-router-dom";
 
-const CategoryParent = () => {
-    // console.log('CategoryParent renders')
+const CategoryWrapper = () => {
+    // console.log('CategoryWrapper renders')
     const { category } = useParams();
 
     return (
@@ -12,4 +12,4 @@ const CategoryParent = () => {
     )
 };
 
-export default CategoryParent;
+export default CategoryWrapper;

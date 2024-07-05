@@ -4,7 +4,7 @@ import chevron from "../../../../assets/chevron.svg";
 import { useState } from "react";
 
 
-const DetailSection = ({ product, isAppendable, isDiamondInCart, setHasHandleAppend }) => {
+const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelectionBar }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [errorSize, setErrorSize] = useState(false)
@@ -13,7 +13,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setHasHandleApp
 
 
     const handleAddToCart = async () => {
-        const addedItemArr = [
+        const addedSingleItem = [
             {
                 productId: product.productId,
                 ringSize: selectedSize
@@ -24,14 +24,12 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setHasHandleApp
             state: {
                 ...location.state,
                 previousUrl: location.pathname,
-                addedItemArr: addedItemArr
+                addedSingleItem: addedSingleItem
             }
         });
     }
 
     const handleAppend = async () => {
-        //if there are two products in selection bar, don't direct. Append tai cho
-        //else if, there is one, direct to diamond/or ring
 
         //check if selectedSize != null if product is Ring
         if (product.categoryName === 'Engagement Ring') {
@@ -43,24 +41,25 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setHasHandleApp
             }
         }
 
-
         const selectionBar = JSON.parse(localStorage.getItem('selectionBar') || '{}');
 
         //save appended product to local storage
         if (product.categoryName === 'Engagement Ring') {
             const engagementRing = {
-                item: product,
+                productId: product.productId,
                 size: selectedSize
             }
             selectionBar.engagementRing = engagementRing;
-            // selectionBar.engagementRing.size = selectedSize;
             localStorage.setItem('selectionBar', JSON.stringify(selectionBar))
         } else {
-            selectionBar.diamond = product;
+            const diamond = {
+                productId: product.productId
+            }
+            selectionBar.diamond = diamond;
             localStorage.setItem('selectionBar', JSON.stringify(selectionBar))
         }
 
-        //direct to diamond or ring or none
+        //Direct to Diamond SRP or Ring SRP or None
         if (selectionBar.engagementRing && !selectionBar.diamond) {
             //direct to diamond
             navigate('/product/diamond')
@@ -69,12 +68,10 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setHasHandleApp
             //direct to ring
             navigate('/product/engagement ring')
         }
-        else {
-            //won't direct, just append to selection bar
 
-        }
+        window.scrollTo(0, 0)
 
-        setHasHandleAppend(true);
+        setResetSelectionBar(prev => !prev);
     }
 
 
@@ -219,7 +216,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setHasHandleApp
                             (
                                 <Link to='/cart' className="flex-1">
                                     <p className="bg-blue-950 text-white text-center py-4 text-[18px] hover:bg-[#34427b] hover:duration-200 rounded-sm">
-                                        GO TO CART
+                                        EXISTING IN CART
                                     </p>
                                 </Link>
                             ) : (

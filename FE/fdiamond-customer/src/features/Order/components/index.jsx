@@ -1,5 +1,5 @@
+export { default as EmptyCart } from './Cart/EmptyCart';
 export { default as MainCartSection } from './Cart/MainCartSection';
-
 export { default as CartLinesList } from './Cart/CartLineList/CartLinesList';
 
 export { default as SingleLine } from './Cart/CartLineList/SingleLine/SingleLine';
@@ -12,4 +12,4 @@ export { default as AttachmentUnavailableLine } from './Cart/CartLineList/Attach
 
 export { default as SummarySection } from './Cart/SummarySection/SummarySection';
 
-export { default as EmptyCart } from './Cart/EmptyCart';
+export { default as ErrorCheckoutModal } from './Cart/ErrorCheckoutModal';

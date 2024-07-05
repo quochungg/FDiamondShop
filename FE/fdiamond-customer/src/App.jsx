@@ -11,10 +11,14 @@ import { LoadingSpinner } from './components/index';
 
 function App() {
 
-    const ProductDetailsPage = React.lazy(() => import("./features/Products/pages/ProductDetailsPage"));
-    const CategoryParent = React.lazy(() => import("./features/Products/pages/CategoryParent"));
-    const CartPage = React.lazy(() => import("./features/Order/pages/CartPage"));
+    const CategoryWrapper = React.lazy(() => import("./features/Products/wrapper/CategoryWrapper"));
+    const ProductDetailsWrapper = React.lazy(() => import("./features/Products/wrapper/ProductDetailsWrapper"));
+
     const AccountDetailsPage = React.lazy(() => import("./features/Authentication/pages/AccountDetailsPage"));
+    const CartPage = React.lazy(() => import("./features/Order/pages/CartPage"));
+    const CheckoutPage = React.lazy(() => import("./features/Order/pages/CheckoutPage"));
+
+
 
     return (
         <>
@@ -25,14 +29,15 @@ function App() {
 
                         <Route path="/product">
                             <Route index element={<Navigate to="/product/diamond" replace />} />
-                            <Route path=":category" element={<CategoryParent />} />
-                            <Route path="product-details/:productId" element={<ProductDetailsPage />} />
+                            <Route path=":category" element={<CategoryWrapper />} />
+                            <Route path="product-details/:productId" element={<ProductDetailsWrapper />} />
                         </Route>
                         <Route path='/product-not-found' element={<ProductNotFound />} />
                         <Route />
 
                         <Route element={<ProtectedRoute />} >
                             <Route path='/cart' element={<CartPage />} />
+                            <Route path='/checkout' element={<CheckoutPage />} />
                             <Route path='/account-details' element={<AccountDetailsPage />} />
                         </Route>
 
