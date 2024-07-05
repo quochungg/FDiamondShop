@@ -27,6 +27,7 @@ namespace FDiamondShop.API
 
             CreateMap<CartLine,CartLineDTO>().ForMember(cl=>cl.CartLineItems,opt=>opt.Ignore()).ReverseMap();
             CreateMap<CartLineItem,CartLineItemDTO>().ForMember(cli => cli.Product, opt=>opt.Ignore()).ReverseMap();
+            CreateMap<CartLineItem,CartLineItemCreateDTO>().ReverseMap();
 
             CreateMap<DiscountCode, DiscountCodeCreateDTO>().ReverseMap();
             CreateMap<DiscountCode, DiscountCodeUpdateDTO>().ReverseMap();

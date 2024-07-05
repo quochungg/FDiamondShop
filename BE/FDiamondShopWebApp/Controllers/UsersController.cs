@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using System.Text.RegularExpressions;
 
 
 namespace FDiamondShop.API.Controllers
@@ -121,7 +122,16 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] AccountUpdateDTO model)
         {
+            const string Pattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$";
             var currentUser = await _userManager.FindByEmailAsync(model.UserName);
+            if(currentUser == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User not found");
+                return NotFound(_response);
+            }
+            
             if (!ModelState.IsValid)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -129,16 +139,44 @@ namespace FDiamondShop.API.Controllers
                 _response.Result = ModelState;
                 return BadRequest(_response);
             }
-            if (!string.IsNullOrEmpty(model.NewPassword))
+            if(model.Password != null)
             {
-
-                if (model.NewPassword != model.ConfimPassword)
+                if(! await _userManager.CheckPasswordAsync(currentUser, model.Password))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("New password and confirmation password do not match.");
+                    _response.ErrorMessages.Add("Password is incorrect");
                     return BadRequest(_response);
-
+                }
+                if(model.NewPassword != null && !Regex.IsMatch(model.NewPassword, Pattern))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Password must be at least 6 characters  and contain at least 1 uppercase letter, 1 number, and 1 special character.");
+                    return BadRequest(_response);
+                }
+                if(model.NewPassword == model.Password)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("New password must be different from the old password");
+                    return BadRequest(_response);
+                }
+                if ( model.NewPassword != model.ConfirmPassword)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Password and Confirm Password do not match");
+                    return BadRequest(_response);
+                }
+            }else
+            {
+                if(model.NewPassword != null || model.ConfirmPassword != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Please enter your current password");
+                    return BadRequest(_response);
                 }
             }
             var user = await _unitOfWork.UserRepository.Update(model);
@@ -174,18 +212,16 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("{username}", Name = "searchuserbyusername")]
+        [HttpGet(Name = "searchuserbyusername")]
         //[Authorize("admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> SearchUserByUserName(string username)
+        public async Task<ActionResult<APIResponse>> SearchUserByUserName([FromQuery]string userId)
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetUserByUsername(username);
-
-                var returnDTO = _mapper.Map<UserDTO>(user);
+                var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId, tracked: false);
                 
                 if (user == null)
                 {
@@ -194,6 +230,11 @@ namespace FDiamondShop.API.Controllers
                     _response.ErrorMessages = new List<string> { $"User was not found." };
                     return NotFound(_response);
                 }
+
+                var returnDTO = _mapper.Map<UserDTO>(user);
+
+                if (user.PasswordHash == null) returnDTO.IsGoogleAccount = true;
+
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = returnDTO;
                 return Ok(_response);

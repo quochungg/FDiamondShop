@@ -15,6 +15,7 @@ export const CategoriesPage = lazy(() => import('src/pages/category'));
 export const NewProductPage = lazy(() => import('src/pages/newProduct'));
 export const EditProductPage = lazy(() => import('src/pages/EditProduct'));
 export const VoucherPage = lazy(() => import('src/pages/voucher'));
+export const AccountProfilePage = lazy(() => import('src/pages/profile'));
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +37,14 @@ export default function Router() {
             </PrivateRoute>
           ),
           index: true,
+        },
+        {
+          path: '/profile/:userId',
+          element: (
+            <PrivateRoute>
+              <AccountProfilePage />
+            </PrivateRoute>
+          ),
         },
         {
           path: 'user',

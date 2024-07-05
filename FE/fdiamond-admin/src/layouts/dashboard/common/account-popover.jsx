@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,35 +10,33 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { account } from 'src/_mock/account';
-
-// ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
-];
+import { AccountContext } from 'src/_mock/AccountContext';
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
 
+  const { account } = useContext(AccountContext);
+
   const navigate = useNavigate();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
+
+  const MENU_OPTIONS = [
+    {
+      label: 'Home',
+      icon: 'eva:home-fill',
+      linkTo: '/',
+    },
+    {
+      label: 'Profile',
+      icon: 'eva:person-fill',
+      linkTo: `/profile/${account.UserID}`,
+    },
+  ];
 
   const handleClose = () => {
     setOpen(null);
@@ -87,7 +85,7 @@ export default function AccountPopover() {
             p: 0,
             mt: 1,
             ml: 0.75,
-            width: 200,
+            width: 250,
           },
         }}
       >
@@ -103,7 +101,12 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
+          <MenuItem
+            key={option.label}
+            to={option.linkTo}
+            component={RouterLink}
+            onClick={handleClose}
+          >
             {option.label}
           </MenuItem>
         ))}

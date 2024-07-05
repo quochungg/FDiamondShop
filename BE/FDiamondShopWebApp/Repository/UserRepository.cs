@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Google.Apis.Auth;
 using Google.Apis.Util;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 
 namespace FDiamondShop.API.Repository
@@ -160,31 +161,51 @@ namespace FDiamondShop.API.Repository
 
         public async Task<UserDTO> Update(AccountUpdateDTO accountUpdateDTO)
         {
+            const string Pattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$";
+            const string DefaultErrorMessage = "Password must be at least 6 characters and contain at least 1 uppercase letter, 1 number, and 1 special character.";
             var user = await _userManager.FindByEmailAsync(accountUpdateDTO.UserName);
             if (user == null)
             {
                 throw new Exception("USER NOT FOUND");
             }
             user.FirstName = accountUpdateDTO.FirstName;
-            user.LastName = accountUpdateDTO.LastName; 
+            user.LastName = accountUpdateDTO.LastName;
             user.Address = accountUpdateDTO.Address;
             user.PhoneNumber = accountUpdateDTO.PhoneNumber;
-            
-            if (!string.IsNullOrEmpty(accountUpdateDTO.NewPassword))
+            if (accountUpdateDTO.Password != null)
             {
-
-                if (!await _userManager.CheckPasswordAsync(user, accountUpdateDTO.Password))
+                if (!await _userManager.CheckPasswordAsync(user, accountUpdateDTO.Password) && accountUpdateDTO.Password != null)
                 {
                     throw new Exception("Current password is incorrect.");
                 }
 
-
-                if (accountUpdateDTO.NewPassword != accountUpdateDTO.ConfimPassword)
+                if (accountUpdateDTO.NewPassword != null && !Regex.IsMatch(accountUpdateDTO.NewPassword, Pattern))
+                {
+                    throw new Exception(DefaultErrorMessage);
+                }
+                if (accountUpdateDTO.NewPassword == accountUpdateDTO.Password)
+                {
+                    throw new Exception("New password and current password are the same.");
+                }
+                if (accountUpdateDTO.NewPassword != accountUpdateDTO.ConfirmPassword)
                 {
                     throw new Exception("New password and confirmation password do not match.");
                 }
+                var passwordChange = await _userManager.ChangePasswordAsync(user, accountUpdateDTO.Password, accountUpdateDTO.NewPassword);
+            } 
+            else 
+            {
+                if(accountUpdateDTO.NewPassword !=null || accountUpdateDTO.ConfirmPassword != null)
+                {
+                    throw new Exception("Current password is required");
+                }
+                var currentPassword = await _userManager.ChangePasswordAsync(user, user.PasswordHash, user.PasswordHash);
             }
-            var passwordChange = await _userManager.ChangePasswordAsync(user, accountUpdateDTO.Password, accountUpdateDTO.NewPassword);
+             
+                
+            
+             
+            
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -200,6 +221,7 @@ namespace FDiamondShop.API.Repository
                 UserName= updatedUser.UserName,
                 Address = updatedUser.Address,
                 PhoneNumber = updatedUser.PhoneNumber,
+            
             };
 
             return userDTO;
