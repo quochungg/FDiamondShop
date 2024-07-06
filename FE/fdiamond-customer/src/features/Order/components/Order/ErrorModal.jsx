@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import invalidShoppingCartSvg from 'src/features/Order/assets/invalidShoppingCartSvg.svg';
 
-const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
+const ErrorModal = ({ checkoutErrors, closeModal }) => {
+
+    const navigate = useNavigate();
 
     useEffect(() => {
+
         document.body.style.overflow = 'hidden';
 
         return () => {
@@ -55,9 +58,9 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
                         <button
                             className='text-lg uppercase font-[500] text-white bg-blue-950 hover:bg-[#34427b] transition-colors duration-200 rounded-md
                             w-full text-center py-2'
-                            onClick={onClose}
+                            onClick={closeModal}
                         >
-                            Ok
+                            BACK TO CART
                         </button>
                     </div>
 
@@ -73,4 +76,4 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
 };
 
 
-export default ErrorCheckoutModal;
+export default ErrorModal;

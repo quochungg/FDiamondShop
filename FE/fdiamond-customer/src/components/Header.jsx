@@ -37,7 +37,7 @@ const Header = () => {
 
                 <div className="flex-1 flex gap-5 items-center">
                     <Link
-                        to=''
+                        to="tel:1800545457"
                         className="flex items-center gap-2"
                     >
                         <span><PiHeadphones size={iconSize} /></span>

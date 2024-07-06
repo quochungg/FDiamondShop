@@ -6,11 +6,6 @@ import { SingleAvailableLine, SingleUnavailableLine } from 'src/features/Order/c
 
 const SingleLineItem = ({ cartLine, onRemoveCartline, onReplaceCartline, checkoutErrors }) => {
 
-    const handleReplace = () => {
-        // Remove first 
-        // Replace later
-    }
-
     return (
         <>
             {cartLine.cartLineItems[0].product.isVisible ? (

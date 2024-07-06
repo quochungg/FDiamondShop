@@ -17,6 +17,9 @@ function App() {
     const AccountDetailsPage = React.lazy(() => import("./features/Authentication/pages/AccountDetailsPage"));
     const CartPage = React.lazy(() => import("./features/Order/pages/CartPage"));
     const CheckoutPage = React.lazy(() => import("./features/Order/pages/CheckoutPage"));
+    const OrderHistoryPage = React.lazy(() => import("./features/Order/pages/OrderHistoryPage"));
+    const OrderDetailsPage = React.lazy(() => import("./features/Order/pages/OrderDetailsPage"));
+    const SuccessfulPaymentPage = React.lazy(() => import("./features/Order/pages/SuccessfulPaymentPage"));
 
 
 
@@ -39,6 +42,9 @@ function App() {
                             <Route path='/cart' element={<CartPage />} />
                             <Route path='/checkout' element={<CheckoutPage />} />
                             <Route path='/account-details' element={<AccountDetailsPage />} />
+                            <Route path='/order-history' element={<OrderHistoryPage />} />
+                            <Route path='/order-details/:orderId' element={<OrderDetailsPage />} />
+                            <Route path='/successful-payment' element={<SuccessfulPaymentPage />} />
                         </Route>
 
                         <Route element={<GuestRoute />} >

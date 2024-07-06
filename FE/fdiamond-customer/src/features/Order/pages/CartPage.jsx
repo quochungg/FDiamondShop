@@ -1,8 +1,7 @@
 import AppLayout from "src/layout/AppLayout";
-import { getAllCartLines, removeCartLine, updateRingSize, checkValidAllCartLines } from "../api/APIs";
-
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getAllCartLines, removeCartLine, updateRingSize, checkValidAllCartLines } from "../api/APIs";
 import { addToCartLine } from "src/features/Order/api/APIs";
 import { EmptyCart, MainCartSection, ErrorCheckoutModal } from "../components/index";
 import { LoadingSpinner } from "src/components";
@@ -137,8 +136,18 @@ const CartPage = () => {
 
     }
 
+
     const [checkoutErrors, setCheckoutErrors] = useState({});
 
+    const [showModal, setShowModal] = useState(false);
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
     const handleCheckout = async (promoCode) => {
         // CART LINES : Check if all cart lines are valid. Invalid if there are DUPLICATED or UNAVAILABLE cart lines
@@ -193,22 +202,10 @@ const CartPage = () => {
         }
     }
 
-
-    const [showModal, setShowModal] = useState(false);
-
-    const openModal = () => {
-        setShowModal(true);
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-    };
-
-
-
     if (cartLineArr === null) {
         return <LoadingSpinner />
     }
+
 
     return (
         <>
@@ -217,11 +214,12 @@ const CartPage = () => {
 
                 <AppLayout>
                     <>
-                        <ErrorCheckoutModal
-                            show={showModal}
-                            onClose={closeModal}
-                            checkoutErrors={checkoutErrors}
-                        />
+                        {showModal &&
+                            <ErrorCheckoutModal
+                                onClose={closeModal}
+                                checkoutErrors={checkoutErrors}
+                            />
+                        }
                     </>
 
                     {cartLineArr.length > 0 ?

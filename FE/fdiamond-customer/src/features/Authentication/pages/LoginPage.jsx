@@ -88,7 +88,6 @@ const LoginPage = () => {
 
     const loginGoogle = useGoogleLogin({
         onSuccess: async googleResponse => {
-            console.log(googleResponse);
             loginWithGoogle(googleResponse.access_token)
         },
     });
