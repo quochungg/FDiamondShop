@@ -111,7 +111,22 @@ namespace FDiamondShop.API.Repository
             _db.Orders.Update(order);
         }
 
-        
+        public async Task<List<OrderDTO>> FilterOrder(string userId, string? status, string? orderBy)
+        {
+            var orders = await _db.Orders.Where(x => x.UserId == userId).ToListAsync();
+
+            if (status != null)
+            {
+                orders = orders.Where(x => x.Status == status).ToList();
+            }
+            orders = orders.OrderByDescending(x => x.OrderDate).ToList();
+            var result = new List<OrderDTO>();
+            foreach(var order in orders)
+            {
+                result.Add(await GetOrderDetails(order.OrderId));
+            }            
+            return result;
+        }
     }
 
 }
