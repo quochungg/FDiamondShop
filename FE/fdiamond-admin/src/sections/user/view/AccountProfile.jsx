@@ -232,6 +232,7 @@ export default function AccountProfile() {
                     onChange={handleInputChange}
                     label="First Name"
                     name="firstName"
+                    required
                   />
                   {errors.name && (
                     <Typography variant="caption" color="error">
@@ -248,6 +249,7 @@ export default function AccountProfile() {
                     onChange={handleInputChange}
                     label="Last Name"
                     name="lastName"
+                    required
                   />
                 </FormControl>
               </Grid>
@@ -259,6 +261,7 @@ export default function AccountProfile() {
                     onChange={handleInputChange}
                     label="Phone Number"
                     name="phoneNumber"
+                    required
                   />
                   {errors.phoneNumber && (
                     <Typography variant="caption" color="error">
@@ -275,6 +278,7 @@ export default function AccountProfile() {
                     onChange={handleInputChange}
                     label="Address"
                     name="address"
+                    required
                   />
                 </FormControl>
               </Grid>
@@ -293,6 +297,7 @@ export default function AccountProfile() {
                         type={showPassword ? 'text' : 'password'}
                         value={formData.password}
                         onChange={handleInputChange}
+                        required
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -315,6 +320,7 @@ export default function AccountProfile() {
                         type={showNewPassword ? 'text' : 'password'}
                         value={formData.newPassword}
                         onChange={handleInputChange}
+                        required
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -345,6 +351,7 @@ export default function AccountProfile() {
                         type={showConfirmPassword ? 'text' : 'password'}
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
+                        required
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
