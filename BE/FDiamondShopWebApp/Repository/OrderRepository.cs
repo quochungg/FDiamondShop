@@ -41,23 +41,7 @@ namespace FDiamondShop.API.Repository
             List<OrderDTO> orderDTOs = new List<OrderDTO>();
             foreach (var model in Orders)
             {
-                model.CartLines = await _db.CartLines.Include(c => c.CartLineItems).ThenInclude(cli => cli.Product).Where(cl => cl.OrderId == model.OrderId).ToListAsync();
-                var payment = await _db.Payments.FirstOrDefaultAsync(x => x.PaymentId == model.PaymentId);
-                var paymentDTO = _mapper.Map<PaymentDTO>(payment);
-                OrderDTO orderDTO = new OrderDTO()
-                {
-                    OrderId= model.OrderId,
-                    BasePrice = model.BasePrice,
-                    OrderDate = model.OrderDate,
-                    DiscountCodeId = model.DiscountCodeId,
-                    TotalPrice = model.TotalPrice,
-                    PaymentInfo = paymentDTO,
-                    CartLines = _mapper.Map<List<CartLineDTO>>(model.CartLines)
-                };
-                foreach(var item in orderDTO.CartLines)
-                {
-                    item.CartLineItems = _mapper.Map<List<CartLineItemDTO>>(_db.CartLineItems.Where(cli => cli.CartLineId == item.CartLineId).ToList());
-                }
+                var orderDTO = await GetOrderDetails(model.OrderId);
                 orderDTOs.Add(orderDTO);
             }
             return orderDTOs;
@@ -65,7 +49,7 @@ namespace FDiamondShop.API.Repository
 
         public async Task<OrderDTO> GetOrderDetails(int orderId)
         {
-            var order = await _db.Orders.Include(o => o.CartLines).ThenInclude(c => c.CartLineItems).ThenInclude(cli => cli.Product).FirstOrDefaultAsync(x => x.OrderId == orderId);
+            var order = await _db.Orders.Include(o => o.CartLines).ThenInclude(c => c.CartLineItems).ThenInclude(cli => cli.Product).Include(o => o.DiscountCode).FirstOrDefaultAsync(x => x.OrderId == orderId);
 
             if (order == null)
             {
@@ -73,12 +57,12 @@ namespace FDiamondShop.API.Repository
             }
 
             var cartlineDTOs= new List<CartLineDTO>();
-            var cartlines = _db.CartLines.Include(c => c.CartLineItems).ThenInclude(cli => cli.Product).Where(x => x.OrderId == orderId).ToList();
+            var cartlines = order.CartLines.ToList();
             foreach(var cartline in cartlines)
             {
                 var cartlineDTO = _mapper.Map<CartLineDTO>(cartline);
                 cartlineDTO.CartLineItems = new List<CartLineItemDTO>();
-                var cartlineItems = _db.CartLineItems.Include(cli => cli.Product).Where(x => x.CartLineId == cartline.CartLineId).ToList();
+                var cartlineItems = cartline.CartLineItems.Where(x => x.CartLineId == cartline.CartLineId).ToList();
                 foreach (var cartlineItem in cartlineItems)
                 {
                     var cartlineItemDTO = _mapper.Map<CartLineItemDTO>(cartlineItem);
@@ -89,16 +73,18 @@ namespace FDiamondShop.API.Repository
             }
             var payment = _db.Payments.FirstOrDefault(x => x.PaymentId == order.PaymentId);
             var paymentDTO = _mapper.Map<PaymentDTO>(payment);
+            var discountCode = _mapper.Map<DiscountCodeDTO>(order.DiscountCode);
             OrderDTO model = new OrderDTO()
             {
-                OrderId = order.OrderId,
-                
+                OrderId = order.OrderId,               
                 OrderDate = order.OrderDate,
                 PaymentInfo = paymentDTO,
                 BasePrice = order.BasePrice,
                 TotalPrice = order.TotalPrice,
                 DiscountCodeId = order.DiscountCodeId,
-                CartLines = cartlineDTOs
+                Status = order.Status,
+                CartLines = cartlineDTOs,
+                DiscountCode = discountCode
             };
              
             
