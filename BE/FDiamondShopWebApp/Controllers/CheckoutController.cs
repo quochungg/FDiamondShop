@@ -222,10 +222,12 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
           
             await _unitOfWork.SaveAsync();
+
             var emailTo = user.Email;
+            
             await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
 
-            return Ok(response);
+            return Redirect("localhost:5173/successful-payment");
         }
 
     }
