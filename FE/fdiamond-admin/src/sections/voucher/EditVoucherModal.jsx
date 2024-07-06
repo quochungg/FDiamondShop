@@ -141,6 +141,9 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
       }
     } catch (error) {
       console.error('Error updating voucher:', error);
+      setErrors({
+        serverError: error.response.data,
+      });
       setErrSnackbar(true);
     }
   };
@@ -153,10 +156,12 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          <AlertTitle>Error</AlertTitle>
-          Discount code is duplicated!
-        </Alert>
+        {errors.serverError && (
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+            <AlertTitle>Error</AlertTitle>
+            {errors.serverError}
+          </Alert>
+        )}
       </Snackbar>
       <Modal
         open={open}
@@ -187,6 +192,7 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
               name="discountCodeName"
               value={localVoucher.discountCodeName}
               onChange={(e) => handleChange('discountCodeName', e.target.value)}
+              required
               sx={{ mb: 2 }}
             />
             <TextField
@@ -196,6 +202,7 @@ export default function EditVoucherModal({ open, handleClose, voucher, setVouche
               type="number"
               value={localVoucher.discountPercent}
               onChange={(e) => handleChange('discountPercent', e.target.value)}
+              required
               sx={{ mb: 2 }}
             />
             {errors.discountPercent && (

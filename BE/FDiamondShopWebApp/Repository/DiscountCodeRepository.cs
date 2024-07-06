@@ -17,9 +17,13 @@ namespace FDiamondShop.API.Repository
         {
             return _db.DiscountCodes.SingleOrDefault (dc=>dc.DiscountCodeName.ToLower() == createDTO.DiscountName.ToLower());
         }
-        public DiscountCode CheckDuplicate(string code)
+        public DiscountCode CheckDuplicate(string code, int id)
         {
-            return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName.Equals(code));
+            if(id == 0)
+            {
+                return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName.Equals(code));
+            }
+            return _db.DiscountCodes.SingleOrDefault(dc => dc.DiscountCodeName.Equals(code) && dc.DiscountId != id);
 
 
         }

@@ -160,7 +160,7 @@ namespace FDiamondShop.API.Controllers
                     case "paypal":
                          paymentInfo.Amount=orderDTO.TotalPrice;
 
-                        var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger/"), "/api/checkout/PayPal");
+                        var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                         if (paymentResponsePaypal.IsSuccessStatusCode)
@@ -210,7 +210,7 @@ namespace FDiamondShop.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "User not found" };
                 return NotFound(_response);
-
+ 
             }
 
             var orders = await _unitOfWork.OrderRepository.GetAllOrderAsync(user.Id);
@@ -274,5 +274,25 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             return Ok(_response);
         }
+        
+        [HttpGet("FilterOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> FilterOrder(string userId, string? status, string? orderBy)
+        {
+            var orders = await _unitOfWork.OrderRepository.FilterOrder(userId, status, orderBy);
+            if (orders == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("No Order Found");
+                return Ok(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
+        }
+        
     }
 }

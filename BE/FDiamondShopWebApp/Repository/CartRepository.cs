@@ -62,12 +62,21 @@ namespace FDiamondShop.API.Repository
             }
 
             ValidCartLineDTO validCartLineDTO = new();
-            Dictionary<int,int> idList = new Dictionary<int, int>();
-
+            Dictionary<int, int> idList = new Dictionary<int, int>();
+            Dictionary<int, int> productStock = new Dictionary<int, int>();
             foreach (var cartline in cartlines)
             {
                 foreach (var cartItem in cartline.CartLineItems)
                 {
+                    if (!productStock.ContainsKey(cartItem.ProductId))
+                    {
+                        productStock.Add(cartItem.ProductId, 1);
+                    }
+                    else
+                    {
+                        productStock[cartItem.ProductId] += 1;
+                    }
+                    //invisible product
                     if (cartItem.Product.Quantity == 0 || !cartItem.Product.IsVisible)
                     {
                         validCartLineDTO.IsValid = false;
@@ -76,18 +85,35 @@ namespace FDiamondShop.API.Repository
                             validCartLineDTO.InvisibleCartLine.Add(cartItem.CartLineId);
                         }
                     }
+                    //duplicate product
                     if (!cartItem.Product.SubCategory.Category.CategoryName.Equals("Diamond"))
                     {
                         continue;
                     }
                     if (!idList.ContainsKey(cartItem.ProductId))
                     {
-                        idList.Add(cartItem.Product.ProductId, 1);                       
+                        idList.Add(cartItem.Product.ProductId, 1);
                     }
                     else
                     {
                         idList[cartItem.Product.ProductId] += 1;
-                    }                   
+                    }
+                    ////out of stock product
+                    //var product = await _db.Products.FindAsync(cartItem.ProductId);
+
+                    //var productInCartQuantity = cartline.CartLineItems.Count(cli => cli.ProductId == cartItem.ProductId);
+                    //{
+                    //    validCartLineDTO.IsValid = false;
+
+                    //        var outOfStock = new OutOfStockProductDTO()
+                    //        {
+                    //            ProductId = cartItem.ProductId,
+                    //            ProductName = cartItem.Product.ProductName,
+                    //            CurrentQuantity = product.Quantity
+                    //        };
+                    //        validCartLineDTO.OutOfStockCartLine.Add(outOfStock);
+
+                    //}
                 }
             }
             List<int> cartLineDuplicate = new List<int>();
@@ -96,7 +122,7 @@ namespace FDiamondShop.API.Repository
                 if (pair.Value > 1)
                 {
                     validCartLineDTO.IsValid = false;
-                    
+
                     cartLineDuplicate.AddRange(_db.CartLines.Include(cl => cl.CartLineItems)
                         .Where(cl => cl.UserId == userId && cl.IsOrdered == false && cl.CartLineItems.Any(cli => cli.ProductId == pair.Key))
                         .Select(cl => cl.CartLineId).ToList());
@@ -105,9 +131,26 @@ namespace FDiamondShop.API.Repository
 
             validCartLineDTO.DuplicateCartLine = cartLineDuplicate;
 
+            foreach (var carline in cartlines)
+            {
+                foreach (var cartItem in carline.CartLineItems)
+                {
+                    if (productStock[cartItem.ProductId] > cartItem.Product.Quantity)
+                    {
+                        validCartLineDTO.IsValid = false;
+                        var outOfStock = new OutOfStockProductDTO()
+                        {
+                            ProductId = cartItem.ProductId,
+                            ProductName = cartItem.Product.ProductName,
+                            CurrentQuantity = cartItem.Product.Quantity,
+                            CartLineId = cartItem.CartLineId
+                        };
+                        validCartLineDTO.OutOfStockCartLines.Add(outOfStock);
+                    }
+                }            
+            }
             return validCartLineDTO;
         }
-
         public async Task UpdateRingSize(CartUpdateDTO updateDTO)
         {
             var cartLineItem = await _db.CartLineItems.FirstOrDefaultAsync(cli => cli.CartLineId.Equals(updateDTO.CartLineId) && cli.ProductId == updateDTO.ProductId);

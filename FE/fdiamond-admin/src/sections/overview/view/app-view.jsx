@@ -1,8 +1,11 @@
 // import { faker } from '@faker-js/faker';
+import { useLocation } from 'react-router';
+import { useState, useEffect } from 'react';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import { Alert, Snackbar, AlertTitle } from '@mui/material';
 
 // import Iconify from 'src/components/iconify';
 
@@ -12,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
+
 // import AppTrafficBySite from '../app-traffic-by-site';
 // import AppCurrentSubject from '../app-current-subject';
 // import AppConversionRates from '../app-conversion-rates';
@@ -19,8 +23,34 @@ import AppWidgetSummary from '../app-widget-summary';
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.showSnackbar) {
+      setOpenSnackbar(true);
+      // Clear the state to avoid showing Snackbar again if the user navigates back to this page
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
   return (
     <Container maxWidth="xl">
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          <AlertTitle>Success</AlertTitle>
+          Update Account Profile Successfully
+        </Alert>
+      </Snackbar>
       <Typography variant="h4" sx={{ mb: 5 }}>
         Hi, Welcome back 👋
       </Typography>

@@ -90,7 +90,10 @@ namespace FDiamondShop.API.Controllers
 
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
-            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
+            var orderDTO = _mapper.Map<OrderDTO>(order);
+            orderDTO.CartLines = _mapper.Map<List<CartLineDTO>>(order.CartLines);
+
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo, orderDTO, payment);
             return Ok(response);
         }
         [HttpPost("momo")]
@@ -151,7 +154,10 @@ namespace FDiamondShop.API.Controllers
            
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
-            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
+            var orderDTO = _mapper.Map<OrderDTO>(order);
+            orderDTO.CartLines = _mapper.Map<List<CartLineDTO>>(order.CartLines);
+
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo, orderDTO, payment);
             return Ok(response);
         }
         [HttpPost("PayPal")]
@@ -222,10 +228,14 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
           
             await _unitOfWork.SaveAsync();
-            var emailTo = user.Email;
-            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo);
 
-            return Ok(response);
+            var emailTo = user.Email;
+            var orderDTO = _mapper.Map<OrderDTO>(order);
+            orderDTO.CartLines = _mapper.Map<List<CartLineDTO>>(order.CartLines);
+
+            await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo,orderDTO,payment);
+
+            return Redirect("localhost:5173/successful-payment");
         }
 
     }
