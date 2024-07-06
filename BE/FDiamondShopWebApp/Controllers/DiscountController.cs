@@ -120,7 +120,7 @@ namespace FDiamondShop.API.Controllers
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
                 var discount = _mapper.Map<DiscountCode>(createDTO);
-                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(createDTO.DiscountCodeName);
+                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(createDTO.DiscountCodeName, 0);
 
                 if (recent != null)
                 {
@@ -180,6 +180,11 @@ namespace FDiamondShop.API.Controllers
                 {
                     return BadRequest("Percent must be the postive number");
                 }              
+                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(updateDTO.DiscountCodeName, id);
+                if (recent != null)
+                {
+                    return BadRequest("Dublicate Code is not required");
+                }
                 if (DateTime.Compare(DateTime.Parse(updateDTO.EndDate), DateTime.Parse(updateDTO.StartingDate)) < 0)// ngay end nho hon ngay start
                 {
                     return BadRequest("End date must be in after Starting date");

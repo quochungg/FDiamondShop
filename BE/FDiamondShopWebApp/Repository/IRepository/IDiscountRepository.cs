@@ -6,7 +6,7 @@ namespace FDiamondShop.API.Repository.IRepository
     public interface IDiscountRepository: IRepository <DiscountCode>
     {
         public DiscountCode FindinOrder(OrderCreateDTO createDTO);
-        public DiscountCode CheckDuplicate(string code );
+        public DiscountCode CheckDuplicate(string code, int id);
         public  Task<DiscountReturnDTO> ApplyDiscount(ApplyDiscountDTO applyDiscountDTO);
     }
 }
