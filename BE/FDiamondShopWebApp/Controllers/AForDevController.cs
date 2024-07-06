@@ -74,7 +74,7 @@ namespace FDiamondShop.API.Controllers
                     product.IsDeleted = false;
                 }
             }
-            await _db.SaveChangesAsync();
+            await _unitOfWork.SaveAsync();
             return NoContent();
         }
 
@@ -85,7 +85,7 @@ namespace FDiamondShop.API.Controllers
         {
             var product = await _unitOfWork.ProductRepository.GetAsync(u => u.ProductId == id);
             product.IsVisible = true;
-            await _db.SaveChangesAsync();
+            await _unitOfWork.SaveAsync();
             return NoContent();
         }
         [HttpPut("update-visibility-to-false/{id:int}")]
@@ -95,7 +95,18 @@ namespace FDiamondShop.API.Controllers
         {
             var product = await _unitOfWork.ProductRepository.GetAsync(u => u.ProductId == id);
             product.IsVisible = false;
-            await _db.SaveChangesAsync();
+            await _unitOfWork.SaveAsync();
+            return NoContent();
+        }
+
+        [HttpGet("update-product-quantity/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        //endpoint to update product's quantity
+        public async Task<IActionResult> UpdateProductQuantity(int id, int quantity)
+        {
+            var product = await _unitOfWork.ProductRepository.GetAsync(u => u.ProductId == id);
+            product.Quantity = quantity;
+            await _unitOfWork.SaveAsync();
             return NoContent();
         }
     }
