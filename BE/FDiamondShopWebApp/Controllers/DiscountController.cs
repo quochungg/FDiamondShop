@@ -175,13 +175,7 @@ namespace FDiamondShop.API.Controllers
                 if (discount == null)
                 {
                     return NotFound("DiscountCode not found");
-                }
-                var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(updateDTO.DiscountCodeName);
-
-                if (recent != null)
-                {
-                    return BadRequest("Dublicate Code is not required");
-                }               
+                }      
                 if (updateDTO.DiscountPercent < 0)
                 {
                     return BadRequest("Percent must be the postive number");
