@@ -49,7 +49,7 @@ namespace FDiamondShop.API.Repository
 
         public async Task<OrderDTO> GetOrderDetails(int orderId)
         {
-            var order = await _db.Orders.Include(o => o.CartLines).ThenInclude(c => c.CartLineItems).ThenInclude(cli => cli.Product).Include(o => o.DiscountCode).FirstOrDefaultAsync(x => x.OrderId == orderId);
+            var order = await _db.Orders.Include(o => o.CartLines).ThenInclude(c => c.CartLineItems).ThenInclude(cli => cli.Product).ThenInclude(p =>p.ProductImages).Include(o => o.DiscountCode).FirstOrDefaultAsync(x => x.OrderId == orderId);
 
             if (order == null)
             {
