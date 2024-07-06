@@ -13,7 +13,7 @@ const CheckoutRightSection = ({ cartLineArr, promoCode, onMakePayment }) => {
                 <summary className='w-full h-auto rounded-md border-[1px] bg-white list-none p-10'>
 
                     <div className='flex justify-between items-center border-b-[1px] pb-3'>
-                        <p className='font-[750] text-lg'>10 ITEMS</p>
+                        <p className='font-[750] text-lg'>{cartLineArr.length} ITEMS</p>
                         <Link to='/cart'>
                             <p className='text-gray-500 text-sm hover:text-black hover:decoration-black hover:underline-offset-2 hover:underline'
                             >

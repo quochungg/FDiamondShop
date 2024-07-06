@@ -20,7 +20,7 @@ function App() {
     const OrderHistoryPage = React.lazy(() => import("./features/Order/pages/OrderHistoryPage"));
     const OrderDetailsPage = React.lazy(() => import("./features/Order/pages/OrderDetailsPage"));
     const SuccessfulPaymentPage = React.lazy(() => import("./features/Order/pages/SuccessfulPaymentPage"));
-
+    const ProceedToPaypalPage = React.lazy(() => import("./features/Order/pages/ProceedToPaypalPage"));
 
 
     return (
@@ -45,6 +45,7 @@ function App() {
                             <Route path='/order-history' element={<OrderHistoryPage />} />
                             <Route path='/order-details/:orderId' element={<OrderDetailsPage />} />
                             <Route path='/successful-payment' element={<SuccessfulPaymentPage />} />
+                            <Route path='/proceed-to-paypal' element={<ProceedToPaypalPage />} />
                         </Route>
 
                         <Route element={<GuestRoute />} >

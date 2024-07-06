@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, Link, Navigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { getAllCartLines, checkValidAllCartLines, makeOrder, getPromoCode } from "../api/APIs";
 import { SlArrowLeft } from "react-icons/sl";
 import { CheckoutLeftSection, CheckoutRightSection, ErrorModal } from 'src/features/Order/components/index';
@@ -123,7 +123,8 @@ const CheckoutPage = () => {
             const response = await makeOrder(location.state.promoCode);
             const paymentUrl = response.data.result.paymentUrl;
             if (paymentUrl) {
-                window.location.href = paymentUrl;
+                navigate('/proceed-to-paypal', { state: { paymentUrl: paymentUrl }, replace: true })
+                // window.location.href = paymentUrl;
             }
         }
         else {

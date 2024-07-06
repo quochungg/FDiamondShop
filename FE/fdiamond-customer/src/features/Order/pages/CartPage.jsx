@@ -149,6 +149,7 @@ const CartPage = () => {
         setShowModal(false);
     };
 
+
     const handleCheckout = async (promoCode) => {
         // CART LINES : Check if all cart lines are valid. Invalid if there are DUPLICATED or UNAVAILABLE cart lines
         const response = await checkValidAllCartLines();
@@ -166,9 +167,11 @@ const CartPage = () => {
 
             let errorCartlinesId = [];
             let errorMsg = [];
+            let outOfQuantityProducts = [];
 
             const duplicatedCartLines = response.data.result.duplicateCartLine;
             const unavailableCartLines = response.data.result.invisibleCartLine;
+            const outOfStockCartLines = response.data.result.outOfStockCartLines;
 
             if (duplicatedCartLines.length > 0 && unavailableCartLines.length > 0) {
                 errorCartlinesId = [...duplicatedCartLines, ...unavailableCartLines];
@@ -188,9 +191,27 @@ const CartPage = () => {
                 errorMsg[0] = 'One or more items in your shopping cart has become unavailable.';
                 errorMsg[1] = 'Please replace all unavailable items and continue, or contact Customer Service for assistance.'
             }
+            else if (outOfStockCartLines.length > 0) {
+
+                for (let i = 0; i < outOfStockCartLines.length; i++) {
+
+                    errorCartlinesId.push(outOfStockCartLines[i].cartLineId);
+
+                    const errorProduct = {
+                        productId: outOfStockCartLines[i].productId,
+                        currentQuantity: outOfStockCartLines[i].currentQuantity
+                    }
+                    outOfQuantityProducts.push(errorProduct);
+
+                }
+
+                errorMsg[0] = 'One or more items exceed the available quantity in store.';
+                errorMsg[1] = 'Please reduce the quantity of those items and continue, or contact Customer Service for assistance'
+            }
 
             errorCartlines.errorCartlinesId = errorCartlinesId;
             errorCartlines.errorMsg = errorMsg;
+            errorCartlines.outOfQuantityProducts = outOfQuantityProducts;
 
             setCheckoutErrors(errorCartlines);
 

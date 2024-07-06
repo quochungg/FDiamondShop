@@ -13,6 +13,7 @@ export default {
                 playfair: ["Playfair Display"],
                 lora: ["Lora"],
                 gantari: ["Gantari"],
+                poppins: ["Poppins"],
             },
             boxShadow: {
                 'cartline': 'rgba(27, 27, 27, 0.17) 0px 2px 5px',

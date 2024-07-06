@@ -12,6 +12,8 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
         };
     }, []);
 
+    console.log(checkoutErrors)
+
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 overflow-hidden">
@@ -27,6 +29,53 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
 
                     <div>
                         <p className='text-[1.3rem] font-[550]'>{checkoutErrors.errorMsg[0]}</p>
+
+                        <div className='flex justify-center items-center bg-gray-200 my-3 px-1'>
+                            <ul className='flex flex-col text-start tracking-wide font-[330] '>
+                                <li>
+                                    <p>
+                                        <span className='font-[650]'>PID-5 </span>
+                                        has only
+                                        <span className='font-[650] text-red-700'> 5 </span>
+                                        items left in stock.
+                                    </p>
+                                </li>
+
+
+
+
+
+                                <li>
+                                    <p>
+                                        <span className='font-[650]'>PID-12 </span>
+                                        has only
+                                        <span className='font-[650] text-red-700'> 5 </span>
+                                        items left in stock.
+                                    </p>
+                                </li>
+
+                                <li>
+                                    <p>
+                                        <span className='font-[650]'>PID-125 </span>
+                                        has only
+                                        <span className='font-[650] text-red-700'> 5 </span>
+                                        items left in stock.
+                                    </p>
+                                </li>
+
+                                <li>
+                                    <p>
+                                        <span className='font-[650]'>PID-78 </span>
+                                        has only
+                                        <span className='font-[650] text-red-700'> 15 </span>
+                                        items left in stock.
+                                    </p>
+                                </li>
+
+                            </ul>
+                        </div>
+
+
                         <p className='mt-2 text-base text-gray-500 text-center'>{checkoutErrors.errorMsg[1]}</p>
                     </div>
 
