@@ -59,7 +59,7 @@ const SummarySection = ({ cartLineArr, onCheckout }) => {
         if (promoCodeValue.length > 0) {
             const checkPromoCode = async () => {
                 const response = await getPromoCode(promoCodeValue);
-                if (response.data.result) {
+                if (response.data.result && !response.data.result.isExpried) {
                     setPromoCode(response.data.result);
                     setInvalidPromoCode(false);
                 } else {

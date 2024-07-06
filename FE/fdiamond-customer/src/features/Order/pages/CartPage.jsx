@@ -1,8 +1,7 @@
 import AppLayout from "src/layout/AppLayout";
-import { getAllCartLines, removeCartLine, updateRingSize, checkValidAllCartLines } from "../api/APIs";
-
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getAllCartLines, removeCartLine, updateRingSize, checkValidAllCartLines } from "../api/APIs";
 import { addToCartLine } from "src/features/Order/api/APIs";
 import { EmptyCart, MainCartSection, ErrorCheckoutModal } from "../components/index";
 import { LoadingSpinner } from "src/components";
@@ -137,7 +136,18 @@ const CartPage = () => {
 
     }
 
+
     const [checkoutErrors, setCheckoutErrors] = useState({});
+
+    const [showModal, setShowModal] = useState(false);
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
 
     const handleCheckout = async (promoCode) => {
@@ -157,9 +167,11 @@ const CartPage = () => {
 
             let errorCartlinesId = [];
             let errorMsg = [];
+            let outOfQuantityProducts = [];
 
             const duplicatedCartLines = response.data.result.duplicateCartLine;
             const unavailableCartLines = response.data.result.invisibleCartLine;
+            const outOfStockCartLines = response.data.result.outOfStockCartLines;
 
             if (duplicatedCartLines.length > 0 && unavailableCartLines.length > 0) {
                 errorCartlinesId = [...duplicatedCartLines, ...unavailableCartLines];
@@ -179,9 +191,27 @@ const CartPage = () => {
                 errorMsg[0] = 'One or more items in your shopping cart has become unavailable.';
                 errorMsg[1] = 'Please replace all unavailable items and continue, or contact Customer Service for assistance.'
             }
+            else if (outOfStockCartLines.length > 0) {
+
+                for (let i = 0; i < outOfStockCartLines.length; i++) {
+
+                    errorCartlinesId.push(outOfStockCartLines[i].cartLineId);
+
+                    const errorProduct = {
+                        productId: outOfStockCartLines[i].productId,
+                        currentQuantity: outOfStockCartLines[i].currentQuantity
+                    }
+                    outOfQuantityProducts.push(errorProduct);
+
+                }
+
+                errorMsg[0] = 'One or more items exceed the available quantity in store.';
+                errorMsg[1] = 'Please reduce the quantity of those items and continue, or contact Customer Service for assistance'
+            }
 
             errorCartlines.errorCartlinesId = errorCartlinesId;
             errorCartlines.errorMsg = errorMsg;
+            errorCartlines.outOfQuantityProducts = outOfQuantityProducts;
 
             setCheckoutErrors(errorCartlines);
 
@@ -193,22 +223,10 @@ const CartPage = () => {
         }
     }
 
-
-    const [showModal, setShowModal] = useState(false);
-
-    const openModal = () => {
-        setShowModal(true);
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-    };
-
-
-
     if (cartLineArr === null) {
         return <LoadingSpinner />
     }
+
 
     return (
         <>
@@ -217,11 +235,12 @@ const CartPage = () => {
 
                 <AppLayout>
                     <>
-                        <ErrorCheckoutModal
-                            show={showModal}
-                            onClose={closeModal}
-                            checkoutErrors={checkoutErrors}
-                        />
+                        {showModal &&
+                            <ErrorCheckoutModal
+                                onClose={closeModal}
+                                checkoutErrors={checkoutErrors}
+                            />
+                        }
                     </>
 
                     {cartLineArr.length > 0 ?

@@ -201,10 +201,11 @@ export const updateRingSize = async (cartLineId, productId, newRingSize) => {
 //                                  ORDER                         
 // =======================================================================
 
-// Order all cart lines
-export const order = async (paymentMethod) => {
-    const userName = JSON.parse(localStorage.getItem('user')).userName;
+
+// Make an order
+export const makeOrder = async (promoCode) => {
     const accessToken = localStorage.getItem('accessToken');
+    const userName = JSON.parse(localStorage.getItem('user')).userName;
 
     let API_url = API_root + `/Order`;
 
@@ -212,9 +213,19 @@ export const order = async (paymentMethod) => {
         'Authorization': `Bearer ${accessToken}`
     }
 
-    const reqData = {
-        userName: userName,
-        paymentMethod: paymentMethod
+    let reqData;
+
+    if (promoCode) {
+        reqData = {
+            userName: userName,
+            discountName: promoCode.discountCodeName,
+            paymentMethod: 'Paypal'
+        }
+    } else {
+        reqData = {
+            userName: userName,
+            paymentMethod: 'Paypal'
+        }
     }
 
     let response;
@@ -226,7 +237,9 @@ export const order = async (paymentMethod) => {
 
     }
     return response;
+
 }
+
 
 // Get all orders
 export const getAllOrders = async () => {
@@ -271,6 +284,8 @@ export const getOrderDetails = async (orderId) => {
     }
     return response;
 }
+
+
 
 
 // =======================================================================

@@ -5,6 +5,7 @@ import { AttachmentAvailableLine, AttachmentUnavailableLine } from 'src/features
 const AttachmentLineItem = ({ cartLine, onRemoveCartline, onUpdateRingSize, onReplaceCartline, checkoutErrors }) => {
     const [isAvailable, setIsAvailable] = useState(null);
 
+
     useEffect(() => {
         let isAvailable = true;
         for (const item of cartLine.cartLineItems) {
@@ -14,7 +15,8 @@ const AttachmentLineItem = ({ cartLine, onRemoveCartline, onUpdateRingSize, onRe
             }
         }
         setIsAvailable(isAvailable);
-    }, [])
+    }, [cartLine])
+
 
     return (
         <>

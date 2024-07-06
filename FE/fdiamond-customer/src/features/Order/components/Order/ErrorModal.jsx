@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import invalidShoppingCartSvg from 'src/features/Order/assets/invalidShoppingCartSvg.svg';
 
-const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
+const ErrorModal = ({ checkoutErrors, closeModal }) => {
+
+    const navigate = useNavigate();
 
     useEffect(() => {
+
         document.body.style.overflow = 'hidden';
 
         return () => {
             document.body.style.overflow = 'unset';
         };
     }, []);
-
-    console.log(checkoutErrors)
 
 
     return (
@@ -29,53 +30,6 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
 
                     <div>
                         <p className='text-[1.3rem] font-[550]'>{checkoutErrors.errorMsg[0]}</p>
-
-                        <div className='flex justify-center items-center bg-gray-200 my-3 px-1'>
-                            <ul className='flex flex-col text-start tracking-wide font-[330] '>
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-5 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 5 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
-
-
-
-
-
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-12 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 5 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
-
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-125 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 5 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
-
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-78 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 15 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
-
-                            </ul>
-                        </div>
-
-
                         <p className='mt-2 text-base text-gray-500 text-center'>{checkoutErrors.errorMsg[1]}</p>
                     </div>
 
@@ -104,9 +58,9 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
                         <button
                             className='text-lg uppercase font-[500] text-white bg-blue-950 hover:bg-[#34427b] transition-colors duration-200 rounded-md
                             w-full text-center py-2'
-                            onClick={onClose}
+                            onClick={closeModal}
                         >
-                            Ok
+                            BACK TO CART
                         </button>
                     </div>
 
@@ -122,4 +76,4 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
 };
 
 
-export default ErrorCheckoutModal;
+export default ErrorModal;

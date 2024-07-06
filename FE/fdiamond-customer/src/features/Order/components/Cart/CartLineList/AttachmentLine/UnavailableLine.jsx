@@ -5,6 +5,7 @@ import ringSvg from 'src/features/Order/assets/ringSvg.svg';
 
 const UnavailableLine = ({ cartLine, onRemoveCartline, onReplaceCartline, checkoutErrors }) => {
 
+
     const selectedSize = cartLine.cartLineItems.find((item) => (
         item.product.categoryName === 'Engagement Ring'
     )).ringSize;

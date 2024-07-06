@@ -41,7 +41,7 @@ const AuthProvider = ({ children }) => {
     const loginWithGoogle = async (accessToken) => {
         const response = await loginGoogleAPI(accessToken);
         const account = response.data.result;
-        console.log(response)
+
 
         if (account) {
             setToken(account.token);

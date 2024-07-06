@@ -37,7 +37,7 @@ const Header = () => {
 
                 <div className="flex-1 flex gap-5 items-center">
                     <Link
-                        to=''
+                        to="tel:1800545457"
                         className="flex items-center gap-2"
                     >
                         <span><PiHeadphones size={iconSize} /></span>
@@ -89,7 +89,14 @@ const Header = () => {
                                     >
                                         My Account
                                     </Link>
-                                    <Link className="text-[14px] block pl-6 py-4 hover:text-slate-600">My Orders</Link>
+
+                                    <Link
+                                        to='/order-history'
+                                        className="text-[14px] block pl-6 py-4 hover:text-slate-600"
+                                    >
+                                        My Orders
+                                    </Link>
+
                                     <Link onClick={handleSignOut} className="text-[14px] block pl-6 py-4 hover:font-[800] border-t-[1px] font-[700]">Sign Out</Link>
                                 </div>
                             </div>
