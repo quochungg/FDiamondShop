@@ -134,6 +134,7 @@ export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
             name="discountCodeName"
             value={newVoucher.discountCodeName}
             onChange={handleChange}
+            required
             sx={{ mb: 2 }}
           />
           <TextField
@@ -143,6 +144,7 @@ export default function AddVoucherModal({ open, handleClose, handleSubmit }) {
             type="number"
             value={newVoucher.discountPercent}
             onChange={handleChange}
+            required
             sx={{ mb: 2 }}
           />
           {errors.discountPercent && (

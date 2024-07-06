@@ -55,6 +55,8 @@ export default function VoucherPage() {
 
   const [ErrSnackbar, setErrSnackbar] = useState(false);
 
+  const [errors, setErrors] = useState({});
+
   const [currentVoucher, setCurrentVoucher] = useState({
     discountId: '',
     discountCodeName: '',
@@ -172,6 +174,9 @@ export default function VoucherPage() {
     } catch (error) {
       console.error('Error adding voucher:', error);
       setErrSnackbar(true);
+      setErrors({
+        serverError: error.response.data,
+      });
     }
   };
 
@@ -195,10 +200,12 @@ export default function VoucherPage() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          <AlertTitle>Error</AlertTitle>
-          Discount code is duplicated!
-        </Alert>
+        {errors.serverError && (
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+            <AlertTitle>Error</AlertTitle>
+            {errors.serverError}
+          </Alert>
+        )}
       </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Vouchers</Typography>
