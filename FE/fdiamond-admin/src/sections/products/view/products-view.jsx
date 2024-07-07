@@ -195,7 +195,7 @@ export default function ProductsView() {
                 onRequestSort={handleSort}
                 headLabel={[
                   { id: 'productId', label: 'ID' },
-                  { id: 'productName', label: 'Name' },
+                  { id: 'productName', label: 'Name', align: 'left' },
                   { id: 'basePrice', label: 'Price' },
                   { id: 'quantity', label: 'Quantity' },
                   { id: 'subCategoryName', label: 'Shape' },
