@@ -311,5 +311,26 @@ namespace FDiamondShop.API.Controllers
             _response.Result = orders;
             return Ok(_response);
         }
+
+        [HttpPut("UpdateStatus/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        
+        public async Task<ActionResult<APIResponse>> UpdateStatus(int id)
+        {
+            try
+            {
+                await _unitOfWork.OrderRepository.CompleteOrder(id);      
+                await _unitOfWork.SaveAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _response.ErrorMessages.Add($"{ex.Message}");
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
     }
 }
