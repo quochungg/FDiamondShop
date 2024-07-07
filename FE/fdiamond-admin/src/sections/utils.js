@@ -35,7 +35,7 @@ export function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export function applyFilter({ inputData, comparator, filterById, filterName }) {
+export function applyFilter({ inputData, comparator, filterById, filterName, filterByOrderId }) {
   if (!Array.isArray(inputData)) {
     console.error('applyFilter expects inputData to be an array, but received:', inputData);
     return [];
@@ -57,6 +57,16 @@ export function applyFilter({ inputData, comparator, filterById, filterName }) {
         return false;
       }
       return data.productId.toString().indexOf(filterById) !== -1;
+    });
+  }
+
+  if (filterByOrderId) {
+    inputData = inputData.filter((data) => {
+      if (!data.orderId) {
+        console.warn('Data item missing orderId:', data);
+        return false;
+      }
+      return data.orderId.toString().indexOf(filterByOrderId) !== -1;
     });
   }
 
