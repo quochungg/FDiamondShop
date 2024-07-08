@@ -17,6 +17,10 @@ namespace FDiamondShop.API.Repository
         {
             return _db.DiscountCodes.SingleOrDefault (dc=>dc.DiscountCodeName.ToLower() == createDTO.DiscountName.ToLower());
         }
+        public List <DiscountCode> GetAllOpen()
+        {
+            return _db.DiscountCodes.Where(dc=>dc.IsExpried == false).ToList();
+        }
         public DiscountCode CheckDuplicate(string code, int id)
         {
             if(id == 0)
