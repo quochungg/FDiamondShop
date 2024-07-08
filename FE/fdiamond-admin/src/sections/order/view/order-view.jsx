@@ -1,19 +1,19 @@
 import axios from 'axios';
+import { useLocation } from 'react-router';
 import React, { useState, useEffect } from 'react';
 
 import {
   Card,
   Stack,
   Table,
-  //   Button,
+  Alert,
   TableRow,
+  Snackbar,
   TableBody,
   Container,
   TableCell,
+  AlertTitle,
   Typography,
-  //   FormControl,
-  //   OutlinedInput,
-  //   InputAdornment,
   TableContainer,
   TablePagination,
 } from '@mui/material';
@@ -30,6 +30,10 @@ import OrderTableHead from '../order-table-head';
 import OrderTableToolbar from '../order-table-toolbar';
 
 export default function OderPage() {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const location = useLocation();
+
   const [page, setPage] = useState(0);
 
   const [filterByOrderId, setFilterByOrderId] = useState('');
@@ -41,6 +45,18 @@ export default function OderPage() {
   const [orderBy, setOrderBy] = useState('orderDate');
 
   const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if (location.state && location.state.showSnackbar) {
+      setOpenSnackbar(true);
+      // Clear the state to avoid showing Snackbar again if the user navigates back to this page
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const dataFiltered = applyFilter({
     inputData: data,
@@ -89,6 +105,17 @@ export default function OderPage() {
 
   return (
     <Container>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          <AlertTitle>Success</AlertTitle>
+          Order is completed
+        </Alert>
+      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Orders</Typography>
         {/* <FormControl>
