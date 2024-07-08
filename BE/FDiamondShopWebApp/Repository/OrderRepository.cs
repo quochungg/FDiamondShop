@@ -84,7 +84,8 @@ namespace FDiamondShop.API.Repository
                 DiscountCodeId = order.DiscountCodeId,
                 Status = order.Status,
                 CartLines = cartlineDTOs,
-                DiscountCode = discountCode
+                DiscountCode = discountCode,
+                UpdateDate = order.UpdateDate
             };
              
             
@@ -108,6 +109,7 @@ namespace FDiamondShop.API.Repository
             }
 
             order.Status = "Cancelled";
+            order.UpdateDate = DateTime.Now;
             _db.Orders.Update(order);
         }
 
@@ -136,6 +138,7 @@ namespace FDiamondShop.API.Repository
                 throw new Exception("Not found Order");
             }
             order.Status = "Completed";
+            order.UpdateDate = DateTime.Now;
             return;
         }
     }

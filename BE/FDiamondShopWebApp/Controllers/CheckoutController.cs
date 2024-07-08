@@ -223,6 +223,8 @@ namespace FDiamondShop.API.Controllers
 
             order.Status = "Ordered";
 
+            order.UpdateDate = now7;
+
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
             await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
