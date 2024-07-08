@@ -235,7 +235,7 @@ namespace FDiamondShop.API.Controllers
 
             await _unitOfWork.EmailRepository.SendEmailOrderAsync(emailTo,orderDTO,payment);
 
-            return Redirect("localhost:5173/successful-payment");
+            return Redirect("http://localhost:5173/successful-payment");
         }
     }
 }
