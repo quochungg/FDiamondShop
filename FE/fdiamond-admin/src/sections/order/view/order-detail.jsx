@@ -39,6 +39,7 @@ export default function OrderDetailPage() {
           `https://fdiamond-api.azurewebsites.net/api/Order/GetOrderDetails?orderId=${orderId}`
         );
         setOrderData(response.data.result);
+        console.log(response);
       } catch (error) {
         console.error('Error fetching order details:', error);
       }
@@ -60,6 +61,7 @@ export default function OrderDetailPage() {
         `https://fdiamond-api.azurewebsites.net/api/Order/UpdateStatus/${orderId}`,
         { status: newStatus }
       );
+
       if (response.status === 204) {
         setOrderData((prevData) => ({
           ...prevData,
@@ -112,7 +114,7 @@ export default function OrderDetailPage() {
                   {orderData.cartLines.map((cartLine) =>
                     cartLine.cartLineItems.map((item) => (
                       <TableRow key={item.productId}>
-                        <TableCell>
+                        <TableCell align="right">
                           <img
                             src={item.product.productImages[0].imageUrl}
                             alt={item.product.productName}
