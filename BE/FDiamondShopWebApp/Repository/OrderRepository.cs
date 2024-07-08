@@ -127,6 +127,17 @@ namespace FDiamondShop.API.Repository
             }            
             return result;
         }
+
+        public async Task CompleteOrder(int orderId)
+        {
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
+            if (order == null)
+            {
+                throw new Exception("Not found Order");
+            }
+            order.Status = "Completed";
+            return;
+        }
     }
 
 }

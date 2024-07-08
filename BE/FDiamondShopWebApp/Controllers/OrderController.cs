@@ -160,7 +160,7 @@ namespace FDiamondShop.API.Controllers
                     case "paypal":
                          paymentInfo.Amount=orderDTO.TotalPrice;
 
-                        var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074/swagger"), "/api/checkout/PayPal");
+                        var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                         if (paymentResponsePaypal.IsSuccessStatusCode)
@@ -199,7 +199,7 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
-        [HttpGet("GetAllOrder")]
+        [HttpGet("GetAllOrderByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllOrder(string UserId)
         {
@@ -293,6 +293,44 @@ namespace FDiamondShop.API.Controllers
             _response.Result = orders;
             return Ok(_response);
         }
+
+        [HttpGet("GetAllOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllOrder()
+        {         
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "CartLines,CartLines.CartLineItems,CartLines.CartLineItems.Product,DiscountCode,Payment");
+            if(orders == null)
+            {
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.ErrorMessages.Add("EMPTY");
+                return Ok(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
+        }
+
+        [HttpPut("UpdateStatus/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         
+        public async Task<ActionResult<APIResponse>> UpdateStatus(int id)
+        {
+            try
+            {
+                await _unitOfWork.OrderRepository.CompleteOrder(id);      
+                await _unitOfWork.SaveAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _response.ErrorMessages.Add($"{ex.Message}");
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
     }
 }

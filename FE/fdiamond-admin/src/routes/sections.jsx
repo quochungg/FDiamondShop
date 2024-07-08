@@ -16,6 +16,8 @@ export const NewProductPage = lazy(() => import('src/pages/newProduct'));
 export const EditProductPage = lazy(() => import('src/pages/EditProduct'));
 export const VoucherPage = lazy(() => import('src/pages/voucher'));
 export const AccountProfilePage = lazy(() => import('src/pages/profile'));
+export const OrderPage = lazy(() => import('src/pages/order'));
+export const OrderDetailPage = lazy(() => import('src/pages/orderDetail'));
 
 // ----------------------------------------------------------------------
 
@@ -67,6 +69,22 @@ export default function Router() {
           element: (
             <PrivateRoute>
               <CategoriesPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: 'order',
+          element: (
+            <PrivateRoute>
+              <OrderPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: 'order/:orderId',
+          element: (
+            <PrivateRoute>
+              <OrderDetailPage />
             </PrivateRoute>
           ),
         },
