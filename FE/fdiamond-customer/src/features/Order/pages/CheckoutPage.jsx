@@ -72,32 +72,24 @@ const CheckoutPage = () => {
     }
 
 
-    //This function is to check if all cart lines are available/visible and not out of stock
-    const checkAvailableCartLines = async () => {
-        let isAvailableAll = true;
-
-        const response = await checkValidAllCartLines();
-        if (response.data.result.invisibleCartLine.length > 0) {
-            isAvailableAll = false;
-        }
-        return isAvailableAll;
-    }
-
-
-
     // Handle payment when user clicks 'Make Payment' button
     const handleMakePayment = async () => {
         setIsHandlingPayment(true);
 
+        // Assume all are valid
         let isValidAll = true;
 
         let error = {};
 
-        // CHECK EXPIRED PROMO CODE FIRST -> CHECK UNAVAILABLE CART LINES
+        // CHECK EXPIRED PROMO CODE FIRST -> CHECK UNAVAILABLE CART LINES -> CHECK OUT OF QUANTITY PRODUCTS
         let isExpired;
-        const isAvailableAll = await checkAvailableCartLines();
 
-        // If promo code is applied, recheck to make sure it is not expired
+        // Call API to check if all cart lines
+        const response = await checkValidAllCartLines();
+        const areAllCartLinesValid = response.data.result.isValid;
+
+
+        // If PROMO CODE is applied, recheck to make sure it is not expired
         if (location.state.promoCode) {
             isExpired = await checkPromoCode();
             if (isExpired) {
@@ -109,12 +101,44 @@ const CheckoutPage = () => {
                 error.errorMsg = errorMsg;
             }
         }
-        else if (!isAvailableAll) {   //check if all cart lines are available/visible and not out of stock
+        else if (!areAllCartLinesValid) {   // Check if all CART LINES are available/visible 
             isValidAll = false;
+
+            const unavailableCartLines = response.data.result.invisibleCartLine;
+            const outOfStockCartLines = response.data.result.outOfStockCartLines;
+
             const errorMsg = [];
-            errorMsg.push('One or more items in your shopping cart has become unavailable.');
-            errorMsg.push('Please go back to your cart and replace all unavailable items, or contact Customer Service for assistance.');
+            let outOfQuantityProducts = [];
+
+            if (unavailableCartLines.length > 0) {
+                errorMsg.push('One or more items in your shopping cart has become unavailable.');
+                errorMsg.push('Please go back to your cart and replace all unavailable items, or contact Customer Service for assistance.');
+            }
+            else if (outOfStockCartLines.length > 0) {
+
+                const errorProductIds = [];
+
+                for (let i = 0; i < outOfStockCartLines.length; i++) {
+
+                    // handle out of quantity products
+                    if (!errorProductIds.includes(outOfStockCartLines[i].productId)) {
+
+                        errorProductIds.push(outOfStockCartLines[i].productId);
+
+                        const errorProduct = {
+                            productId: outOfStockCartLines[i].productId,
+                            currentQuantity: outOfStockCartLines[i].currentQuantity
+                        }
+                        outOfQuantityProducts.push(errorProduct);
+                    }
+
+                }
+                errorMsg.push('One or more items exceed the available quantity in store.');
+                errorMsg.push('Please reduce the quantity of those items and continue, or contact Customer Service for assistance');
+            }
+
             error.errorMsg = errorMsg;
+            error.outOfQuantityProducts = outOfQuantityProducts;
         }
 
 
@@ -124,7 +148,6 @@ const CheckoutPage = () => {
             const paymentUrl = response.data.result.paymentUrl;
             if (paymentUrl) {
                 navigate('/proceed-to-paypal', { state: { paymentUrl: paymentUrl }, replace: true })
-                // window.location.href = paymentUrl;
             }
         }
         else {
@@ -145,12 +168,14 @@ const CheckoutPage = () => {
         <>
             {accessible && cartLineArr &&
                 <>
+                    {/* ERROR MODAL */}
                     {showModal &&
                         <ErrorModal
                             checkoutErrors={checkoutErrors}
                             closeModal={closeModal}
                         />
                     }
+
 
                     <div className='w-screen h-screen font-gantari bg-gray-50'>
 
@@ -181,7 +206,7 @@ const CheckoutPage = () => {
                                 <div className='grid grid-cols-[1fr_36.69%] gap-x-10'>
 
                                     <div className='col-span-full mb-4'>
-                                        <p className='uppercase text-center text-[2.5rem] font-[650] font-gantari text-[#151541] py-8'
+                                        <p className='uppercase text-center text-[2.5rem] font-[700] font-gantari text-[#151541] py-9'
                                         >
                                             Checkout
                                         </p>
@@ -196,13 +221,16 @@ const CheckoutPage = () => {
                                     </div>
 
 
+
+                                    {/* CHECKOUT LEFT SECTION */}
                                     <CheckoutLeftSection />
 
+
+                                    {/* CHECKOUT RIGHT SECTION */}
                                     <CheckoutRightSection
                                         promoCode={location.state.promoCode}
                                         cartLineArr={cartLineArr}
                                         onMakePayment={handleMakePayment}
-
                                     />
 
                                 </div>

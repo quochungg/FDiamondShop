@@ -37,7 +37,6 @@ const SummarySectionCK = ({ promoCode, cartLineArr, onMakePayment }) => {
     let totalPayment = calculateTotal();
 
 
-
     return (
         <>
 

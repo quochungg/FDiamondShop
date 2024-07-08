@@ -21,10 +21,17 @@ export { default as ErrorCheckoutModal } from './Cart/ErrorCheckoutModal';
 // ============================================
 //                    ORDER
 // ============================================
-export { default as CheckoutLeftSection } from './Order/CheckoutLeftSection';
-export { default as CheckoutRightSection } from './Order/CheckoutRightSection';
-export { default as SingleLineCK } from './Order/SingleLineCK';
-export { default as AttachmentLineCK } from './Order/AttachmentLineCK';
-export { default as ItemList } from './Order/ItemList';
-export { default as SummarySectionCK } from './Order/SummarySectionCK';
-export { default as ErrorModal } from './Order/ErrorModal';
+// Checkout Page
+export { default as CheckoutLeftSection } from './Order/Checkout/CheckoutLeftSection';
+export { default as CheckoutRightSection } from './Order/Checkout/CheckoutRightSection';
+export { default as SingleLineCK } from './Order/Checkout/SingleLineCK';
+export { default as AttachmentLineCK } from './Order/Checkout/AttachmentLineCK';
+export { default as ItemList } from './Order/Checkout/ItemList';
+export { default as SummarySectionCK } from './Order/Checkout/SummarySectionCK';
+export { default as ErrorModal } from './Order/Checkout/ErrorModal';
+
+// Order History Page
+export { default as SidebarMenu } from './Order/OrderHistory/SidebarMenu';
+export { default as OrderList } from './Order/OrderHistory/OrderList';
+export { default as OrderListItem } from './Order/OrderHistory/OrderListItem';
+

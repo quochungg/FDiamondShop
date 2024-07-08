@@ -27,6 +27,7 @@ const CheckoutRightSection = ({ cartLineArr, promoCode, onMakePayment }) => {
                         cartLineArr={cartLineArr}
                     />
 
+
                     <SummarySectionCK
                         promoCode={promoCode}
                         cartLineArr={cartLineArr}

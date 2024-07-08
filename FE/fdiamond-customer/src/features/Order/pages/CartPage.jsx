@@ -193,15 +193,24 @@ const CartPage = () => {
             }
             else if (outOfStockCartLines.length > 0) {
 
+                const errorProductIds = [];
+
                 for (let i = 0; i < outOfStockCartLines.length; i++) {
 
+                    // handle cartlines that contain out of quantity products
                     errorCartlinesId.push(outOfStockCartLines[i].cartLineId);
 
-                    const errorProduct = {
-                        productId: outOfStockCartLines[i].productId,
-                        currentQuantity: outOfStockCartLines[i].currentQuantity
+                    // handle out of quantity products
+                    if (!errorProductIds.includes(outOfStockCartLines[i].productId)) {
+
+                        errorProductIds.push(outOfStockCartLines[i].productId);
+
+                        const errorProduct = {
+                            productId: outOfStockCartLines[i].productId,
+                            currentQuantity: outOfStockCartLines[i].currentQuantity
+                        }
+                        outOfQuantityProducts.push(errorProduct);
                     }
-                    outOfQuantityProducts.push(errorProduct);
 
                 }
 

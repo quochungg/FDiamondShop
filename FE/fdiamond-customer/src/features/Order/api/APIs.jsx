@@ -242,11 +242,13 @@ export const makeOrder = async (promoCode) => {
 
 
 // Get all orders
-export const getAllOrders = async () => {
+export const getAllFilterOrders = async (status) => {
     const userId = JSON.parse(localStorage.getItem('user')).userId;
     const accessToken = localStorage.getItem('accessToken');
 
-    let API_url = API_root + `/Order/GetAllOrder?userId=${userId}`;
+
+
+    let API_url = API_root + `/Order/FilterOrder?userId=${userId}&status=`;
 
     const headers = {
         'Authorization': `Bearer ${accessToken}`
@@ -256,12 +258,15 @@ export const getAllOrders = async () => {
 
     try {
         response = await axios.get(API_url, { headers: headers })
+        console.log(response)
     } catch (error) {
         console.error('There was an error', error);
 
     }
     return response;
 }
+
+getAllFilterOrders('Ordered')
 
 
 // Get order details

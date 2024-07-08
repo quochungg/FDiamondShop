@@ -1,8 +1,6 @@
-import { SingleLineCK, AttachmentLineCK } from '../index'
+import { SingleLineCK, AttachmentLineCK } from 'src/features/Order/components/index'
 
 const ItemList = ({ cartLineArr }) => {
-
-
 
     return (
         <>

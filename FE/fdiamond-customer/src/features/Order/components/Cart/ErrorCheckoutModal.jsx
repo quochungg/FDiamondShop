@@ -28,54 +28,31 @@ const ErrorCheckoutModal = ({ onClose, checkoutErrors }) => {
                     </div>
 
                     <div>
+                        {/* MAIN ERROR MESSAGE */}
                         <p className='text-[1.3rem] font-[550]'>{checkoutErrors.errorMsg[0]}</p>
 
-                        <div className='flex justify-center items-center bg-gray-200 my-3 px-1'>
-                            <ul className='flex flex-col text-start tracking-wide font-[330] '>
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-5 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 5 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
 
+                        {/*IN CASE OF OUT OF QUANTITY PRODUCTS */}
+                        {checkoutErrors.outOfQuantityProducts.length > 0 &&
 
+                            <div className=' bg-gray-200 my-4 flex justify-center px-1'>
+                                <ul className='text-center tracking-wider font-[330] max-h-28 overflow-y-auto py-3 w-full'>
+                                    {checkoutErrors.outOfQuantityProducts.map((product, index) => (
+                                        <li key={index}>
+                                            <p>
+                                                <span className='font-[650]'>PID-{product.productId} </span>
+                                                has only
+                                                <span className='font-[650] text-red-700'> {product.currentQuantity} </span>
+                                                items left in stock.
+                                            </p>
+                                        </li>
 
+                                    ))}
+                                </ul>
+                            </div>
+                        }
 
-
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-12 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 5 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
-
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-125 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 5 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
-
-                                <li>
-                                    <p>
-                                        <span className='font-[650]'>PID-78 </span>
-                                        has only
-                                        <span className='font-[650] text-red-700'> 15 </span>
-                                        items left in stock.
-                                    </p>
-                                </li>
-
-                            </ul>
-                        </div>
-
-
+                        {/* SECONDARY ERROR MESSAGE */}
                         <p className='mt-2 text-base text-gray-500 text-center'>{checkoutErrors.errorMsg[1]}</p>
                     </div>
 

@@ -114,7 +114,7 @@ const SummarySection = ({ cartLineArr, onCheckout }) => {
                 </div>
 
                 <section
-                    className="h-auto sticky top-0 shadow-summary bg-white rounded-md p-10
+                    className="h-auto sticky top-0 shadow-summary bg-white rounded-md p-10   
                     flex flex-col"
                 >
 
@@ -194,7 +194,7 @@ const SummarySection = ({ cartLineArr, onCheckout }) => {
                     {/* Total */}
                     <div className="pb-4 pt-4 border-b-[1px] border-gray-300">
                         <ul>
-                            <li className="flex justify-between text-lg font-[600]">
+                            <li className="flex justify-between text-xl py-1 font-[700]">
                                 <p>Total</p>
                                 {isVisibleAll && isVisibleAll ? (
                                     totalPayment && <p>${totalPayment.toLocaleString()}</p>
@@ -210,7 +210,7 @@ const SummarySection = ({ cartLineArr, onCheckout }) => {
 
                     {/* Checkout button */}
                     <div className='mt-5'>
-                        <button className=' w-full py-3 text-white  text-lg uppercase tracking-wide font-[600]
+                        <button className=' w-full py-4 text-white text-lg uppercase tracking-wide font-[600]
                          bg-blue-950 hover:bg-[#34427b] transition-colors duration-200 rounded-md'
                             onClick={handleCheckout}
                         >
