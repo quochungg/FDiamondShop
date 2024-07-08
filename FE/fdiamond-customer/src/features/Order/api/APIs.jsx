@@ -258,7 +258,6 @@ export const getAllFilterOrders = async (status) => {
 
     try {
         response = await axios.get(API_url, { headers: headers })
-        console.log(response)
     } catch (error) {
         console.error('There was an error', error);
 

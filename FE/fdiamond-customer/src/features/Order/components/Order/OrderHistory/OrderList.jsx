@@ -1,13 +1,34 @@
 import { OrderListItem } from 'src/features/Order/components/index';
 
 
-const OrderList = () => {
+const OrderList = ({ orderArr }) => {
+
+    console.log(orderArr)
+
     return (
         <>
             <div>
 
                 <div className='w-full flex flex-col space-y-10'>
-                    <OrderListItem />
+
+
+                    {orderArr.length === 0 ? (
+                        <div className='w-full h-96 shadow-cartline flex flex-col justify-center items-center'>
+                            <p>Currently, you have no orders</p>
+                            <p>Shop now</p>
+                        </div>
+                    ) : (
+                        orderArr.map((orderItem, index) => (
+                            <div key={index}>
+                                <OrderListItem orderItem={orderItem}
+                                    orderArr={orderArr}
+                                />
+                            </div>
+                        ))
+                    )}
+
+
+
                 </div>
 
             </div>
