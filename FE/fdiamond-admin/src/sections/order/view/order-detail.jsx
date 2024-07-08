@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { useParams } from 'react-router';
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router';
 
 import {
   Box,
@@ -9,12 +9,15 @@ import {
   Stack,
   Table,
   Paper,
+  Alert,
   Button,
+  Snackbar,
   TableRow,
   TableCell,
   Container,
   TableBody,
   Typography,
+  AlertTitle,
 
   //   TableContainer,
 } from '@mui/material';
@@ -22,6 +25,12 @@ import {
 export default function OrderDetailPage() {
   const { orderId } = useParams();
   const [orderData, setOrderData] = useState(null);
+  const navigate = useNavigate();
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -42,37 +51,52 @@ export default function OrderDetailPage() {
     return <Typography>Loading...</Typography>;
   }
 
+  const handleBack = () => {
+    navigate('/order');
+  };
   const updateOrderStatus = async (newStatus) => {
     try {
       const response = await axios.put(
         `https://fdiamond-api.azurewebsites.net/api/Order/UpdateStatus/${orderId}`,
         { status: newStatus }
       );
-      if (response.data.success) {
+      if (response.status === 204) {
         setOrderData((prevData) => ({
           ...prevData,
           status: newStatus,
         }));
+        navigate('/order', { state: { showSnackbar: true } });
       } else {
-        alert('Failed to update order status');
+        setOpenSnackbar(true);
       }
     } catch (error) {
       console.error('Error updating order status:', error);
-      alert('Error updating order status');
+      setOpenSnackbar(true);
     }
   };
 
   const handleCompletedClick = () => {
-    if (orderData.status !== 'Ordered') {
-      alert('Only orders with the status "Ordered" can be marked as "Completed"');
-      return;
-    }
+    // if (orderData.status !== 'Ordered') {
+    //   alert('Only orders with the status "Ordered" can be marked as "Completed"');
+    //   return;
+    // }
     updateOrderStatus('Completed');
   };
 
   const { paymentInfo } = orderData;
   return (
     <Container>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          <AlertTitle>Error</AlertTitle>
+          Error
+        </Alert>
+      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Order Detail</Typography>
       </Stack>
@@ -153,6 +177,14 @@ export default function OrderDetailPage() {
                   </TableRow>
                 </TableBody>
               </Table>
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={handleBack}
+                sx={{ mr: 2, marginTop: '20px' }}
+              >
+                Back
+              </Button>
               {orderData.status === 'Ordered' && (
                 <Button
                   variant="contained"
