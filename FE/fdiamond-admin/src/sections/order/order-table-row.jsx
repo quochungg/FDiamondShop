@@ -62,13 +62,13 @@ export default function OrderTableRow({ orderId, orderDate, totalPrice, paymentM
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         slotProps={{
           paper: {
-            sx: { width: 140 },
+            sx: { width: 100 },
           },
         }}
       >
         <MenuItem onClick={handleEdit}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Edit
+          <Iconify icon="eva:eye-fill" sx={{ mr: 2 }} />
+          View
         </MenuItem>
       </Popover>
     </>
