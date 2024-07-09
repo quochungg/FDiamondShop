@@ -45,11 +45,12 @@ namespace FDiamondShop.API.Controllers
                 decimal totalPrice = 0;
                 var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                 var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
-                if (cartLines == null)
+                if (cartLines.Count()==0)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
                     _response.ErrorMessages = new List<string> { "Cart is empty" };
+                    return NotFound(_response);
                 }
                     totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
