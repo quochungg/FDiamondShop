@@ -45,6 +45,12 @@ namespace FDiamondShop.API.Controllers
                 decimal totalPrice = 0;
                 var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                 var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
+                if (cartLines == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "Cart is empty" };
+                }
                     totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
                       .Sum(cartLineItem => cartLineItem.Price);
                 DateTime now = DateTime.Now;
@@ -82,7 +88,7 @@ namespace FDiamondShop.API.Controllers
                 _response.StatusCode = HttpStatusCode.Created;
                 var paymentInfo = new PaymentInformationModel
                 {
-                    Amount = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD"),
+                    Amount = orderDTO.TotalPrice,
                     Name = user.UserName,
                     OrderDescription = "Thanh toan don hang",
                     OrderID = "",
