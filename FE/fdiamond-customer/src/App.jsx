@@ -1,27 +1,38 @@
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
-import Home from "./pages/Home";
-import PageNotFound from './pages/PageNotFound';
-import AuthProvider from './context/AuthProvider';
-import ProtectedRoute from './routes/ProtectedRoute';
-import GuestRoute from './routes/GuestRoute';
-import { LoginPage, RegisterPage, SuccessfulVerificationPage, EmailVerificationPage } from 'src/features/Authentication/index'
-import { ProductNotFound } from 'src/features/Products/index';
-import { LoadingSpinner } from './components/index';
+import AuthProvider from 'src/context/AuthProvider';
+import ProtectedRoute from 'src/routes/ProtectedRoute';
+import GuestRoute from 'src/routes/GuestRoute';
+import { LoadingSpinner } from 'src/components/index';
 
 function App() {
 
-    const CategoryWrapper = React.lazy(() => import("./features/Products/wrapper/CategoryWrapper"));
-    const ProductDetailsWrapper = React.lazy(() => import("./features/Products/wrapper/ProductDetailsWrapper"));
+    //General pages
+    const Home = React.lazy(() => import("src/pages/Home"));
 
-    const AccountDetailsPage = React.lazy(() => import("./features/Authentication/pages/AccountDetailsPage"));
-    const CartPage = React.lazy(() => import("./features/Order/pages/CartPage"));
-    const CheckoutPage = React.lazy(() => import("./features/Order/pages/CheckoutPage"));
-    const OrderHistoryPage = React.lazy(() => import("./features/Order/pages/OrderHistoryPage"));
-    const OrderDetailsPage = React.lazy(() => import("./features/Order/pages/OrderDetailsPage"));
-    const SuccessfulPaymentPage = React.lazy(() => import("./features/Order/pages/SuccessfulPaymentPage"));
-    const ProceedToPaypalPage = React.lazy(() => import("./features/Order/pages/ProceedToPaypalPage"));
+    //Wrapper components
+    const CategoryWrapper = React.lazy(() => import("src/features/Products/wrapper/CategoryWrapper"));
+    const ProductDetailsWrapper = React.lazy(() => import("src/features/Products/wrapper/ProductDetailsWrapper"));
 
+    //Authentication pages
+    const LoginPage = React.lazy(() => import("src/features/Authentication/pages/LoginPage"));
+    const RegisterPage = React.lazy(() => import("src/features/Authentication/pages/RegisterPage"));
+    const SuccessfulVerificationPage = React.lazy(() => import("src/features/Authentication/pages/SuccessfulVerificationPage"));
+    const EmailVerificationPage = React.lazy(() => import("src/features/Authentication/pages/EmailVerificationPage"));
+    const AccountDetailsPage = React.lazy(() => import("src/features/Authentication/pages/AccountDetailsPage"));
+
+    //Order pages
+    const CartPage = React.lazy(() => import("src/features/Order/pages/Cart/CartPage"));
+    const CheckoutPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/CheckoutPage"));
+    const SuccessfulPaymentPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/SuccessfulPaymentPage"));
+    const ProceedToPaypalPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/ProceedToPaypalPage"));
+    const OrderHistoryPage = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderHistoryPage"));
+    const OrderDetailsPage = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderDetailsPage"));
+
+    //Error pages
+    const PageNotFound = React.lazy(() => import("src/pages/PageNotFound"))
+    const ProductNotFound = React.lazy(() => import("src/features/Products/pages/ProductNotFound"))
+    const OrderNotFound = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderNotFound"))
 
     return (
         <>
@@ -36,16 +47,17 @@ function App() {
                             <Route path="product-details/:productId" element={<ProductDetailsWrapper />} />
                         </Route>
                         <Route path='/product-not-found' element={<ProductNotFound />} />
+                        <Route path='/order-not-found' element={<OrderNotFound />} />
                         <Route />
 
                         <Route element={<ProtectedRoute />} >
+                            <Route path='/account-details' element={<AccountDetailsPage />} />
                             <Route path='/cart' element={<CartPage />} />
                             <Route path='/checkout' element={<CheckoutPage />} />
-                            <Route path='/account-details' element={<AccountDetailsPage />} />
-                            <Route path='/order-history' element={<OrderHistoryPage />} />
-                            <Route path='/order-details/:orderId' element={<OrderDetailsPage />} />
                             <Route path='/successful-payment' element={<SuccessfulPaymentPage />} />
                             <Route path='/proceed-to-paypal' element={<ProceedToPaypalPage />} />
+                            <Route path='/order-history' element={<OrderHistoryPage />} />
+                            <Route path='/order-details/:orderId' element={<OrderDetailsPage />} />
                         </Route>
 
                         <Route element={<GuestRoute />} >

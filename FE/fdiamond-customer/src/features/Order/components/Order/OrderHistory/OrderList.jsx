@@ -1,9 +1,7 @@
 import { OrderListItem } from 'src/features/Order/components/index';
 
 
-const OrderList = ({ orderArr }) => {
-
-    console.log(orderArr)
+const OrderList = ({ orderArr, setResetAfterCancel }) => {
 
     return (
         <>
@@ -20,14 +18,13 @@ const OrderList = ({ orderArr }) => {
                     ) : (
                         orderArr.map((orderItem, index) => (
                             <div key={index}>
-                                <OrderListItem orderItem={orderItem}
-                                    orderArr={orderArr}
+                                <OrderListItem
+                                    orderItem={orderItem}
+                                    setResetAfterCancel={setResetAfterCancel}
                                 />
                             </div>
                         ))
                     )}
-
-
 
                 </div>
 

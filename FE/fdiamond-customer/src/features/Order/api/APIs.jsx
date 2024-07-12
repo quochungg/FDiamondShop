@@ -53,8 +53,11 @@ export const getAllCartLines = async () => {
     try {
         response = await axios.get(API_url, { headers: headers })
     } catch (error) {
-        console.error('There was an error', error);
-
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
     }
     return response;
 }
@@ -81,7 +84,11 @@ export const checkExistingDiamondInCart = async (productId) => {
     try {
         response = await axios.post(API_url, reqData, { headers: headers })
     } catch (error) {
-        console.error('There was an error', error);
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
     }
     return response;
 }
@@ -108,7 +115,11 @@ export const checkExistingAttachmentInCart = async (attachmentItemsArr) => {
     try {
         response = await axios.post(API_url, reqData, { headers: headers })
     } catch (error) {
-        console.error('There was an error', error);
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
     }
     return response;
 }
@@ -156,7 +167,11 @@ export const removeCartLine = async (cartLineId) => {
     try {
         response = await axios.delete(API_url, { headers: headers })
     } catch (error) {
-        console.error('There was an error', error);
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
     }
     return response;
 
@@ -233,22 +248,22 @@ export const makeOrder = async (promoCode) => {
     try {
         response = await axios.post(API_url, reqData, { headers: headers })
     } catch (error) {
-        console.error('There was an error', error);
-
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
     }
     return response;
 
 }
 
-
-// Get all orders
-export const getAllFilterOrders = async (status) => {
+// Get all orders by userID
+export const getAllOrdersByUserId = async () => {
     const userId = JSON.parse(localStorage.getItem('user')).userId;
     const accessToken = localStorage.getItem('accessToken');
 
-
-
-    let API_url = API_root + `/Order/FilterOrder?userId=${userId}&status=`;
+    let API_url = API_root + `/Order/GetAllOrderByUserId?UserId=${userId}`;
 
     const headers = {
         'Authorization': `Bearer ${accessToken}`
@@ -259,14 +274,39 @@ export const getAllFilterOrders = async (status) => {
     try {
         response = await axios.get(API_url, { headers: headers })
     } catch (error) {
-        console.error('There was an error', error);
-
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
     }
     return response;
 }
 
-getAllFilterOrders('Ordered')
+// Get all orders
+export const getAllFilterOrders = async (status) => {
+    const userId = JSON.parse(localStorage.getItem('user')).userId;
+    const accessToken = localStorage.getItem('accessToken');
 
+    let API_url = API_root + `/Order/FilterOrder?userId=${userId}&status=${status}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.get(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
+    }
+    return response;
+}
 
 // Get order details
 export const getOrderDetails = async (orderId) => {
@@ -283,13 +323,39 @@ export const getOrderDetails = async (orderId) => {
     try {
         response = await axios.get(API_url, { headers: headers })
     } catch (error) {
-        console.error('There was an error', error);
-
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
     }
     return response;
 }
 
+// Cancel an order
+export const cancelOrder = async (orderId) => {
+    const accessToken = localStorage.getItem('accessToken');
 
+    let API_url = API_root + `/Order/CancelOrder?orderId=${orderId}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.post(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
+    }
+
+    return response;
+}
 
 
 // =======================================================================

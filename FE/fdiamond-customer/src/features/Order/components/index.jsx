@@ -34,4 +34,6 @@ export { default as ErrorModal } from './Order/Checkout/ErrorModal';
 export { default as SidebarMenu } from './Order/OrderHistory/SidebarMenu';
 export { default as OrderList } from './Order/OrderHistory/OrderList';
 export { default as OrderListItem } from './Order/OrderHistory/OrderListItem';
+export { default as OrderDetailsLeftSection } from './Order/OrderHistory/OrderDetailsLeftSection';
+export { default as OrderDetailsRightSection } from './Order/OrderHistory/OrderDetailsRightSection';
 
