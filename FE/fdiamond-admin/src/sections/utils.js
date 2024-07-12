@@ -35,7 +35,14 @@ export function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export function applyFilter({ inputData, comparator, filterById, filterName, filterByOrderId }) {
+export function applyFilter({
+  inputData,
+  comparator,
+  filterById,
+  filterName,
+  filterByOrderId,
+  filterFirstName,
+}) {
   if (!Array.isArray(inputData)) {
     console.error('applyFilter expects inputData to be an array, but received:', inputData);
     return [];
@@ -78,6 +85,19 @@ export function applyFilter({ inputData, comparator, filterById, filterName, fil
           return false;
         }
         return data.discountCodeName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1;
+      }
+      // (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+    );
+  }
+
+  if (filterFirstName) {
+    inputData = inputData.filter(
+      (data) => {
+        if (!data.firstName) {
+          console.warn('Data item missing first name:', data);
+          return false;
+        }
+        return data.firstName.toLowerCase().indexOf(filterFirstName.toLowerCase()) !== -1;
       }
       // (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
