@@ -210,7 +210,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllOrder(string UserId)
         {
-            var user = _userManager.Users.First(u => u.Id == UserId);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == UserId);
             if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
