@@ -92,7 +92,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
 | Nguyen Huu Quoc Hung     | UC-24   | Cancel Order                |
-| Nguyen Huu Quoc Hung     | UC-06   | Filter Search Option                 |
+| Nguyen Huu Quoc Hung     | UC-06   | Confirm Email                 |
 | Nguyen Thi Bich Duyen     | UC-17   | Add Products to Cart       |
 | Nguyen Thi Ngoc Thu   | UC-16    | Update Discount Code                    |
 | Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |

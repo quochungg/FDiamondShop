@@ -191,16 +191,10 @@ namespace FDiamondShop.API.Repository
         <p>We sincerely thank you for trusting and shopping at FDIAMOND.</p>
         <p>Your order has been successfully processed.</p>
         <p>Here are the details of your order:</p>
+        <p>Order ID: {orderDTO.OrderId}</p>
         <p>Order Date: {orderDTO.OrderDate}</p>
         <p>Order Transaction ID: {paymentDTO.TransactionId}</p>
-        <p>";
-            if (order.DiscountCodeId != null)
-            {
-                body +=
-        $@"<p>Discount Code: {discount.DiscountCodeName}</p>";
-            }
-            body += $@"
-            </p>
+        
         <p>Order Items:</p>
         <ul>";
             foreach (var product in orderDetail)
@@ -219,8 +213,17 @@ namespace FDiamondShop.API.Repository
         </ul>
         <div class='order-summary'>
             <p><strong>Order Status:</strong> {orderDTO.Status}</p>
-            <p><strong>Order Base Price:</strong> {orderDTO.BasePrice}</p>
-            <p><strong>Order Total Price:</strong> {orderDTO.TotalPrice}</p>
+            <p>";
+            if (order.DiscountCodeId != null)
+            {
+                body += $@"
+            <p>Discount Code: {discount.DiscountCodeName}</p>";
+            }
+            body += $@"
+            </p>
+            <p><strong>Order Base Price:$</strong>{orderDTO.BasePrice}</p>
+            <p><strong>Order Total Price:$</strong> {orderDTO.TotalPrice}</p>
+
             <p><strong>Payment Method:</strong> {payment.PaymentMethod}</p>
         </div>
         <p>If you have any questions, please feel free to contact us via email or our support phone number.</p>
