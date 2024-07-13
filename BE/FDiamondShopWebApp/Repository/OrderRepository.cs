@@ -111,7 +111,6 @@ namespace FDiamondShop.API.Repository
 
             foreach (var cartline in cartlines)
             {
-                cartline.IsOrdered = false;
                 foreach (var cartlineItem in cartline.CartLineItems)
                 {
                     var product = await _db.Products.FirstOrDefaultAsync(x => x.ProductId == cartlineItem.ProductId);
@@ -120,7 +119,6 @@ namespace FDiamondShop.API.Repository
                     _db.Products.Update(product);
                 }
             }
-            _db.CartLines.RemoveRange(cartlines);
             order.Status = "Cancelled";
             order.UpdateDate = DateTime.Now;
             _db.Orders.Update(order);
