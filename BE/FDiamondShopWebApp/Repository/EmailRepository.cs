@@ -55,7 +55,7 @@ namespace FDiamondShop.API.Repository
             line-height: 1.6;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 0;k
+            padding: 0;
         }}
         .container {{
             max-width: 600px;
@@ -86,7 +86,8 @@ namespace FDiamondShop.API.Repository
         <h1>Dear {lastName},</h1>
         <p>We regret to inform you that your recent order with FDIAMOND has been successfully cancelled as per your request.</p>
         <p>We apologize for any inconvenience this may have caused.</p>
-        <p>If you have any questions or need further assistance, please feel free to contact us via email or our support phone number.</p>
+        <p>The store will refund you within the next 3-5 days. Please check your account.</p>
+        <p>If you have any questions, please contact us via email at fdiamondshop391@gmail.com or call us at 1800545457.</p>
         <p>Thank you for understanding. We hope to serve you again in the future. Have a wonderful day!</p>
         <br/>
         <p>Sincerely,</p>
@@ -203,28 +204,28 @@ namespace FDiamondShop.API.Repository
         <li>
             <img src='{product.ProductImages.First().ImageUrl}' alt='{product.ProductName} Image' class='product-image' />
             <div class='product-details'>
-                <p><strong>Product Name:</strong> {product.ProductName}</p>
-                <p><strong>Base Price:</strong> {product.BasePrice}</p>
-                <p><strong>Category:</strong> {product.CategoryName}</p>
+                <p><strong>Product Name:</strong>{product.ProductName}</p>
+                <p><strong>Base Price:</strong>${product.BasePrice}</p>
+                <p><strong>Category:</strong>{product.CategoryName}</p>
             </div>
         </li>";
             }
             body += $@"
         </ul>
         <div class='order-summary'>
-            <p><strong>Order Status:</strong> {orderDTO.Status}</p>
+            <p><strong>Order Status:</strong>{orderDTO.Status}</p>
             <p>";
             if (order.DiscountCodeId != null)
             {
                 body += $@"
-            <p>Discount Code: {discount.DiscountCodeName}</p>";
+            <p><strong>Discount Code:</strong> {discount.DiscountCodeName}</p>";
             }
             body += $@"
             </p>
-            <p><strong>Order Base Price:$</strong>{orderDTO.BasePrice}</p>
-            <p><strong>Order Total Price:$</strong> {orderDTO.TotalPrice}</p>
+            <p><strong>Order Base Price:</strong>${orderDTO.BasePrice}</p>
+            <p><strong>Order Total Price:</strong>${orderDTO.TotalPrice}</p>
 
-            <p><strong>Payment Method:</strong> {payment.PaymentMethod}</p>
+            <p><strong>Payment Method:</strong>{payment.PaymentMethod}</p>
         </div>
         <p>If you have any questions, please feel free to contact us via email or our support phone number.</p>
         <p>Once again, thank you for choosing FDIAMOND. Have a wonderful day!</p>
