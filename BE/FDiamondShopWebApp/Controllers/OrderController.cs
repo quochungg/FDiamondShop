@@ -53,7 +53,7 @@ namespace FDiamondShop.API.Controllers
                     return NotFound(_response);
                 }
                     totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
-                      .Sum(cartLineItem => cartLineItem.Price);
+                      .Sum(cartLineItem => cartLineItem.Product.BasePrice);
                 DateTime now = DateTime.Now;
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
@@ -64,6 +64,13 @@ namespace FDiamondShop.API.Controllers
                     OrderDate= now7,
                     Status = createDTO.Status
                 };
+                foreach (var cartLine in cartLines)
+                {
+                    foreach (var cartLineItem in cartLine.CartLineItems)
+                    {
+                       cartLineItem.Price = cartLineItem.Product.BasePrice;
+                    }                
+                }
                 if (createDTO.DiscountName!=null)
                 {
                     var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
