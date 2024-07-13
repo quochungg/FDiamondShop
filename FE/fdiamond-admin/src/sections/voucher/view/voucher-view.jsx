@@ -23,8 +23,8 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from 'src/sections/table-no-data';
-import TableEmptyRows from 'src/sections/table-empty-rows';
-import { emptyRows, applyFilter, getComparator } from 'src/sections/utils';
+// import TableEmptyRows from 'src/sections/table-empty-rows';
+import { applyFilter, getComparator } from 'src/sections/utils';
 
 import AddVoucherModal from '../AddVoucherModal';
 import EditVoucherModal from '../EditVoucherModal';
@@ -47,7 +47,7 @@ export default function VoucherPage() {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -180,6 +180,15 @@ export default function VoucherPage() {
     }
   };
 
+  const totalDiscounts = data.length;
+  const startIndex = page * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, totalDiscounts);
+  const emptyRowsCount = endIndex < rowsPerPage ? rowsPerPage - (endIndex - startIndex) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
   const notFound = !dataFiltered.length && !!filterName;
   return (
     <Container>
@@ -248,22 +257,23 @@ export default function VoucherPage() {
                     </TableCell>
                   </TableRow>
                 )}
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <VoucherTableRow
-                      key={row.discountId}
-                      discountId={row.discountId}
-                      discountCodeName={row.discountCodeName}
-                      discountPercent={row.discountPercent}
-                      startingDate={row.startingDate}
-                      endDate={row.endDate}
-                      isExpried={row.isExpried}
-                      onEdit={() => handleOpenEditModal(row)}
-                    />
-                  ))}
-
-                <TableEmptyRows height={77} emptyRows={emptyRows(page, rowsPerPage, data.length)} />
+                {dataFiltered.slice(startIndex, endIndex).map((row) => (
+                  <VoucherTableRow
+                    key={row.discountId}
+                    discountId={row.discountId}
+                    discountCodeName={row.discountCodeName}
+                    discountPercent={row.discountPercent}
+                    startingDate={row.startingDate}
+                    endDate={row.endDate}
+                    isExpried={row.isExpried}
+                    onEdit={() => handleOpenEditModal(row)}
+                  />
+                ))}
+                {emptyRowsCount > 0 && (
+                  <TableRow style={{ height: 53 * emptyRowsCount }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
                 {notFound && <TableNoData query={filterName} />}
               </TableBody>
             </Table>
@@ -273,9 +283,9 @@ export default function VoucherPage() {
         <TablePagination
           page={page}
           component="div"
-          count={data.length}
+          count={totalDiscounts}
           rowsPerPage={rowsPerPage}
-          onPageChange={(event, value) => setPage(value)}
+          onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />

@@ -22,8 +22,8 @@ import {
 import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from 'src/sections/table-no-data';
-import TableEmptyRows from 'src/sections/table-empty-rows';
-import { emptyRows, applyFilter, getComparator } from 'src/sections/utils';
+// import TableEmptyRows from 'src/sections/table-empty-rows';
+import { applyFilter, getComparator } from 'src/sections/utils';
 
 import OrderTableRow from '../order-table-row';
 import OrderTableHead from '../order-table-head';
@@ -101,6 +101,15 @@ export default function OderPage() {
     setPage(0);
   };
 
+  const totalOrders = data.length;
+  const startIndex = page * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, totalOrders);
+  const emptyRowsCount = endIndex < rowsPerPage ? rowsPerPage - (endIndex - startIndex) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
   const notFound = !dataFiltered.length && !!filterByOrderId;
 
   return (
@@ -169,19 +178,21 @@ export default function OderPage() {
                     </TableCell>
                   </TableRow>
                 )}
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <OrderTableRow
-                      key={row.orderId}
-                      orderId={row.orderId}
-                      orderDate={row.orderDate}
-                      totalPrice={row.totalPrice}
-                      paymentMethod={row.payment?.paymentMethod}
-                      status={row.status}
-                    />
-                  ))}
-                <TableEmptyRows height={77} emptyRows={emptyRows(page, rowsPerPage, data.length)} />
+                {dataFiltered.slice(startIndex, endIndex).map((row) => (
+                  <OrderTableRow
+                    key={row.orderId}
+                    orderId={row.orderId}
+                    orderDate={row.orderDate}
+                    totalPrice={row.totalPrice}
+                    paymentMethod={row.payment?.paymentMethod}
+                    status={row.status}
+                  />
+                ))}
+                {emptyRowsCount > 0 && (
+                  <TableRow style={{ height: 53 * emptyRowsCount }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
 
                 {notFound && <TableNoData query={filterByOrderId} />}
               </TableBody>
@@ -191,9 +202,9 @@ export default function OderPage() {
         <TablePagination
           page={page}
           component="div"
-          count={data.length}
+          count={totalOrders}
           rowsPerPage={rowsPerPage}
-          onPageChange={(event, value) => setPage(value)}
+          onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
