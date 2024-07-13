@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { getAllCartLines, checkValidAllCartLines, makeOrder, getPromoCode } from "../api/APIs";
+import { getAllCartLines, checkValidAllCartLines, makeOrder, getPromoCode } from "../../../api/APIs";
 import { SlArrowLeft } from "react-icons/sl";
 import { CheckoutLeftSection, CheckoutRightSection, ErrorModal } from 'src/features/Order/components/index';
 import { LoadingSpinner } from 'src/components';

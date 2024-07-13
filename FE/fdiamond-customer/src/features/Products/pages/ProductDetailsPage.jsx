@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { ImageCarousel, SelectionBar, DetailSection } from '../components/index';
 import { getProductByID } from '../api/APIs'
 import AppLayout from "src/layout/AppLayout";

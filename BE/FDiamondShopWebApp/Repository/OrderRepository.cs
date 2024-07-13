@@ -84,7 +84,8 @@ namespace FDiamondShop.API.Repository
                 DiscountCodeId = order.DiscountCodeId,
                 Status = order.Status,
                 CartLines = cartlineDTOs,
-                DiscountCode = discountCode
+                DiscountCode = discountCode,
+                UpdateDate = order.UpdateDate
             };
              
             
@@ -95,6 +96,7 @@ namespace FDiamondShop.API.Repository
         {
             var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
             var cartlines = await _db.CartLines.Where(x => x.OrderId == orderId).ToListAsync();
+            
             foreach (var cartline in cartlines)
             {
                 cartline.IsOrdered = false;
@@ -106,8 +108,9 @@ namespace FDiamondShop.API.Repository
                     _db.Products.Update(product);
                 }
             }
-
+            _db.CartLines.RemoveRange(cartlines);
             order.Status = "Cancelled";
+            order.UpdateDate = DateTime.Now;
             _db.Orders.Update(order);
         }
 
@@ -136,6 +139,7 @@ namespace FDiamondShop.API.Repository
                 throw new Exception("Not found Order");
             }
             order.Status = "Completed";
+            order.UpdateDate = DateTime.Now;
             return;
         }
     }

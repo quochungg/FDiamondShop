@@ -1,9 +1,9 @@
 import AppLayout from "src/layout/AppLayout";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getAllCartLines, removeCartLine, updateRingSize, checkValidAllCartLines } from "../api/APIs";
+import { getAllCartLines, removeCartLine, updateRingSize, checkValidAllCartLines } from "src/features/Order/api/APIs";
 import { addToCartLine } from "src/features/Order/api/APIs";
-import { EmptyCart, MainCartSection, ErrorCheckoutModal } from "../components/index";
+import { EmptyCart, MainCartSection, ErrorCheckoutModal } from "src/features/Order/components/index";
 import { LoadingSpinner } from "src/components";
 
 

@@ -75,7 +75,46 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+        [HttpGet(("GetOpenDiscountCode"), Name = "GetOpenDiscountCode")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetOpenDiscounCode()
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PutAsync("https://fdiamond-api.azurewebsites.net/api/discount/updateauto", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Cannot update discount code" };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                return StatusCode(500, _response);
+            }
+            IEnumerable<DiscountCode> DiscountList =  _unitOfWork.DiscountCodeRepository.GetAllOpen();
+            if (DiscountList == null)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Discount Code Not Found" };
+                _response.StatusCode = HttpStatusCode.NotFound;
+                return StatusCode(404, _response);
+            }        
+            try
+            {
 
+                var model = _mapper.Map<List<DiscountCodeDTO>>(DiscountList);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = model;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
         [HttpGet(("GetDiscountCodeByCodeName"), Name = "GetDiscountCodeByCodeName")]
         public async Task<ActionResult<APIResponse>> GetDiscountCode(string discountCode)
         {
@@ -126,9 +165,9 @@ namespace FDiamondShop.API.Controllers
                 {
                     return BadRequest("Dublicate Code is not required");
                 }
-                if (createDTO.DiscountPercent<0)
+                if (createDTO.DiscountPercent <= 0 || createDTO.DiscountPercent > 100)
                 {
-                    return BadRequest("Percent must be the postive number");
+                    return BadRequest("Percent must be in range (0,100] ");
                 }
                 //if (DateTime.Compare(now7, createDTO.StartingDate) > 0) //Ngay hien tai lon hon ngay start
                 //{
@@ -175,11 +214,11 @@ namespace FDiamondShop.API.Controllers
                 if (discount == null)
                 {
                     return NotFound("DiscountCode not found");
-                }      
-                if (updateDTO.DiscountPercent < 0)
+                }
+                if (updateDTO.DiscountPercent <= 0 || updateDTO.DiscountPercent > 100)
                 {
-                    return BadRequest("Percent must be the postive number");
-                }              
+                    return BadRequest("Percent must be in range (0,100] ");
+                }
                 var recent = _unitOfWork.DiscountCodeRepository.CheckDuplicate(updateDTO.DiscountCodeName, id);
                 if (recent != null)
                 {
