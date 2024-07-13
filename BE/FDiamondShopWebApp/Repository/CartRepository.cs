@@ -32,7 +32,7 @@ namespace FDiamondShop.API.Repository
         }
         public async Task<List<CartLine>> GetAllCartlineExist(ApplicationUser user)
         {
-            var cartlineList = await _db.CartLines.Include(cl => cl.CartLineItems)
+            var cartlineList = await _db.CartLines.Include(cl => cl.CartLineItems).ThenInclude(cli => cli.Product)
                  .Where(cl => cl.UserId == user.Id && cl.IsOrdered == false)
                  .ToListAsync();
             return cartlineList;

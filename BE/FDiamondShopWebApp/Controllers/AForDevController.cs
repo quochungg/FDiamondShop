@@ -109,5 +109,15 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return NoContent();
         }
+        [HttpPost("update-product-price")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        //endpoint to update product's price
+        public async Task<IActionResult> UpdateProductPrice(int id, decimal price)
+        {
+            var product = await _unitOfWork.ProductRepository.GetAsync(u => u.ProductId == id);
+            product.BasePrice = price;
+            await _unitOfWork.SaveAsync();
+            return NoContent();
+        }
     }
 }
