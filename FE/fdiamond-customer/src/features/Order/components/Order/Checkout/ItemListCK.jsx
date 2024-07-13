@@ -1,6 +1,6 @@
 import { SingleLineCK, AttachmentLineCK } from 'src/features/Order/components/index'
 
-const ItemList = ({ cartLineArr }) => {
+const ItemListCK = ({ cartLineArr }) => {
 
     return (
         <>
@@ -26,4 +26,4 @@ const ItemList = ({ cartLineArr }) => {
     )
 };
 
-export default ItemList;
+export default ItemListCK;

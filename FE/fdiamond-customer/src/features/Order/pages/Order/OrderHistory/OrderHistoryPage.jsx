@@ -11,7 +11,7 @@ const OrderHistoryPage = () => {
     const [resetAfterCancel, setResetAfterCancel] = useState(false);
 
     const [orderTypes, setOrderTypes] = useState({
-        All: 0,
+        All: 0,     // All except "Pending state"
         Ordered: 0,
         Completed: 0,
         Cancelled: 0
@@ -19,8 +19,14 @@ const OrderHistoryPage = () => {
 
     const getAllOrdersByStatus = async (status) => {
         const response = await getAllFilterOrders(status);
-        if (response.data.result) {
-            setOrderArr(response.data.result)
+        let ordersList = response.data.result
+        if (ordersList) {
+            if (status === '') {
+                ordersList = ordersList.filter((order) => {
+                    return order.status !== 'Pending'
+                })
+            }
+            setOrderArr(ordersList)
         }
     }
 
@@ -32,8 +38,12 @@ const OrderHistoryPage = () => {
             getAllFilterOrders('Cancelled')
         ])
 
+        const allOrders = response[0].data.result;
+
+        const allOrdersExceptPending = allOrders.filter((order) => (order.status !== 'Pending'))
+
         setOrderTypes({
-            All: response[0].data.result.length,
+            All: allOrdersExceptPending.length,
             Ordered: response[1].data.result.length,
             Completed: response[2].data.result.length,
             Cancelled: response[3].data.result.length
@@ -60,7 +70,7 @@ const OrderHistoryPage = () => {
                 orderArr &&
                 <AppLayout>
 
-                    <div className='w-screen h-auto font-gantari bg-gray-50'>
+                    <div className='w-screen h-auto font-gantari bg-gray-50 mb-16'>
 
                         <div className='w-[80%] mx-auto'>
                             <header>
@@ -88,6 +98,7 @@ const OrderHistoryPage = () => {
                                     />
 
                                     <OrderList
+                                        selectedStatus={selectedStatus}
                                         orderArr={orderArr}
                                         setResetAfterCancel={setResetAfterCancel}
                                     />
