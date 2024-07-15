@@ -25,10 +25,10 @@ import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from '../../table-no-data';
 import ProductTableRow from '../product-table-row';
-import TableEmptyRows from '../../table-empty-rows';
+// import TableEmptyRows from '../../table-empty-rows';
 import ProductTableHead from '../product-table-head';
+import { applyFilter, getComparator } from '../../utils';
 import ProductTableToolbar from '../product-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../../utils';
 
 // import ProductCard from '../product-card';
 // import ProductSort from '../product-sort';
@@ -147,6 +147,14 @@ export default function ProductsView() {
   //   }
   //   setSelected(newSelected);
   // };
+  const totalProducts = data.length;
+  const startIndex = page * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, totalProducts);
+  const emptyRowsCount = endIndex < rowsPerPage ? rowsPerPage - (endIndex - startIndex) : 0;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
   const notFound = !dataFiltered.length && !!filterById;
   // const handleOpenFilter = () => {
@@ -211,23 +219,25 @@ export default function ProductsView() {
                     </TableCell>
                   </TableRow>
                 )}
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <ProductTableRow
-                      key={row.productId}
-                      productId={row.productId}
-                      productName={row.productName}
-                      basePrice={row.basePrice}
-                      quantity={row.quantity}
-                      subCategoryName={row.subCategoryName}
-                      isVisible={row.isVisible}
-                      // selected={selected.indexOf(row.id) !== -1}
-                      // handleClick={(event) => handleClick(event, row.id)}
-                    />
-                  ))}
+                {dataFiltered.slice(startIndex, endIndex).map((row) => (
+                  <ProductTableRow
+                    key={row.productId}
+                    productId={row.productId}
+                    productName={row.productName}
+                    basePrice={row.basePrice}
+                    quantity={row.quantity}
+                    subCategoryName={row.subCategoryName}
+                    isVisible={row.isVisible}
+                    // selected={selected.indexOf(row.id) !== -1}
+                    // handleClick={(event) => handleClick(event, row.id)}
+                  />
+                ))}
 
-                <TableEmptyRows height={77} emptyRows={emptyRows(page, rowsPerPage, data.length)} />
+                {emptyRowsCount > 0 && (
+                  <TableRow style={{ height: 53 * emptyRowsCount }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
 
                 {notFound && <TableNoData query={filterById} />}
               </TableBody>
@@ -237,9 +247,9 @@ export default function ProductsView() {
         <TablePagination
           page={page}
           component="div"
-          count={data.length}
+          count={totalProducts}
           rowsPerPage={rowsPerPage}
-          onPageChange={(event, value) => setPage(value)}
+          onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
