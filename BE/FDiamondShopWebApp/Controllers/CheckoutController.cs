@@ -86,7 +86,7 @@ namespace FDiamondShop.API.Controllers
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-            await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+  
 
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
@@ -150,7 +150,7 @@ namespace FDiamondShop.API.Controllers
             order.PaymentId = model.PaymentId;
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-            await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+ 
            
             await _unitOfWork.SaveAsync();
             var emailTo = user.Email;
@@ -193,11 +193,12 @@ namespace FDiamondShop.API.Controllers
             
              //= await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
+
             if (!response.Success)
             {
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Payment failed");
-                return BadRequest(_response);
+                await _unitOfWork.OrderRepository.RollBackOrder(order.OrderId);
+                await _unitOfWork.SaveAsync();
+                return Redirect("http://localhost:5173/failed-payment");
             }
 
             PaymentDTO payment = new PaymentDTO()
@@ -227,7 +228,7 @@ namespace FDiamondShop.API.Controllers
 
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-            await _unitOfWork.PaymentRepository.UpdateStatus(order, model, user);
+            
           
             await _unitOfWork.SaveAsync();
 
