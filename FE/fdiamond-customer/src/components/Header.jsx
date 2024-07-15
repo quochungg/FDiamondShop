@@ -33,6 +33,10 @@ const Header = () => {
 
     return (
         <>
+            <div className="bg-[#000035] py-2 text-white capitalize text-center font-[600]">
+                Today Only! 20% Off Sitewide. Use Code: FDIAMOND20
+            </div>
+
             <div className={`flex items-center font-gantari text-[14px] font-[500] py-5 border-b-[1px] px-12`}>
 
                 <div className="flex-1 flex gap-5 items-center">

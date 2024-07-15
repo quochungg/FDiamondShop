@@ -4,6 +4,7 @@ import { getAllFilterOrders } from 'src/features/Order/api/APIs'
 import { useEffect, useState } from 'react';
 import { LoadingSpinner } from 'src/components/index';
 
+
 const OrderHistoryPage = () => {
 
     const [orderArr, setOrderArr] = useState(null);
@@ -11,21 +12,19 @@ const OrderHistoryPage = () => {
     const [resetAfterCancel, setResetAfterCancel] = useState(false);
 
     const [orderTypes, setOrderTypes] = useState({
-        All: 0,     // All except "Pending state"
+        All: 0,
         Ordered: 0,
         Completed: 0,
-        Cancelled: 0
+        Cancelled: 0,
+        Pending: 0,
+        Failed: 0,
     })
+
 
     const getAllOrdersByStatus = async (status) => {
         const response = await getAllFilterOrders(status);
         let ordersList = response.data.result
         if (ordersList) {
-            if (status === '') {
-                ordersList = ordersList.filter((order) => {
-                    return order.status !== 'Pending'
-                })
-            }
             setOrderArr(ordersList)
         }
     }
@@ -35,18 +34,19 @@ const OrderHistoryPage = () => {
             getAllFilterOrders(''),
             getAllFilterOrders('Ordered'),
             getAllFilterOrders('Completed'),
-            getAllFilterOrders('Cancelled')
+            getAllFilterOrders('Cancelled'),
+            getAllFilterOrders('Pending'),
+            getAllFilterOrders('Failed')
         ])
 
-        const allOrders = response[0].data.result;
-
-        const allOrdersExceptPending = allOrders.filter((order) => (order.status !== 'Pending'))
 
         setOrderTypes({
-            All: allOrdersExceptPending.length,
+            All: response[0].data.result.length,
             Ordered: response[1].data.result.length,
             Completed: response[2].data.result.length,
-            Cancelled: response[3].data.result.length
+            Cancelled: response[3].data.result.length,
+            Pending: response[4].data.result.length,
+            Failed: response[5].data.result.length
         })
 
     }
@@ -94,12 +94,12 @@ const OrderHistoryPage = () => {
                                         orderTypes={orderTypes}
                                         selectedStatus={selectedStatus}
                                         setSelectedStatus={setSelectedStatus}
-                                        orderArr={orderArr}
                                     />
 
                                     <OrderList
                                         selectedStatus={selectedStatus}
                                         orderArr={orderArr}
+                                        orderTypes={orderTypes}
                                         setResetAfterCancel={setResetAfterCancel}
                                     />
 

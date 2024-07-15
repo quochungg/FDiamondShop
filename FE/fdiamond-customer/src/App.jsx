@@ -25,6 +25,7 @@ function App() {
     const CartPage = React.lazy(() => import("src/features/Order/pages/Cart/CartPage"));
     const CheckoutPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/CheckoutPage"));
     const SuccessfulPaymentPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/SuccessfulPaymentPage"));
+    const FailedPaymentPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/FailedPaymentPage"));
     const ProceedToPaypalPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/ProceedToPaypalPage"));
     const OrderHistoryPage = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderHistoryPage"));
     const OrderDetailsPage = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderDetailsPage"));
@@ -55,6 +56,7 @@ function App() {
                             <Route path='/cart' element={<CartPage />} />
                             <Route path='/checkout' element={<CheckoutPage />} />
                             <Route path='/successful-payment' element={<SuccessfulPaymentPage />} />
+                            <Route path='/failed-payment' element={<FailedPaymentPage />} />
                             <Route path='/proceed-to-paypal' element={<ProceedToPaypalPage />} />
                             <Route path='/order-history' element={<OrderHistoryPage />} />
                             <Route path='/order-details/:orderId' element={<OrderDetailsPage />} />

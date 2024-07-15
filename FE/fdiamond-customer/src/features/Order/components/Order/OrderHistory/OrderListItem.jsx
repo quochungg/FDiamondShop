@@ -4,7 +4,7 @@ import { cancelOrder } from 'src/features/Order/api/APIs'
 import { useNavigate } from 'react-router-dom';
 
 
-const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
+const OrderListItem = ({ orderTypes, orderItem, setResetAfterCancel }) => {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +32,8 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
     const handleViewOrderDetails = async () => {
         navigate(`/order-details/${orderItem.orderId}`);
     }
+
+
 
 
     return (
