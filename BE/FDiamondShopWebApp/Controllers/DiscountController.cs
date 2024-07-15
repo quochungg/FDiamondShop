@@ -181,6 +181,7 @@ namespace FDiamondShop.API.Controllers
                 {
                     discount.IsExpried = now7 < discount.StartingDate || now7 > discount.EndDate;
                     await _unitOfWork.DiscountCodeRepository.CreateAsync(discount);
+                    discount.DiscountCodeName = createDTO.DiscountCodeName.ToUpper();
                     await _unitOfWork.SaveAsync();
                     _response.Result = _mapper.Map<DiscountCodeDTO>(discount);
                     _response.StatusCode = HttpStatusCode.Created;
@@ -230,7 +231,7 @@ namespace FDiamondShop.API.Controllers
                 }
                 else
                 {
-                    discount.DiscountCodeName = updateDTO.DiscountCodeName;
+                    discount.DiscountCodeName = updateDTO.DiscountCodeName.ToUpper();
                     discount.DiscountPercent = updateDTO.DiscountPercent;
                     discount.StartingDate = DateTime.Parse(updateDTO.StartingDate);
                     discount.EndDate = DateTime.Parse(updateDTO.EndDate);

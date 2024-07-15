@@ -171,6 +171,21 @@ namespace FDiamondShop.API.Repository
             order.UpdateDate = DateTime.Now;
             return;
         }
+        public async Task RePurchase(int orderid)
+        {
+            var order = _db.Orders.FirstOrDefault(x => x.OrderId == orderid);
+            if (order == null)
+            {
+                throw new Exception("Not found");
+            }
+            _db.Orders.Remove(order);
+            var cartlines = await _db.CartLines.Where(x => x.OrderId == orderid).ToListAsync();
+            foreach (var line in cartlines)
+            {
+                line.IsOrdered = false;
+            }
+
+        }
     }
 
 }
