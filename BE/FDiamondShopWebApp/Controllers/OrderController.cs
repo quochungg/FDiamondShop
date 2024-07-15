@@ -350,5 +350,25 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+
+        [HttpPut("RePurchase/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> RePurcharge(int id)
+        {
+            try
+            {
+                await _unitOfWork.OrderRepository.RePurchase(id);
+                await _unitOfWork.SaveAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _response.ErrorMessages.Add($"{ex.Message}");
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
     }
 }
