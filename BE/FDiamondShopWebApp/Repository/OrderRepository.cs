@@ -127,12 +127,13 @@ namespace FDiamondShop.API.Repository
         {
             var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
             var cartlines = await _db.CartLines.Where(x => x.OrderId == orderId).ToListAsync();
-
+            
             foreach (var cartline in cartlines)
             {
-                foreach (var cartlineItem in cartline.CartLineItems)
+                var cartlineItem = await _db.CartLineItems.Where(x => x.CartLineId == cartline.CartLineId).ToListAsync();
+                foreach (var item in cartlineItem)
                 {
-                    var product = await _db.Products.FirstOrDefaultAsync(x => x.ProductId == cartlineItem.ProductId);
+                    var product = await _db.Products.FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
                     product.Quantity += 1;
                     product.IsVisible = true;
                     _db.Products.Update(product);
