@@ -76,7 +76,7 @@ namespace FDiamondShop.API.Controllers
         {
             Boolean isExist = false;
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == diamondCart.userName);
-            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x => x.CartLineItems.Count() == 1 && x.UserId == user.Id, includeProperties: "CartLineItems");
+            var cartLines = await _unitOfWork.CartRepository.GetAllAsync(x => x.CartLineItems.Count() == 1 && x.UserId == user.Id && x.IsOrdered == false, includeProperties: "CartLineItems");
             var cartLineItems = cartLines.SelectMany(x => x.CartLineItems).ToList();
             var product = cartLineItems.FirstOrDefault(x => x.ProductId == diamondCart.productId);
             if (product != null)
