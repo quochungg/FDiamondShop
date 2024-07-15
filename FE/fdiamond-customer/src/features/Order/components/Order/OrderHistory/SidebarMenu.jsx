@@ -19,7 +19,7 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
                             <p
                                 className={selectedStatus === '' ? activeTag : inactiveTag}
                             >
-                                All Orders ({orderTypes.All})
+                                All ({orderTypes.All})
                             </p>
                         </button>
                     </div>
@@ -60,6 +60,34 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
                                 className={selectedStatus === 'Cancelled' ? activeTag : inactiveTag}
                             >
                                 Cancelled ({orderTypes.Cancelled})
+                            </p>
+                        </button>
+                    </div>
+
+
+                    <div>
+                        <button
+                            onClick={() => setSelectedStatus('Pending')}
+                            className='w-full'
+                        >
+                            <p
+                                className={selectedStatus === 'Pending' ? activeTag : inactiveTag}
+                            >
+                                Pending ({orderTypes.Pending})
+                            </p>
+                        </button>
+                    </div>
+
+
+                    <div>
+                        <button
+                            onClick={() => setSelectedStatus('Failed')}
+                            className='w-full'
+                        >
+                            <p
+                                className={selectedStatus === 'Failed' ? activeTag : inactiveTag}
+                            >
+                                Failed ({orderTypes.Failed})
                             </p>
                         </button>
                     </div>

@@ -61,9 +61,9 @@ namespace FDiamondShop.API.Controllers
                 {
                     BasePrice = totalPrice,
                     TotalPrice = totalPrice,
-                    OrderDate= now7,
+                    OrderDate = now7,
                     Status = createDTO.Status
-                };
+                };                  
                 foreach (var cartLine in cartLines)
                 {
                     foreach (var cartLineItem in cartLine.CartLineItems)
@@ -90,6 +90,7 @@ namespace FDiamondShop.API.Controllers
                 var order = _mapper.Map<Order>(orderDTO);
                 order.Status = "Pending";
                 order.UserId = user.Id;
+                order.CartLines = cartLines;
                 await _unitOfWork.OrderRepository.CreateAsync(order);
                 await _unitOfWork.SaveAsync();               
                 _response.Result = _mapper.Map<OrderDTO>(order);
@@ -176,8 +177,6 @@ namespace FDiamondShop.API.Controllers
 
                         var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
-                        
-                        
 
                         if (paymentResponsePaypal.IsSuccessStatusCode)
                         {

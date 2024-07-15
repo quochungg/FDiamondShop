@@ -26,7 +26,7 @@ export { default as CheckoutLeftSection } from './Order/Checkout/CheckoutLeftSec
 export { default as CheckoutRightSection } from './Order/Checkout/CheckoutRightSection';
 export { default as SingleLineCK } from './Order/Checkout/SingleLineCK';
 export { default as AttachmentLineCK } from './Order/Checkout/AttachmentLineCK';
-export { default as ItemList } from './Order/Checkout/ItemList';
+export { default as ItemListCK } from './Order/Checkout/ItemListCK';
 export { default as SummarySectionCK } from './Order/Checkout/SummarySectionCK';
 export { default as ErrorModal } from './Order/Checkout/ErrorModal';
 
@@ -34,6 +34,13 @@ export { default as ErrorModal } from './Order/Checkout/ErrorModal';
 export { default as SidebarMenu } from './Order/OrderHistory/SidebarMenu';
 export { default as OrderList } from './Order/OrderHistory/OrderList';
 export { default as OrderListItem } from './Order/OrderHistory/OrderListItem';
-export { default as OrderDetailsLeftSection } from './Order/OrderHistory/OrderDetailsLeftSection';
-export { default as OrderDetailsRightSection } from './Order/OrderHistory/OrderDetailsRightSection';
+
+// Order Details Page
+export { default as ItemListOD } from './Order/OrderDetails/ItemListOD';
+export { default as SingleLineOD } from './Order/OrderDetails/SingleLineOD';
+export { default as AttachmentLineOD } from './Order/OrderDetails/AttachmentLineOD';
+export { default as SummarySectionOD } from './Order/OrderDetails/SummarySectionOD';
+export { default as OrderDetailsLeftSection } from './Order/OrderDetails/OrderDetailsLeftSection';
+export { default as OrderDetailsRightSection } from './Order/OrderDetails/OrderDetailsRightSection';
+
 

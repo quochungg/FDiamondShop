@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { PiHeadphones } from "react-icons/pi";
 import { TfiEmail } from "react-icons/tfi";
-import { ItemList, SummarySectionCK } from 'src/features/Order/components/index';
+import { ItemListCK, SummarySectionCK } from 'src/features/Order/components/index';
 
 
 const CheckoutRightSection = ({ cartLineArr, promoCode, onMakePayment }) => {
@@ -23,7 +23,7 @@ const CheckoutRightSection = ({ cartLineArr, promoCode, onMakePayment }) => {
                     </div>
 
 
-                    <ItemList
+                    <ItemListCK
                         cartLineArr={cartLineArr}
                     />
 

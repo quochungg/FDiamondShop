@@ -1,5 +1,5 @@
 
-const OrderDetailsLeftSection = () => {
+const OrderDetailsLeftSection = ({ orderDetails }) => {
     const userName = JSON.parse(localStorage.getItem('user')).userName;
 
     return (

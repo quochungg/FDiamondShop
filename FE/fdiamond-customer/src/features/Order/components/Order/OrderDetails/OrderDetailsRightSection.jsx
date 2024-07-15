@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { PiHeadphones } from "react-icons/pi";
 import { TfiEmail } from "react-icons/tfi";
-import { ItemList, SummarySectionCK } from 'src/features/Order/components/index';
+import { ItemListOD, SummarySectionOD } from 'src/features/Order/components/index';
 
 const OrderDetailsRightSection = ({ orderDetails }) => {
 
@@ -17,15 +17,13 @@ const OrderDetailsRightSection = ({ orderDetails }) => {
                     </div>
 
 
-                    <ItemList
-                        cartLineArr={cartLineArr}
+                    <ItemListOD
+                        orderDetails={orderDetails}
                     />
 
 
-                    <SummarySectionCK
-                        promoCode={promoCode}
-                        cartLineArr={cartLineArr}
-                        onMakePayment={onMakePayment}
+                    <SummarySectionOD
+                        orderDetails={orderDetails}
                     />
 
                 </summary>

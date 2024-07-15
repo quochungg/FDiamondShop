@@ -1,7 +1,10 @@
+
 import diamondSvg from 'src/features/Order/assets/diamondSvg.svg';
 import ringSvg from 'src/features/Order/assets/ringSvg.svg';
 
-const AttachmentLineCK = ({ cartLine }) => {
+const AttachmentLineOD = ({ cartLine }) => {
+
+    console.log(cartLine)
 
     const selectedSize = cartLine.cartLineItems.find((item) => {
         return item.product.categoryName === 'Engagement Ring';
@@ -17,7 +20,7 @@ const AttachmentLineCK = ({ cartLine }) => {
     ))
 
     const totalPrice = cartLine.cartLineItems.reduce((total, item) => {
-        return total + item.product.basePrice;
+        return total + item.price;
     }, 0)
 
 
@@ -77,4 +80,4 @@ const AttachmentLineCK = ({ cartLine }) => {
     )
 };
 
-export default AttachmentLineCK;
+export default AttachmentLineOD;

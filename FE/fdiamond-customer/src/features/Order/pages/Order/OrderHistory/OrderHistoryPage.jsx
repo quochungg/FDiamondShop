@@ -4,6 +4,7 @@ import { getAllFilterOrders } from 'src/features/Order/api/APIs'
 import { useEffect, useState } from 'react';
 import { LoadingSpinner } from 'src/components/index';
 
+
 const OrderHistoryPage = () => {
 
     const [orderArr, setOrderArr] = useState(null);
@@ -14,13 +15,17 @@ const OrderHistoryPage = () => {
         All: 0,
         Ordered: 0,
         Completed: 0,
-        Cancelled: 0
+        Cancelled: 0,
+        Pending: 0,
+        Failed: 0,
     })
+
 
     const getAllOrdersByStatus = async (status) => {
         const response = await getAllFilterOrders(status);
-        if (response.data.result) {
-            setOrderArr(response.data.result)
+        let ordersList = response.data.result
+        if (ordersList) {
+            setOrderArr(ordersList)
         }
     }
 
@@ -29,14 +34,19 @@ const OrderHistoryPage = () => {
             getAllFilterOrders(''),
             getAllFilterOrders('Ordered'),
             getAllFilterOrders('Completed'),
-            getAllFilterOrders('Cancelled')
+            getAllFilterOrders('Cancelled'),
+            getAllFilterOrders('Pending'),
+            getAllFilterOrders('Failed')
         ])
+
 
         setOrderTypes({
             All: response[0].data.result.length,
             Ordered: response[1].data.result.length,
             Completed: response[2].data.result.length,
-            Cancelled: response[3].data.result.length
+            Cancelled: response[3].data.result.length,
+            Pending: response[4].data.result.length,
+            Failed: response[5].data.result.length
         })
 
     }
@@ -60,7 +70,7 @@ const OrderHistoryPage = () => {
                 orderArr &&
                 <AppLayout>
 
-                    <div className='w-screen h-auto font-gantari bg-gray-50'>
+                    <div className='w-screen h-auto font-gantari bg-gray-50 mb-16'>
 
                         <div className='w-[80%] mx-auto'>
                             <header>
@@ -84,11 +94,12 @@ const OrderHistoryPage = () => {
                                         orderTypes={orderTypes}
                                         selectedStatus={selectedStatus}
                                         setSelectedStatus={setSelectedStatus}
-                                        orderArr={orderArr}
                                     />
 
                                     <OrderList
+                                        selectedStatus={selectedStatus}
                                         orderArr={orderArr}
+                                        orderTypes={orderTypes}
                                         setResetAfterCancel={setResetAfterCancel}
                                     />
 
