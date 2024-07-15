@@ -123,6 +123,25 @@ namespace FDiamondShop.API.Repository
             order.UpdateDate = DateTime.Now;
             _db.Orders.Update(order);
         }
+        public async Task RollBackOrder(int orderId)
+        {
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
+            var cartlines = await _db.CartLines.Where(x => x.OrderId == orderId).ToListAsync();
+
+            foreach (var cartline in cartlines)
+            {
+                foreach (var cartlineItem in cartline.CartLineItems)
+                {
+                    var product = await _db.Products.FirstOrDefaultAsync(x => x.ProductId == cartlineItem.ProductId);
+                    product.Quantity += 1;
+                    product.IsVisible = true;
+                    _db.Products.Update(product);
+                }
+            }
+            order.Status = "Failed";
+            order.UpdateDate = DateTime.Now;
+            _db.Orders.Update(order);
+        }
 
         public async Task<List<OrderDTO>> FilterOrder(string userId, string? status, string? orderBy)
         {

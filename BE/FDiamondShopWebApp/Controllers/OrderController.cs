@@ -177,7 +177,7 @@ namespace FDiamondShop.API.Controllers
 
                         var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
-                       
+
                         if (paymentResponsePaypal.IsSuccessStatusCode)
                         {
 
@@ -187,7 +187,10 @@ namespace FDiamondShop.API.Controllers
                                 _response.Result = new
                                 {
                                     PaymentUrl = paymentResult.Result.ToString(),
+                                    
                                 };
+                                await _unitOfWork.PaymentRepository.UpdateStatus(order, user);                               
+                                
                             }
 
                             else
