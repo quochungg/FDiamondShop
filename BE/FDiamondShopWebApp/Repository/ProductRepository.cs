@@ -29,13 +29,20 @@ namespace FDiamondShop.API.Repository
 
         public async Task<List<Product>> SearchProductByName(string searchValue)
         {
-            return await _db.Products.Include(p => p.ProductImages).
+            var returnList = await _db.Products.Include(p => p.ProductImages).
                 Include(p => p.ProductVariantValues).
                 ThenInclude(pv=>pv.Variant).
                 Include(p => p.SubCategory).
                 ThenInclude(o => o.Category).
+                Include(p => p.ProductImages).
                 Where(p => p.ProductName.ToLower().Contains(searchValue.ToLower()) && p.IsVisible == true && p.IsDeleted == false).
                 ToListAsync();
+
+            foreach (var product in returnList)
+            {
+                product.ProductImages = product.ProductImages.Where(i => i.ImageUrl.Contains("bluenile")).Take(1).ToList();
+            }
+            return returnList;
         }
 
         public async Task<Product> UpdateProduct(ProductUpdateDTO dto)
