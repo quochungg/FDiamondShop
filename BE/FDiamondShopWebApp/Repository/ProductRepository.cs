@@ -30,7 +30,7 @@ namespace FDiamondShop.API.Repository
                 ThenInclude(pv=>pv.Variant).
                 Include(p => p.SubCategory).
                 ThenInclude(o => o.Category).
-                Where(p => p.ProductName.ToLower().Contains(searchValue.ToLower())).
+                Where(p => p.ProductName.ToLower().Contains(searchValue.ToLower()) && p.IsVisible == true && p.IsDeleted == false).
                 ToListAsync();
         }
 
