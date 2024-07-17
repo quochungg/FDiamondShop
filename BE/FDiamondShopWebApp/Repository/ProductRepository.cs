@@ -19,8 +19,8 @@ namespace FDiamondShop.API.Repository
         public async Task<List<Product>> GetRecommendProducts(int productId)
         {
             var product = await _db.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-            var recommendProducts = _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId).ToListAsync();
-            return await recommendProducts;
+            var recommendProducts = await _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId).Include(p => p.ProductImages).ToListAsync();
+            return recommendProducts;
         }
 
         public async Task<IEnumerable<Product>> SearchProductByName(string searchValue)
@@ -29,6 +29,7 @@ namespace FDiamondShop.API.Repository
                 Include(p => p.ProductVariantValues).
                 Include(p => p.SubCategory).
                 ThenInclude(o => o.Category).
+                Include(p => p.ProductImages).
                 Where(p => p.ProductName.Contains(searchValue)).
                 ToListAsync();
         }
