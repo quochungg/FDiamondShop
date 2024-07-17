@@ -165,7 +165,7 @@ namespace FDiamondShop.API.Controllers
         public async Task<ActionResult<APIResponse>> GetProductbyName (string? name)
         {
             var ProductList = await _unitOfWork.ProductRepository.SearchProductByName(name);
-            if(ProductList == null)
+            if(ProductList.Count()==0)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
                 _response.IsSuccess = false;
