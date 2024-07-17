@@ -87,6 +87,9 @@ const ProductDetailsPage = ({ productId }) => {
                             isDiamondInCart={isDiamondInCart}
                             setResetSelectionBar={setResetSelectionBar}
                         />
+
+
+
                     </div>
                 </AppLayout>
             }

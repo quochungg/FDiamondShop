@@ -357,14 +357,64 @@ export const cancelOrder = async (orderId) => {
     return response;
 }
 
+// Reorder when payment failed
+export const reorder = async (orderId) => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    let API_url = API_root + `/Order/RePurchase/${orderId}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.put(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
+    }
+
+    return response;
+}
+
 
 // =======================================================================
 //                                  DISCOUNT
 // =======================================================================
+// Get discount code by code name
 export const getPromoCode = async (promoCode) => {
     const accessToken = localStorage.getItem('accessToken');
 
     let API_url = API_root + `/Discount/GetDiscountCodeByCodeName?discountCode=${promoCode}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.get(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response)
+            response = error.response;
+        else
+            console.error('There was an error', error);
+    }
+    return response;
+}
+
+
+// Get non-expired discount codes
+export const getNonExpiredDiscountCodes = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    let API_url = API_root + `/Discount/GetOpenDiscountCode`;
 
     const headers = {
         'Authorization': `Bearer ${accessToken}`

@@ -6,12 +6,14 @@ import { AiOutlineShopping } from "react-icons/ai";
 import { SlLocationPin } from "react-icons/sl";
 import { PiHeadphones } from "react-icons/pi";
 import { useAuth } from "src/context/AuthProvider";
+import { getNonExpiredDiscountCodes } from 'src/features/Order/api/APIs'
 
 
 const Header = () => {
     const location = useLocation();
     const { logout, token } = useAuth();
     const [user, setUser] = useState(null);
+    const [maxDiscountPercentage, setMaxDiscountPercentage] = useState(null);
 
     useEffect(() => {
         if (token) {
@@ -23,19 +25,36 @@ const Header = () => {
     }, [token]);
 
 
+    useEffect(() => {
+        const fetchDiscountCodes = async () => {
+            const response = await getNonExpiredDiscountCodes();
+            const discountArr = response.data.result;
+            if (discountArr && discountArr.length > 0) {
+                const maxDiscount = Math.max(...discountArr.map(discount => discount.discountPercent));
+                setMaxDiscountPercentage(maxDiscount);
+            }
+        }
+        fetchDiscountCodes();
+    }, [])
+
+
     const handleSignOut = (e) => {
         e.preventDefault();
         logout();
     }
 
-
     const iconSize = 25;
 
     return (
         <>
-            <div className="bg-[#000035] py-2 text-white capitalize text-center font-[600]">
-                Today Only! 20% Off Sitewide. Use Code: FDIAMOND20
-            </div>
+            {maxDiscountPercentage &&
+                <div
+                    className="bg-[#000035] py-2 tracking-wide text-white font-gantari text-center font-[350]"
+                >   <Link to='/promo-code'>
+                        <p>Save up to {maxDiscountPercentage}%. Click to view all available promo codes!</p>
+                    </Link>
+                </div>
+            }
 
             <div className={`flex items-center font-gantari text-[14px] font-[500] py-5 border-b-[1px] px-12`}>
 

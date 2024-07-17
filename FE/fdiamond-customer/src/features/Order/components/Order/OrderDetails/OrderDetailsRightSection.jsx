@@ -26,6 +26,7 @@ const OrderDetailsRightSection = ({ orderDetails }) => {
                         orderDetails={orderDetails}
                     />
 
+
                 </summary>
 
 

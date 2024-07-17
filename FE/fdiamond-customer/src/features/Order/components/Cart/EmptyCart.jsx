@@ -11,7 +11,7 @@ const EmptyCart = () => {
 
 
                 <div className="font-gantari flex flex-col space-y-6 text-center mt-2">
-                    <h2 className="text-2xl font-[650] tracking-wide font-lora">Your shopping cart is empty</h2>
+                    <h2 className="text-2xl font-[650] tracking-wide font-lora capitalize">Your shopping cart is empty</h2>
                     <p className="text-lg font-[350]">Looks like you haven't added any items to your cart yet.</p>
                 </div>
 

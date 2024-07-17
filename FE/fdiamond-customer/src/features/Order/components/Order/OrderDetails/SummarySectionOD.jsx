@@ -1,5 +1,9 @@
+import { useNavigate } from 'react-router-dom';
+import { reorder } from 'src/features/Order/api/APIs'
+
 
 const SummarySectionOD = ({ orderDetails }) => {
+    const navigate = useNavigate();
 
     const discountCode = orderDetails.discountCode;
 
@@ -20,6 +24,13 @@ const SummarySectionOD = ({ orderDetails }) => {
         let total = orderDetails.totalPrice;
         return total;
     }
+
+
+    const handleReorder = () => {
+        reorder(orderDetails.orderId);
+        navigate('/cart');
+    }
+
 
     const subTotal = calculateSubtotal();
 
@@ -64,6 +75,23 @@ const SummarySectionOD = ({ orderDetails }) => {
                     <p>${totalPayment.toLocaleString()}</p>
                 </div>
             </div>
+
+            {orderDetails.status === 'Failed' && (
+                <div className='w-full mt-6'>
+                    <button
+                        onClick={handleReorder}
+                        className='w-full'
+                    >
+                        <p className='uppercase text-center text-lg text-white font-[600] tracking-wide 
+                            rounded-md py-4 bg-blue-950 hover:bg-[#34427b] transition-colors duration-200'
+                        >
+                            Reorder
+                        </p>
+                    </button>
+                </div>
+            )
+
+            }
         </>
     )
 };

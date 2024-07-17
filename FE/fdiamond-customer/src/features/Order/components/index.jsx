@@ -44,3 +44,5 @@ export { default as OrderDetailsLeftSection } from './Order/OrderDetails/OrderDe
 export { default as OrderDetailsRightSection } from './Order/OrderDetails/OrderDetailsRightSection';
 
 
+// Discount List Page
+export { default as EmptyDiscountList } from './Discount/EmptyDiscountList';

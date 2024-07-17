@@ -10,10 +10,10 @@ const OrderListItem = ({ orderTypes, orderItem, setResetAfterCancel }) => {
     const [isLoading, setIsLoading] = useState(false);
 
 
-    const orderDate = new Date(orderItem.orderDate).toLocaleDateString("en-GB", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
+    const orderDate = new Date(orderItem.orderDate).toLocaleDateString("en-US", {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
     });
 
 
@@ -34,8 +34,6 @@ const OrderListItem = ({ orderTypes, orderItem, setResetAfterCancel }) => {
     }
 
 
-
-
     return (
         <>
             <div className='w-full h-auto shadow-cartline font-gantari'>
@@ -54,49 +52,63 @@ const OrderListItem = ({ orderTypes, orderItem, setResetAfterCancel }) => {
                         <p>Order Status: {orderItem.status}</p>
                     </div>
 
-                    <div className="self-end flex space-x-4 px-7 pb-3">
-                        <div>
-                            <button onClick={handleViewOrderDetails}>
-                                <p className="border-[1px] text-white bg-blue-950 text-md font-[550] py-4 px-7 rounded-md uppercase">
-                                    View Order Details
-                                </p>
-                            </button>
-                        </div>
 
-                        <div>
-                            {orderItem.status === 'Ordered' ? (
-                                isLoading ?
-                                    (
-                                        <p className="text-white text-md font-[550] bg-red-800 py-4 px-14 rounded-md uppercase">
-                                            <TailSpin
-                                                visible={true}
-                                                height="25"
-                                                color="#e5e5e5"
-                                                ariaLabel="tail-spin-loading"
-                                                radius="1"
-                                                wrapperClass="flex justify-center items-center"
-                                            />
-                                        </p>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleCancelOrder(orderItem.orderId)}
-                                        >
-                                            <p className="text-white text-md font-[550] bg-red-800 py-4 px-16 rounded-md uppercase">
-                                                Cancel
-                                            </p>
-                                        </button>
-                                    )
+                    <div className='flex justify-end'>
+                        {orderItem.status === 'Ordered' ?
+                            (
+                                <>
+                                    <div className="self-end flex space-x-4 px-7 pb-6">
+                                        <div>
+                                            <button onClick={handleViewOrderDetails}>
+                                                <p className="border-[1px] text-white bg-blue-950 text-md font-[550] py-4 px-7 rounded-md uppercase">
+                                                    View Order Details
+                                                </p>
+                                            </button>
+                                        </div>
+
+                                        {isLoading ?
+                                            (
+                                                <p className="text-white text-md font-[550] bg-red-800 py-4 px-14 rounded-md uppercase">
+                                                    <TailSpin
+                                                        visible={true}
+                                                        height="25"
+                                                        color="#e5e5e5"
+                                                        ariaLabel="tail-spin-loading"
+                                                        radius="1"
+                                                        wrapperClass="flex justify-center items-center"
+                                                    />
+                                                </p>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleCancelOrder(orderItem.orderId)}
+                                                >
+                                                    <p className="text-white text-md font-[550] bg-red-800 py-4 px-16 rounded-md uppercase">
+                                                        Cancel
+                                                    </p>
+                                                </button>
+                                            )
+                                        }
+                                    </div>
+
+
+
+                                </>
+
                             ) : (
-                                <button disabled>
-                                    <p className="text-white text-md font-[550] bg-gray-300 py-4 px-16 rounded-md uppercase">
-                                        Cancel
-                                    </p>
-                                </button>
+                                <div className='pb-6 px-7'>
+                                    <button onClick={handleViewOrderDetails}>
+                                        <p className="border-[1px] text-white bg-blue-950 text-md font-[550] py-4 px-7 rounded-md uppercase">
+                                            View Order Details
+                                        </p>
+                                    </button>
+                                </div>
                             )
-                            }
 
-                        </div>
+
+                        }
+
                     </div>
+
 
                 </div>
 

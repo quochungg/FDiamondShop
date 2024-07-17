@@ -47,6 +47,8 @@ const OrderDetailsPage = () => {
 
     }, [orderId])
 
+
+
     return (
         <>
             {orderDetails &&
@@ -65,11 +67,7 @@ const OrderDetailsPage = () => {
                             <main>
                                 <div className='grid grid-cols-[1fr_36.69%] gap-x-10'>
 
-                                    <div className='col-span-full mb-4'>
-                                        <p className='uppercase text-start text-[2.5rem] font-[700] font-gantari text-[#151541] py-9'
-                                        >
-                                            Order Details
-                                        </p>
+                                    <div className='col-span-full mt-16 mb-5'>
 
                                         <Link to='/order-history'>
                                             <div className='flex items-center space-x-1'>
@@ -79,8 +77,8 @@ const OrderDetailsPage = () => {
                                                     Back to order history
                                                 </p>
                                             </div>
-
                                         </Link>
+
                                     </div>
 
 

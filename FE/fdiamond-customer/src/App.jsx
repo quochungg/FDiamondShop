@@ -29,6 +29,7 @@ function App() {
     const ProceedToPaypalPage = React.lazy(() => import("src/features/Order/pages/Order/Checkout/ProceedToPaypalPage"));
     const OrderHistoryPage = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderHistoryPage"));
     const OrderDetailsPage = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderDetailsPage"));
+    const DiscountListPage = React.lazy(() => import("src/features/Order/pages/Discount/DiscountListPage"));
 
     //Error pages
     const PageNotFound = React.lazy(() => import("src/pages/PageNotFound"))
@@ -40,16 +41,19 @@ function App() {
             <Suspense fallback={<LoadingSpinner />}>
                 <AuthProvider>
                     <Routes>
-                        <Route path="/" element={<Home />} />
 
+                        <Route path="/" element={<Home />} />
                         <Route path="/product">
                             <Route index element={<Navigate to="/product/diamond" replace />} />
                             <Route path=":category" element={<CategoryWrapper />} />
                             <Route path="product-details/:productId" element={<ProductDetailsWrapper />} />
                         </Route>
+                        <Route path='/promo-code' element={<DiscountListPage />} />
                         <Route path='/product-not-found' element={<ProductNotFound />} />
                         <Route path='/order-not-found' element={<OrderNotFound />} />
                         <Route />
+
+
 
                         <Route element={<ProtectedRoute />} >
                             <Route path='/account-details' element={<AccountDetailsPage />} />
@@ -61,6 +65,8 @@ function App() {
                             <Route path='/order-history' element={<OrderHistoryPage />} />
                             <Route path='/order-details/:orderId' element={<OrderDetailsPage />} />
                         </Route>
+
+
 
                         <Route element={<GuestRoute />} >
                             <Route path='/login' element={<LoginPage />} />

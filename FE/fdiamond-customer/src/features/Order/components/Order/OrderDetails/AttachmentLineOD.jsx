@@ -4,8 +4,6 @@ import ringSvg from 'src/features/Order/assets/ringSvg.svg';
 
 const AttachmentLineOD = ({ cartLine }) => {
 
-    console.log(cartLine)
-
     const selectedSize = cartLine.cartLineItems.find((item) => {
         return item.product.categoryName === 'Engagement Ring';
     }).ringSize
