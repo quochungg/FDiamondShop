@@ -45,7 +45,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Sort By")] string sortBy = "asc")           
         {
             
-            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues,SubCategory.Category");
+            IEnumerable<Product> ProductList = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "ProductImages,ProductVariantValues.Variant,SubCategory.Category");
            
             if (cateName != null)
             {
@@ -91,7 +91,7 @@ namespace FDiamondShop.API.Controllers
                 var model = _mapper.Map<List<ProductDTO>>(ProductList);
                 foreach (var product in model)
                 {
-                    product.SubCategoryName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).SubCategory.SubcategoryName;
+                    product.SubCategoryName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).SubCategory.SubcategoryName;                
                 }
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -157,6 +157,52 @@ namespace FDiamondShop.API.Controllers
             }
 
         }
+        [HttpGet("GetProductbyName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task<ActionResult<APIResponse>> GetProductbyName (string? name)
+        {
+            var ProductList = await _unitOfWork.ProductRepository.SearchProductByName(name);
+            if(ProductList == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "No Products Found" };
+                return BadRequest(_response);
+            }
+            try
+            {
+                var model = _mapper.Map<List<ProductDTO>>(ProductList);
+                foreach (var productDTO in model)
+                {
+                    var product = _mapper.Map<Product>(productDTO);
+
+                    productDTO.SubCategoryName = ProductList.FirstOrDefault(p => p.ProductId == product.ProductId).SubCategory.SubcategoryName;
+
+                    productDTO.CategoryName = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result.SubCategory.Category.CategoryName;
+                    productDTO.CategoryId = _unitOfWork.SubCategoryRepository.GetAsync(s => s.SubCategoryId == product.SubCategoryId).Result.CategoryId;
+                    foreach (var variant in productDTO.ProductVariantValues)
+                    {
+                        variant.VariantName = _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == product.ProductId).Result
+                            .ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
+                    }
+                }
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = model;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
+
         [HttpPost(Name = "CreateProduct")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

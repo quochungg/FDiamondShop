@@ -23,13 +23,14 @@ namespace FDiamondShop.API.Repository
             return await recommendProducts;
         }
 
-        public async Task<IEnumerable<Product>> SearchProductByName(string searchValue)
+        public async Task<List<Product>> SearchProductByName(string searchValue)
         {
             return await _db.Products.Include(p => p.ProductImages).
                 Include(p => p.ProductVariantValues).
+                ThenInclude(pv=>pv.Variant).
                 Include(p => p.SubCategory).
                 ThenInclude(o => o.Category).
-                Where(p => p.ProductName.Contains(searchValue)).
+                Where(p => p.ProductName.ToLower().Contains(searchValue.ToLower())).
                 ToListAsync();
         }
 
