@@ -19,7 +19,11 @@ namespace FDiamondShop.API.Repository
         public async Task<List<Product>> GetRecommendProducts(int productId)
         {
             var product = await _db.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-            var recommendProducts = await _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId).Include(p => p.ProductImages).ToListAsync();
+            var recommendProducts = await _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId && p.IsVisible == true).Include(p => p.ProductImages).ToListAsync();
+            foreach (var products in recommendProducts)
+            {
+                products.ProductImages = products.ProductImages.Where(i => i.ImageUrl.Contains("bluenile")).Take(1).ToList();
+            }
             return recommendProducts;
         }
 
