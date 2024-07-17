@@ -13,5 +13,7 @@ namespace FDiamondShop.API.Repository.IRepository
         public Task<List<OrderDTO>> FilterOrder (string userId, string status, string orderBy);
 
         public Task CompleteOrder (int orderId);
+        public Task RollBackOrder(int orderId);
+        public Task RePurchase(int orderId);
     }
 }

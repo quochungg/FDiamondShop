@@ -123,6 +123,26 @@ namespace FDiamondShop.API.Repository
             order.UpdateDate = DateTime.Now;
             _db.Orders.Update(order);
         }
+        public async Task RollBackOrder(int orderId)
+        {
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
+            var cartlines = await _db.CartLines.Where(x => x.OrderId == orderId).ToListAsync();
+            
+            foreach (var cartline in cartlines)
+            {
+                var cartlineItem = await _db.CartLineItems.Where(x => x.CartLineId == cartline.CartLineId).ToListAsync();
+                foreach (var item in cartlineItem)
+                {
+                    var product = await _db.Products.FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
+                    product.Quantity += 1;
+                    product.IsVisible = true;
+                    _db.Products.Update(product);
+                }
+            }
+            order.Status = "Failed";
+            order.UpdateDate = DateTime.Now;
+            _db.Orders.Update(order);
+        }
 
         public async Task<List<OrderDTO>> FilterOrder(string userId, string? status, string? orderBy)
         {
@@ -151,6 +171,21 @@ namespace FDiamondShop.API.Repository
             order.Status = "Completed";
             order.UpdateDate = DateTime.Now;
             return;
+        }
+        public async Task RePurchase(int orderid)
+        {
+            var order = _db.Orders.FirstOrDefault(x => x.OrderId == orderid);
+            if (order == null)
+            {
+                throw new Exception("Not found");
+            }
+            _db.Orders.Remove(order);
+            var cartlines = await _db.CartLines.Where(x => x.OrderId == orderid).ToListAsync();
+            foreach (var line in cartlines)
+            {
+                line.IsOrdered = false;
+            }
+
         }
     }
 

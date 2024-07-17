@@ -16,7 +16,7 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
-        public async Task UpdateStatus(Order order,Payment model,ApplicationUser user)
+        public async Task UpdateStatus(Order order,ApplicationUser user)
         {
             
             var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)

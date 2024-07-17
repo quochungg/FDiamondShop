@@ -177,7 +177,7 @@ namespace FDiamondShop.API.Controllers
 
                         var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
-                       
+
                         if (paymentResponsePaypal.IsSuccessStatusCode)
                         {
 
@@ -187,7 +187,10 @@ namespace FDiamondShop.API.Controllers
                                 _response.Result = new
                                 {
                                     PaymentUrl = paymentResult.Result.ToString(),
+                                    
                                 };
+                                await _unitOfWork.PaymentRepository.UpdateStatus(order, user);                               
+                                
                             }
 
                             else
@@ -336,6 +339,26 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 await _unitOfWork.OrderRepository.CompleteOrder(id);      
+                await _unitOfWork.SaveAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _response.ErrorMessages.Add($"{ex.Message}");
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
+
+        [HttpPut("RePurchase/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> RePurcharge(int id)
+        {
+            try
+            {
+                await _unitOfWork.OrderRepository.RePurchase(id);
                 await _unitOfWork.SaveAsync();
                 return NoContent();
             }
