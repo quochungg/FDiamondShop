@@ -27,7 +27,7 @@ namespace FDiamondShop.API.Repository
             return recommendProducts;
         }
 
-        public async Task<List<Product>> SearchProductByName(string searchValue)
+        public async Task<IEnumerable<Product>> SearchProductByName(string searchValue)
         {
             var returnList = await _db.Products.Include(p => p.ProductImages).
                 Include(p => p.ProductVariantValues).
@@ -51,7 +51,7 @@ namespace FDiamondShop.API.Repository
             return product ?? new Product();
         }
         
-        }
-        
     }
+        
+}
 
