@@ -66,15 +66,14 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 |          | UC-19    | View Cart            |
 | Sprint 3 | UC-20    | Order               |
 |          | UC-21    | Apply Discount to Order               |
-|          | UC-22    | Select Payment Method             |
-|          | UC-23    | Excute Payment                 |
-|          | UC-24    | Cancel Order                 |
-|          | UC-25    | View Order Details                 |
-|          | UC-26    | View Order History               |
-|          | UC-27    | Receive New Orders                 |
-|          | UC-28    | View All Order        |
-|          | UC-29    | View All Accounts         |
-|          | UC-30    | View Dashboard   .      |
+|          | UC-22    | Excute Payment                 |
+|          | UC-23    | Cancel Order                 |
+|          | UC-24    | View Order Details                 |
+|          | UC-25    | View Order History               |
+|          | UC-26    | Receive New Orders                 |
+|          | UC-27    | View All Order        |
+|          | UC-28    | View All Accounts         |
+|          | UC-29    | View Dashboard   .      |
 
 ### Table 2: Member Assignment for Sprint 1
 | Member Name | User Story ID | Description            |
@@ -106,7 +105,6 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 | Nguyen Huu Quoc Hung     | UC-20   | Order                |
 | Tran Nguyen Thu An       | UC-21    | Apply Discount to Order           |
 | Ha Duy Tung    | UC-22    | Select Payment Method                   |
-| Ha Duy Tung    | UC-23    | Excute Payment                   |
 | Nguyen Thi Ngoc Thu   | UC-24    | Cancel Order                    |
 | Nguyen Thi Bich Duyen     | UC-25   | View Order Details      |
 | Nguyen Thi Bich Duyen     | UC-26   | View Order History       |
