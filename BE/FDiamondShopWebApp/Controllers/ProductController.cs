@@ -162,9 +162,12 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<ActionResult<APIResponse>> GetProductbyName (string? name)
+        public async Task<ActionResult<APIResponse>> GetProductbyName (string? searchproductname,
+            [FromQuery(Name = "PageSize")] int pageSize = 10,
+            [FromQuery(Name = "PageNumber")] int pageNumber = 1)
         {
-            var ProductList = await _unitOfWork.ProductRepository.SearchProductByName(name);
+            var ProductList = await _unitOfWork.ProductRepository.SearchProductByName(searchproductname);
+
             if(ProductList.Count()==0)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
@@ -174,8 +177,13 @@ namespace FDiamondShop.API.Controllers
             }
             try
             {
-                var model = _mapper.Map<List<ProductDTO>>(ProductList);
-                foreach (var productDTO in model)
+                var count = ProductList.Count();
+                ProductList = ProductList
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize);
+                var productDTOList = _mapper.Map<List<ProductDTO>>(ProductList);
+
+                foreach (var productDTO in productDTOList)
                 {
                     var product = _mapper.Map<Product>(productDTO);
 
@@ -189,6 +197,9 @@ namespace FDiamondShop.API.Controllers
                             .ProductVariantValues.FirstOrDefault(v => v.VariantId == variant.VariantId).Variant.VariantName;
                     }
                 }
+                
+                var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+                var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, totalPages);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = model;
