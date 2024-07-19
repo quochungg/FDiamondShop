@@ -68,13 +68,13 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 |          | UC-21    | Apply Discount to Order               |
 |          | UC-22    | Select Payment Method             |
 |          | UC-23    | Excute Payment                 |
-|          | UC-24    | Cancel Payment                 |
+|          | UC-24    | Cancel Order                 |
 |          | UC-25    | View Order Details                 |
 |          | UC-26    | View Order History               |
 |          | UC-27    | Receive New Orders                 |
 |          | UC-28    | View All Order        |
 |          | UC-29    | View All Accounts         |
-|          | UC-30    | View Dashboard         |
+|          | UC-30    | View Dashboard   .      |
 
 ### Table 2: Member Assignment for Sprint 1
 | Member Name | User Story ID | Description            |
@@ -99,6 +99,21 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 | Tran Nguyen Thu An       | UC-18    | Remove Products From Cart           |
 | Doan Dang Thien Bao       | UC-12    | Create Discount Code            |
 | Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |      
+
+### Table 3: Member Assignment for Sprint 3
+| Member Name | User Story ID | Description            |
+|-------------|---------------|------------------------|
+| Nguyen Huu Quoc Hung     | UC-20   | Order                |
+| Tran Nguyen Thu An       | UC-21    | Apply Discount to Order           |
+| Ha Duy Tung    | UC-22    | Select Payment Method                   |
+| Ha Duy Tung    | UC-23    | Excute Payment                   |
+| Nguyen Thi Ngoc Thu   | UC-24    | Cancel Order                    |
+| Nguyen Thi Bich Duyen     | UC-25   | View Order Details      |
+| Nguyen Thi Bich Duyen     | UC-26   | View Order History       |
+| Doan Dang Thien Bao       | UC-27    | Receive New Orders            | 
+| Doan Dang Thien Bao       | UC-28    | View All Order             |
+| Tran Nguyen Thu An       | UC-29    | View All Accounts           |
+| Nguyen Thi Ngoc Thu   | UC-30    | View Dashboard                  |
 <!-- ## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
