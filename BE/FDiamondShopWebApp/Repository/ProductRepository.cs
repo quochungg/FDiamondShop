@@ -19,18 +19,30 @@ namespace FDiamondShop.API.Repository
         public async Task<List<Product>> GetRecommendProducts(int productId)
         {
             var product = await _db.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-            var recommendProducts = _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId).ToListAsync();
-            return await recommendProducts;
+            var recommendProducts = await _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId && p.IsVisible == true).Include(p => p.ProductImages).ToListAsync();
+            foreach (var products in recommendProducts)
+            {
+                products.ProductImages = products.ProductImages.Where(i => i.ImageUrl.Contains("bluenile")).Take(1).ToList();
+            }
+            return recommendProducts;
         }
 
         public async Task<IEnumerable<Product>> SearchProductByName(string searchValue)
         {
-            return await _db.Products.Include(p => p.ProductImages).
+            var returnList = await _db.Products.Include(p => p.ProductImages).
                 Include(p => p.ProductVariantValues).
+                ThenInclude(pv=>pv.Variant).
                 Include(p => p.SubCategory).
                 ThenInclude(o => o.Category).
-                Where(p => p.ProductName.Contains(searchValue)).
+                Include(p => p.ProductImages).
+                Where(p => p.ProductName.ToLower().Contains(searchValue.ToLower()) && p.IsVisible == true && p.IsDeleted == false).
                 ToListAsync();
+
+            foreach (var product in returnList)
+            {
+                product.ProductImages = product.ProductImages.Where(i => i.ImageUrl.Contains("bluenile")).Take(1).ToList();
+            }
+            return returnList;
         }
 
         public async Task<Product> UpdateProduct(ProductUpdateDTO dto)
@@ -39,7 +51,7 @@ namespace FDiamondShop.API.Repository
             return product ?? new Product();
         }
         
-        }
-        
     }
+        
+}
 

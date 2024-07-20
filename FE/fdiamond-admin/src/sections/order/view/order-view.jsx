@@ -72,7 +72,8 @@ export default function OderPage() {
         );
         // console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
         if (response.data && Array.isArray(response.data.result)) {
-          setData(response.data.result);
+          const Orders = response.data.result.filter((od) => od.status !== 'Failed');
+          setData(Orders);
         } else {
           console.error('Unexpected API response format:', response.data);
         }
