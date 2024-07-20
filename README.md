@@ -1,6 +1,6 @@
 Diamond Shop System - SWP391 project
 ![screencapture-localhost-5174-product-diamond-2024-06-19-07_38_34](https://github.com/quochungg/FDiamondShop/assets/167979922/404aa80a-6696-403e-9ebb-b33c1487a5d7)
-- Function Details
+- roject Tracking
 
   https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 
@@ -11,6 +11,14 @@ Diamond Shop System - SWP391 project
 - Report 0
 
   https://docs.google.com/spreadsheets/d/1BQvEpAOgzN8YQgIGbiRbuI6_ncsvz-kn/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+
+- API Postman
+
+  https://documenter.getpostman.com/view/36189969/2sA3kSoiHt
+  
+-SRS 
+  https://docs.google.com/document/d/1KStpC8Z2f0te3t9XLxPAABaqf7SuWLAN/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+  
 
 # Team's Member
 
