@@ -199,7 +199,7 @@ namespace FDiamondShop.API.Controllers
                 }
                 
                 var totalPages = (int)Math.Ceiling(count / (double)pageSize);
-                var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, totalPages);
+                var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, totalPages, count);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = model;
@@ -442,7 +442,7 @@ namespace FDiamondShop.API.Controllers
 
             //Pagination
             var totalPages = (int)Math.Ceiling(count / (double)pageSize);
-            var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, totalPages);
+            var model = new PaginatedList<ProductDTO>(productDTOList, pageNumber, totalPages, count);
             try
             {
                 _response.StatusCode = HttpStatusCode.OK;
