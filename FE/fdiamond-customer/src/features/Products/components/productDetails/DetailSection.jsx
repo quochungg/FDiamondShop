@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
 import chevron from "../../../../assets/chevron.svg";
-import { useState } from "react";
+import { ImageModal } from "../index";
+import ring_size_chart from "src/features/Products/assets/ring_size_chart.png";
+
+
 
 
 const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelectionBar }) => {
@@ -11,6 +15,11 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelecti
 
     const [selectedSize, setSelectedSize] = useState(0);
 
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    }
 
     const handleAddToCart = async () => {
         const addedSingleItem = [
@@ -105,7 +114,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelecti
 
     return (
         <>
-            <div className="px-10 py-6 bg-gray-100 rounded-sm">
+            <div className="px-12 py-8 bg-gray-100 rounded-sm">
                 <div className="h-auto">
                     <div className="flex flex-col gap-y-6">
 
@@ -174,7 +183,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelecti
                 <div className="font-gantari mt-4 border-t-[1px] border-blue-950 py-5 flex flex-col gap-8">
                     {product.categoryName === 'Engagement Ring' &&
                         <div className="flex flex-row gap-6">
-                            <label htmlFor="size" className="text-[19px] cursor-pointer">Select ring size</label>
+                            <label htmlFor="size" className="text-[19px] font-[500] cursor-pointer">Select ring size</label>
                             <select
                                 name="size"
                                 id="size"
@@ -191,7 +200,24 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelecti
                                 <option value="7">7</option>
                                 <option value="8">8</option>
                                 <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
                             </select>
+
+                            <div className="self-end">
+                                <button
+                                    onClick={() => setOpen(true)}
+                                    className="text-sm no-underline hover:underline hover:underline-offset-4"
+                                >
+                                    Size Guide
+                                </button>
+                                {open && <ImageModal open={open} onClose={handleClose} imageUrl={ring_size_chart} />}
+                            </div>
 
                             {errorSize &&
                                 <div className="self-end ml-4">

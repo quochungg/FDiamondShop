@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GIAModal } from "../index";
+import { ImageModal } from "../index";
 
 const ImageCarousel = ({ product }) => {
     const [activeImage, setActiveImage] = useState(product.productImages[0].imageUrl)
@@ -61,7 +61,7 @@ const ImageCarousel = ({ product }) => {
                                             </p>
 
                                         </div>
-                                        {open && <GIAModal open={open} onClose={handleClose} imageUrl={image.imageUrl} />}
+                                        {open && <ImageModal open={open} onClose={handleClose} imageUrl={image.imageUrl} />}
                                     </>
                                 )
                                 }
@@ -70,10 +70,10 @@ const ImageCarousel = ({ product }) => {
                     })}
                 </div>
 
-                <div className="flex-1 flex justify-center items-center">
+                <div className="flex-1 w-full flex justify-center items-center">
                     <img
                         src={activeImage}
-                        className="object-cover rounded-sm"
+                        className="object-cover rounded-sm w-[90%]"
                     />
                 </div>
 

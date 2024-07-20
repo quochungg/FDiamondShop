@@ -121,6 +121,7 @@ const SummarySection = ({ cartLineArr, onCheckout }) => {
                     {/* Subtotal & Shipping*/}
                     <div className="pb-7 border-b-[1px] border-gray-300">
                         <ul className='flex flex-col space-y-4'>
+
                             <li className="flex justify-between">
                                 <p>Subtotal</p>
                                 {isVisibleAll && isVisibleAll ?
@@ -130,12 +131,13 @@ const SummarySection = ({ cartLineArr, onCheckout }) => {
                                         <p>Not Available</p>
                                     )
                                 }
-
                             </li>
-                            <li className="flex justify-between">
+
+                            {/* <li className="flex justify-between">
                                 <p>US & Int. Shipping</p>
                                 <p>Free</p>
-                            </li>
+                            </li> */}
+
                         </ul>
                     </div>
 

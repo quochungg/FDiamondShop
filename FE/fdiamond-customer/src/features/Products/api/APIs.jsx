@@ -54,6 +54,25 @@ export const getProductByID = async (id) => {
 }
 
 
+export const searchProductByName = async (productName, pageNumber) => {
+    let response;
+    const API_url = API_ROOT + `/api/product/GetProductbyName?searchproductname=${productName}&PageSize=10&PageNumber=${pageNumber}`;
+
+    try {
+        response = await axios.get(API_url);
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        } else {
+            //such as network errors
+            console.error("There was an error!", error);
+        }
+    }
+    console.log(response)
+    return response;
+};
+
+
 //https://fdiamond-api.azurewebsites.net/api/Product/
 //GetProductWithFilter?
 //Category Name=diamond&    (******)

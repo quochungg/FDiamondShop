@@ -86,7 +86,10 @@ const Header = () => {
 
                 <div className="flex-1 flex justify-end items-center gap-7">
                     <div>
-                        <Link title="Search">
+                        <Link
+                            title="Search"
+                            to="/search"
+                        >
                             <IoIosSearch size={iconSize} />
                         </Link>
                     </div>

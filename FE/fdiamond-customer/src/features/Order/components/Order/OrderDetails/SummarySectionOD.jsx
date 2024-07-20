@@ -62,10 +62,10 @@ const SummarySectionOD = ({ orderDetails }) => {
                 )}
 
 
-                <div className='flex justify-between'>
+                {/* <div className='flex justify-between'>
                     <p>US & Int. Shipping</p>
                     <p>Free</p>
-                </div>
+                </div> */}
 
             </div>
 

@@ -2,7 +2,7 @@ import Lightbox from "yet-another-react-lightbox";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import "yet-another-react-lightbox/styles.css";
 
-const GIAModal = ({ open, onClose, imageUrl }) => {
+const ImageModal = ({ open, onClose, imageUrl }) => {
     return (
 
         <Lightbox
@@ -18,4 +18,4 @@ const GIAModal = ({ open, onClose, imageUrl }) => {
 
 };
 
-export default GIAModal;
+export default ImageModal;

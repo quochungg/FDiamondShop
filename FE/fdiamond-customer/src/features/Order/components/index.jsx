@@ -46,3 +46,4 @@ export { default as OrderDetailsRightSection } from './Order/OrderDetails/OrderD
 
 // Discount List Page
 export { default as EmptyDiscountList } from './Discount/EmptyDiscountList';
+export { default as VoucherItem } from './Discount/VoucherItem';

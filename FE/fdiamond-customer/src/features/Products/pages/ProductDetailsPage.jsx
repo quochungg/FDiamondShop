@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { ImageCarousel, SelectionBar, DetailSection } from '../components/index';
+import { ImageCarousel, SelectionBar, DetailSection, RecommendedProducts, EmptyRecommendedProducts } from '../components/index';
 import { getProductByID } from '../api/APIs'
 import AppLayout from "src/layout/AppLayout";
 import { LoadingSpinner } from 'src/components';
@@ -66,33 +66,60 @@ const ProductDetailsPage = ({ productId }) => {
         return <Navigate to='/product-not-found' replace={true} />;
     }
 
-    const appendableLayout = "grid grid-cols-2 gap-10 px-28 mb-10 py-14";
-    const notAppendableLayout = "grid grid-cols-2 gap-10 px-28 mb-10 py-16";
+    const appendableLayout = "grid grid-cols-2 px-28 mb-5 py-14";
+    const notAppendableLayout = "grid grid-cols-2 px-28 mb-5 py-16";
 
     return (
         <>
-            {product &&
-                <AppLayout>
-                    {isAppendable &&
-                        <SelectionBar
-                            key={resetSelectionBar}
-                            setResetSelectionBar={setResetSelectionBar}
-                        />
-                    }
-                    <div className={isAppendable ? appendableLayout : notAppendableLayout}>
-                        <ImageCarousel product={product} />
-                        <DetailSection
-                            product={product}
-                            isAppendable={isAppendable}
-                            isDiamondInCart={isDiamondInCart}
-                            setResetSelectionBar={setResetSelectionBar}
-                        />
+            <div>
+                {product &&
+                    <AppLayout>
+                        {isAppendable &&
+                            <SelectionBar
+                                key={resetSelectionBar}
+                                setResetSelectionBar={setResetSelectionBar}
+                            />
+                        }
+                        <div className={isAppendable ? appendableLayout : notAppendableLayout}>
+                            <ImageCarousel product={product} />
+
+                            <DetailSection
+                                product={product}
+                                isAppendable={isAppendable}
+                                isDiamondInCart={isDiamondInCart}
+                                setResetSelectionBar={setResetSelectionBar}
+                            />
+                        </div>
+
+
+                        <div className='px-16'>
+
+                            <div className="pt-8 pb-16">
+
+                                <div className="px-2 mb-7">
+                                    <p className="font-lora text-[1.9rem] font-[450] tracking-wide "
+                                    >
+                                        Similar Items
+                                    </p>
+                                </div>
+
+                                {product.recommendProducts.length > 0 ?
+                                    (
+                                        <RecommendedProducts product={product} />
+                                    ) : (
+                                        <EmptyRecommendedProducts />
+                                    )
+                                }
+                            </div>
+
+                        </div>
 
 
 
-                    </div>
-                </AppLayout>
-            }
+                    </AppLayout>
+                }
+            </div>
+
         </>
     )
 };

@@ -61,10 +61,10 @@ const SummarySectionCK = ({ promoCode, cartLineArr, onMakePayment }) => {
                 )}
 
 
-                <div className='flex justify-between'>
+                {/* <div className='flex justify-between'>
                     <p>US & Int. Shipping</p>
                     <p>Free</p>
-                </div>
+                </div> */}
 
             </div>
 

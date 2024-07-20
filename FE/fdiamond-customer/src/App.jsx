@@ -14,6 +14,9 @@ function App() {
     const CategoryWrapper = React.lazy(() => import("src/features/Products/wrapper/CategoryWrapper"));
     const ProductDetailsWrapper = React.lazy(() => import("src/features/Products/wrapper/ProductDetailsWrapper"));
 
+    //Product pages
+    const SearchBarPage = React.lazy(() => import("src/features/Products/pages/SearchBarPage"));
+
     //Authentication pages
     const LoginPage = React.lazy(() => import("src/features/Authentication/pages/LoginPage"));
     const RegisterPage = React.lazy(() => import("src/features/Authentication/pages/RegisterPage"));
@@ -48,7 +51,9 @@ function App() {
                             <Route path=":category" element={<CategoryWrapper />} />
                             <Route path="product-details/:productId" element={<ProductDetailsWrapper />} />
                         </Route>
+                        <Route path="/search" element={<SearchBarPage />} />
                         <Route path='/promo-code' element={<DiscountListPage />} />
+
                         <Route path='/product-not-found' element={<ProductNotFound />} />
                         <Route path='/order-not-found' element={<OrderNotFound />} />
                         <Route />
