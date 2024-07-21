@@ -14,7 +14,7 @@
 
         public string ProductName { get; set; } = null!;
 
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         public decimal BasePrice { get; set; }
 
