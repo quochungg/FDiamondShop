@@ -326,7 +326,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllOrder()
         {
-            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "CartLines,CartLines.CartLineItems,CartLines.CartLineItems.Product,DiscountCode,Payment");
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "CartLines.CartLineItems.Product.SubCategory.Category,DiscountCode,Payment");
             if (orders == null)
             {
                 _response.StatusCode = HttpStatusCode.OK;

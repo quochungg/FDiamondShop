@@ -22,7 +22,7 @@ namespace FDiamondShop.API.Repository
             var recommendProducts = await _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId && p.IsVisible == true).Include(p => p.ProductImages).ToListAsync();
             foreach (var products in recommendProducts)
             {
-                product.ProductImages = product.ProductImages.Where(i => i.ImageUrl.Contains("bluenile") || i.ImageUrl.Contains("stage_0") || i.ImageUrl.Contains("thumb_0")).Take(1).ToList();
+                products.ProductImages = products.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") || u.ImageUrl.Contains("stage_0") || u.ImageUrl.Contains("firebase")).Take(1).ToList();
                 if (product.ProductImages.Count == 0)
                 {
                     var productImage = new ProductImage
@@ -48,7 +48,7 @@ namespace FDiamondShop.API.Repository
 
             foreach (var product in returnList)
             {
-                product.ProductImages = product.ProductImages.Where(i => i.ImageUrl.Contains("bluenile") || i.ImageUrl.Contains("stage_0") || i.ImageUrl.Contains("thumb_0")).Take(1).ToList();
+                product.ProductImages = product.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") || u.ImageUrl.Contains("stage_0") || u.ImageUrl.Contains("firebase")).Take(1).ToList();
                 if (product.ProductImages.Count == 0)
                 {
                     var productImage = new ProductImage
