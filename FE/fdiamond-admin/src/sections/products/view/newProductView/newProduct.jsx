@@ -167,7 +167,7 @@ export default function NewProductView() {
       const productData = {
         subCategoryName: formData.subCategoryName,
         productName: formData.productName,
-        quantity: formData.quantity, // Assuming default value is 0
+        quantity: formData.category === 'ring' ? 10000 : formData.quantity,
         basePrice: formData.basePrice,
         description: formData.description,
         isVisible: formData.isVisible,
