@@ -16,9 +16,9 @@ namespace FDiamondShop.API.Repository
         {
             _db = db;
         }
-        public async Task UpdateStatus(Order order,ApplicationUser user)
+        public async Task UpdateStatus(Order order, ApplicationUser user)
         {
-            
+
             var cartLineupdate = _db.CartLines.Where(cartLineupdate => cartLineupdate.UserId.Equals(user.Id)
             && cartLineupdate.IsOrdered == false).ToList();
             foreach (var line in cartLineupdate)
@@ -28,8 +28,13 @@ namespace FDiamondShop.API.Repository
                 var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
                 foreach (var item in cartlineItems)
                 {
-                    var product = await _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefaultAsync();
-                    product.Quantity--;
+                    Product product = await _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefaultAsync();
+                    if (product.Quantity == 0)
+                    {
+                        throw new Exception("Product is out of stock: " + product.ProductName);
+                    }
+                        product.Quantity--;
+                    
                     if (product.Quantity == 0)
                     {
                         product.IsVisible = false;

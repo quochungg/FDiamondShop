@@ -180,5 +180,27 @@ namespace FDiamondShop.API.Repository
             }         
             return result;
         }
+
+        public async Task<List<CartLine>> GetAllCartLineByUserId(string userId)
+        {
+            var cartlineList = await _db.CartLines.Include(cl => cl.CartLineItems).ThenInclude(cli => cli.Product)
+                 .Where(cl => cl.UserId == userId && cl.IsOrdered == false)
+                 .ToListAsync();
+
+            foreach (var cartline in cartlineList)
+            {
+                foreach(var cartLineItem in cartline.CartLineItems)
+                {
+                    var imageList = await _db.ProductImages.Where(p => p.IsGia == false && p.ImageUrl.Contains("bluenile") && p.ProductId == cartLineItem.Product.ProductId).ToListAsync();
+                    ICollection<ProductImage> images = new List<ProductImage>();
+                    images.Add(imageList.FirstOrDefault(p => p.ImageUrl.Contains("stage_0")));
+
+                    cartLineItem.Product.ProductImages = images;
+                }
+            }
+            return cartlineList;
+        }
+
+
     }
 }

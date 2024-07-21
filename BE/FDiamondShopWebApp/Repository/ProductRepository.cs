@@ -22,7 +22,15 @@ namespace FDiamondShop.API.Repository
             var recommendProducts = await _db.Products.Where(p => p.SubCategoryId == product.SubCategoryId && p.ProductId != productId && p.IsVisible == true).Include(p => p.ProductImages).ToListAsync();
             foreach (var products in recommendProducts)
             {
-                products.ProductImages = products.ProductImages.Where(i => i.ImageUrl.Contains("bluenile")).Take(1).ToList();
+                product.ProductImages = product.ProductImages.Where(i => i.ImageUrl.Contains("bluenile") || i.ImageUrl.Contains("stage_0") || i.ImageUrl.Contains("thumb_0")).Take(1).ToList();
+                if (product.ProductImages.Count == 0)
+                {
+                    var productImage = new ProductImage
+                    {
+                        ImageUrl = "https://img.freepik.com/premium-photo/close-up-elegant-diamond-interior-white-space-product-display-exhibition-concept-choosing-best-diamond-gem-design-3d-render_167862-5942.jpg"
+                    };
+                    product.ProductImages.Add(productImage);
+                }
             }
             return recommendProducts;
         }
@@ -40,7 +48,15 @@ namespace FDiamondShop.API.Repository
 
             foreach (var product in returnList)
             {
-                product.ProductImages = product.ProductImages.Where(i => i.ImageUrl.Contains("bluenile")).Take(1).ToList();
+                product.ProductImages = product.ProductImages.Where(i => i.ImageUrl.Contains("bluenile") || i.ImageUrl.Contains("stage_0") || i.ImageUrl.Contains("thumb_0")).Take(1).ToList();
+                if (product.ProductImages.Count == 0)
+                {
+                    var productImage = new ProductImage
+                    {
+                        ImageUrl = "https://img.freepik.com/premium-photo/close-up-elegant-diamond-interior-white-space-product-display-exhibition-concept-choosing-best-diamond-gem-design-3d-render_167862-5942.jpg"
+                    };
+                    product.ProductImages.Add(productImage);
+                }
             }
             return returnList;
         }

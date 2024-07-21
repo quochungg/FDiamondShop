@@ -72,9 +72,9 @@ namespace FDiamondShop.API.Repository
                 RedirectUrls = new RedirectUrls()
                 {
                     ReturnUrl =
-                        $"{urlCallBack}?payment_method=PayPal&success=1&order_id={paypalOrderId}",
+                        $"{urlCallBack}?payment_method=PayPal&success=1&order_id={model.OrderID}",
                     CancelUrl =
-                        $"{urlCallBack}?payment_method=PayPal&success=0&order_id={paypalOrderId}"
+                        $"{urlCallBack}?payment_method=PayPal&success=0&order_id={model.OrderID}"
                 },
                 Payer = new Payer()
                 {

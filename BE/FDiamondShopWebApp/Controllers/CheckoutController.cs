@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Utilities;
 using PayPal.v1.Webhooks;
 using System.Net;
 using System.Net.Http.Headers;
@@ -197,7 +198,8 @@ namespace FDiamondShop.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> PaymentExecutePayPal()
         {
-            var order = _db.Orders.OrderBy(o => o.OrderDate).LastOrDefault();
+            var orderId = HttpContext.Request.Query["order_id"];
+            var order = _db.Orders.FirstOrDefault(o => o.OrderId == int.Parse(orderId.ToString()));
             var user = _userManager.Users.FirstOrDefault(u => u.Id == order.UserId);
             
              //= await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
@@ -212,7 +214,7 @@ namespace FDiamondShop.API.Controllers
 
             PaymentDTO payment = new PaymentDTO()
             {
-                TransactionId = response.OrderId,
+                TransactionId = response.PaymentId,
                 PaymentMethod = "PayPal"
             };
             var model = _mapper.Map<Payment>(payment);

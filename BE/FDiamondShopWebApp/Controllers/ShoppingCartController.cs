@@ -44,7 +44,8 @@ namespace FDiamondShop.API.Controllers
             foreach (var item in model)
             {
                 var product = await _unitOfWork.ProductRepository.GetAsync(p => p.ProductId == item.ProductId, includeProperties: "ProductImages,ProductVariantValues,SubCategory");
-                //if (product.Quantity == 0 )
+                //if (product.
+                //== 0 )
                 //{
                 //    _response.IsSuccess = false;
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
@@ -146,6 +147,10 @@ namespace FDiamondShop.API.Controllers
                     if(cli.Product.CategoryId == 1)
                     {
                         cli.Product.ProductImages = cli.Product.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") && u.IsGia == false).ToList();
+                    }
+                    else
+                    {
+                        cli.Product.ProductImages = cli.Product.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") || u.ImageUrl.Contains("stage_0")).ToList();
                     }
                 }
             }

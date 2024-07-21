@@ -31,13 +31,13 @@ namespace FDiamondShop.API.Controllers
             _userManager = userManager;
             _httpClient = httpClient;
         }
-        
+
         [HttpPost(Name = "CreateOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateOrder( [FromBody] OrderCreateDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateOrder([FromBody] OrderCreateDTO createDTO)
         {
             List<Product> products = new();
             try
@@ -45,15 +45,15 @@ namespace FDiamondShop.API.Controllers
                 decimal totalPrice = 0;
                 var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                 var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
-                if (cartLines.Count()==0)
+                if (cartLines.Count() == 0)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
                     _response.ErrorMessages = new List<string> { "Cart is empty" };
                     return NotFound(_response);
                 }
-                    totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
-                      .Sum(cartLineItem => cartLineItem.Product.BasePrice);
+                totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
+                  .Sum(cartLineItem => cartLineItem.Product.BasePrice);
                 DateTime now = DateTime.Now;
                 TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
@@ -63,28 +63,35 @@ namespace FDiamondShop.API.Controllers
                     TotalPrice = totalPrice,
                     OrderDate = now7,
                     Status = createDTO.Status
-                };                  
+                };
                 foreach (var cartLine in cartLines)
                 {
                     foreach (var cartLineItem in cartLine.CartLineItems)
                     {
-                       cartLineItem.Price = cartLineItem.Product.BasePrice;
-                    }                
+                        if (cartLineItem.Product.Quantity <= 0)
+                        {
+                            _response.StatusCode = HttpStatusCode.BadRequest;
+                            _response.IsSuccess = false;
+                            _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
+                            return BadRequest(_response);
+                        }
+                        cartLineItem.Price = cartLineItem.Product.BasePrice;
+                    }
                 }
-                if (createDTO.DiscountName!=null)
+                if (createDTO.DiscountName != null)
                 {
                     var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
 
                     if (discount == null)
                     {
-                        
+
                         return NotFound("Discount code not found");
                     }
                     if (discount != null)
                     {
                         orderDTO.DiscountCodeId = discount.DiscountId;
-                        orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);      
-                    }                  
+                        orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);
+                    }
                 }
 
                 var order = _mapper.Map<Order>(orderDTO);
@@ -92,7 +99,7 @@ namespace FDiamondShop.API.Controllers
                 order.UserId = user.Id;
                 order.CartLines = cartLines;
                 await _unitOfWork.OrderRepository.CreateAsync(order);
-                await _unitOfWork.SaveAsync();               
+                await _unitOfWork.SaveAsync();
                 _response.Result = _mapper.Map<OrderDTO>(order);
                 _response.StatusCode = HttpStatusCode.Created;
                 var paymentInfo = new PaymentInformationModel
@@ -104,13 +111,14 @@ namespace FDiamondShop.API.Controllers
                     OrderType = createDTO.PaymentMethod,
 
                 };
-                
+
                 switch (paymentInfo.OrderType.ToLower())
                 {
-                   
+
                     case "vnpay":
                         decimal amount = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
                         paymentInfo.Amount = (int)amount;
+
                         //sua link tren swagger
                         var paymentApiUrl = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
                         var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
@@ -136,7 +144,7 @@ namespace FDiamondShop.API.Controllers
                             }
                         }
                         break;
-                    
+
                     case "momo":
                         decimal amountVND = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
                         paymentInfo.Amount = (int)amountVND;
@@ -173,8 +181,9 @@ namespace FDiamondShop.API.Controllers
                         }
                         break;
                     case "paypal":
-                         paymentInfo.Amount=orderDTO.TotalPrice;
-
+                        paymentInfo.Amount = orderDTO.TotalPrice;
+                        paymentInfo.OrderID = order.OrderId.ToString();
+                        
                         var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                         var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
@@ -187,10 +196,11 @@ namespace FDiamondShop.API.Controllers
                                 _response.Result = new
                                 {
                                     PaymentUrl = paymentResult.Result.ToString(),
-                                    
+
                                 };
-                                await _unitOfWork.PaymentRepository.UpdateStatus(order, user);                               
-                                
+                                await _unitOfWork.PaymentRepository.UpdateStatus(order, user);
+
+
                             }
 
                             else
@@ -228,11 +238,11 @@ namespace FDiamondShop.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "User not found" };
                 return NotFound(_response);
- 
+
             }
 
             var orders = await _unitOfWork.OrderRepository.GetAllOrderAsync(user.Id);
-            if(orders == null)
+            if (orders == null)
             {
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -292,7 +302,7 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             return Ok(_response);
         }
-        
+
         [HttpGet("FilterOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -315,9 +325,9 @@ namespace FDiamondShop.API.Controllers
         [HttpGet("GetAllOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllOrder()
-        {         
+        {
             var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "CartLines,CartLines.CartLineItems,CartLines.CartLineItems.Product,DiscountCode,Payment");
-            if(orders == null)
+            if (orders == null)
             {
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -333,12 +343,12 @@ namespace FDiamondShop.API.Controllers
         [HttpPut("UpdateStatus/{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        
+
         public async Task<ActionResult<APIResponse>> UpdateStatus(int id)
         {
             try
             {
-                await _unitOfWork.OrderRepository.CompleteOrder(id);      
+                await _unitOfWork.OrderRepository.CompleteOrder(id);
                 await _unitOfWork.SaveAsync();
                 return NoContent();
             }
