@@ -61,19 +61,19 @@ const EditProductPage = () => {
     () => ({
       diamond: [
         { variantId: 1, key: 'Color' },
-        { variantId: 2, key: 'clarity' },
+        { variantId: 2, key: 'Clarity' },
         { variantId: 3, key: 'Cut' },
         { variantId: 4, key: 'CaratWeight' },
         { variantId: 5, key: 'Florescence' },
         { variantId: 6, key: 'Length' },
         { variantId: 7, key: 'Depth' },
       ],
-      necklace: [{ variantId: 8, key: 'NecklaceMetal' }],
+      necklace: [{ variantId: 8, key: 'Necklace Metal' }],
       ring: [
-        { variantId: 9, key: 'RingMetal' },
-        { variantId: 10, key: 'Size' },
+        { variantId: 9, key: 'Ring Metal' },
+        { variantId: 10, key: 'Width' },
       ],
-      earring: [{ variantId: 11, key: 'EarringMetal' }],
+      earring: [{ variantId: 11, key: 'Earring Metal' }],
     }),
     []
   );
@@ -207,7 +207,6 @@ const EditProductPage = () => {
 
       const payload = {
         ...product,
-        quantity: product.categoryId === 3 ? 10000 : product.quantity,
         productImages: [...allProductFiles, ...allGIAFiles],
         productVariantValues,
       };
