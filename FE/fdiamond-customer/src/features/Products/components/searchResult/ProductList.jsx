@@ -13,9 +13,9 @@ const ProductList = ({ productList, category }) => {
                     {productList.map(product => (
                         <div key={product.productId} className={`w-[350px] h-[400px] border-[1px] ${hover} `}>
                             <Link to={`/product/product-details/${product.productId}`} className="flex flex-col justify-start h-full w-full">
-                                <div className="">
+                                <div className="w-[348px] h-[278px]">
                                     <img
-                                        className="object-cover"
+                                        className="object-cover w-full h-full"
                                         src={product.productImages[0].imageUrl}
                                     />
                                 </div>

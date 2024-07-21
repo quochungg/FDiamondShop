@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import shoppingBagIcon from 'src/assets/shopping-bag-svgrepo-com.svg';
 
 const SuccessfulPaymentPage = () => {
     const navigate = useNavigate();
@@ -7,17 +7,8 @@ const SuccessfulPaymentPage = () => {
 
     return (
         <>
-            {/* <div className="">
-                <div>Successful Payment Page</div>
-                <div className="mt-10">
-                    <Link to='/'
-                        className="bg-blue-950 text-white p-5"
-                    >
-                        Go To Homepage</Link>
-                </div>
-            </div> */}
 
-            <div className='w-screen h-screen font-gantari bg-gray-100'>
+            <div className='w-screen h-auto font-gantari bg-gray-50'>
 
                 {/* BEGIN HEADER */}
                 <header>
@@ -42,10 +33,40 @@ const SuccessfulPaymentPage = () => {
                     {/* BEGIN MAIN */}
                     <main>
                         <div className="my-20 flex justify-center items-center">
-                            <div className="w-[50%] shadow-cartline h-96">
+                            <div className="w-[55%] shadow-cartline h-auto flex justify-center items-center flex-col p-12">
 
+                                <div className="w-32">
+                                    <img src={shoppingBagIcon} />
+                                </div>
 
+                                <p className="capitalize mt-10 text-2xl font-lora font-[600]  text-yellow-600"
+                                >
+                                    Order placed successfully !
+                                </p>
 
+                                <p className="mt-6 text-center tracking-wide text-lg">
+                                    We have sent a confirmation email with your order details.
+                                </p>
+
+                                <div className="flex flex-row text-white space-x-5 font-gantari w-full mt-9 text-[1.05rem] mb-6">
+                                    <button
+                                        onClick={() => { navigate('/order-history') }}
+                                        className="flex-1">
+                                        <p className="w-full border-[1px] border-blue-950 text-black py-4 rounded-md hover:bg-blue-950 hover:text-white transition-colors duration-300 capitalize"
+                                        >
+                                            View your order history
+                                        </p>
+                                    </button>
+
+                                    <button
+                                        onClick={() => { navigate('/product') }}
+                                        className="flex-1">
+                                        <p className="w-full bg-yellow-500 py-4 rounded-md hover:bg-yellow-400 hover:text-white transition-colors duration-300 font-[550] capitalize"
+                                        >
+                                            Continue shopping
+                                        </p>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </main>
