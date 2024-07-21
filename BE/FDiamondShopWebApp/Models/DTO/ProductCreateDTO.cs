@@ -8,7 +8,7 @@ namespace FDiamondShop.API.Models.DTO
         public string SubCategoryName { get; set; }
         [Required]
         public string ProductName { get; set; } = null!;
-        public int Quantity { get; set; } = 1;
+        public int? Quantity { get; set; } = 1;
         [Required]
         public decimal BasePrice { get; set; }
 

@@ -7,7 +7,11 @@ using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PayPal.v1.Webhooks;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -20,16 +24,21 @@ namespace FDiamondShop.API.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly FDiamondContext _db;
-        public CheckoutController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, FDiamondContext db)
+        private IConfiguration _config;
+        private IHttpClientFactory _httpClientFactory;
+        public CheckoutController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, FDiamondContext db, IConfiguration config, IHttpClientFactory httpClientFactory)
         {
             _unitOfWork = unitOfWork;
             _response = new();
             _mapper = mapper;
             _userManager = userManager;
             _db = db;
+            _config = config;
+            _httpClientFactory = httpClientFactory;
         }
-
-        [HttpPost("vnpay")]
+        
+    
+    [HttpPost("vnpay")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
