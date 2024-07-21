@@ -53,15 +53,11 @@ const OrderDetailsPage = () => {
         <>
             {orderDetails &&
                 <AppLayout>
-                    <div className='w-screen h-auto font-gantari bg-gray-50'>
-
-
+                    <div className='w-screen h-auto font-gantari bg-gray-50 mb-10'>
 
 
                         {/* BEGIN BODY SECTION */}
                         <div className='w-[75%] mx-auto'>
-
-
 
                             {/* BEGIN MAIN */}
                             <main>
@@ -97,12 +93,6 @@ const OrderDetailsPage = () => {
                                 </div>
                             </main>
                             {/* END MAIN */}
-
-
-
-
-
-
 
 
                         </div>

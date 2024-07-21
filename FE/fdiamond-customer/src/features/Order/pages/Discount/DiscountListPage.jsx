@@ -1,8 +1,9 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "src/layout/AppLayout";
 import { EmptyDiscountList, VoucherItem } from "src/features/Order/components/index";
 import { getNonExpiredDiscountCodes } from "src/features/Order/api/APIs"
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { LoadingSpinner } from "src/components";
 
 const DiscountListPage = () => {
     const navigate = useNavigate();
@@ -46,6 +47,12 @@ const DiscountListPage = () => {
         })
     }
 
+    if (!validDiscountArr) {
+        return (
+            <LoadingSpinner />
+        )
+    }
+
 
     return (
         <>
@@ -82,9 +89,6 @@ const DiscountListPage = () => {
                                 </button>
                             </div>
                         </div>
-
-
-
 
                     </div>
                 }

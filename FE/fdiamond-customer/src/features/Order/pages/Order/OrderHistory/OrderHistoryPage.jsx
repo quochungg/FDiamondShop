@@ -1,15 +1,21 @@
 import AppLayout from 'src/layout/AppLayout';
-import { SidebarMenu, OrderList } from 'src/features/Order/components/index';
+import { SidebarMenu, OrderList, ModalAfterCancel } from 'src/features/Order/components/index';
 import { getAllFilterOrders } from 'src/features/Order/api/APIs'
 import { useEffect, useState } from 'react';
 import { LoadingSpinner } from 'src/components/index';
+
 
 
 const OrderHistoryPage = () => {
 
     const [orderArr, setOrderArr] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState('');
-    const [resetAfterCancel, setResetAfterCancel] = useState(false);
+    const [resetAfterCancel, setResetAfterCancel] = useState(null);
+    const [openModal, setOpenModal] = useState(false);
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    }
 
     const [orderTypes, setOrderTypes] = useState({
         All: 0,
@@ -58,6 +64,11 @@ const OrderHistoryPage = () => {
     }, [selectedStatus, resetAfterCancel])
 
 
+    useEffect(() => {
+        if (orderArr && orderArr.length > 0) {
+            setOpenModal(true);
+        }
+    }, [resetAfterCancel])
 
 
     if (!orderArr) {
@@ -69,6 +80,8 @@ const OrderHistoryPage = () => {
             {
                 orderArr &&
                 <AppLayout>
+
+                    {openModal && <ModalAfterCancel handleCloseModal={handleCloseModal} />}
 
                     <div className='w-screen h-auto font-gantari bg-gray-50 mb-16'>
 

@@ -10,9 +10,9 @@ const OrderList = ({ orderTypes, selectedStatus, orderArr, setResetAfterCancel }
         <>
             <div>
 
-                <div className='w-full flex flex-col space-y-10 font-gantari'>
+                <div className='w-full flex flex-col space-y-11 font-gantari'>
 
-
+                    {/* Empty Order List */}
                     {orderArr.length === 0 ? (
                         <div className='w-full h-[35rem] shadow-cartline flex flex-col justify-center items-center'>
 

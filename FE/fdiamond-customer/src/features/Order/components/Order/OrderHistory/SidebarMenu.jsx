@@ -8,7 +8,7 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
         <>
 
 
-            <div className='w-full rounded-md '>
+            <div className='w-full '>
 
                 <div className='shadow-cartline h-auto sticky top-10'>
 
@@ -17,7 +17,7 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
                             onClick={() => setSelectedStatus('')}
                             className='w-full'>
                             <p
-                                className={selectedStatus === '' ? activeTag : inactiveTag}
+                                className={selectedStatus === '' ? activeTag + ' rounded-t-md' : inactiveTag}
                             >
                                 All ({orderTypes.All})
                             </p>
@@ -38,6 +38,8 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
                         </button>
                     </div>
 
+
+
                     <div>
                         <button
                             onClick={() => setSelectedStatus('Completed')}
@@ -51,6 +53,8 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
                         </button>
                     </div>
 
+
+
                     <div>
                         <button
                             onClick={() => setSelectedStatus('Cancelled')}
@@ -63,6 +67,7 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
                             </p>
                         </button>
                     </div>
+
 
 
                     <div>
@@ -79,20 +84,22 @@ const SidebarMenu = ({ orderTypes, selectedStatus, setSelectedStatus }) => {
                     </div>
 
 
+
                     <div>
                         <button
                             onClick={() => setSelectedStatus('Failed')}
                             className='w-full'
                         >
                             <p
-                                className={selectedStatus === 'Failed' ? activeTag : inactiveTag}
+                                className={selectedStatus === 'Failed' ? activeTag + ' rounded-b-md' : inactiveTag}
                             >
                                 Failed ({orderTypes.Failed})
                             </p>
                         </button>
                     </div>
-                </div>
 
+
+                </div>
 
             </div>
 

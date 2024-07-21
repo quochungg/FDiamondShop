@@ -16,9 +16,6 @@ const CheckoutLeftSection = () => {
                     </p>
                 </div>
 
-                <div className='shadow-cartline w-full rounded-md bg-white p-12 mt-8'>
-                    <p className='uppercase text-xl font-[680]'>SHIPPING</p>
-                </div>
 
             </div>
 
