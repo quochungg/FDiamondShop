@@ -207,6 +207,7 @@ const EditProductPage = () => {
 
       const payload = {
         ...product,
+        quantity: product.categoryId === 3 ? 10000 : product.quantity,
         productImages: [...allProductFiles, ...allGIAFiles],
         productVariantValues,
       };
