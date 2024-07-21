@@ -39,6 +39,8 @@ export default function AppView() {
   const [totalPriceCompletedOrders, setTotalPriceCompletedOrders] = useState(0);
   const [beforeDiscount, setBeforeDiscount] = useState(0);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [actualRevenueByMonth, setActualRevenueByMonth] = useState(Array(12).fill(0));
+  const [completedOrdersByMonth, setCompletedOrdersByMonth] = useState(Array(12).fill(0));
 
   const location = useLocation();
 
@@ -94,7 +96,16 @@ export default function AppView() {
             completedOrdersData.reduce((total, order) => total + order.basePrice, 0) || 0;
 
           setBeforeDiscount(totalBeforeDiscount);
-          console.log(totalBeforeDiscount, soldProductsCount, completedOrdersCount);
+
+          const revenueByMonth = Array(12).fill(0);
+          const completedOrdersByMonthTemp = Array(12).fill(0);
+          completedOrdersData.forEach((order) => {
+            const month = new Date(order.orderDate).getMonth();
+            revenueByMonth[month] += order.totalPrice;
+            completedOrdersByMonthTemp[month] += 1;
+          });
+          setActualRevenueByMonth(revenueByMonth);
+          setCompletedOrdersByMonth(completedOrdersByMonthTemp);
         } else {
           console.error('Error in response data:', response.data.errorMessages);
         }
@@ -181,7 +192,7 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Average invoice (5)=(4)/(1) "
+            title="Average invoice (5)=(4)/(1)"
             type="currency"
             total={Average}
             color="error"
@@ -214,42 +225,63 @@ export default function AppView() {
           </Grid>
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid xs={12} sm={12} md={9}>
           <AppWebsiteVisits
-            title="Website Visits"
-            subheader="(+43%) than last year"
+            title="Revenue"
+            subheader="Monthly Revenue"
             chart={{
               labels: [
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
               ],
               series: [
-                // {
-                //   name: 'Team A',
-                //   type: 'column',
-                //   fill: 'solid',
-                //   data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                // },
                 {
-                  name: 'Team B',
+                  name: 'Revenue',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: actualRevenueByMonth,
                 },
+              ],
+            }}
+          />
+        </Grid>
+
+        <Grid xs={12} sm={12} md={8}>
+          <AppWebsiteVisits
+            title="Completed Orders"
+            subheader="Monthly Completed Orders"
+            chart={{
+              labels: [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+              ],
+              series: [
                 {
-                  name: 'Team C',
-                  type: 'line',
-                  fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  name: 'Completed Orders',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: completedOrdersByMonth,
+                  color: 'orange',
                 },
               ],
             }}
@@ -258,13 +290,13 @@ export default function AppView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
-            title="Current Visits"
+            title="Product Sold"
             chart={{
               series: [
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Diamond', value: 4344 },
+                { label: 'Ring', value: 5435 },
+                { label: 'Earring', value: 1443 },
+                { label: 'Necklace', value: 4443 },
               ],
             }}
           />

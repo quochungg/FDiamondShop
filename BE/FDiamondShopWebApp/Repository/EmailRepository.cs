@@ -184,6 +184,12 @@ namespace FDiamondShop.API.Repository
             border-top: 1px solid #ddd;
             padding-top: 20px;
         }}
+        .cancellation-policy {{
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            color: #ff0000; /* You can style it as needed */
+        }}
     </style>
 </head>
 <body>
@@ -232,6 +238,9 @@ namespace FDiamondShop.API.Repository
         <br/>
         <p>Sincerely,</p>
         <p>The FDIAMOND Team</p>
+        <div class='cancellation-policy'>
+            <p><strong>Cancellation Policy:</strong> If you wish to cancel your order, please do so within 24 hours of placing the order. After this period, the store will not support order cancellations.</p>
+        </div>
     </div>
 </body>
 </html>";

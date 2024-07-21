@@ -268,23 +268,25 @@ const EditProductPage = () => {
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Quantity</InputLabel>
-                  <OutlinedInput
-                    value={product.quantity}
-                    onChange={handleInputChange}
-                    label="Quantity"
-                    name="quantity"
-                    type="number"
-                  />
-                  {errors.quantity && (
-                    <Typography variant="caption" color="error">
-                      {errors.quantity}
-                    </Typography>
-                  )}
-                </FormControl>
-              </Grid>
+              {product.categoryId !== 3 && (
+                <Grid item xs={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Quantity</InputLabel>
+                    <OutlinedInput
+                      value={product.quantity}
+                      onChange={handleInputChange}
+                      label="Quantity"
+                      name="quantity"
+                      type="number"
+                    />
+                    {errors.quantity && (
+                      <Typography variant="caption" color="error">
+                        {errors.quantity}
+                      </Typography>
+                    )}
+                  </FormControl>
+                </Grid>
+              )}
               {product.productVariantValues.map((variant, index) => (
                 <Grid item xs={6} key={index}>
                   <FormControl fullWidth required>

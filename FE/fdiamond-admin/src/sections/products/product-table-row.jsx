@@ -63,7 +63,7 @@ export default function ProductTableRow({
         <TableCell align="left">{productName}</TableCell>
 
         <TableCell align="center">{basePrice}</TableCell>
-        <TableCell align="center">{quantity}</TableCell>
+        <TableCell align="center">{quantity || 'N/A'}</TableCell>
         <TableCell align="center">{subCategoryName}</TableCell>
         <TableCell align="center">
           <Label color={isVisible ? 'success' : 'error'}>{isVisible ? 'Visible' : 'Hidden'}</Label>
