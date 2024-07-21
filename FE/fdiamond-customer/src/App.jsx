@@ -38,6 +38,7 @@ function App() {
     const PageNotFound = React.lazy(() => import("src/pages/PageNotFound"))
     const ProductNotFound = React.lazy(() => import("src/features/Products/pages/ProductNotFound"))
     const OrderNotFound = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderNotFound"))
+    const NoContentPage = React.lazy(() => import("src/pages/NoContentPage"))
 
     return (
         <>
@@ -54,6 +55,7 @@ function App() {
                         <Route path="/search" element={<SearchBarPage />} />
                         <Route path='/promo-code' element={<DiscountListPage />} />
 
+                        <Route path='no-content' element={<NoContentPage />} />
                         <Route path='/product-not-found' element={<ProductNotFound />} />
                         <Route path='/order-not-found' element={<OrderNotFound />} />
                         <Route />

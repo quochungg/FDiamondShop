@@ -34,7 +34,7 @@ export default function AppWidgetSummary({
       {icon && <Box sx={{ width: 64, height: 64 }}>{icon}</Box>}
 
       <Stack spacing={0.5}>
-        <Typography variant="h5">{title}</Typography>
+        <Typography variant="h6">{title}</Typography>
         {type === 'currency' ? (
           <Typography variant="h4">{fCurrency(total)}</Typography>
         ) : (

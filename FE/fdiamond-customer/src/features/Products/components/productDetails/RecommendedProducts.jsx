@@ -6,6 +6,7 @@ import LinesEllipsis from 'react-lines-ellipsis'
 
 const RecommendedProducts = ({ product }) => {
 
+
     const hover = 'cursor-pointer hover:border-blue-950 hover:border-[1px] hover:duration-150';
 
     return (
@@ -75,9 +76,9 @@ const RecommendedProducts = ({ product }) => {
                                         to={`/product/product-details/${product.productId}`}
                                         className="flex flex-col justify-start h-full w-full"
                                     >
-                                        <div>
+                                        <div className="w-[334px] h-[267px]">
                                             <img
-                                                className="object-cover"
+                                                className="object-cover w-full h-full"
                                                 src={product.productImages[0].imageUrl}
                                             />
                                         </div>

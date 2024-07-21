@@ -167,7 +167,7 @@ export default function NewProductView() {
       const productData = {
         subCategoryName: formData.subCategoryName,
         productName: formData.productName,
-        quantity: formData.quantity, // Assuming default value is 0
+        quantity: formData.category === 'ring' ? 10000 : formData.quantity,
         basePrice: formData.basePrice,
         description: formData.description,
         isVisible: formData.isVisible,
@@ -254,23 +254,39 @@ export default function NewProductView() {
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Quantity</InputLabel>
-                  <OutlinedInput
-                    value={formData.quantity}
-                    onChange={handleInputChange}
-                    label="Quantity"
-                    name="quantity"
-                    type="number"
-                  />
-                  {errors.quantity && (
-                    <Typography variant="caption" color="error">
-                      {errors.quantity}
-                    </Typography>
-                  )}
-                </FormControl>
-              </Grid>
+              {formData.category !== 'ring' && (
+                <Grid item xs={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Quantity</InputLabel>
+                    <OutlinedInput
+                      value={formData.quantity}
+                      onChange={handleInputChange}
+                      label="Quantity"
+                      name="quantity"
+                      type="number"
+                    />
+                    {errors.quantity && (
+                      <Typography variant="caption" color="error">
+                        {errors.quantity}
+                      </Typography>
+                    )}
+                  </FormControl>
+                </Grid>
+              )}
+              {/* {formData.category === 'ring' && (
+                <Grid item xs={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Quantity</InputLabel>
+                    <OutlinedInput
+                      value={10000}
+                      disabled
+                      label="Quantity"
+                      name="quantity"
+                      type="number"
+                    />
+                  </FormControl>
+                </Grid>
+              )} */}
               {formData.category === 'diamond' && (
                 <DiamondForm formData={formData} handleInputChange={handleInputChange} />
               )}

@@ -68,7 +68,7 @@ const Header = () => {
                     </Link>
 
                     <Link
-                        to=''
+                        to='/no-content'
                         className="flex items-center gap-2"
                     >
                         <span><SlLocationPin size={iconSize} /></span>
