@@ -6,7 +6,7 @@ import { Grid, Select, MenuItem, InputLabel, FormControl, OutlinedInput } from '
 function RingForm({ formData, handleInputChange }) {
   return (
     <>
-      <Grid item md={12}>
+      <Grid item md={6}>
         <FormControl fullWidth required>
           <InputLabel>Shape</InputLabel>
           <Select
