@@ -1,5 +1,5 @@
 import AppLayout from "src/layout/AppLayout";
-import { Hero, ShopDiamondByShape, ShopByCategory } from "src/components";
+import { Hero, ShopDiamondByShape, ShopByCategory, HandCraftedSection, StoreLocation } from "src/components";
 import { useAuth } from "src/context/AuthProvider";
 
 const Home = () => {
@@ -19,6 +19,14 @@ const Home = () => {
                 <ShopDiamondByShape />
 
                 <ShopByCategory />
+
+                <HandCraftedSection />
+
+                <StoreLocation />
+
+                {/* Need Help ? */}
+
+                {/* Create Good Memory */}
 
                 {/* <ProductImages /> */}
                 {/* <Footer /> */}
