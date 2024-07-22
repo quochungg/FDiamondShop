@@ -177,7 +177,7 @@ const CheckoutPage = () => {
                     }
 
 
-                    <div className='w-screen h-screen font-gantari bg-gray-50'>
+                    <div className='w-screen h-auto font-gantari bg-gray-50'>
 
                         {/* BEGIN HEADER */}
                         <header>
