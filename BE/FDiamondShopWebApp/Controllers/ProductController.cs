@@ -5,6 +5,7 @@ using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository;
 using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -226,7 +227,14 @@ namespace FDiamondShop.API.Controllers
                 ModelState.AddModelError("CustomError", "Subcategory is not valid!");
                 return BadRequest(ModelState);
             }
-
+            var existed = await _db.Products.FirstOrDefaultAsync(p => p.ProductName.Trim().ToLower() == createDTO.ProductName.Trim().ToLower());
+            if (existed != null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Product's name is existed" };
+                return BadRequest(_response);
+            }
             if (createDTO == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -277,6 +285,14 @@ namespace FDiamondShop.API.Controllers
                 if (product == null)
                 {
                     return NotFound("Product not found");
+                }
+                var existed = await _db.Products.FirstOrDefaultAsync(p => p.ProductName.Trim().ToLower() == updateDTO.ProductName.Trim().ToLower() && p.ProductId != updateDTO.ProductId);
+                if (existed != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "Product's name is existed" };
+                    return BadRequest(_response);
                 }
                 _mapper.Map(updateDTO, product);
 
