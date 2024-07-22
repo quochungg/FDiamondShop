@@ -33,8 +33,8 @@ const navConfig = [
     icon: icon('ic_order'),
   },
   {
-    title: 'voucher',
-    path: '/voucher',
+    title: 'Discount',
+    path: '/discountCode',
     icon: icon('ic_voucher'),
   },
   // {

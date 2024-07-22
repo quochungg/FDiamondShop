@@ -8,7 +8,7 @@ export default function VoucherPage() {
   return (
     <>
       <Helmet>
-        <title> Voucher Management </title>
+        <title> Discount Code Management </title>
       </Helmet>
 
       <VoucherView />
