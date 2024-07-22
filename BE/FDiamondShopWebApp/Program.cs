@@ -1,5 +1,6 @@
 using Azure;
 using FDiamondShop.API;
+using FDiamondShop.API.Controllers;
 using FDiamondShop.API.Data;
 using FDiamondShop.API.Helper;
 using FDiamondShop.API.Models;
@@ -41,6 +42,8 @@ builder.Services.AddHttpClient();
 
 // Register the background service
 builder.Services.AddHostedService<TimedHostedService>();
+builder.Services.AddHttpClient<CancelOrderService>(); // Register HttpClient for ApiPollingService
+builder.Services.AddHostedService<CancelOrderService>(); // Register the background service
 
 // Register Repositories
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

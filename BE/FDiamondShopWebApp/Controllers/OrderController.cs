@@ -32,6 +32,21 @@ namespace FDiamondShop.API.Controllers
             _httpClient = httpClient;
         }
 
+        //[HttpPost("PreOrder")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<ActionResult<APIResponse>> PreOrder(int orderId)
+        //{
+        //    var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId, includeProperties: "Cartlines.CartLineItems.Products");
+        //    if (order == null)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.NotFound;
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string> { "Order not found" };
+        //        return NotFound(_response);
+        //    }
+        //}
+
         [HttpPost(Name = "CreateOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -40,183 +55,222 @@ namespace FDiamondShop.API.Controllers
         public async Task<ActionResult<APIResponse>> CreateOrder([FromBody] OrderCreateDTO createDTO)
         {
             List<Product> products = new();
-            try
+            using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
-                decimal totalPrice = 0;
-                var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
-                var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
-                if (cartLines.Count() == 0)
+                try
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages = new List<string> { "Cart is empty" };
-                    return NotFound(_response);
-                }
-                totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
-                  .Sum(cartLineItem => cartLineItem.Product.BasePrice);
-                DateTime now = DateTime.Now;
-                TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-                DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
-                OrderDTO orderDTO = new()
-                {
-                    BasePrice = totalPrice,
-                    TotalPrice = totalPrice,
-                    OrderDate = now7,
-                    Status = createDTO.Status
-                };
-                foreach (var cartLine in cartLines)
-                {
-                    foreach (var cartLineItem in cartLine.CartLineItems)
+                    decimal totalPrice = 0;
+                    var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
+                    var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
+
+                    if (!cartLines.Any())
                     {
-                        if (cartLineItem.Product.Quantity <= 0)
+                        _response.StatusCode = HttpStatusCode.NotFound;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages = new List<string> { "Cart is empty" };
+                        return NotFound(_response);
+                    }
+
+                    totalPrice = cartLines.SelectMany(cartLine => cartLine.CartLineItems)
+                                          .Sum(cartLineItem => cartLineItem.Product.BasePrice);
+
+                    DateTime now = DateTime.Now;
+                    TimeZoneInfo utcPlus7 = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime now7 = TimeZoneInfo.ConvertTime(now, utcPlus7);
+
+                    OrderDTO orderDTO = new()
+                    {
+                        BasePrice = totalPrice,
+                        TotalPrice = totalPrice,
+                        OrderDate = now7,
+                        Status = createDTO.Status
+                    };
+
+                    if (!string.IsNullOrEmpty(createDTO.DiscountName))
+                    {
+                        var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
+
+                        if (discount == null)
                         {
-                            _response.StatusCode = HttpStatusCode.BadRequest;
-                            _response.IsSuccess = false;
-                            _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
-                            return BadRequest(_response);
+                            return NotFound("Discount code not found");
                         }
-                        cartLineItem.Price = cartLineItem.Product.BasePrice;
-                    }
-                }
-                if (createDTO.DiscountName != null)
-                {
-                    var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
 
-                    if (discount == null)
-                    {
-
-                        return NotFound("Discount code not found");
-                    }
-                    if (discount != null)
-                    {
                         orderDTO.DiscountCodeId = discount.DiscountId;
                         orderDTO.TotalPrice -= (orderDTO.TotalPrice * discount.DiscountPercent / 100);
                     }
+
+                    var order = _mapper.Map<Order>(orderDTO);
+                    order.Status = "Pending";
+                    order.UserId = user.Id;
+                    order.CartLines = cartLines;
+
+                    foreach (var cartLine in cartLines)
+                    {
+                        cartLine.IsOrdered = true;
+                        foreach (var cartLineItem in cartLine.CartLineItems)
+                        {
+                            var product = await _unitOfWork.ProductRepository.GetProductForUpdateAsync(cartLineItem.ProductId);
+                            if (product.Quantity < 1)
+                            {
+                                await transaction.RollbackAsync();
+                                _response.StatusCode = HttpStatusCode.BadRequest;
+                                _response.IsSuccess = false;
+                                _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
+                                return BadRequest(_response);
+                            }
+                            product.Quantity -= 1;
+                            if (product.Quantity == 0)
+                            {
+                                product.IsVisible = false;
+                            }
+                            _unitOfWork.ProductRepository.Update(product);
+                            cartLineItem.Price = product.BasePrice;
+                        }
+                    }
+
+                    await _unitOfWork.OrderRepository.CreateAsync(order);
+                    await _unitOfWork.SaveAsync();
+                    //await _unitOfWork.PaymentRepository.UpdateStatus(order, user);
+
+                    var paymentInfo = new PaymentInformationModel
+                    {
+                        Amount = orderDTO.TotalPrice,
+                        Name = user.UserName,
+                        OrderDescription = "Thanh toan don hang",
+                        OrderID = "",
+                        OrderType = createDTO.PaymentMethod,
+                    };
+
+                    switch (paymentInfo.OrderType.ToLower())
+                    {
+                        case "vnpay":
+                            decimal amountVNPay = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
+                            paymentInfo.Amount = (int)amountVNPay;
+
+                            var paymentApiUrlVNPay = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
+                            var paymentResponseVNPay = await _httpClient.PostAsJsonAsync(paymentApiUrlVNPay, paymentInfo);
+                            if (paymentResponseVNPay.IsSuccessStatusCode)
+                            {
+                                var paymentResultVNPay = await paymentResponseVNPay.Content.ReadFromJsonAsync<APIResponse>();
+                                if (paymentResultVNPay.IsSuccess)
+                                {
+                                    _response.Result = new { PaymentUrl = paymentResultVNPay.Result.ToString() };
+                                }
+                                else
+                                {
+                                    await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                                    await _unitOfWork.SaveAsync();
+                                    _response.StatusCode = HttpStatusCode.BadRequest;
+                                    _response.IsSuccess = false;
+                                    _response.ErrorMessages = paymentResultVNPay.ErrorMessages;
+                                    return BadRequest(_response);
+                                }
+                            }
+                            break;
+
+                        case "momo":
+                            decimal amountMoMo = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
+                            paymentInfo.Amount = (int)amountMoMo;
+
+                            var paymentApiUrlMoMo = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/momo");
+                            var paymentResponseMoMo = await _httpClient.PostAsJsonAsync(paymentApiUrlMoMo, paymentInfo);
+                            if (paymentResponseMoMo.IsSuccessStatusCode)
+                            {
+                                var paymentResultMoMo = await paymentResponseMoMo.Content.ReadFromJsonAsync<APIResponse>();
+                                if (paymentResultMoMo.IsSuccess)
+                                {
+                                    _response.Result = new { PaymentUrl = paymentResultMoMo.Result.ToString() };
+                                }
+                                else
+                                {
+                                    await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                                    await _unitOfWork.SaveAsync();
+                                    _response.StatusCode = HttpStatusCode.BadRequest;
+                                    _response.IsSuccess = false;
+                                    _response.ErrorMessages = paymentResultMoMo.ErrorMessages;
+                                    return BadRequest(_response);
+                                }
+                            }
+                            else
+                            {
+                                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                                await _unitOfWork.SaveAsync();
+                                return BadRequest(paymentResponseMoMo.Content.ToString());
+                            }
+                            break;
+
+                        case "paypal":
+                            paymentInfo.Amount = orderDTO.TotalPrice;
+                            paymentInfo.OrderID = order.OrderId.ToString();
+
+                            var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
+                            var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
+
+                            if (paymentResponsePaypal.IsSuccessStatusCode)
+                            {
+                                var paymentResultPaypal = await paymentResponsePaypal.Content.ReadFromJsonAsync<APIResponse>();
+                                if (paymentResultPaypal.IsSuccess)
+                                {
+                                    _response.Result = new { PaymentUrl = paymentResultPaypal.Result.ToString() };
+                                }
+                                else
+                                {
+                                    await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
+                                    await _unitOfWork.SaveAsync();
+                                    _response.StatusCode = HttpStatusCode.BadRequest;
+                                    _response.IsSuccess = false;
+                                    _response.ErrorMessages = paymentResultPaypal.ErrorMessages;
+                                    return BadRequest(_response);
+                                }
+                            }
+                            break;
+                    }
+
+                    await _unitOfWork.SaveAsync();
+                    await transaction.CommitAsync();
+                    return Ok(_response);
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { ex.ToString() };
+                    return BadRequest(_response);
+                }
+            }
+        }
+
+        [HttpPost("CancelPendingOrders")]
+        public async Task<ActionResult<APIResponse>> CancelPendingOrders()
+        {
+            try
+            {
+                TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+                DateTime cutoffTime = vietnamNow.AddMinutes(-5);
+
+                var pendingOrders = await _unitOfWork.OrderRepository.GetPendingOrdersOlderThan(cutoffTime);
+
+                if (pendingOrders == null || !pendingOrders.Any())
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "No pending orders found to cancel." };
+                    return NotFound(_response);
                 }
 
-                var order = _mapper.Map<Order>(orderDTO);
-                order.Status = "Pending";
-                order.UserId = user.Id;
-                order.CartLines = cartLines;
-                await _unitOfWork.OrderRepository.CreateAsync(order);
-                await _unitOfWork.SaveAsync();
-                _response.Result = _mapper.Map<OrderDTO>(order);
-                _response.StatusCode = HttpStatusCode.Created;
-                var paymentInfo = new PaymentInformationModel
-                {
-                    Amount = orderDTO.TotalPrice,
-                    Name = user.UserName,
-                    OrderDescription = "Thanh toan don hang",
-                    OrderID = "",
-                    OrderType = createDTO.PaymentMethod,
-
-                };
-
-                switch (paymentInfo.OrderType.ToLower())
+                foreach (var order in pendingOrders)
                 {
 
-                    case "vnpay":
-                        decimal amount = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
-                        paymentInfo.Amount = (int)amount;
-
-                        //sua link tren swagger
-                        var paymentApiUrl = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
-                        var paymentResponse = await _httpClient.PostAsJsonAsync(paymentApiUrl, paymentInfo);
-                        if (paymentResponse.IsSuccessStatusCode)
-                        {
-                            var paymentResult = await paymentResponse.Content.ReadFromJsonAsync<APIResponse>();
-                            if (paymentResult.IsSuccess)
-                            {
-                                _response.Result = new
-                                {
-                                    PaymentUrl = paymentResult.Result.ToString(),
-                                };
-                            }
-
-                            else
-                            {
-                                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
-                                await _unitOfWork.SaveAsync();
-                                _response.StatusCode = HttpStatusCode.BadRequest;
-                                _response.IsSuccess = false;
-                                _response.ErrorMessages = paymentResult.ErrorMessages;
-                                return BadRequest(_response);
-                            }
-                        }
-                        break;
-
-                    case "momo":
-                        decimal amountVND = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
-                        paymentInfo.Amount = (int)amountVND;
-                        var paymentApiUrlMomo = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/momo");
-                        var paymentResponseMomo = await _httpClient.PostAsJsonAsync(paymentApiUrlMomo, paymentInfo);
-                        var respose = paymentResponseMomo.Content.ToString();
-                        if (paymentResponseMomo.IsSuccessStatusCode)
-                        {
-
-                            var paymentResult = await paymentResponseMomo.Content.ReadFromJsonAsync<APIResponse>();
-                            if (paymentResult.IsSuccess)
-                            {
-                                _response.Result = new
-                                {
-                                    PaymentUrl = paymentResult.Result.ToString(),
-                                };
-                            }
-
-                            else
-                            {
-                                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
-                                await _unitOfWork.SaveAsync();
-                                _response.StatusCode = HttpStatusCode.BadRequest;
-                                _response.IsSuccess = false;
-                                _response.ErrorMessages = paymentResult.ErrorMessages;
-                                return BadRequest(_response);
-                            }
-                        }
-                        else
-                        {
-                            await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
-                            await _unitOfWork.SaveAsync();
-                            return BadRequest(respose);
-                        }
-                        break;
-                    case "paypal":
-                        paymentInfo.Amount = orderDTO.TotalPrice;
-                        paymentInfo.OrderID = order.OrderId.ToString();
-                        
-                        var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
-                        var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
-
-                        if (paymentResponsePaypal.IsSuccessStatusCode)
-                        {
-
-                            var paymentResult = await paymentResponsePaypal.Content.ReadFromJsonAsync<APIResponse>();
-                            if (paymentResult.IsSuccess)
-                            {
-                                _response.Result = new
-                                {
-                                    PaymentUrl = paymentResult.Result.ToString(),
-
-                                };
-                                await _unitOfWork.PaymentRepository.UpdateStatus(order, user);
-
-
-                            }
-
-                            else
-                            {
-                                await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
-                                await _unitOfWork.SaveAsync();
-                                _response.StatusCode = HttpStatusCode.BadRequest;
-                                _response.IsSuccess = false;
-                                _response.ErrorMessages = paymentResult.ErrorMessages;
-                                return BadRequest(_response);
-                            }
-                        }
-                        break;
+                    await _unitOfWork.OrderRepository.RollBackOrder(order.OrderId);
+                    await _unitOfWork.SaveAsync();
                 }
 
                 await _unitOfWork.SaveAsync();
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = new { Message = "Pending orders cancelled successfully." };
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -227,6 +281,7 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+
         [HttpGet("GetAllOrderByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllOrder(string UserId)
