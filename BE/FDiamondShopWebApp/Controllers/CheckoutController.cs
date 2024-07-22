@@ -205,7 +205,7 @@ namespace FDiamondShop.API.Controllers
              //= await _unitOfWork.OrderRepository.GetAsync(o => o.PaymentId == null && o.UserId.Equals(user.Id));
             var response = _unitOfWork.PayPalRepository.PaymentExecute(HttpContext.Request.Query);
 
-            if (!response.Success || order.Status=="Failed")
+            if (!response.Success || order.Status!="Pending")
             {
                 await _unitOfWork.OrderRepository.RollBackOrder(order.OrderId);
                 await _unitOfWork.SaveAsync();
