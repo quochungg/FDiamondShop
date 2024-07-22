@@ -97,7 +97,7 @@ export default function Router() {
           ),
         },
         {
-          path: 'voucher',
+          path: 'discountCode',
           element: (
             <PrivateRoute>
               <VoucherPage />

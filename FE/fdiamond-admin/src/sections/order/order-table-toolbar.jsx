@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 
-import Tooltip from '@mui/material/Tooltip';
+// import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
 // import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+// import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -39,11 +39,11 @@ export default function OrderTableToolbar({ filterByOrderId, onFilterByOrderId }
         }
       />
 
-      <Tooltip title="Filter list">
+      {/* <Tooltip title="Filter list">
         <IconButton>
           <Iconify icon="ic:round-filter-list" />
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
     </Toolbar>
   );
 }
