@@ -12,22 +12,27 @@ export const getCategory = async (category) => {
     try {
         response = await axios.get(API_url);
     } catch (error) {
+        if (error.response) {
+            response = error.response;
+        }
         console.error("There was an error!", error);
     }
     return response;
 };
 
-export const getProducts = async (category, searchParams) => {
+export const getProducts = async (category, searchParams, subcategory) => {
     let response;
     const queryStr = searchParams.toString();
-    const URL_str = API_ROOT + `/api/product/GetProductWithFilter?CategoryName=${category}&${queryStr}`;
+    const URL_str = `${API_ROOT}/api/product/GetProductWithFilter?CategoryName=${category}&${queryStr}` + (subcategory ? `&subcategoryName=${subcategory}` : '');
     const API_url = URL_str.replace(/ /g, '+');
 
-    // console.log(API_url);
 
     try {
         response = await axios.get(API_url);
     } catch (error) {
+        if (error.response) {
+            response = error.response;
+        }
         console.error("There was an error!", error);
     }
     return response;

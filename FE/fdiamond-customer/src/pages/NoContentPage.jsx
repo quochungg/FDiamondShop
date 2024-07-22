@@ -9,7 +9,7 @@ const NoContentPage = () => {
             <div className="flex justify-center items-center flex-col h-screen font-gantari">
 
 
-                <div className="w-48">
+                <div className="w-48 mt-3">
                     <img src={smile} />
                 </div>
 
