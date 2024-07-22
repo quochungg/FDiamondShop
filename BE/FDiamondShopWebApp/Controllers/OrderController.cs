@@ -140,7 +140,10 @@ namespace FDiamondShop.API.Controllers
                                 _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
                                 return BadRequest(_response);
                             }
-                            product.Quantity -= 1;
+                            if (!(product.SubCategoryId > 13 && product.SubCategoryId < 20))
+                            {
+                                product.Quantity -= 1;
+                            }
                             if (product.Quantity == 0)
                             {
                                 product.IsVisible = false;
