@@ -70,7 +70,16 @@ export default function ProductsView() {
         const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Product');
         // console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
         if (response.data && Array.isArray(response.data.result)) {
-          setData(response.data.result);
+          const updatedData = response.data.result.map((product) => {
+            const hasVariantId9 = product.productVariantValues.some(
+              (variant) => variant.variantId === 9
+            );
+            return {
+              ...product,
+              quantity: hasVariantId9 ? 'N/A' : product.quantity,
+            };
+          });
+          setData(updatedData);
         } else {
           console.error('Unexpected API response format:', response.data);
         }
