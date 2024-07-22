@@ -8,7 +8,6 @@ using FDiamondShop.API.Models.DTO;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace FDiamondShop.API.Repository
 {
     public class OrderRepository : Repository<Order>, IOrderRepository
@@ -186,6 +185,20 @@ namespace FDiamondShop.API.Repository
                 line.IsOrdered = false;
             }
 
+        }
+
+        public async Task<IEnumerable<Order>> GetPendingOrdersOlderThan(DateTime cutoffTimeVietnam)
+        {
+            TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+            // Convert Vietnamese time to UTC for database comparison
+            DateTime cutoffTimeUtc = TimeZoneInfo.ConvertTimeToUtc(cutoffTimeVietnam, vietnamTimeZone);
+            return await _db.Orders.Where(x => x.OrderDate < cutoffTimeVietnam && x.Status == "Pending").ToListAsync();
+        }
+
+        public Task UpdateAsync(Order order)
+        {
+            throw new NotImplementedException();
         }
     }
 
