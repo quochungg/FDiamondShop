@@ -305,10 +305,10 @@ export default function AppView() {
               series: [
                 {
                   name: 'Completed Orders',
-                  type: 'area',
-                  fill: 'gradient',
+                  type: 'line',
+                  fill: 'solid',
                   data: completedOrdersByMonth,
-                  color: 'orange',
+                  color: '#00A76F',
                 },
               ],
             }}
@@ -349,6 +349,13 @@ export default function AppView() {
                 fill: 'solid',
                 data,
               })),
+              options: {
+                plotOptions: {
+                  bar: {
+                    columnWidth: '50%', // Tăng độ rộng cột lên
+                  },
+                },
+              },
             }}
           />
         </Grid>
