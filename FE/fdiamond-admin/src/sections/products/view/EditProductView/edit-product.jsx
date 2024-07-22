@@ -183,7 +183,6 @@ const EditProductPage = () => {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setOpenSnackbar(true);
       return;
     }
     // Log the product object to see what is being sent
