@@ -144,14 +144,10 @@ namespace FDiamondShop.API.Controllers
                     cli.Product.SubCategoryName = (await _unitOfWork.SubCategoryRepository.GetAsync(sc => sc.SubCategoryId == cli.Product.SubCategoryId)).SubcategoryName;
                     cli.Product.CategoryId = (await _unitOfWork.SubCategoryRepository.GetAsync(ct => ct.SubCategoryId == cli.Product.SubCategoryId)).CategoryId;
                     cli.Product.CategoryName = (await _unitOfWork.CategoryRepository.GetAsync(ct => ct.CategoryId == cli.Product.CategoryId)).CategoryName;
-                    if(cli.Product.CategoryId == 1)
-                    {
-                        cli.Product.ProductImages = cli.Product.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") && u.IsGia == false).ToList();
-                    }
-                    else
-                    {
-                        cli.Product.ProductImages = cli.Product.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") || u.ImageUrl.Contains("stage_0")).ToList();
-                    }
+
+
+                    cli.Product.ProductImages = cli.Product.ProductImages.Where(u => u.ImageUrl.Contains("https://ion.bluenile.com") || u.ImageUrl.Contains("stage_0") || u.ImageUrl.Contains("firebase")).Take(1).ToList();
+
                 }
             }
 

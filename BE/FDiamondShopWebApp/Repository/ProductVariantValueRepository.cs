@@ -15,16 +15,15 @@ namespace FDiamondShop.API.Repository
 
         public void UpdateVariantValue(Product product, ProductVariantValueUpdateDTO productVariantValue)
         {
-            foreach(var item in product.ProductVariantValues)
+
+            var existedVariantValue = product.ProductVariantValues.FirstOrDefault(x => x.VariantId == productVariantValue.VariantId);
+            if (existedVariantValue != null)
             {
-                var existedVariantValue = product.ProductVariantValues.FirstOrDefault(x => x.VariantId == item.VariantId);
-                if(existedVariantValue != null)
-                {
-                    existedVariantValue.Value = productVariantValue.Value;
-                    return;
-                }
+                existedVariantValue.Value = productVariantValue.Value;
+                return;
             }
+
         }
-        
+
     }
 }
