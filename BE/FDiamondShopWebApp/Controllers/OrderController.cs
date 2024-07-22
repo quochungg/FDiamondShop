@@ -228,6 +228,8 @@ namespace FDiamondShop.API.Controllers
 
                     await _unitOfWork.SaveAsync();
                     await transaction.CommitAsync();
+                    _response.IsSuccess = true;
+                    _response.StatusCode = HttpStatusCode.OK;
                     return Ok(_response);
                 }
                 catch (Exception ex)
