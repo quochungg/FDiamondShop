@@ -66,7 +66,20 @@ namespace FDiamondShop.API.Repository
             var product = await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages).FirstOrDefaultAsync(u => u.ProductId == dto.ProductId) ?? throw new Exception("Product Not Found!");
             return product ?? new Product();
         }
-        
+
+        public async Task<Product> GetProductForUpdateAsync(int productId)
+        {
+            return await _db.Products
+                                 .Where(p => p.ProductId == productId)
+                                 .FirstOrDefaultAsync(p => p.ProductId == productId, cancellationToken: default)
+                                 .ConfigureAwait(false);
+        }
+
+        public Product Update(Product entity)
+        {
+            var product = _db.Products.Update(entity);
+            return product.Entity;
+        }
     }
         
 }
