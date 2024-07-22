@@ -1,37 +1,34 @@
 Diamond Shop System - SWP391 project
 ![screencapture-localhost-5174-product-diamond-2024-06-19-07_38_34](https://github.com/quochungg/FDiamondShop/assets/167979922/404aa80a-6696-403e-9ebb-b33c1487a5d7)
-- roject Tracking
-
-  https://docs.google.com/spreadsheets/d/1JxnJVCDxOXmmKXwIGKsYdrOdT0KFIojc/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
-
+- Project Tracking
+  
+  https://docs.google.com/spreadsheets/d/1_KQ_Ekz96dBMHueeMBkS5EH1SxAo9njEWgm_3NB2ejU/edit?usp=sharing
+  
 - Usecase List
 
-  https://docs.google.com/spreadsheets/d/1U_4yT58R3hsqsuEnPUe-_KW3S0RedlPb7foW3sFKYJc/edit?usp=sharing
-
-- Report 0
-
-  https://docs.google.com/spreadsheets/d/1BQvEpAOgzN8YQgIGbiRbuI6_ncsvz-kn/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+  https://docs.google.com/spreadsheets/d/1uiBUuUwCw7POmWJfGRHV07HYhllTbghzrYamDNfgfLc/edit?usp=sharing
 
 - API Postman
 
   https://documenter.getpostman.com/view/36189969/2sA3kSoiHt
   
--SRS 
+- SRS 
+
   https://docs.google.com/document/d/1KStpC8Z2f0te3t9XLxPAABaqf7SuWLAN/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
   
 
 # Team's Member
 
 - Front - end
+  
   - Nguyen Thi Bich Duyen - SE183629
   - Doan Dang Thien Bao - SE171827
+    
 - Back - end
-
+  
   - Nguyen Huu Quoc Hung - SE172905
   - Ha Duy Tung - SE173573
   - Tran Nguyen Thu An - SE182972
-
-  - Nguyen Thi Ngoc Thu - SE171992
 
 # About
 
@@ -58,35 +55,37 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 |          | UC-03    | Login With Google           |
 |          | UC-04    | Manage Personal Information            |
 |          | UC-05    | Add Product           |
-|          | UC-06    | Filter Search Option                    |
-|          | UC-07    | Sort Product                  |
-|          | UC-08    | Delete Product                 |
-|          | UC-09    | Search Product               |
-|          | UC-10    | Update Product               |
-|          | UC-11    | View Product Details                |
-| Sprint2  | UC-12    | Create Discount Code              |
-|          | UC-13    | Search Discoust Code by Name            |
-|          | UC-14    | View All Discount Code            |
-|          | UC-15    | Cancel Discount Code               |
-|          | UC-16    | Update Discount Code                 |
-|          | UC-17    | Add Products to Cart                 |
-|          | UC-18    | Remove Products From Cart               |
-|          | UC-19    | View Cart            |
-| Sprint 3 | UC-20    | Order               |
-|          | UC-21    | Apply Discount to Order               |
-|          | UC-22    | Excute Payment                 |
-|          | UC-23    | Cancel Order                 |
-|          | UC-24    | View Order Details                 |
-|          | UC-25    | View Order History               |
-|          | UC-26    | Receive New Orders                 |
-|          | UC-27    | View All Order        |
-|          | UC-28    | View All Accounts         |
-|          | UC-29    | View Dashboard   .      |
+|          | UC-06    | Delete Product                 |
+|          | UC-07    | Search Product               |
+|          | UC-08    | Update Product               |
+|          | UC- 09   | View Product Details                |
+| Sprint2  | UC-10   | Create Discount Code              |
+|          | UC-11    | Search Discoust Code by Name            |
+|          | UC-12   | View All Discount Code            |
+|          | UC-13    | Cancel Discount Code               |
+|          | UC-14    | Update Discount Code                 |
+|          | UC-15    | Add Products to Cart                 |
+|          | UC-16    | Remove Products From Cart               |
+|          | UC-17    | View Cart            |
+| Sprint 3 | UC-18    | Order               |
+|          | UC-19    | Apply Discount to Order               |
+|          | UC-20    | Excute Payment                 |
+|          | UC-21    | Cancel Order                 |
+|          | UC-22    | View Order Details                 |
+|          | UC-23    | View Order History               |
+|          | UC-24    | Receive New Orders                 |
+|          | UC-25    | View All Order        |
+|          | UC-26    | View All Accounts         |
+|          | UC-27    | View Dashboard   .      |
 
+
+
+
+
+### SWT Assignment
 ### Table 2: Member Assignment for Sprint 1
 | Member Name | User Story ID | Description            |
 |-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-06   |  Filter Search Option                 |
 | Nguyen Huu Quoc Hung     | UC-03   |  Login With Google                 |
 | Nguyen Thi Bich Duyen     | UC-01   | Register       |
 | Nguyen Thi Ngoc Thu   | UC-02    | Login (Customer)                    |
