@@ -145,9 +145,14 @@ const CheckoutPage = () => {
         // If all cart lines are valid, proceed to make payment. Else, show error modal
         if (isValidAll) {
             const response = await makeOrder(location.state.promoCode);
-            const paymentUrl = response.data.result.paymentUrl;
-            if (paymentUrl) {
+            console.log(response);
+            const result = response.data.result;
+
+            if (result) {
+                const paymentUrl = response.data.result.paymentUrl;
                 navigate('/proceed-to-paypal', { state: { paymentUrl: paymentUrl }, replace: true })
+            } else {
+                navigate('/page-not-found');
             }
         }
         else {

@@ -8,7 +8,7 @@ const HandCraftedSection = () => {
                 <div className="flex h-[450px] mx-12 bg-gray-100 mb-20 font-gantari">
 
                     <div className="flex-1 flex flex-col p-12 justify-center items-center text-center">
-                        <p className="text-4xl font-lora mb-7 font-[500] tracking-wide">Handcrafted In Ho Chi Minh</p>
+                        <p className="text-4xl font-lora mb-7 tracking-wide">Handcrafted In Ho Chi Minh</p>
                         <p className="mb-12">
                             Our highly skilled artisans exceed industry standards with sparkling GIA-graded natural diamonds, the finest-quality materials and outstanding engagement ring design at an amazing value.
                         </p>
