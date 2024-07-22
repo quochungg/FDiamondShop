@@ -227,6 +227,46 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+        [HttpPost("CancelPendingOrders")]
+        public async Task<ActionResult<APIResponse>> CancelPendingOrders()
+        {
+            try
+            {
+                TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+                DateTime cutoffTime = vietnamNow.AddMinutes(-5);
+
+                var pendingOrders = await _unitOfWork.OrderRepository.GetPendingOrdersOlderThan(cutoffTime);
+
+                if (pendingOrders == null || !pendingOrders.Any())
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "No pending orders found to cancel." };
+                    return NotFound(_response);
+                }
+
+                foreach (var order in pendingOrders)
+                {
+
+                    await _unitOfWork.OrderRepository.RollBackOrder(order.OrderId);
+                    await _unitOfWork.SaveAsync();
+                }
+
+                await _unitOfWork.SaveAsync();
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = new { Message = "Pending orders cancelled successfully." };
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
         [HttpGet("GetAllOrderByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllOrder(string UserId)
