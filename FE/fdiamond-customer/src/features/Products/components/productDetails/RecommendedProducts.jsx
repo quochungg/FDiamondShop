@@ -74,9 +74,9 @@ const RecommendedProducts = ({ product }) => {
                                 <div key={product.productId} className={`w-full h-full border-[1px] rounded-sm ${hover}`}>
                                     <Link
                                         to={`/product/product-details/${product.productId}`}
-                                        className="flex flex-col justify-start h-full w-full"
+                                        className="flex flex-col justify-start h-full w-full border-b-[1px]"
                                     >
-                                        <div className="w-[334px] h-[267px]">
+                                        <div className="w-[334px] h-[267px] self-center">
                                             <img
                                                 className="object-cover w-full h-full"
                                                 src={product.productImages[0].imageUrl}

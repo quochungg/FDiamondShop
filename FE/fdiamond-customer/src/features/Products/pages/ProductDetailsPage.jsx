@@ -25,7 +25,7 @@ const ProductDetailsPage = ({ productId }) => {
     useEffect(() => {
         //productId is not a number
         if (isNaN(Number.parseInt(productId))) {
-            navigate('/product-not-found', { replace: true });
+            navigate('/product-not-available', { replace: true });
             return;
         }
 
@@ -35,7 +35,7 @@ const ProductDetailsPage = ({ productId }) => {
                     setProduct(response.data.result)
                     window.scrollTo(0, 0)
                 } else {
-                    navigate('/product-not-found', { replace: true });
+                    navigate('/product-not-available', { replace: true });
                     return;
                 }
             })
@@ -63,7 +63,7 @@ const ProductDetailsPage = ({ productId }) => {
     }
 
     if (product && !product.isVisible) {
-        return <Navigate to='/product-not-found' replace={true} />;
+        return <Navigate to='/product-not-available' replace={true} />;
     }
 
     const appendableLayout = "grid grid-cols-2 px-28 mb-5 py-14";

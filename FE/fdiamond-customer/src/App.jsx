@@ -36,9 +36,10 @@ function App() {
 
     //Error pages
     const PageNotFound = React.lazy(() => import("src/pages/PageNotFound"))
-    const ProductNotFound = React.lazy(() => import("src/features/Products/pages/ProductNotFound"))
+    const ProductNotAvailable = React.lazy(() => import("src/features/Products/pages/ProductNotAvailable"))
     const OrderNotFound = React.lazy(() => import("src/features/Order/pages/Order/OrderHistory/OrderNotFound"))
     const NoContentPage = React.lazy(() => import("src/pages/NoContentPage"))
+    const NoProductsFound = React.lazy(() => import("src/features/Products/pages/NoProductsFound"))
 
     return (
         <>
@@ -49,14 +50,15 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/product">
                             <Route index element={<Navigate to="/product/diamond" replace />} />
-                            <Route path=":category" element={<CategoryWrapper />} />
+                            <Route path=":category/:subcategory?" element={<CategoryWrapper />} />
                             <Route path="product-details/:productId" element={<ProductDetailsWrapper />} />
                         </Route>
                         <Route path="/search" element={<SearchBarPage />} />
                         <Route path='/promo-code' element={<DiscountListPage />} />
 
                         <Route path='no-content' element={<NoContentPage />} />
-                        <Route path='/product-not-found' element={<ProductNotFound />} />
+                        <Route path='/no-products-found' element={<NoProductsFound />} />
+                        <Route path='/product-not-available' element={<ProductNotAvailable />} />
                         <Route path='/order-not-found' element={<OrderNotFound />} />
                         <Route />
 

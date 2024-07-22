@@ -39,7 +39,7 @@ namespace FDiamondShop.API.Repository
         {
             var returnList = await _db.Products.Include(p => p.ProductImages).
                 Include(p => p.ProductVariantValues).
-                ThenInclude(pv=>pv.Variant).
+                ThenInclude(pv => pv.Variant).
                 Include(p => p.SubCategory).
                 ThenInclude(o => o.Category).
                 Include(p => p.ProductImages).
@@ -66,8 +66,20 @@ namespace FDiamondShop.API.Repository
             var product = await _db.Products.Include(p => p.ProductVariantValues).Include(p => p.ProductImages).FirstOrDefaultAsync(u => u.ProductId == dto.ProductId) ?? throw new Exception("Product Not Found!");
             return product ?? new Product();
         }
-        
+
+        public async Task<Product> GetProductForUpdateAsync(int productId)
+        {
+            return await _db.Products
+        .FromSqlRaw("SELECT * FROM Products WITH (UPDLOCK) WHERE product_id = {0}", productId)
+        .FirstOrDefaultAsync();
+        }
+
+        public Product Update(Product entity)
+        {
+            var product = _db.Products.Update(entity);
+            return product.Entity;
+        }
     }
-        
+
 }
 

@@ -6,7 +6,7 @@ import AppLayout from "src/layout/AppLayout";
 import { LoadingSpinner } from "src/components";
 
 
-const SearchResultPage = ({ category }) => {
+const SearchResultPage = ({ category, subcategory }) => {
     // console.log('SearchResultPage renders');
 
     const navigate = useNavigate();
@@ -18,12 +18,19 @@ const SearchResultPage = ({ category }) => {
     // console.log(searchParams);
 
     const [isLoading, setIsLoading] = useState(true);
-    const [productList, setProductList] = useState([]);
+    const [productList, setProductList] = useState(null);
     const [categoryInfo, setCategoryInfo] = useState({});
     const [totalPage, setTotalPage] = useState(null);
 
     const [resetSelectionBar, setResetSelectionBar] = useState(false);
 
+    // This function will be called to update search params in the url
+    const handleSearchParams = (props) => {
+        setSearchParams(prev => ({
+            ...prev,
+            [props.name]: props.value
+        }));
+    }
 
 
     const isValidCategory = () => {
@@ -46,16 +53,10 @@ const SearchResultPage = ({ category }) => {
         }
     }
 
-    const handleSearchParams = (props) => {
-        setSearchParams(prev => ({
-            ...prev,
-            [props.name]: props.value
-        }));
-    }
-
     useEffect(() => {
         if (!isValidCategory()) {
-            navigate('*');
+            navigate('/no-products-found');
+            return;
         }
 
         // category API
@@ -68,14 +69,19 @@ const SearchResultPage = ({ category }) => {
 
     useEffect(() => {
         // products API
-        getProducts(category, searchParams).
+        getProducts(category, searchParams, subcategory).
             then((response) => {
-                setProductList(response.data.result.items);
-                setTotalPage(response.data.result.totalPages);
+                if (response.data.result) {
+                    setProductList(response.data.result.items);
+                    setTotalPage(response.data.result.totalPages);
+                } else { //empty product list
+                    navigate('/no-products-found');
+                    return;
+                }
                 setIsLoading(false);
                 window.scrollTo(0, 0);
             });
-    }, [searchParams])
+    }, [searchParams, subcategory])
 
 
     if (isLoading) {
@@ -87,6 +93,7 @@ const SearchResultPage = ({ category }) => {
 
     return (
         <>
+
             {validatePageNumber()}
             <AppLayout>
 

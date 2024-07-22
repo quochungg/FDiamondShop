@@ -49,7 +49,7 @@ export default function ProductsView() {
 
   const [orderBy, setOrderBy] = useState('productId');
 
-  const [filterById, setFilterById] = useState('');
+  const [filterByName, setFilterByName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -70,7 +70,16 @@ export default function ProductsView() {
         const response = await axios.get('https://fdiamond-api.azurewebsites.net/api/Product');
         // console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
         if (response.data && Array.isArray(response.data.result)) {
-          setData(response.data.result);
+          const updatedData = response.data.result.map((product) => {
+            const hasVariantId9 = product.productVariantValues.some(
+              (variant) => variant.variantId === 9
+            );
+            return {
+              ...product,
+              quantity: hasVariantId9 ? 'N/A' : product.quantity,
+            };
+          });
+          setData(updatedData);
         } else {
           console.error('Unexpected API response format:', response.data);
         }
@@ -102,9 +111,9 @@ export default function ProductsView() {
   //   setSelected([]);
   // };
 
-  const handleFilterByID = (event) => {
+  const handleFilterByName = (event) => {
     setPage(0);
-    setFilterById(event.target.value);
+    setFilterByName(event.target.value);
   };
 
   const handleSort = (event, productId) => {
@@ -127,7 +136,7 @@ export default function ProductsView() {
   const dataFiltered = applyFilter({
     inputData: data,
     comparator: getComparator(order, orderBy),
-    filterById,
+    filterByName,
   });
 
   // const handleClick = (event, productId) => {
@@ -156,7 +165,7 @@ export default function ProductsView() {
     setPage(newPage);
   };
 
-  const notFound = !dataFiltered.length && !!filterById;
+  const notFound = !dataFiltered.length && !!filterByName;
   // const handleOpenFilter = () => {
   //   setOpenFilter(true);
   // };
@@ -192,7 +201,7 @@ export default function ProductsView() {
       </Stack>
 
       <Card>
-        <ProductTableToolbar filterById={filterById} onFilterById={handleFilterByID} />
+        <ProductTableToolbar filterByName={filterByName} onFilterByName={handleFilterByName} />
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
@@ -239,7 +248,7 @@ export default function ProductsView() {
                   </TableRow>
                 )}
 
-                {notFound && <TableNoData query={filterById} />}
+                {notFound && <TableNoData query={filterByName} />}
               </TableBody>
             </Table>
           </TableContainer>

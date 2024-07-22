@@ -1,6 +1,5 @@
-import Header from "../components/Header"
-// import Footer from "../components/Footer"
-import Hero from "../components/Hero"
+import AppLayout from "src/layout/AppLayout";
+import { Hero, ShopDiamondByShape, ShopByCategory, HandCraftedSection, StoreLocation } from "src/components";
 import { useAuth } from "src/context/AuthProvider";
 
 const Home = () => {
@@ -12,11 +11,27 @@ const Home = () => {
 
     return (
         <>
-            {/* <button onClick={handleLogout}>Logout</button> */}
-            <Header />
-            <Hero />
-            {/* <ProductImages /> */}
-            {/* <Footer /> */}
+            <AppLayout>
+                {/* <button onClick={handleLogout}>Logout</button> */}
+
+                <Hero />
+
+                <ShopDiamondByShape />
+
+                <ShopByCategory />
+
+                <HandCraftedSection />
+
+                <StoreLocation />
+
+                {/* Need Help ? */}
+
+                {/* Create Good Memory */}
+
+                {/* <ProductImages /> */}
+                {/* <Footer /> */}
+            </AppLayout>
+
 
         </>
     )

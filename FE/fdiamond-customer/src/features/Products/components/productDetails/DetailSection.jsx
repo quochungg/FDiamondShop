@@ -124,7 +124,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelecti
                         </p>
 
                         {/* PRODUCT DESCRIPTION */}
-                        <p className=" w-auto font-gantari text-[16px] bg-gray-200 px-3 py-3 rounded-sm leading-7">
+                        <p className=" w-auto font-gantari text-[16px] bg-gray-200 px-4 py-3 rounded-sm leading-7">
                             {product.description}
                         </p>
 

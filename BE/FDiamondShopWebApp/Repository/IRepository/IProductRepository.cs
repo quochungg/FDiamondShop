@@ -10,5 +10,7 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<Product> UpdateProduct(ProductUpdateDTO dto);
         Task<List<Product>> GetRecommendProducts(int productId);
         Task<IEnumerable<Product>> SearchProductByName(string searchValue);
+        Task<Product> GetProductForUpdateAsync(int productId);
+        Product Update(Product entity);
     }
 }

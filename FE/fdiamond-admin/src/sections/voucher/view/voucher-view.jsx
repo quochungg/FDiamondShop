@@ -217,7 +217,7 @@ export default function VoucherPage() {
         )}
       </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Vouchers</Typography>
+        <Typography variant="h4">Discount Codes</Typography>
 
         <Button
           onClick={handleOpenModal}
@@ -225,7 +225,7 @@ export default function VoucherPage() {
           color="inherit"
           startIcon={<Iconify icon="eva:plus-fill" />}
         >
-          Add Voucher
+          Add Discount Code
         </Button>
       </Stack>
 

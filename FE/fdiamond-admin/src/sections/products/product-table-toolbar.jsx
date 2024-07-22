@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 
-import Tooltip from '@mui/material/Tooltip';
+// import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
 // import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+// import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -11,7 +11,7 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function ProductTableToolbar({ filterById, onFilterById }) {
+export default function ProductTableToolbar({ filterByName, onFilterByName }) {
   return (
     <Toolbar
       sx={{
@@ -26,9 +26,9 @@ export default function ProductTableToolbar({ filterById, onFilterById }) {
       }}
     >
       <OutlinedInput
-        value={filterById}
-        onChange={onFilterById}
-        placeholder="Search product by ID"
+        value={filterByName}
+        onChange={onFilterByName}
+        placeholder="Search product by name..."
         startAdornment={
           <InputAdornment position="start">
             <Iconify
@@ -39,16 +39,16 @@ export default function ProductTableToolbar({ filterById, onFilterById }) {
         }
       />
 
-      <Tooltip title="Filter list">
+      {/* <Tooltip title="Filter list">
         <IconButton>
           <Iconify icon="ic:round-filter-list" />
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
     </Toolbar>
   );
 }
 
 ProductTableToolbar.propTypes = {
-  filterById: PropTypes.string,
-  onFilterById: PropTypes.func,
+  filterByName: PropTypes.string,
+  onFilterByName: PropTypes.func,
 };
