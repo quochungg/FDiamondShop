@@ -18,7 +18,7 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
+            //_timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
             return Task.CompletedTask;
         }
 
@@ -27,9 +27,9 @@
             var client = _httpClientFactory.CreateClient();
             try
             {
-                var response = await client.PutAsync("https://fdiamond-api.azurewebsites.net/Discount/UpdateAuto", null);
+                //var response = await client.PutAsync("https://fdiamond-api.azurewebsites.net/Discount/UpdateAuto", null);
                 
-              response.EnsureSuccessStatusCode();
+              //response.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException)
             {

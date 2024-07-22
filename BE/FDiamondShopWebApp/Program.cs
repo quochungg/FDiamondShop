@@ -39,6 +39,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailRepository, EmailRepository>();
 builder.Services.AddHttpClient();
+builder.Services.AddResponseCaching();
 
 // Register the background service
 builder.Services.AddHostedService<TimedHostedService>();
@@ -160,6 +161,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAllOrigins");
+app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 
