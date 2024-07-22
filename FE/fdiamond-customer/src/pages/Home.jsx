@@ -29,7 +29,7 @@ const Home = () => {
                 {/* Create Good Memory */}
 
                 {/* <ProductImages /> */}
-                {/* <Footer /> */}
+
             </AppLayout>
 
 
