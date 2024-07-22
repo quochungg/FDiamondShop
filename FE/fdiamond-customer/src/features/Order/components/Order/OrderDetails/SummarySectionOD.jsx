@@ -26,8 +26,8 @@ const SummarySectionOD = ({ orderDetails }) => {
     }
 
 
-    const handleReorder = () => {
-        reorder(orderDetails.orderId);
+    const handleReorder = async () => {
+        await reorder(orderDetails.orderId);
         navigate('/cart');
     }
 

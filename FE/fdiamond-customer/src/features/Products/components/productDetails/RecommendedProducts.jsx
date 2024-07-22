@@ -76,7 +76,7 @@ const RecommendedProducts = ({ product }) => {
                                         to={`/product/product-details/${product.productId}`}
                                         className="flex flex-col justify-start h-full w-full border-b-[1px]"
                                     >
-                                        <div className="w-[334px] h-[267px]">
+                                        <div className="w-[334px] h-[267px] self-center">
                                             <img
                                                 className="object-cover w-full h-full"
                                                 src={product.productImages[0].imageUrl}
