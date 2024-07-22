@@ -42,6 +42,7 @@ export function applyFilter({
   filterName,
   filterByOrderId,
   filterFirstName,
+  filterByName,
 }) {
   if (!Array.isArray(inputData)) {
     console.error('applyFilter expects inputData to be an array, but received:', inputData);
@@ -57,13 +58,13 @@ export function applyFilter({
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (filterById) {
+  if (filterByName) {
     inputData = inputData.filter((data) => {
-      if (!data.productId) {
-        console.warn('Data item missing productId:', data);
+      if (!data.productName) {
+        console.warn('Data item missing productName:', data);
         return false;
       }
-      return data.productId.toString().indexOf(filterById) !== -1;
+      return data.productName.toLowerCase().indexOf(filterByName.toLowerCase()) !== -1;
     });
   }
 
