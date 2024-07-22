@@ -13,7 +13,7 @@ const ShopByCategory = () => {
                 className="mt-20 mb-20"
             >
                 <div>
-                    <p className="font-lora text-3xl text-start px-12 capitalize tracking-wide font-[450]">Shop By Category</p>
+                    <p className="font-lora text-3xl text-start px-12 capitalize tracking-wide">Shop By Category</p>
                 </div>
 
                 <div className="flex flex-row justify-center mx-auto mt-10">

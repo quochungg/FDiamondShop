@@ -13,9 +13,10 @@ const Hero = () => {
 
                     />
 
-                    <div className="absolute flex flex-col justify-end items-end text-end w-[40%] right-16 top-1/2 -translate-y-1/2">
-                        <p className='text-6xl font-lora mb-8 capitalize font-[450]'>Sparkle with us</p>
-                        <p className="mb-10">
+                    <div className="absolute flex flex-col justify-center items-center text-center w-[40%] right-14 top-1/2 -translate-y-1/2">
+                        <p className='text-[3.2rem] font-lora mb-7 capitalize font-[500] tracking-tight'>Sparkle with us</p>
+
+                        <p className="mb-10 leading-loose text-lg font-[500] font-gantari">
                             {/* At Diamonds Direct, we pride ourselves not only on our stunning
                             collection of jewelry but also on the array of additional services
                             we offer to enhance your jewelry experience. From meticulous
