@@ -41,6 +41,7 @@ export default function AppView() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [actualRevenueByMonth, setActualRevenueByMonth] = useState(Array(12).fill(0));
   const [completedOrdersByMonth, setCompletedOrdersByMonth] = useState(Array(12).fill(0));
+  const [cancelledOrdersByMonth, setCancelledOrdersByMonth] = useState(Array(12).fill(0));
   const [productCategoryData, setProductCategoryData] = useState([]);
   const [productCategoryByMonth, setProductCategoryByMonth] = useState({});
 
@@ -69,6 +70,8 @@ export default function AppView() {
           setPurchasedOrders(purchaseOrdersData.length || 0);
 
           const completedOrdersData = ordersByYear.filter((order) => order.status === 'Completed');
+
+          const cancelledOrdersData = ordersByYear.filter((order) => order.status === 'Cancelled');
           setCompletedOrders(completedOrdersData.length || 0);
 
           const soldProductsCount =
@@ -97,6 +100,14 @@ export default function AppView() {
           const completedOrdersByMonthTemp = Array(12).fill(0);
           const productCategoryCount = {};
           const localProductCategoryByMonth = {};
+          const cancelledOrdersByMonthTemp = Array(12).fill(0);
+
+          cancelledOrdersData.forEach((order) => {
+            const month = new Date(order.orderDate).getMonth();
+            cancelledOrdersByMonthTemp[month] += 1;
+          });
+
+          setCancelledOrdersByMonth(cancelledOrdersByMonthTemp);
 
           completedOrdersData.forEach((order) => {
             const month = new Date(order.orderDate).getMonth();
@@ -305,10 +316,17 @@ export default function AppView() {
               series: [
                 {
                   name: 'Completed Orders',
-                  type: 'line',
-                  fill: 'solid',
+                  type: 'area',
+                  fill: 'gradient',
                   data: completedOrdersByMonth,
                   color: '#00A76F',
+                },
+                {
+                  name: 'Cancelled Orders',
+                  type: 'line',
+                  fill: 'solid',
+                  data: cancelledOrdersByMonth,
+                  color: '#FF5630',
                 },
               ],
             }}
