@@ -254,8 +254,8 @@ const CartPage = () => {
 
                     {cartLineArr.length > 0 ?
                         (
-                            <div className="h-auto w-screen bg-white overflow-visible">
-                                <div className="h-auto w-full max-w-7xl mx-auto bg-white">
+                            <div className="h-auto w-screen bg-gray-50 overflow-visible pb-20">
+                                <div className="h-auto w-full max-w-7xl mx-auto bg-gray-50 ">
                                     <MainCartSection
                                         cartLineArr={cartLineArr}
                                         onRemoveCartline={handleRemoveCartline}
