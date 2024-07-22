@@ -1,7 +1,7 @@
 import axios from 'axios';
 // import { faker } from '@faker-js/faker';
 import { useLocation } from 'react-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -41,6 +41,8 @@ export default function AppView() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [actualRevenueByMonth, setActualRevenueByMonth] = useState(Array(12).fill(0));
   const [completedOrdersByMonth, setCompletedOrdersByMonth] = useState(Array(12).fill(0));
+  const [productCategoryData, setProductCategoryData] = useState([]);
+  const [productCategoryByMonth, setProductCategoryByMonth] = useState({});
 
   const location = useLocation();
 
@@ -52,7 +54,7 @@ export default function AppView() {
     }
   }, [location]);
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     axios
       .get('https://fdiamond-api.azurewebsites.net/api/Order/GetAllOrder')
       .then((response) => {
@@ -64,14 +66,10 @@ export default function AppView() {
           const purchaseOrdersData = ordersByYear.filter(
             (purchaseOrder) => purchaseOrder.status === 'Ordered'
           );
-
-          const purchaseOrdersCount = purchaseOrdersData.length || 0;
-          setPurchasedOrders(purchaseOrdersCount);
+          setPurchasedOrders(purchaseOrdersData.length || 0);
 
           const completedOrdersData = ordersByYear.filter((order) => order.status === 'Completed');
-
-          const completedOrdersCount = completedOrdersData.length || 0;
-          setCompletedOrders(completedOrdersCount);
+          setCompletedOrders(completedOrdersData.length || 0);
 
           const soldProductsCount =
             completedOrdersData.reduce((total, order) => {
@@ -89,23 +87,47 @@ export default function AppView() {
 
           const totalPrice =
             completedOrdersData.reduce((total, order) => total + order.totalPrice, 0) || 0;
-
           setTotalPriceCompletedOrders(totalPrice);
 
           const totalBeforeDiscount =
             completedOrdersData.reduce((total, order) => total + order.basePrice, 0) || 0;
-
           setBeforeDiscount(totalBeforeDiscount);
 
           const revenueByMonth = Array(12).fill(0);
           const completedOrdersByMonthTemp = Array(12).fill(0);
+          const productCategoryCount = {};
+          const localProductCategoryByMonth = {};
+
           completedOrdersData.forEach((order) => {
             const month = new Date(order.orderDate).getMonth();
             revenueByMonth[month] += order.totalPrice;
             completedOrdersByMonthTemp[month] += 1;
+
+            order.cartLines.forEach((cartLine) => {
+              cartLine.cartLineItems.forEach((item) => {
+                const category = item.product.subCategory.category.categoryName;
+                if (category) {
+                  if (!productCategoryCount[category]) {
+                    productCategoryCount[category] = 0;
+                  }
+                  productCategoryCount[category] += 1;
+
+                  if (!localProductCategoryByMonth[category]) {
+                    localProductCategoryByMonth[category] = Array(12).fill(0);
+                  }
+                  localProductCategoryByMonth[category][month] += 1;
+                }
+              });
+            });
           });
+
+          console.log('Product Category By Month:', localProductCategoryByMonth);
           setActualRevenueByMonth(revenueByMonth);
           setCompletedOrdersByMonth(completedOrdersByMonthTemp);
+          setProductCategoryData(
+            Object.entries(productCategoryCount).map(([label, value]) => ({ label, value }))
+          );
+          setProductCategoryByMonth(localProductCategoryByMonth);
         } else {
           console.error('Error in response data:', response.data.errorMessages);
         }
@@ -114,6 +136,10 @@ export default function AppView() {
         console.error('Error fetching orders:', error);
       });
   }, [selectedYear]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
@@ -125,6 +151,7 @@ export default function AppView() {
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
+
   return (
     <Container maxWidth="xl">
       <Snackbar
@@ -292,12 +319,36 @@ export default function AppView() {
           <AppCurrentVisits
             title="Product Sold"
             chart={{
-              series: [
-                { label: 'Diamond', value: 4344 },
-                { label: 'Ring', value: 5435 },
-                { label: 'Earring', value: 1443 },
-                { label: 'Necklace', value: 4443 },
+              series: productCategoryData,
+            }}
+          />
+        </Grid>
+
+        <Grid xs={12} sm={12} md={12}>
+          <AppWebsiteVisits
+            title="Products Sold by Category"
+            subheader="Monthly Products Sold by Category"
+            chart={{
+              labels: [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
               ],
+              series: Object.entries(productCategoryByMonth).map(([category, data]) => ({
+                name: category,
+                type: 'column',
+                fill: 'solid',
+                data,
+              })),
             }}
           />
         </Grid>
