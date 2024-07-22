@@ -161,7 +161,6 @@ export default function NewProductView() {
     }
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setOpenSnackbar(true);
       return;
     }
 
