@@ -62,7 +62,7 @@ namespace FDiamondShop.API.Controllers
                     decimal totalPrice = 0;
                     var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                     var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
-
+                    await _unitOfWork.CartRepository.ValidCartLine(user.Id);
                     if (!cartLines.Any())
                     {
                         _response.StatusCode = HttpStatusCode.NotFound;
