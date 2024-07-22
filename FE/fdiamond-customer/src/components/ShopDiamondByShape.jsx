@@ -17,7 +17,7 @@ const ShopDiamondByShape = () => {
     return (
         <>
             <div
-                className="mt-16 mb-20"
+                className="mt-16 mb-24"
             >
                 <div>
                     <p className="font-lora text-3xl text-center capitalize">Shop Diamonds by Shape</p>

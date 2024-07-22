@@ -83,6 +83,7 @@ const SummarySectionCK = ({ promoCode, cartLineArr, onMakePayment }) => {
                         Make payment
                     </p>
                 </button>
+                <p></p>
             </div>
         </>
     )
