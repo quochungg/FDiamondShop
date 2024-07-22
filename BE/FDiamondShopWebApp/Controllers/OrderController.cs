@@ -119,7 +119,7 @@ namespace FDiamondShop.API.Controllers
                                 return BadRequest(_response);
                             }
                             product.Quantity -= 1;
-                            if (product.Quantity == 0)
+                            if (product.Quantity <1)
                             {
                                 product.IsVisible = false;
                             }
