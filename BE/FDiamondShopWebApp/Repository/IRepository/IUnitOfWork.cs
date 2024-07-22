@@ -1,4 +1,6 @@
-﻿namespace FDiamondShop.API.Repository.IRepository
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace FDiamondShop.API.Repository.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -20,6 +22,7 @@
         IExchangeRepository ExchangeRepository { get; }
         IDashboardRepository DashboardRepository { get; }
 
+        Task<IDbContextTransaction> BeginTransactionAsync();
         Task SaveAsync();
     }
 }

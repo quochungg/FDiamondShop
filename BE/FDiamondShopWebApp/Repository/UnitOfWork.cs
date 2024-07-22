@@ -1,6 +1,8 @@
 ﻿using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FDiamondShop.API.Repository
 {
@@ -77,6 +79,12 @@ namespace FDiamondShop.API.Repository
             }
             this.disposed = true;
         }
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _db.Database.BeginTransactionAsync();
+        }
+
+
 
         public void Dispose()
         {

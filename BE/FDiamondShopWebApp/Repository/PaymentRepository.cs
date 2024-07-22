@@ -25,7 +25,7 @@ namespace FDiamondShop.API.Repository
             {
                 line.OrderId = order.OrderId;
                 line.IsOrdered = true;
-                var cartlineItems = _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToList();
+                var cartlineItems = await _db.CartLineItems.Where(cartlineItems => cartlineItems.CartLineId == line.CartLineId).ToListAsync();
                 foreach (var item in cartlineItems)
                 {
                     Product product = await _db.Products.Where(product => product.ProductId == item.ProductId).FirstOrDefaultAsync();
