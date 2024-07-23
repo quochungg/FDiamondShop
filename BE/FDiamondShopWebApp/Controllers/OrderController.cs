@@ -469,5 +469,23 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+
+        [HttpGet("GetOrderMinor")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetOrderMinor()
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "Payment");
+            if (orders == null)
+            {
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.ErrorMessages.Add("EMPTY");
+                return Ok(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
+        }
     }
 }
