@@ -16,7 +16,6 @@ const Footer = () => {
     return (
         <>
             <div className='font-gantari border-t-[1px] border-gray-400 h-auto px-16'>
-                {/* <div className="flex items-center justify-center h-72 border-t-[1px] bg-[#000035] text-white"> */}
                 <div className='py-10'>
 
                     <ul className='flex flex-row justify-center items-start'>
