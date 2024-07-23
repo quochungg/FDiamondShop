@@ -68,7 +68,7 @@ export default function OderPage() {
     const getAll = async () => {
       try {
         const response = await axios.get(
-          'https://fdiamond-api.azurewebsites.net/api/Order/GetAllOrder'
+          'https://fdiamond-api.azurewebsites.net/api/Order/GetOrderMinor'
         );
         // console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
         if (response.data && Array.isArray(response.data.result)) {
