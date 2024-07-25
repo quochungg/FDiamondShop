@@ -135,7 +135,10 @@ namespace FDiamondShop.API.Repository
                         {
                             await _roleManager.CreateAsync(new IdentityRole(role));
                         }
-
+                        if (role == "admin" || role == "deliverystaff" || role == "ordermanagementstaff")
+                        {
+                            User.EmailConfirmed = true;
+                        }
                         await _userManager.AddToRoleAsync(user, role);
                         var userToReturn = _db.ApplicationUsers.FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
                         return userToReturn;

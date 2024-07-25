@@ -256,7 +256,7 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
         }
 
-        [HttpGet(Name = "searchuserbyusername")]
+        [HttpGet(Name = "searchuserbyuserid")]
         //[Authorize("admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -276,6 +276,7 @@ namespace FDiamondShop.API.Controllers
                 }
 
                 var returnDTO = _mapper.Map<UserDTO>(user);
+                returnDTO.Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
 
                 if (user.PasswordHash == null) returnDTO.IsGoogleAccount = true;
 
