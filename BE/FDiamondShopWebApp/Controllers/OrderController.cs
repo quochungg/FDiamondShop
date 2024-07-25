@@ -87,7 +87,15 @@ namespace FDiamondShop.API.Controllers
                         address = createDTO.address,
                        
                     };
-
+                    if(string.IsNullOrEmpty(createDTO.address))
+                    {
+                       orderDTO.address= user.Address;
+                    } else
+                    {
+                        orderDTO.address=createDTO.address;
+                    }
+                    
+                    
                     if (!string.IsNullOrEmpty(createDTO.DiscountName))
                     {
                         var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
@@ -143,8 +151,24 @@ namespace FDiamondShop.API.Controllers
                         Name = user.UserName,
                         OrderDescription = "Thanh toan don hang",
                         OrderID = "",
-                        OrderType = createDTO.PaymentMethod,
+                        OrderType = createDTO.PaymentMethod,                      
                     };
+
+                    var deliveryDetail = new DeliveryDetail
+                    {
+                        Address = createDTO.Address,
+                        Phone = createDTO.Phone,
+                        FirstName = createDTO.FirstName,
+                        LastName = createDTO.LastName,
+                        Note = createDTO.Note
+                        
+                    };
+                    await _unitOfWork.DeliveryDetailRepository.CreateAsync(deliveryDetail);
+
+                    order.DeliveryDetailId = deliveryDetail.DeliveryDetailId;
+                    order.DeliveryDetail = deliveryDetail;
+
+                    await _unitOfWork.SaveAsync();
 
                     switch (paymentInfo.OrderType.ToLower())
                     {
@@ -230,7 +254,7 @@ namespace FDiamondShop.API.Controllers
                             }
                             break;
                     }
-
+                    
                     await _unitOfWork.SaveAsync();
                     await transaction.CommitAsync();
                     _response.IsSuccess = true;

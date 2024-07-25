@@ -22,7 +22,6 @@
         public string Status { get; set; }
 
         public DateTime? UpdateDate { get; set; }
-
         public int? DeliveryDetailId { get; set; }
         public string address { get; set; }
     }

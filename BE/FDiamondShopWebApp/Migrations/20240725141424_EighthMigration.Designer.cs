@@ -4,6 +4,7 @@ using FDiamondShop.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    partial class FDiamondContextModelSnapshot : ModelSnapshot
+    [Migration("20240725141424_EighthMigration")]
+    partial class EighthMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,7 +120,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("CartLines", (string)null);
+                    b.ToTable("CartLines");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.CartLineItem", b =>
@@ -138,7 +141,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("CartLineId");
 
-                    b.ToTable("CartLineItems", (string)null);
+                    b.ToTable("CartLineItems");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.Category", b =>
@@ -168,7 +171,7 @@ namespace FDiamondShop.API.Migrations
                     b.HasKey("CategoryId")
                         .HasName("PK__categori__D54EE9B40910DE00");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.CategoryVariant", b =>
@@ -199,7 +202,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryVariants", (string)null);
+                    b.ToTable("CategoryVariants");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.DeliveryDetail", b =>
@@ -235,7 +238,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DeliveryDetails", (string)null);
+                    b.ToTable("DeliveryDetails");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.DiscountCode", b =>
@@ -271,7 +274,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasKey("DiscountId");
 
-                    b.ToTable("DiscountCodes", (string)null);
+                    b.ToTable("DiscountCodes");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
@@ -322,7 +325,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.Payment", b =>
@@ -344,7 +347,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasKey("PaymentId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.Product", b =>
@@ -395,7 +398,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.ProductImage", b =>
@@ -427,7 +430,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.ProductVariantValue", b =>
@@ -450,7 +453,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductVariantValues", (string)null);
+                    b.ToTable("ProductVariantValues");
                 });
 
             modelBuilder.Entity("FDiamondShop.API.Models.SubCategory", b =>
@@ -486,7 +489,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("SubCategories", (string)null);
+                    b.ToTable("SubCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -26,6 +26,7 @@ namespace FDiamondShop.API.Repository
         public IExchangeRepository ExchangeRepository { get; }
         public IDashboardRepository DashboardRepository { get; }
         public IDeliveryRepository DeliveryRepository { get; }
+        public IDeliveryDetailRepository DeliveryDetailRepository { get; }
         public UnitOfWork(FDiamondContext db, 
             IProductRepository productRepository, 
             IProductImageRepository productImageRepository, 
@@ -45,6 +46,7 @@ namespace FDiamondShop.API.Repository
             IDashboardRepository dashboardRepository,
             IDeliveryRepository deliveryRepository
             
+            IDeliveryDetailRepository deliveryDetailRepository
             
             )
         {
@@ -66,6 +68,8 @@ namespace FDiamondShop.API.Repository
             ExchangeRepository = exchangeRepository;  
             DashboardRepository = dashboardRepository;
             DeliveryRepository = deliveryRepository;
+            DeliveryDetailRepository = deliveryDetailRepository;
+
         }
         public async Task SaveAsync()
         {
