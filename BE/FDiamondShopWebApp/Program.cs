@@ -63,6 +63,7 @@ builder.Services.AddScoped<IOrderRepository , OrderRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IExchangeRepository, ExchangeRepository>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IDeliveryRepository,DeliveryRepository>();
 builder.Services.AddScoped<IDeliveryDetailRepository, DeliveryDetailRepository>();
 var configuration = builder.Configuration;
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>

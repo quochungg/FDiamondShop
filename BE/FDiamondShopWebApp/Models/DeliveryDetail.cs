@@ -1,4 +1,7 @@
-﻿namespace FDiamondShop.API.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace FDiamondShop.API.Models
 {
     public class DeliveryDetail
     {
