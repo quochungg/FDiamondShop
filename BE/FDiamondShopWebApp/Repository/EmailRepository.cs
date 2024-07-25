@@ -105,9 +105,10 @@ namespace FDiamondShop.API.Repository
             var discount = await _db.DiscountCodes.FindAsync(orderDTO.DiscountCodeId);
 
             var order = await _db.Orders.FindAsync(orderDTO.OrderId);
+            var listCartlines= await _db.CartLines.Where(cl => cl.OrderId == order.OrderId).ToListAsync();
             var payment = await _db.Payments.FindAsync(order.PaymentId);
             var orderDetail = new List<ProductDTO>();
-            foreach (var item in orderDTO.CartLines)
+            foreach (var item in listCartlines)
             {
                 var cartLine = await _db.CartLines.FindAsync(item.CartLineId);
                 var cartLineItems = await _db.CartLineItems.Where(cli => cli.CartLineId == item.CartLineId).ToListAsync();
