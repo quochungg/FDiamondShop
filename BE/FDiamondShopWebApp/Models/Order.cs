@@ -7,6 +7,7 @@ namespace FDiamondShop.API.Models
         public int OrderId { get; set; }
 
         public string UserId { get; set; }
+        [ForeignKey("DeliveryDetail")]
         public int? DeliveryId { get; set; }
         public DeliveryDetail? DeliveryDetail { get; set; }
 
