@@ -171,8 +171,24 @@ namespace FDiamondShop.API.Controllers
                         Name = user.UserName,
                         OrderDescription = "Thanh toan don hang",
                         OrderID = "",
-                        OrderType = createDTO.PaymentMethod,
+                        OrderType = createDTO.PaymentMethod,                      
                     };
+
+                    var deliveryDetail = new DeliveryDetail
+                    {
+                        Address = createDTO.Address,
+                        Phone = createDTO.Phone,
+                        FirstName = createDTO.FirstName,
+                        LastName = createDTO.LastName,
+                        Note = createDTO.Note
+                        
+                    };
+                    await _unitOfWork.DeliveryDetailRepository.CreateAsync(deliveryDetail);
+
+                    order.DeliveryDetailId = deliveryDetail.DeliveryDetailId;
+                    order.DeliveryDetail = deliveryDetail;
+
+                    await _unitOfWork.SaveAsync();
 
                     switch (paymentInfo.OrderType.ToLower())
                     {
@@ -262,7 +278,7 @@ namespace FDiamondShop.API.Controllers
                             }
                             break;
                     }
-
+                    
                     await _unitOfWork.SaveAsync();
                     await transaction.CommitAsync();
                     _transactionInProgress = false; // Reset the flag
