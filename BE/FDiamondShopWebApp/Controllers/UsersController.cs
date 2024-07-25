@@ -346,6 +346,26 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
         }
 
+        [HttpGet("GetUserAddress")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetUserAddress(string userId)
+        {
+            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId, tracked: false);
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User not found");
+                return BadRequest(_response);
+            }
+            var address = user.Address;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = address;
+            return Ok(_response);
+        }
+
 
     }
 
