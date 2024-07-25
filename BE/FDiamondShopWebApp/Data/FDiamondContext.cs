@@ -29,7 +29,7 @@ namespace FDiamondShop.API.Data
         public virtual DbSet<CartLineItem> CartLineItems { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         
-
+        public virtual DbSet<DeliveryDetail> DeliveryDetails { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
