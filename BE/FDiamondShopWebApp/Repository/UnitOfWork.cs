@@ -25,6 +25,7 @@ namespace FDiamondShop.API.Repository
         public IPaymentRepository PaymentRepository { get; }
         public IExchangeRepository ExchangeRepository { get; }
         public IDashboardRepository DashboardRepository { get; }
+        public IDeliveryRepository DeliveryRepository { get; }
         public UnitOfWork(FDiamondContext db, 
             IProductRepository productRepository, 
             IProductImageRepository productImageRepository, 
@@ -41,7 +42,9 @@ namespace FDiamondShop.API.Repository
             ICategoryRepository categoryRepository,
             IPayPalRepository payPalRepository,
             IExchangeRepository exchangeRepository,
-            IDashboardRepository dashboardRepository
+            IDashboardRepository dashboardRepository,
+            IDeliveryRepository deliveryRepository
+            
             
             )
         {
@@ -62,6 +65,7 @@ namespace FDiamondShop.API.Repository
             PaymentRepository = paymentRepository;
             ExchangeRepository = exchangeRepository;  
             DashboardRepository = dashboardRepository;
+            DeliveryRepository = deliveryRepository;
         }
         public async Task SaveAsync()
         {

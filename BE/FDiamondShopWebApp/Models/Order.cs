@@ -30,8 +30,6 @@ namespace FDiamondShop.API.Models
         public DateTime? UpdateDate { get; set; }
         public string? address { get; set; }
         [ForeignKey("DeliveryDetail")]
-        public int? DeliveryId { get; set; }
-
         public int? DeliveryDetailId { get; set; }
         public DeliveryDetail? DeliveryDetail { get; set; }
     }

@@ -83,7 +83,9 @@ namespace FDiamondShop.API.Controllers
                         BasePrice = totalPrice,
                         TotalPrice = totalPrice,
                         OrderDate = now7,
-                        Status = createDTO.Status
+                        Status = createDTO.Status,
+                        address = createDTO.address,
+                       
                     };
 
                     if (!string.IsNullOrEmpty(createDTO.DiscountName))
@@ -206,7 +208,7 @@ namespace FDiamondShop.API.Controllers
                             paymentInfo.Amount = orderDTO.TotalPrice;
                             paymentInfo.OrderID = order.OrderId.ToString();
 
-                            var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
+                            var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074"), "/api/checkout/PayPal");
                             var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                             if (paymentResponsePaypal.IsSuccessStatusCode)
