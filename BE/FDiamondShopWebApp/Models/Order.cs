@@ -28,5 +28,8 @@ namespace FDiamondShop.API.Models
         public string Status { get; set; } = "Ordered";
 
         public DateTime? UpdateDate { get; set; }
+        public string? address { get; set; }
+        public int? DeliveryDetailId { get; set; }
+        public DeliveryDetail? DeliveryDetail { get; set; }
     }
 }
