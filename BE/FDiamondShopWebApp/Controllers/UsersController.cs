@@ -113,7 +113,51 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
-
+        [HttpPost("registerForStaff")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> RegisterStaff([FromBody] RegistrationRequestDTO model)
+        {
+            var User = _userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
+            var recentPhone = _userManager.Users.FirstOrDefault(x => x.PhoneNumber.Equals(model.PhoneNumber));
+            if (User != null)
+            {
+                _response.StatusCode = HttpStatusCode.Conflict;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User already exists");
+                return Conflict(_response);
+            }
+            if (recentPhone != null)
+            {
+                _response.StatusCode = HttpStatusCode.Conflict;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Phonenumber already exists");
+                return Conflict(_response);
+            }
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.Result = ModelState;
+                return BadRequest(_response);
+            }
+            var user = await _unitOfWork.UserRepository.Register(model);
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Error while registering");
+                return BadRequest(_response);
+            }
+            user.EmailConfirmed = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            
+            await _unitOfWork.SaveAsync();
+            return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
+        }
         [HttpPut("update")]
         //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

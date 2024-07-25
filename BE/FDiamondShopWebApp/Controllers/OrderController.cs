@@ -106,7 +106,15 @@ namespace FDiamondShop.API.Controllers
                         OrderDate = now7,
                         Status = createDTO.Status
                     };
-
+                    if(string.IsNullOrEmpty(createDTO.address))
+                    {
+                       orderDTO.address= user.Address;
+                    } else
+                    {
+                        orderDTO.address=createDTO.address;
+                    }
+                    
+                    
                     if (!string.IsNullOrEmpty(createDTO.DiscountName))
                     {
                         var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);

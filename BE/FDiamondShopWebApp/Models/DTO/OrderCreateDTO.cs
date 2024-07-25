@@ -6,5 +6,9 @@
         public string? DiscountName { get; set; } = null;
         public string? PaymentMethod { get; set; }
         public string Status { get; } = "Pending";
+        public int? DeliveryDetailId { get; set; }
+        
+        public string? address { get; set; }
+
     }
 }

@@ -142,7 +142,11 @@ namespace FDiamondShop.API.Repository
                     }
                     else
                     {
+                        var userToDelete = await _userManager.FindByEmailAsync(registerationRequestDTO.UserName);
+                        await _userManager.DeleteAsync(userToDelete);
                         throw new Exception("Wrong role");
+                        
+
                     }
 
                 }
