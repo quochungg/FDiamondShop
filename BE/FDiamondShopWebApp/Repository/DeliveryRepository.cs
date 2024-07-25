@@ -34,7 +34,7 @@ namespace FDiamondShop.API.Repository
                     IsGoogleAccount = (user.PasswordHash == null),
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
                 };
-                if(userDTO.Role == "admin")//sau nay sua thanh deliverer
+                if(userDTO.Role == "admin")// tam thoi em de admin
                 {
                     userDTOs.Add(userDTO);
                 }
