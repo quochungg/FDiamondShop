@@ -129,7 +129,7 @@ namespace FDiamondShop.API.Repository
                    
                 {
                     string role = registerationRequestDTO.Role.ToLower(); 
-                    if(role== "admin" ||  role =="customer" || role == "manager")
+                    if(role== "admin" ||  role =="customer" || role == "deliverystaff" || role == "ordermanagementstaff")
                     {
                         if (!await _roleManager.RoleExistsAsync(role))
                         {

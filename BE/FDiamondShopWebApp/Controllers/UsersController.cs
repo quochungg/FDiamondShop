@@ -113,7 +113,7 @@ namespace FDiamondShop.API.Controllers
             await _unitOfWork.SaveAsync();
             return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
         }
-        [HttpPost("registerForStaff")]
+        [HttpPost("RegisterForStaff")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

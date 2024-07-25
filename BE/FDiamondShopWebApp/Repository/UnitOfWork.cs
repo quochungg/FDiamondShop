@@ -44,8 +44,7 @@ namespace FDiamondShop.API.Repository
             IPayPalRepository payPalRepository,
             IExchangeRepository exchangeRepository,
             IDashboardRepository dashboardRepository,
-            IDeliveryRepository deliveryRepository
-            
+            IDeliveryRepository deliveryRepository,           
             IDeliveryDetailRepository deliveryDetailRepository
             
             )
