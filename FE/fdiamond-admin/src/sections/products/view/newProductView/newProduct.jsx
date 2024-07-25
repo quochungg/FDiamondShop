@@ -148,9 +148,19 @@ export default function NewProductView() {
       validationErrors.quantity = 'Quantity cannot be negative!';
     }
 
+    if (formData.productName.length > 100) {
+      validationErrors.productName = 'Product name cannot exceed 100 characters!';
+    }
+
+    if (formData.productImages.length === 0) {
+      validationErrors.productImages = 'Product images must be provided!';
+    }
+
+    if (formData.GIAImages.length === 0) {
+      validationErrors.GIAImages = 'GIA images must be provided!';
+    }
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setOpenSnackbar(true);
       return;
     }
 
@@ -189,9 +199,7 @@ export default function NewProductView() {
       // Gửi dữ liệu lên server hoặc xử lý dữ liệu tại đây
     } catch (error) {
       console.error('Error uploading files or submitting product data:', error);
-      if (error.response) {
-        console.error('Error details:', error.response.data);
-      }
+      setErrors({ serverError: error.response.data.errorMessages.join(', ') });
       setOpenSnackbar(true);
     }
   };
@@ -234,6 +242,11 @@ export default function NewProductView() {
                     label="Product Name"
                     name="productName"
                   />
+                  {errors.productName && (
+                    <Typography variant="caption" color="error">
+                      {errors.productName}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
 
@@ -314,25 +327,35 @@ export default function NewProductView() {
               </Grid>
 
               <Grid item xs={6}>
-                <FormControl fullWidth required>
+                <FormControl fullWidth required error={!!errors.productImages}>
                   <Typography variant="subtitle1" gutterBottom>
                     Upload Product Images
                   </Typography>
                   <AddMutipleFile
                     onImageSelect={(fileList) => handleImageSelect(fileList, false)}
                   />
+                  {errors.productImages && (
+                    <Typography variant="caption" color="error">
+                      {errors.productImages}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
 
               {formData.category === 'diamond' && (
                 <Grid item xs={6}>
-                  <FormControl fullWidth required>
+                  <FormControl fullWidth required error={!!errors.GIAImages}>
                     <Typography variant="subtitle1" gutterBottom>
                       Upload GIA Report
                     </Typography>
                     <AddMutipleFile
                       onImageSelect={(fileList) => handleImageSelect(fileList, true)}
                     />
+                    {errors.GIAImages && (
+                      <Typography variant="caption" color="error">
+                        {errors.GIAImages}
+                      </Typography>
+                    )}
                   </FormControl>
                 </Grid>
               )}
@@ -378,10 +401,12 @@ export default function NewProductView() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          <AlertTitle>Error</AlertTitle>
-          Error submitting product data. Please try again.
-        </Alert>
+        {errors.serverError && (
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+            <AlertTitle>Error</AlertTitle>
+            {errors.serverError}
+          </Alert>
+        )}
       </Snackbar>
     </Container>
   );

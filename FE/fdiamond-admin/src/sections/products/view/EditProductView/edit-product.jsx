@@ -169,9 +169,20 @@ const EditProductPage = () => {
       validationErrors.quantity = 'Quantity cannot be negative';
     }
 
+    if (product.productName.length > 100) {
+      validationErrors.productName = 'Product name cannot exceed 100 characters!';
+    }
+
+    if (!product.productImages || product.productImages.length === 0) {
+      validationErrors.productImages = 'Product images must be provided!';
+    }
+
+    if (product.categoryId === 1 && (!product.GIAImages || product.GIAImages.length === 0)) {
+      validationErrors.GIAImages = 'GIA images must be provided!';
+    }
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setOpenSnackbar(true);
       return;
     }
     // Log the product object to see what is being sent
@@ -179,24 +190,32 @@ const EditProductPage = () => {
 
     // Filter out unnecessary fields
     try {
-      const newProductFiles = product.productImages.filter((file) => !file.url);
-      const newGIAFiles = product.GIAImages.filter((file) => !file.url);
+      const newProductFiles = Array.isArray(product.productImages)
+        ? product.productImages.filter((file) => !file.url)
+        : [];
+      const newGIAFiles = Array.isArray(product.GIAImages)
+        ? product.GIAImages.filter((file) => !file.url)
+        : [];
 
       const productFileUrls = await uploadFiles(newProductFiles);
       const GIAFileUrls = await uploadFiles(newGIAFiles);
 
       const allProductFiles = [
-        ...product.productImages
-          .filter((file) => file.url)
-          .map((file) => ({ imageUrl: file.url, isGia: false })),
+        ...(Array.isArray(product.productImages)
+          ? product.productImages
+              .filter((file) => file.url)
+              .map((file) => ({ imageUrl: file.url, isGia: false }))
+          : []),
         ...productFileUrls.map((url) => ({ imageUrl: url, isGia: false })),
       ];
 
       const allGIAFiles = [
-        ...product.GIAImages.filter((file) => file.url).map((file) => ({
-          imageUrl: file.url,
-          isGia: true,
-        })),
+        ...(Array.isArray(product.GIAImages)
+          ? product.GIAImages.filter((file) => file.url).map((file) => ({
+              imageUrl: file.url,
+              isGia: true,
+            }))
+          : []),
         ...GIAFileUrls.map((url) => ({ imageUrl: url, isGia: true })),
       ];
 
@@ -221,6 +240,7 @@ const EditProductPage = () => {
       console.error('Error updating product:', error);
       if (error.response) {
         console.error('Error response data:', error.response.data);
+        setErrors({ serverError: error.response.data.errorMessages.join(', ') });
         setOpenSnackbar(true);
       }
     }
@@ -249,6 +269,11 @@ const EditProductPage = () => {
                     label="Product Name"
                     name="productName"
                   />
+                  {errors.productName && (
+                    <Typography variant="caption" color="error">
+                      {errors.productName}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
@@ -313,8 +338,8 @@ const EditProductPage = () => {
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth required>
+              <Grid item xs={6}>
+                <FormControl fullWidth required error={!!errors.productImages}>
                   <Typography variant="subtitle1" gutterBottom>
                     Upload Product Images
                   </Typography>
@@ -322,15 +347,32 @@ const EditProductPage = () => {
                     initialFiles={product.productImages.filter((img) => img.isGia === false)}
                     onImageSelect={(fileList) => handleImageSelect(fileList, false)}
                   />
-                  <Typography variant="subtitle1" gutterBottom>
-                    Upload GIA Report
-                  </Typography>
-                  <AddMutipleFile
-                    initialFiles={product.productImages.filter((img) => img.isGia)}
-                    onImageSelect={(fileList) => handleImageSelect(fileList, true)}
-                  />
+                  {errors.productImages && (
+                    <Typography variant="caption" color="error">
+                      {errors.productImages}
+                    </Typography>
+                  )}
                 </FormControl>
               </Grid>
+              {product.categoryId === 1 && (
+                <Grid item xs={6}>
+                  <FormControl fullWidth required error={!!errors.GIAImages}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Upload GIA Report
+                    </Typography>
+                    <AddMutipleFile
+                      initialFiles={product.productImages.filter((img) => img.isGia)}
+                      onImageSelect={(fileList) => handleImageSelect(fileList, true)}
+                    />
+                    {errors.GIAImages && (
+                      <Typography variant="caption" color="error">
+                        {errors.GIAImages}
+                      </Typography>
+                    )}
+                  </FormControl>
+                </Grid>
+              )}
+
               <Grid item xs={8}>
                 <FormControl component="fieldset">
                   <Grid container alignItems="center">
@@ -374,10 +416,12 @@ const EditProductPage = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          <AlertTitle>Error</AlertTitle>
-          Error submitting product data. Please try again.
-        </Alert>
+        {errors.serverError && (
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+            <AlertTitle>Error</AlertTitle>
+            {errors.serverError}
+          </Alert>
+        )}
       </Snackbar>
     </Container>
   );

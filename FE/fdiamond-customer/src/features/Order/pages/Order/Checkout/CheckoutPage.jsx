@@ -151,15 +151,23 @@ const CheckoutPage = () => {
             if (result) {
                 const paymentUrl = response.data.result.paymentUrl;
                 navigate('/proceed-to-paypal', { state: { paymentUrl: paymentUrl }, replace: true })
-            } else {
-                navigate('/page-not-found');
+            } else { //in case two users click Making Purchase at the same time => diamond/products quantity is not enough
+                const errorMsg = [];
+                let outOfQuantityProducts = [];
+
+                //quick fix for two users click Making Purchase at the same time
+                errorMsg.push('We are sorry to inform you that the product you are trying to purchase is unavailable/not enough.');
+                errorMsg.push('Please go back to your cart and replace all unavailable items, or contact Customer Service for assistance.');
+                error.errorMsg = errorMsg;
+                error.outOfQuantityProducts = outOfQuantityProducts;
+                setCheckoutErrors(error);
+                openModal();
             }
         }
         else {
             setCheckoutErrors(error);
             openModal();
         }
-
         setIsHandlingPayment(false);
     }
 

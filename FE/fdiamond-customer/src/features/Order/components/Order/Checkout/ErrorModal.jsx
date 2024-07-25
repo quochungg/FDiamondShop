@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import invalidShoppingCartSvg from 'src/features/Order/assets/invalidShoppingCartSvg.svg';
 
 const ErrorModal = ({ checkoutErrors, closeModal }) => {
+    console.log(checkoutErrors);
 
     useEffect(() => {
 
@@ -49,7 +50,7 @@ const ErrorModal = ({ checkoutErrors, closeModal }) => {
                             </div>
                         }
 
-                        {/*IN CASE OF OUT OF QUANTITY PRODUCTS */}
+                        {/*IN CASE OF OUT OF STOCK PRODUCTS */}
                         <p className='mt-2 text-base text-gray-500 text-center'>{checkoutErrors.errorMsg[1]}</p>
                     </div>
 

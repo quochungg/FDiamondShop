@@ -118,8 +118,11 @@ namespace FDiamondShop.API.Controllers
                                 _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
                                 return BadRequest(_response);
                             }
-                            product.Quantity -= 1;
-                            if (product.Quantity ==0)
+                            if (!(product.SubCategoryId > 13 && product.SubCategoryId < 20))
+                            {
+                                product.Quantity -= 1;
+                            }
+                            if (product.Quantity == 0)
                             {
                                 product.IsVisible = false;
                             }
@@ -436,6 +439,24 @@ namespace FDiamondShop.API.Controllers
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 return BadRequest(_response);
             }
+        }
+
+        [HttpGet("GetOrderMinor")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetOrderMinor()
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "Payment");
+            if (orders == null)
+            {
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.ErrorMessages.Add("EMPTY");
+                return Ok(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
         }
     }
 }
