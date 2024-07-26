@@ -73,6 +73,7 @@ namespace FDiamondShop.API.Repository
         public DeliveryDetail GetDeliveryDetailbyId(int? id)
         {
             return _db.DeliveryDetails.FirstOrDefault(dl => dl.DeliveryDetailId == id);
+        }
 
         public async Task<List<OrderDTO>> GetAllOrderForDelivery(string id)
         {
