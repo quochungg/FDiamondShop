@@ -55,6 +55,7 @@ namespace FDiamondShop.API.Repository
                             .ThenInclude(cli => cli.Product)                               
                                 .ThenInclude(p => p.SubCategory)
                                     .ThenInclude(sc => sc.Category)
+                                    .Include(o => o.DeliveryDetail)
                                 //.ThenInclude(p => p.ProductImages) // Include ProductImages
                     .Include(o => o.DiscountCode)
                     .FirstOrDefaultAsync(x => x.OrderId == orderId);
@@ -85,6 +86,7 @@ namespace FDiamondShop.API.Repository
             var payment = _db.Payments.FirstOrDefault(x => x.PaymentId == order.PaymentId);
             var paymentDTO = _mapper.Map<PaymentDTO>(payment);
             var discountCode = _mapper.Map<DiscountCodeDTO>(order.DiscountCode);
+            var deliveryDetail = _mapper.Map<DeliveryDTO>(order.DeliveryDetail);
             OrderDTO model = new OrderDTO()
             {
                 OrderId = order.OrderId,
@@ -96,7 +98,8 @@ namespace FDiamondShop.API.Repository
                 Status = order.Status,
                 CartLines = cartlineDTOs,
                 DiscountCode = discountCode,
-                UpdateDate = order.UpdateDate
+                UpdateDate = order.UpdateDate,
+                DeliveryDetail = deliveryDetail
             };
 
 
