@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
@@ -7,10 +8,11 @@ import Table from '@mui/material/Table';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
-import { TableRow, TableCell } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
+import { Button, TableRow, TableCell } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 
+import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import UserTableRow from '../user-table-row';
@@ -35,6 +37,8 @@ export default function UserPage() {
 
   const [data, setData] = useState([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getAll = async () => {
       try {
@@ -42,7 +46,7 @@ export default function UserPage() {
           'https://fdiamond-api.azurewebsites.net/api/Users/getalluser'
         );
         if (response.data && Array.isArray(response.data.result)) {
-          const customers = response.data.result.filter((user) => user.role === 'customer');
+          const customers = response.data.result.filter((user) => user.role !== 'customer');
           setData(customers);
         } else {
           console.error('Unexpected API response format:', response.data);
@@ -53,6 +57,11 @@ export default function UserPage() {
     };
     getAll();
   }, []);
+
+  const handleClickAdd = () => {
+    // Điều hướng đến một đường dẫn mới
+    navigate('/staff/new');
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -87,7 +96,16 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        <Typography variant="h4">Staffs</Typography>
+
+        <Button
+          onClick={handleClickAdd}
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+        >
+          New Account
+        </Button>
       </Stack>
 
       <Card>
@@ -108,6 +126,7 @@ export default function UserPage() {
                   { id: 'lastName', label: 'Last Name' },
                   { id: 'address', label: 'Address' },
                   { id: 'phoneNumber', label: 'Phone' },
+                  { id: 'role', label: 'Position' },
                   { id: 'userName', label: 'Email' },
                 ]}
               />
@@ -128,6 +147,7 @@ export default function UserPage() {
                       lastName={row.lastName}
                       address={row.address}
                       phoneNumber={row.phoneNumber}
+                      role={row.role}
                       userName={row.userName}
                     />
                   ))}
