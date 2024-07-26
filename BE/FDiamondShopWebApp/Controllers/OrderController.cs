@@ -519,5 +519,26 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+
+        [HttpGet("GetAllOrderForOrderManagementStaff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllOrderForOrderManagementStaff(string id)
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderForOrderManagement(id);
+            if (orders.Count() == 0)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "EMPTY" };
+                return NotFound(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
+
+
+        }
     }
 }

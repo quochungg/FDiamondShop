@@ -106,6 +106,6 @@ namespace FDiamondShop.API.Repository
             _db.Orders.Update(order);
             
         }
-
+        
     }
 }

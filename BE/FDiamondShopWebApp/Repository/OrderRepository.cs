@@ -199,6 +199,30 @@ namespace FDiamondShop.API.Repository
         {
             return _db.Orders.FirstOrDefault(or => or.OrderId == id);
         }
+        public async Task<List<OrderDTO>> GetAllOrderForOrderManagement(string id)
+        {
+            var order = _db.Orders.Where(x => x.OrderManagementStaffId == id).ToList();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (var item in order)
+            {
+                OrderDTO orderDTO = new OrderDTO
+                {
+                    OrderId = item.OrderId,
+                    BasePrice = item.BasePrice,
+                    DeliveryDetailId = item.DeliveryDetailId,
+                    TotalPrice = item.TotalPrice,
+                    OrderDate = item.OrderDate,
+                    Status = item.Status,
+
+                };
+                if (orderDTO.Status == "Ordered")
+                {
+                    orderDTOs.Add(orderDTO);
+                }
+
+            }
+            return orderDTOs;
+        }
         public Task UpdateAsync(Order order)
         {
             throw new NotImplementedException();

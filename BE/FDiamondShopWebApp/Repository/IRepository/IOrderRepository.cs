@@ -18,6 +18,8 @@ namespace FDiamondShop.API.Repository.IRepository
         Task<IEnumerable<Order>> GetPendingOrdersOlderThan(DateTime cutoffTime);
         Task UpdateAsync(Order order);
         public Order GerOrderbyId(int id);
+        public Task<List<OrderDTO>> GetAllOrderForOrderManagement(string id);
+
 
     }
 }
