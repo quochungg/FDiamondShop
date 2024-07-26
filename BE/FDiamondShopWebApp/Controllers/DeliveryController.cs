@@ -43,25 +43,32 @@ namespace FDiamondShop.API.Controllers
 
         }
 
-        [HttpPost(Name = "CreateDelivery")]
+        [HttpGet("GetOrdermanagementStaff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllOrdermanagementStaff()
+        {
+            var users = await _unitOfWork.DeliveryRepository.GetOrdermanagementStaff();
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = users;
+            return Ok(_response);
+
+        }
+        [HttpPost("AssignToDeliveryStaff")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateDelivery([FromBody] DeliveryCreateDTO createDTO)
+        public async Task<ActionResult<APIResponse>> AssignToDeliveryStaff([FromBody] AssignCreateDTO createDTO)
         {
             try
             {
-                var deliverystaff = _userManager.Users.FirstOrDefault(us=>us.UserName == createDTO.UserName);
-                var deliverydetail = _mapper.Map<DeliveryDetail>(createDTO);
-                deliverydetail.UserId = deliverystaff.Id;
-                await _unitOfWork.DeliveryRepository.CreateAsync(deliverydetail);
+                var deliverystaff = _userManager.Users.FirstOrDefault(us => us.UserName == createDTO.UserName);
+                var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);             
+                var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
+                detail.UserId = deliverystaff.Id;               
                 await _unitOfWork.SaveAsync();
-                //Create new Delivery, Assign for staff
-                var order = _db.Orders.FirstOrDefault(or=>or.OrderId == createDTO.OrderId);
-                order.DeliveryDetailId = deliverydetail.DeliveryDetailId;
-                await _unitOfWork.SaveAsync();
-                //Update DeliveryDetailId in Order table
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
