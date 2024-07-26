@@ -34,7 +34,7 @@ namespace FDiamondShop.API.Models
 
         public DeliveryDetail? DeliveryDetail { get; set; }
 
-        public int OrderManagementStaffId { get; set; }
+        public string OrderManagementStaffId { get; set; }
 
         public ApplicationUser OrderManagementStaff { get; set; }
 
