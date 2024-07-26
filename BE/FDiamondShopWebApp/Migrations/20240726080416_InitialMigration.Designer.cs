@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    [Migration("20240725171120_NinthMigration")]
-    partial class NinthMigration
+    [Migration("20240726080416_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -299,10 +299,7 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("order_date");
 
-                    b.Property<int>("OrderManagementStaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OrderManagementStaffId1")
+                    b.Property<string>("OrderManagementStaffId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("PaymentId")
@@ -327,7 +324,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("DiscountCodeId");
 
-                    b.HasIndex("OrderManagementStaffId1");
+                    b.HasIndex("OrderManagementStaffId");
 
                     b.HasIndex("PaymentId");
 
@@ -692,7 +689,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasOne("FDiamondShop.API.Models.ApplicationUser", "OrderManagementStaff")
                         .WithMany()
-                        .HasForeignKey("OrderManagementStaffId1");
+                        .HasForeignKey("OrderManagementStaffId");
 
                     b.HasOne("FDiamondShop.API.Models.Payment", "Payment")
                         .WithMany()

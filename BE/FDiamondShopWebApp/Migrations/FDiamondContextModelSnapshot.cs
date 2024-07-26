@@ -296,10 +296,7 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("order_date");
 
-                    b.Property<int>("OrderManagementStaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OrderManagementStaffId1")
+                    b.Property<string>("OrderManagementStaffId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("PaymentId")
@@ -324,7 +321,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasIndex("DiscountCodeId");
 
-                    b.HasIndex("OrderManagementStaffId1");
+                    b.HasIndex("OrderManagementStaffId");
 
                     b.HasIndex("PaymentId");
 
@@ -689,7 +686,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasOne("FDiamondShop.API.Models.ApplicationUser", "OrderManagementStaff")
                         .WithMany()
-                        .HasForeignKey("OrderManagementStaffId1");
+                        .HasForeignKey("OrderManagementStaffId");
 
                     b.HasOne("FDiamondShop.API.Models.Payment", "Payment")
                         .WithMany()
