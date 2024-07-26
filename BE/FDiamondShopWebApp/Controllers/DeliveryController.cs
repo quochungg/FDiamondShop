@@ -71,7 +71,7 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                var deliverystaff = _userManager.Users.FirstOrDefault(us => us.UserName == createDTO.UserName);
+                var deliverystaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
                 var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);             
                 var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
                 detail.UserId = deliverystaff.Id;               
