@@ -30,12 +30,19 @@ namespace FDiamondShop.API.Controllers
             _userManager = userManager;
             _httpClient = httpClient;
         }
-        [HttpGet("GetDeliveryStaff")]
+        [HttpGet("GetAllDeliveryStaff")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllDeliveryStaff()
         {
             var users = await _unitOfWork.DeliveryRepository.GetDeliveryStaff();
+            if(users.Count() == 0)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "EMPTY" };
+                return NotFound(_response);
+            }
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = users;
@@ -74,5 +81,44 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
         }
+        [HttpGet("GetAllOrderForDeliveryStaff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllOrderForDeliveryStaff(string id)
+        {
+            var orders = await _unitOfWork.DeliveryRepository.GetAllOrderForDelivery(id);
+            if(orders.Count()==0)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "EMPTY" };
+                return NotFound(_response);
+            }
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = orders;
+                return Ok(_response);
+            
+            
+        }
+        [HttpPut("UpdateOrderStatus")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateOrderStatus([FromBody] OrderStatusDTO model) 
+        {
+            var order=_unitOfWork.OrderRepository.GetOrderDetails(model.OrderId);
+            if(order == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Order not found" };
+                return BadRequest(_response);
+            }
+            await _unitOfWork.DeliveryRepository.UpdateOrderStatus(model);
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            await _unitOfWork.SaveAsync();
+            return Ok(_response);
+        } 
     }
 }

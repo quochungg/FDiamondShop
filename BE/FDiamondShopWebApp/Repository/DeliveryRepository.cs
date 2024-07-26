@@ -21,7 +21,8 @@ namespace FDiamondShop.API.Repository
         {
             var users = _userManager.Users.ToList();
             List<UserDTO> userDTOs = new List<UserDTO>();
-
+            
+            
             foreach (var user in users)
             {
                 UserDTO userDTO = new UserDTO
@@ -34,7 +35,7 @@ namespace FDiamondShop.API.Repository
                     IsGoogleAccount = (user.PasswordHash == null),
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
                 };
-                if(userDTO.Role == "admin")// tam thoi em de admin
+                if(userDTO.Role == "deliverystaff")// tam thoi em de admin
                 {
                     userDTOs.Add(userDTO);
                 }
@@ -42,7 +43,37 @@ namespace FDiamondShop.API.Repository
             return userDTOs;
            
         }
-
+        public async Task<List<OrderDTO>> GetAllOrderForDelivery(string id)
+        {
+            var order=_db.Orders.Include(o => o.DeliveryDetail).Where(x=>x.DeliveryDetail.UserId==id).ToList();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (var item in order)
+            {
+                OrderDTO orderDTO = new OrderDTO
+                {
+                    OrderId = item.OrderId,
+                    BasePrice = item.BasePrice,
+                    DeliveryDetailId = item.DeliveryDetailId,                    
+                    TotalPrice = item.TotalPrice,
+                    OrderDate = item.OrderDate,
+                    Status = item.Status,
+                    
+                };
+                if (orderDTO.Status == "Completed")
+                {
+                    orderDTOs.Add(orderDTO);
+                }
+                
+            }
+            return orderDTOs;
+        } 
+        public async Task UpdateOrderStatus(OrderStatusDTO model)
+        {
+            var order = _db.Orders.FirstOrDefault(x => x.OrderId == model.OrderId);
+            order.Status = model.Status;
+            _db.Orders.Update(order);
+            
+        }
 
     }
 }
