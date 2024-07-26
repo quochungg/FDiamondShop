@@ -97,67 +97,30 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
-            if (user == null)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Error while registering");
-                return BadRequest(_response);
-            }
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
-            await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
-
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
-            await _unitOfWork.SaveAsync();
-            return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
-        }
-        [HttpPost("RegisterForStaff")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> RegisterStaff([FromBody] RegistrationRequestDTO model)
-        {
-            var User = _userManager.Users.FirstOrDefault(x => x.UserName == model.UserName);
-            var recentPhone = _userManager.Users.FirstOrDefault(x => x.PhoneNumber.Equals(model.PhoneNumber));
-            if (User != null)
-            {
-                _response.StatusCode = HttpStatusCode.Conflict;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("User already exists");
-                return Conflict(_response);
-            }
-            if (recentPhone != null)
-            {
-                _response.StatusCode = HttpStatusCode.Conflict;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Phonenumber already exists");
-                return Conflict(_response);
-            }
-            if (!ModelState.IsValid)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.Result = ModelState;
-                return BadRequest(_response);
-            }
-            var user = await _unitOfWork.UserRepository.Register(model);
-            if (user == null)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Error while registering");
-                return BadRequest(_response);
-            }
-            user.EmailConfirmed = true;
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
             
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Error while registering");
+                return BadRequest(_response);
+            }
+           var userRole= _userManager.GetRolesAsync(user).Result.FirstOrDefault();
+            if(userRole == "customer")
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
+                await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
+            }else
+            {
+                user.EmailConfirmed = true;               
+            }
+            _response.StatusCode = HttpStatusCode.Created;
+            _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
-            return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
+            return CreatedAtRoute("searchuserbyuserid", new { username = model.UserName }, _response);
         }
+        
         [HttpPut("update")]
         //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
