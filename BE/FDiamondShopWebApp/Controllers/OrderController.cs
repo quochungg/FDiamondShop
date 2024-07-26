@@ -83,13 +83,8 @@ namespace FDiamondShop.API.Controllers
                         BasePrice = totalPrice,
                         TotalPrice = totalPrice,
                         OrderDate = now7,
-                        Status = createDTO.Status,
-                       
-                       
-                    };
-                    
-                    
-                    
+                        Status = createDTO.Status,                                          
+                    };                                                          
                     if (!string.IsNullOrEmpty(createDTO.DiscountName))
                     {
                         var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
@@ -157,6 +152,22 @@ namespace FDiamondShop.API.Controllers
                         Note = createDTO.Note
                         
                     };
+                    if (string.IsNullOrEmpty(createDTO.Address))
+                    {
+                        deliveryDetail.Address = user.Address;
+                    }
+                    if (string.IsNullOrEmpty(createDTO.Phone))
+                    {
+                        deliveryDetail.Phone = user.PhoneNumber;
+                    }
+                    if (string.IsNullOrEmpty(createDTO.FirstName))
+                    {
+                        deliveryDetail.FirstName = user.FirstName;
+                    }
+                    if (string.IsNullOrEmpty(createDTO.LastName))
+                    {
+                        deliveryDetail.LastName = user.LastName;
+                    }                  
                     await _unitOfWork.DeliveryDetailRepository.CreateAsync(deliveryDetail);
 
                     order.DeliveryDetailId = deliveryDetail.DeliveryDetailId;
@@ -477,6 +488,36 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             _response.Result = orders;
             return Ok(_response);
+        }
+
+        [HttpPost("AssignToOrderManagementStaff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> AssignToOrderManagementStaff([FromBody] AssignCreateDTO createDTO)
+        {
+            try
+            {
+                var ordermanagementstaff = _userManager.Users.FirstOrDefault(us => us.UserName == createDTO.UserName);
+
+
+                var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);
+
+                order.OrderManagementStaffId = ordermanagementstaff.Id;
+                
+                await _unitOfWork.SaveAsync();
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
         }
     }
 }

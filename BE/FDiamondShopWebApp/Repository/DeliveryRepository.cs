@@ -43,6 +43,37 @@ namespace FDiamondShop.API.Repository
             return userDTOs;
            
         }
+
+
+        public async Task<List<UserDTO>> GetOrdermanagementStaff()
+        {
+            var users = _userManager.Users.ToList();
+            List<UserDTO> userDTOs = new List<UserDTO>();
+
+            foreach (var user in users)
+            {
+                UserDTO userDTO = new UserDTO
+                {
+                    UserName = user.UserName,
+                    Address = user.Address,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    IsGoogleAccount = (user.PasswordHash == null),
+                    Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
+                };
+                if (userDTO.Role == "ordermanagementstaff")// tam thoi em de admin
+                {
+                    userDTOs.Add(userDTO);
+                }
+            }
+            return userDTOs;
+
+        }
+        public DeliveryDetail GetDeliveryDetailbyId(int? id)
+        {
+            return _db.DeliveryDetails.FirstOrDefault(dl => dl.DeliveryDetailId == id);
+
         public async Task<List<OrderDTO>> GetAllOrderForDelivery(string id)
         {
             var order=_db.Orders.Include(o => o.DeliveryDetail).Where(x=>x.DeliveryDetail.UserId==id).ToList();
