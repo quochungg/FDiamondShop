@@ -9,6 +9,7 @@ export const AccountProvider = ({ children }) => {
     displayName: '',
     email: '',
     UserID: '',
+    role: '',
     photoURL: '/assets/images/avatars/avtdf.jpg',
   });
 

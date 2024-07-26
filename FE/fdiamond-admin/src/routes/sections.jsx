@@ -1,9 +1,10 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useContext } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import PrivateRoute from 'src/routes/PrivateRoute';
 
 import DashboardLayout from 'src/layouts/dashboard';
+import { AccountContext } from 'src/_mock/AccountContext';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
@@ -18,10 +19,12 @@ export const VoucherPage = lazy(() => import('src/pages/voucher'));
 export const AccountProfilePage = lazy(() => import('src/pages/profile'));
 export const OrderPage = lazy(() => import('src/pages/order'));
 export const OrderDetailPage = lazy(() => import('src/pages/orderDetail'));
+export const NewStaffPage = lazy(() => import('src/pages/creatNewStaff'));
+export const DeliveryOrderPage = lazy(() => import('src/pages/deliveryOrderPage'));
 
-// ----------------------------------------------------------------------
+const Router = () => {
+  const { account } = useContext(AccountContext);
 
-export default function Router() {
   const routes = useRoutes([
     {
       element: (
@@ -40,87 +43,107 @@ export default function Router() {
           ),
           index: true,
         },
-        {
-          path: '/profile/:userId',
-          element: (
-            <PrivateRoute>
-              <AccountProfilePage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: 'user',
-          element: (
-            <PrivateRoute>
-              <UserPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: 'products',
-          element: (
-            <PrivateRoute>
-              <ProductsPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: 'category',
-          element: (
-            <PrivateRoute>
-              <CategoriesPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: 'order',
-          element: (
-            <PrivateRoute>
-              <OrderPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: 'order/:orderId',
-          element: (
-            <PrivateRoute>
-              <OrderDetailPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: 'blog',
-          element: (
-            <PrivateRoute>
-              <BlogPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: 'discountCode',
-          element: (
-            <PrivateRoute>
-              <VoucherPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: '/products/new',
-          element: (
-            <PrivateRoute>
-              <NewProductPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: '/edit-product/:id',
-          element: (
-            <PrivateRoute>
-              <EditProductPage />
-            </PrivateRoute>
-          ),
-        },
-      ],
+        account.role === 'admin' && [
+          {
+            path: '/profile/:userId',
+            element: (
+              <PrivateRoute>
+                <AccountProfilePage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'staff',
+            element: (
+              <PrivateRoute>
+                <UserPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'staff/new',
+            element: (
+              <PrivateRoute>
+                <NewStaffPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'products',
+            element: (
+              <PrivateRoute>
+                <ProductsPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'category',
+            element: (
+              <PrivateRoute>
+                <CategoriesPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'order',
+            element: (
+              <PrivateRoute>
+                <OrderPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'order/:orderId',
+            element: (
+              <PrivateRoute>
+                <OrderDetailPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'blog',
+            element: (
+              <PrivateRoute>
+                <BlogPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'discountCode',
+            element: (
+              <PrivateRoute>
+                <VoucherPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: '/products/new',
+            element: (
+              <PrivateRoute>
+                <NewProductPage />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: '/edit-product/:id',
+            element: (
+              <PrivateRoute>
+                <EditProductPage />
+              </PrivateRoute>
+            ),
+          },
+        ],
+        account.role === 'deliverystaff' && [
+          {
+            path: 'order-delivery',
+            element: (
+              <PrivateRoute>
+                <DeliveryOrderPage />
+              </PrivateRoute>
+            ),
+          },
+        ],
+      ].flat(),
     },
     {
       path: 'login',
@@ -137,4 +160,6 @@ export default function Router() {
   ]);
 
   return routes;
-}
+};
+
+export default Router;
