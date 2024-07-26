@@ -4,6 +4,7 @@ using FDiamondShop.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    partial class FDiamondContextModelSnapshot : ModelSnapshot
+    [Migration("20240725141424_EighthMigration")]
+    partial class EighthMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,12 +299,6 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("order_date");
 
-                    b.Property<int>("OrderManagementStaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OrderManagementStaffId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
@@ -323,8 +320,6 @@ namespace FDiamondShop.API.Migrations
                     b.HasIndex("DeliveryDetailId");
 
                     b.HasIndex("DiscountCodeId");
-
-                    b.HasIndex("OrderManagementStaffId1");
 
                     b.HasIndex("PaymentId");
 
@@ -687,10 +682,6 @@ namespace FDiamondShop.API.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("DiscountCodeId");
 
-                    b.HasOne("FDiamondShop.API.Models.ApplicationUser", "OrderManagementStaff")
-                        .WithMany()
-                        .HasForeignKey("OrderManagementStaffId1");
-
                     b.HasOne("FDiamondShop.API.Models.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId");
@@ -702,8 +693,6 @@ namespace FDiamondShop.API.Migrations
                     b.Navigation("DeliveryDetail");
 
                     b.Navigation("DiscountCode");
-
-                    b.Navigation("OrderManagementStaff");
 
                     b.Navigation("Payment");
 

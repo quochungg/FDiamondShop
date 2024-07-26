@@ -4,6 +4,7 @@ using FDiamondShop.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    partial class FDiamondContextModelSnapshot : ModelSnapshot
+    [Migration("20240725084748_SixMigration")]
+    partial class SixMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -210,21 +213,6 @@ namespace FDiamondShop.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryDetailId"));
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("ReceiveDate")
                         .HasColumnType("datetime2");
 
@@ -286,21 +274,12 @@ namespace FDiamondShop.API.Migrations
                     b.Property<decimal>("BasePrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("DeliveryDetailId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("DiscountCodeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("order_date");
-
-                    b.Property<int>("OrderManagementStaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OrderManagementStaffId1")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");
@@ -320,11 +299,7 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("DeliveryDetailId");
-
                     b.HasIndex("DiscountCodeId");
-
-                    b.HasIndex("OrderManagementStaffId1");
 
                     b.HasIndex("PaymentId");
 
@@ -679,17 +654,9 @@ namespace FDiamondShop.API.Migrations
 
             modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
                 {
-                    b.HasOne("FDiamondShop.API.Models.DeliveryDetail", "DeliveryDetail")
-                        .WithMany()
-                        .HasForeignKey("DeliveryDetailId");
-
                     b.HasOne("FDiamondShop.API.Models.DiscountCode", "DiscountCode")
                         .WithMany("Orders")
                         .HasForeignKey("DiscountCodeId");
-
-                    b.HasOne("FDiamondShop.API.Models.ApplicationUser", "OrderManagementStaff")
-                        .WithMany()
-                        .HasForeignKey("OrderManagementStaffId1");
 
                     b.HasOne("FDiamondShop.API.Models.Payment", "Payment")
                         .WithMany()
@@ -699,11 +666,7 @@ namespace FDiamondShop.API.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("UserId");
 
-                    b.Navigation("DeliveryDetail");
-
                     b.Navigation("DiscountCode");
-
-                    b.Navigation("OrderManagementStaff");
 
                     b.Navigation("Payment");
 
