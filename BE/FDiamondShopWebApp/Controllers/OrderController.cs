@@ -83,13 +83,8 @@ namespace FDiamondShop.API.Controllers
                         BasePrice = totalPrice,
                         TotalPrice = totalPrice,
                         OrderDate = now7,
-                        Status = createDTO.Status,
-                        address = createDTO.Address,
-                       
-                    };
-                   
-                    
-                    
+                        Status = createDTO.Status,                                          
+                    };                                                          
                     if (!string.IsNullOrEmpty(createDTO.DiscountName))
                     {
                         var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
