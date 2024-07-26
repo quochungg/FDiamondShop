@@ -499,7 +499,7 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                var ordermanagementstaff = _userManager.Users.FirstOrDefault(us => us.UserName == createDTO.UserName);
+                var ordermanagementstaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
 
 
                 var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);
