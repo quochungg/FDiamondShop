@@ -14,6 +14,6 @@ namespace FDiamondShop.API.Models
         public string? Note { get; set; } = string.Empty;
         public string LastName { get; set; }
         public string FirstName { get; set; }
-
+        public string? FailReason { get; set; } = string.Empty;
     }
 }
