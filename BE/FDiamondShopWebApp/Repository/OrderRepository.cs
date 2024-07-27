@@ -208,21 +208,26 @@ namespace FDiamondShop.API.Repository
             List<OrderDTO> orderDTOs = new List<OrderDTO>();
             foreach (var item in order)
             {
-                OrderDTO orderDTO = new OrderDTO
-                {
-                    OrderId = item.OrderId,
-                    BasePrice = item.BasePrice,
-                    DeliveryDetailId = item.DeliveryDetailId,
-                    TotalPrice = item.TotalPrice,
-                    OrderDate = item.OrderDate,
-                    Status = item.Status,
-
-                };
-                if (orderDTO.Status == "Ordered")
+                var orderDTO = await GetOrderDetails(item.OrderId);
+                if (orderDTO.Status == "Preparing")
                 {
                     orderDTOs.Add(orderDTO);
                 }
 
+            }
+            return orderDTOs;
+        }
+        public async Task<List<OrderDTO>> GetAllOrderForDelivery(string id)
+        {
+            var order = _db.Orders.Include(o => o.DeliveryDetail).Where(x => x.DeliveryDetail.UserId == id).ToList();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (var item in order)
+            {
+                var orderDTO = await GetOrderDetails(item.OrderId);
+                if (orderDTO.Status == "Delivering")
+                {
+                    orderDTOs.Add(orderDTO);
+                }
             }
             return orderDTOs;
         }

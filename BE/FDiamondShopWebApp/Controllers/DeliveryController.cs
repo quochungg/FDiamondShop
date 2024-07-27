@@ -94,7 +94,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllOrderForDeliveryStaff(string id)
         {
-            var orders = await _unitOfWork.DeliveryRepository.GetAllOrderForDelivery(id);
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderForDelivery(id);
             if(orders.Count()==0)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
@@ -102,10 +102,10 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { "EMPTY" };
                 return NotFound(_response);
             }
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.IsSuccess = true;
-                _response.Result = orders;
-                return Ok(_response);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
             
             
         }

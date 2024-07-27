@@ -19,6 +19,8 @@ namespace FDiamondShop.API.Repository.IRepository
         Task UpdateAsync(Order order);
         public Order GerOrderbyId(int id);
         public Task<List<OrderDTO>> GetAllOrderForOrderManagement(string id);
+        public Task<List<OrderDTO>> GetAllOrderForDelivery(string id);
+
 
 
     }
