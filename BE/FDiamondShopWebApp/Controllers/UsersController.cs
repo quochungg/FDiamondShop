@@ -97,6 +97,7 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
             var user = await _unitOfWork.UserRepository.Register(model);
+            
             if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -104,16 +105,22 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages.Add("Error while registering");
                 return BadRequest(_response);
             }
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
-            await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
-
-            _response.StatusCode = HttpStatusCode.OK;
+           var userRole= _userManager.GetRolesAsync(user).Result.FirstOrDefault();
+            if(userRole == "customer")
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token = token, email = user.Email }, Request.Scheme);
+                await _unitOfWork.UserRepository.SendEmailConfirmationAsync(user, confirmationLink);
+            }else
+            {
+                user.EmailConfirmed = true;               
+            }
+            _response.StatusCode = HttpStatusCode.Created;
             _response.IsSuccess = true;
             await _unitOfWork.SaveAsync();
-            return CreatedAtRoute("searchuserbyusername", new { username = model.UserName }, _response);
+            return CreatedAtRoute("searchuserbyuserid", new { username = model.UserName }, _response);
         }
-
+        
         [HttpPut("update")]
         //[Authorize("customer")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -212,7 +219,7 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
         }
 
-        [HttpGet(Name = "searchuserbyusername")]
+        [HttpGet(Name = "searchuserbyuserid")]
         //[Authorize("admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -232,6 +239,7 @@ namespace FDiamondShop.API.Controllers
                 }
 
                 var returnDTO = _mapper.Map<UserDTO>(user);
+                returnDTO.Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault();
 
                 if (user.PasswordHash == null) returnDTO.IsGoogleAccount = true;
 
@@ -343,6 +351,26 @@ namespace FDiamondShop.API.Controllers
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
             _response.Result = loginResponse;
+            return Ok(_response);
+        }
+
+        [HttpGet("GetUserAddress")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetUserAddress(string userId)
+        {
+            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId, tracked: false);
+            if (user == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("User not found");
+                return BadRequest(_response);
+            }
+            var address = user.Address;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = address;
             return Ok(_response);
         }
 

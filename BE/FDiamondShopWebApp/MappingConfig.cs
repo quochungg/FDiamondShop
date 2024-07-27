@@ -24,6 +24,7 @@ namespace FDiamondShop.API
             CreateMap<ProductVariantValue,ProductVariantValueUpdateDTO>().ReverseMap();
             CreateMap<ApplicationUser, UserDTO>().ReverseMap();
             CreateMap<DiscountCode, DiscountCodeDTO>().ReverseMap();
+            CreateMap<DeliveryDetail, DeliveryDTO>().ReverseMap();
 
             CreateMap<CartLine,CartLineDTO>().ForMember(cl=>cl.CartLineItems,opt=>opt.Ignore()).ReverseMap();
             CreateMap<CartLineItem,CartLineItemDTO>().ForMember(cli => cli.Product, opt=>opt.Ignore()).ReverseMap();
@@ -40,7 +41,10 @@ namespace FDiamondShop.API
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<Order, OrderCreateDTO>().ReverseMap();
 
-            CreateMap<Payment, PaymentDTO>().ReverseMap();
+            CreateMap<DeliveryDetail, DeliveryDTO>().ReverseMap();
+            CreateMap<DeliveryDetail, AssignCreateDTO>().ReverseMap();
+
+
 
 
         }

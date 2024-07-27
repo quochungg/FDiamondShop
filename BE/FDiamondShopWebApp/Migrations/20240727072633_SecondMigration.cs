@@ -1,20 +1,19 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FDiamondShop.API.Migrations
 {
     /// <inheritdoc />
-    public partial class FourthMigration : Migration
+    public partial class SecondMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "UpdateDate",
-                table: "Orders",
-                type: "datetime2",
+            migrationBuilder.AddColumn<string>(
+                name: "FailReason",
+                table: "DeliveryDetails",
+                type: "nvarchar(max)",
                 nullable: true);
         }
 
@@ -22,8 +21,8 @@ namespace FDiamondShop.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "UpdateDate",
-                table: "Orders");
+                name: "FailReason",
+                table: "DeliveryDetails");
         }
     }
 }

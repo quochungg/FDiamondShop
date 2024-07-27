@@ -53,17 +53,24 @@ export default function LoginView() {
         response.data.isSuccess &&
         response.data.result &&
         response.data.result.token &&
-        response.data.result.role === 'admin'
+        response.data.result.role !== 'customer'
       ) {
-        const { token, userId } = response.data.result;
+        const { token, userId, role } = response.data.result;
         localStorage.setItem('token', token);
         localStorage.setItem('username', userName);
         localStorage.setItem('userId', userId);
+        localStorage.setItem('role', response.data.result.role);
         console.log(token);
         console.log(userName);
         console.log(userId);
-        await fetchUserData(userId);
-        navigate('/');
+        await fetchUserData(userId, role);
+        if (role === 'admin') {
+          navigate('/');
+        } else if (role === 'deliverystaff') {
+          navigate('/order-delivery');
+        } else {
+          setError('Unauthorized role');
+        }
       } else {
         setError('You dont have permission to access this website');
       }
@@ -83,17 +90,19 @@ export default function LoginView() {
     }
   };
 
-  const fetchUserData = async (userId) => {
+  const fetchUserData = async (userId, role) => {
     try {
       const response = await axios.get(
         `https://fdiamond-api.azurewebsites.net/api/Users?userId=${userId}`
       );
       const userInfo = response.data.result; // Đúng định dạng lấy dữ liệu từ result
+      console.log(userInfo);
       if (userInfo) {
         updateAccount({
           displayName: `${userInfo.lastName} ${userInfo.firstName}`,
           email: userInfo.userName,
           UserID: userId,
+          role: userInfo.role,
         });
       } else {
         console.error('User info is undefined:', response.data.result);

@@ -21,7 +21,7 @@ namespace FDiamondShop.API.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly HttpClient _httpClient;
-        private static bool _transactionInProgress = false; 
+        private static bool _transactionInProgress = false;
         public OrderController(IUnitOfWork unitOfWork, FDiamondContext db, IMapper mapper,
             UserManager<ApplicationUser> userManager, HttpClient httpClient)
         {
@@ -48,7 +48,6 @@ namespace FDiamondShop.API.Controllers
         //    }
         //}
 
-
         [HttpPost(Name = "CreateOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -72,14 +71,12 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { "A transaction is already in process. Please try again later." };
                 return BadRequest(_response);
             }
-
             List<Product> products = new();
             using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
                 try
                 {
-                    _transactionInProgress = true; // Set the flag to true
-
+                    _transactionInProgress = true;
                     decimal totalPrice = 0;
                     var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                     var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
@@ -104,9 +101,8 @@ namespace FDiamondShop.API.Controllers
                         BasePrice = totalPrice,
                         TotalPrice = totalPrice,
                         OrderDate = now7,
-                        Status = createDTO.Status
-                    };
-
+                        Status = createDTO.Status,                                          
+                    };                                                          
                     if (!string.IsNullOrEmpty(createDTO.DiscountName))
                     {
                         var discount = _unitOfWork.DiscountCodeRepository.FindinOrder(createDTO);
@@ -134,7 +130,7 @@ namespace FDiamondShop.API.Controllers
                             if (product.Quantity < 1)
                             {
                                 await transaction.RollbackAsync();
-                                _transactionInProgress = false; // Reset the flag
+                                _transactionInProgress = false;
                                 _response.StatusCode = HttpStatusCode.BadRequest;
                                 _response.IsSuccess = false;
                                 _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
@@ -163,8 +159,40 @@ namespace FDiamondShop.API.Controllers
                         Name = user.UserName,
                         OrderDescription = "Thanh toan don hang",
                         OrderID = "",
-                        OrderType = createDTO.PaymentMethod,
+                        OrderType = createDTO.PaymentMethod,                      
                     };
+
+                    var deliveryDetail = new DeliveryDetail
+                    {
+                        Address = createDTO.Address,
+                        Phone = createDTO.Phone,
+                        FirstName = createDTO.FirstName,
+                        LastName = createDTO.LastName,
+                        Note = createDTO.Note
+                        
+                    };
+                    if (string.IsNullOrEmpty(createDTO.Address))
+                    {
+                        deliveryDetail.Address = user.Address;
+                    }
+                    if (string.IsNullOrEmpty(createDTO.Phone))
+                    {
+                        deliveryDetail.Phone = user.PhoneNumber;
+                    }
+                    if (string.IsNullOrEmpty(createDTO.FirstName))
+                    {
+                        deliveryDetail.FirstName = user.FirstName;
+                    }
+                    if (string.IsNullOrEmpty(createDTO.LastName))
+                    {
+                        deliveryDetail.LastName = user.LastName;
+                    }                  
+                    await _unitOfWork.DeliveryDetailRepository.CreateAsync(deliveryDetail);
+
+                    order.DeliveryDetailId = deliveryDetail.DeliveryDetailId;
+                    order.DeliveryDetail = deliveryDetail;
+
+                    await _unitOfWork.SaveAsync();
 
                     switch (paymentInfo.OrderType.ToLower())
                     {
@@ -185,7 +213,6 @@ namespace FDiamondShop.API.Controllers
                                 {
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
-                                    _transactionInProgress = false; // Reset the flag
                                     _response.StatusCode = HttpStatusCode.BadRequest;
                                     _response.IsSuccess = false;
                                     _response.ErrorMessages = paymentResultVNPay.ErrorMessages;
@@ -211,7 +238,6 @@ namespace FDiamondShop.API.Controllers
                                 {
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
-                                    _transactionInProgress = false; // Reset the flag
                                     _response.StatusCode = HttpStatusCode.BadRequest;
                                     _response.IsSuccess = false;
                                     _response.ErrorMessages = paymentResultMoMo.ErrorMessages;
@@ -222,7 +248,6 @@ namespace FDiamondShop.API.Controllers
                             {
                                 await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                 await _unitOfWork.SaveAsync();
-                                _transactionInProgress = false; // Reset the flag
                                 return BadRequest(paymentResponseMoMo.Content.ToString());
                             }
                             break;
@@ -245,7 +270,6 @@ namespace FDiamondShop.API.Controllers
                                 {
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
-                                    _transactionInProgress = false; // Reset the flag
                                     _response.StatusCode = HttpStatusCode.BadRequest;
                                     _response.IsSuccess = false;
                                     _response.ErrorMessages = paymentResultPaypal.ErrorMessages;
@@ -254,10 +278,9 @@ namespace FDiamondShop.API.Controllers
                             }
                             break;
                     }
-
+                    
                     await _unitOfWork.SaveAsync();
                     await transaction.CommitAsync();
-                    _transactionInProgress = false; // Reset the flag
                     _response.IsSuccess = true;
                     _response.StatusCode = HttpStatusCode.OK;
                     return Ok(_response);
@@ -265,7 +288,6 @@ namespace FDiamondShop.API.Controllers
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _transactionInProgress = false; // Reset the flag
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
                     _response.ErrorMessages = new List<string> { ex.ToString() };
@@ -273,7 +295,6 @@ namespace FDiamondShop.API.Controllers
                 }
             }
         }
-
 
         [HttpPost("CancelPendingOrders")]
         public async Task<ActionResult<APIResponse>> CancelPendingOrders()
@@ -375,11 +396,11 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { "Order not found" };
                 return NotFound(_response);
             }
-            if (orderDTO.Status == "Completed")
+            if (orderDTO.Status == "Delivered")
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Order has been completed" };
+                _response.ErrorMessages = new List<string> { "Order has been delivered" };
                 return BadRequest(_response);
             }
             await _unitOfWork.OrderRepository.CancelOrder(orderId);
@@ -486,6 +507,63 @@ namespace FDiamondShop.API.Controllers
             _response.IsSuccess = true;
             _response.Result = orders;
             return Ok(_response);
+        }
+
+        [HttpPost("AssignToOrderManagementStaff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> AssignToOrderManagementStaff([FromBody] AssignCreateDTO createDTO)
+        {
+            try
+            {
+                var ordermanagementstaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
+
+
+                var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
+                if (!order.Status.Equals("Ordered"))
+                {
+                    _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED" };
+                    return BadRequest(_response);
+
+                }
+                order.OrderManagementStaffId = ordermanagementstaff.Id;
+                order.Status = "Preparing";
+                order.UpdateDate = DateTime.Now;
+                await _unitOfWork.SaveAsync();
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                return BadRequest(_response);
+            }
+        }
+
+        [HttpGet("GetAllOrderForOrderManagementStaff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllOrderForOrderManagementStaff(string id)
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderForOrderManagement(id);
+            if (orders.Count() == 0)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "EMPTY" };
+                return NotFound(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
+
+
         }
     }
 }

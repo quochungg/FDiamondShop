@@ -10,7 +10,9 @@ import {
   Table,
   Paper,
   Alert,
+  Select,
   Button,
+  MenuItem,
   Snackbar,
   TableRow,
   TableCell,
@@ -18,6 +20,8 @@ import {
   TableBody,
   Typography,
   AlertTitle,
+  InputLabel,
+  FormControl,
 
   //   TableContainer,
 } from '@mui/material';
@@ -25,6 +29,8 @@ import {
 export default function OrderDetailPage() {
   const { orderId } = useParams();
   const [orderData, setOrderData] = useState(null);
+  const [staffList, setStaffList] = useState([]);
+  const [selectedStaff, setSelectedStaff] = useState('');
   const navigate = useNavigate();
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -45,7 +51,19 @@ export default function OrderDetailPage() {
       }
     };
 
+    const fetchStaffList = async () => {
+      try {
+        const response = await axios.get(
+          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetOrdermanagementStaff`
+        );
+        setStaffList(response.data.result);
+      } catch (error) {
+        console.error('Error fetching staff list:', error);
+      }
+    };
+
     fetchOrderDetails();
+    fetchStaffList();
   }, [orderId]);
 
   if (!orderData) {
@@ -55,34 +73,29 @@ export default function OrderDetailPage() {
   const handleBack = () => {
     navigate('/order');
   };
-  const updateOrderStatus = async (newStatus) => {
+  const handleAssignClick = async (newStatus) => {
     try {
-      const response = await axios.put(
-        `https://fdiamond-api.azurewebsites.net/api/Order/UpdateStatus/${orderId}`,
-        { status: newStatus }
+      const response = await axios.post(
+        `https://fdiamond-api.azurewebsites.net/api/Order/AssignToOrderManagementStaff`,
+        {
+          orderId,
+          userName: selectedStaff,
+        }
       );
 
-      if (response.status === 204) {
+      if (response.status === 200 || response.status === 201) {
         setOrderData((prevData) => ({
           ...prevData,
-          status: newStatus,
+          status: 'Assigned',
         }));
         navigate('/order', { state: { showSnackbar: true } });
       } else {
         setOpenSnackbar(true);
       }
     } catch (error) {
-      console.error('Error updating order status:', error);
+      console.error('Error assigning order:', error);
       setOpenSnackbar(true);
     }
-  };
-
-  const handleCompletedClick = () => {
-    // if (orderData.status !== 'Ordered') {
-    //   alert('Only orders with the status "Ordered" can be marked as "Completed"');
-    //   return;
-    // }
-    updateOrderStatus('Completed');
   };
 
   const { paymentInfo } = orderData;
@@ -188,14 +201,30 @@ export default function OrderDetailPage() {
                 Back
               </Button>
               {orderData.status === 'Ordered' && (
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleCompletedClick}
-                  style={{ marginTop: '20px' }}
-                >
-                  Complete Order
-                </Button>
+                <>
+                  <FormControl fullWidth sx={{ mt: 2 }}>
+                    <InputLabel>Assign to Staff</InputLabel>
+                    <Select
+                      value={selectedStaff}
+                      label="Assign to Staff"
+                      onChange={(e) => setSelectedStaff(e.target.value)}
+                    >
+                      {staffList.map((staff) => (
+                        <MenuItem key={staff.userName} value={staff.userName}>
+                          {staff.firstName} {staff.lastName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleAssignClick}
+                    style={{ marginTop: '20px' }}
+                  >
+                    Assign
+                  </Button>
+                </>
               )}
             </Box>
           </Paper>

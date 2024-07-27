@@ -7,7 +7,7 @@ namespace FDiamondShop.API.Models
         public int OrderId { get; set; }
 
         public string UserId { get; set; }
-
+       
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
         public int? PaymentId { get; set; }
@@ -28,5 +28,15 @@ namespace FDiamondShop.API.Models
         public string Status { get; set; } = "Ordered";
 
         public DateTime? UpdateDate { get; set; }
+
+        [ForeignKey("DeliveryDetail")]
+        public int? DeliveryDetailId { get; set; }
+
+        public DeliveryDetail? DeliveryDetail { get; set; }
+
+        public string? OrderManagementStaffId { get; set; }
+
+        public ApplicationUser? OrderManagementStaff { get; set; }
+
     }
 }

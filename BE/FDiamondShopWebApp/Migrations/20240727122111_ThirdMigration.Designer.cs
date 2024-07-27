@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDiamondShop.API.Migrations
 {
     [DbContext(typeof(FDiamondContext))]
-    [Migration("20240628091908_SecondMigration")]
-    partial class SecondMigration
+    [Migration("20240727122111_ThirdMigration")]
+    partial class ThirdMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -205,6 +205,45 @@ namespace FDiamondShop.API.Migrations
                     b.ToTable("CategoryVariants");
                 });
 
+            modelBuilder.Entity("FDiamondShop.API.Models.DeliveryDetail", b =>
+                {
+                    b.Property<int>("DeliveryDetailId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryDetailId"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FailReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReceiveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("DeliveryDetailId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DeliveryDetails");
+                });
+
             modelBuilder.Entity("FDiamondShop.API.Models.DiscountCode", b =>
                 {
                     b.Property<int>("DiscountId")
@@ -253,6 +292,9 @@ namespace FDiamondShop.API.Migrations
                     b.Property<decimal>("BasePrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("DeliveryDetailId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("DiscountCodeId")
                         .HasColumnType("int");
 
@@ -260,11 +302,20 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("order_date");
 
+                    b.Property<string>("OrderManagementStaffId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)")
@@ -272,7 +323,11 @@ namespace FDiamondShop.API.Migrations
 
                     b.HasKey("OrderId");
 
+                    b.HasIndex("DeliveryDetailId");
+
                     b.HasIndex("DiscountCodeId");
+
+                    b.HasIndex("OrderManagementStaffId");
 
                     b.HasIndex("PaymentId");
 
@@ -338,11 +393,11 @@ namespace FDiamondShop.API.Migrations
                         .HasColumnType("nvarchar(80)")
                         .HasColumnName("product_name");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
 
-                    b.Property<int?>("SubCategoryId")
+                    b.Property<int>("SubCategoryId")
                         .HasColumnType("int")
                         .HasColumnName("sub_category_id");
 
@@ -616,11 +671,28 @@ namespace FDiamondShop.API.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("FDiamondShop.API.Models.DeliveryDetail", b =>
+                {
+                    b.HasOne("FDiamondShop.API.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FDiamondShop.API.Models.Order", b =>
                 {
+                    b.HasOne("FDiamondShop.API.Models.DeliveryDetail", "DeliveryDetail")
+                        .WithMany()
+                        .HasForeignKey("DeliveryDetailId");
+
                     b.HasOne("FDiamondShop.API.Models.DiscountCode", "DiscountCode")
                         .WithMany("Orders")
                         .HasForeignKey("DiscountCodeId");
+
+                    b.HasOne("FDiamondShop.API.Models.ApplicationUser", "OrderManagementStaff")
+                        .WithMany()
+                        .HasForeignKey("OrderManagementStaffId");
 
                     b.HasOne("FDiamondShop.API.Models.Payment", "Payment")
                         .WithMany()
@@ -630,7 +702,11 @@ namespace FDiamondShop.API.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("UserId");
 
+                    b.Navigation("DeliveryDetail");
+
                     b.Navigation("DiscountCode");
+
+                    b.Navigation("OrderManagementStaff");
 
                     b.Navigation("Payment");
 
@@ -642,6 +718,8 @@ namespace FDiamondShop.API.Migrations
                     b.HasOne("FDiamondShop.API.Models.SubCategory", "SubCategory")
                         .WithMany("Products")
                         .HasForeignKey("SubCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__products__sub_ca__36B12243");
 
                     b.Navigation("SubCategory");
