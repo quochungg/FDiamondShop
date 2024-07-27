@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { UserView } from 'src/sections/user/view';
+import { NewStaffView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function StaffsPage() {
   return (
     <>
       <Helmet>
-        <title> Staff Management </title>
+        <title> Add new staff Account </title>
       </Helmet>
 
-      <UserView />
+      <NewStaffView />
     </>
   );
 }

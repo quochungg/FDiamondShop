@@ -71,10 +71,11 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                var deliverystaff = _userManager.Users.FirstOrDefault(us => us.UserName == createDTO.UserName);
-                var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);             
+                var deliverystaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
+                var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);             
                 var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
-                detail.UserId = deliverystaff.Id;               
+                detail.UserId = deliverystaff.Id;
+                order.Status = "Delivering";
                 await _unitOfWork.SaveAsync();
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
@@ -93,7 +94,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllOrderForDeliveryStaff(string id)
         {
-            var orders = await _unitOfWork.DeliveryRepository.GetAllOrderForDelivery(id);
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderForDelivery(id);
             if(orders.Count()==0)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
@@ -101,10 +102,10 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { "EMPTY" };
                 return NotFound(_response);
             }
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.IsSuccess = true;
-                _response.Result = orders;
-                return Ok(_response);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
             
             
         }

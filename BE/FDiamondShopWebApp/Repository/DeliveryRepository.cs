@@ -12,6 +12,7 @@ namespace FDiamondShop.API.Repository
         private readonly FDiamondContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
 
+
         public DeliveryRepository(FDiamondContext db, UserManager<ApplicationUser> userManager) : base(db)
         {
             _db = db;
@@ -62,7 +63,7 @@ namespace FDiamondShop.API.Repository
                     IsGoogleAccount = (user.PasswordHash == null),
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
                 };
-                if (userDTO.Role == "ordermanagementstaff")// tam thoi em de admin
+                if (userDTO.Role == "ordermanagementstaff")
                 {
                     userDTOs.Add(userDTO);
                 }
@@ -105,6 +106,6 @@ namespace FDiamondShop.API.Repository
             _db.Orders.Update(model);
             
         }
-
+        
     }
 }

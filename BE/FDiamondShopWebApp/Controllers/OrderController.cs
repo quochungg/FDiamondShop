@@ -499,13 +499,13 @@ namespace FDiamondShop.API.Controllers
         {
             try
             {
-                var ordermanagementstaff = _userManager.Users.FirstOrDefault(us => us.UserName == createDTO.UserName);
+                var ordermanagementstaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
 
 
                 var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
 
                 order.OrderManagementStaffId = ordermanagementstaff.Id;
-                
+                order.Status = "Preparing";
                 await _unitOfWork.SaveAsync();
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
@@ -518,6 +518,27 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.ToString() };
                 return BadRequest(_response);
             }
+        }
+
+        [HttpGet("GetAllOrderForOrderManagementStaff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllOrderForOrderManagementStaff(string id)
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderForOrderManagement(id);
+            if (orders.Count() == 0)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "EMPTY" };
+                return NotFound(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
+
+
         }
     }
 }

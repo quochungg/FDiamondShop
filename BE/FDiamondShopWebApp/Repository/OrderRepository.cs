@@ -55,6 +55,7 @@ namespace FDiamondShop.API.Repository
                             .ThenInclude(cli => cli.Product)                               
                                 .ThenInclude(p => p.SubCategory)
                                     .ThenInclude(sc => sc.Category)
+                                    .Include(o => o.DeliveryDetail)
                                 //.ThenInclude(p => p.ProductImages) // Include ProductImages
                     .Include(o => o.DiscountCode)
                     .FirstOrDefaultAsync(x => x.OrderId == orderId);
@@ -85,6 +86,7 @@ namespace FDiamondShop.API.Repository
             var payment = _db.Payments.FirstOrDefault(x => x.PaymentId == order.PaymentId);
             var paymentDTO = _mapper.Map<PaymentDTO>(payment);
             var discountCode = _mapper.Map<DiscountCodeDTO>(order.DiscountCode);
+            var deliveryDetail = _mapper.Map<DeliveryDTO>(order.DeliveryDetail);
             OrderDTO model = new OrderDTO()
             {
                 OrderId = order.OrderId,
@@ -96,7 +98,8 @@ namespace FDiamondShop.API.Repository
                 Status = order.Status,
                 CartLines = cartlineDTOs,
                 DiscountCode = discountCode,
-                UpdateDate = order.UpdateDate
+                UpdateDate = order.UpdateDate,
+                DeliveryDetail = deliveryDetail
             };
 
 
@@ -198,6 +201,35 @@ namespace FDiamondShop.API.Repository
         public  Order GetOrderbyId(int id)
         {
             return _db.Orders.FirstOrDefault(or => or.OrderId == id);
+        }
+        public async Task<List<OrderDTO>> GetAllOrderForOrderManagement(string id)
+        {
+            var order = _db.Orders.Where(x => x.OrderManagementStaffId == id).ToList();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (var item in order)
+            {
+                var orderDTO = await GetOrderDetails(item.OrderId);
+                if (orderDTO.Status == "Preparing")
+                {
+                    orderDTOs.Add(orderDTO);
+                }
+
+            }
+            return orderDTOs;
+        }
+        public async Task<List<OrderDTO>> GetAllOrderForDelivery(string id)
+        {
+            var order = _db.Orders.Include(o => o.DeliveryDetail).Where(x => x.DeliveryDetail.UserId == id).ToList();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (var item in order)
+            {
+                var orderDTO = await GetOrderDetails(item.OrderId);
+                if (orderDTO.Status == "Delivering")
+                {
+                    orderDTOs.Add(orderDTO);
+                }
+            }
+            return orderDTOs;
         }
         public Task UpdateAsync(Order order)
         {

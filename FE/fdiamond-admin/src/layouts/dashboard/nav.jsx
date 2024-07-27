@@ -4,7 +4,6 @@ import { useEffect, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-// import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
@@ -21,7 +20,7 @@ import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
-import navConfig from './config-navigation';
+import useNavConfig from './config-navigation';
 
 // ----------------------------------------------------------------------
 
@@ -56,17 +55,25 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">{account.displayName}</Typography>
-
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
-        </Typography>
+        {account.role === 'admin' && (
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            System Manager
+          </Typography>
+        )}
+        {account.role === 'deliverystaff' && (
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Delivery Staff
+          </Typography>
+        )}
       </Box>
     </Box>
   );
 
+  const config = useNavConfig();
+
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-      {navConfig.map((item) => (
+      {config.map((item) => (
         <NavItem key={item.title} item={item} />
       ))}
     </Stack>
