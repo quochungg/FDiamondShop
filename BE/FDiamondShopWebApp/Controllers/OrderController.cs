@@ -396,11 +396,11 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { "Order not found" };
                 return NotFound(_response);
             }
-            if (orderDTO.Status == "Completed")
+            if (orderDTO.Status == "Delivered")
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Order has been completed" };
+                _response.ErrorMessages = new List<string> { "Order has been delivered" };
                 return BadRequest(_response);
             }
             await _unitOfWork.OrderRepository.CancelOrder(orderId);
@@ -522,9 +522,15 @@ namespace FDiamondShop.API.Controllers
 
 
                 var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
+                if (!order.Status.Equals("Ordered"))
+                {
+                    _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED" };
+                    return BadRequest(_response);
 
+                }
                 order.OrderManagementStaffId = ordermanagementstaff.Id;
                 order.Status = "Preparing";
+                order.UpdateDate = DateTime.Now;
                 await _unitOfWork.SaveAsync();
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;

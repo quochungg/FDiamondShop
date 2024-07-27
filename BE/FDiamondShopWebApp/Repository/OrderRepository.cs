@@ -166,12 +166,14 @@ namespace FDiamondShop.API.Repository
         public async Task CompleteOrder(int orderId)
         {
             var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
-            if (order == null)
+            var detail =  _db.DeliveryDetails.FirstOrDefault(dt => dt.DeliveryDetailId == order.DeliveryDetailId);
+            if (order == null && detail == null)
             {
                 throw new Exception("Not found Order");
             }
-            order.Status = "Completed";
+            order.Status = "Delivered";
             order.UpdateDate = DateTime.Now;
+            detail.ReceiveDate = DateTime.Now;
             return;
         }
         public async Task RePurchase(int orderid)
@@ -211,7 +213,7 @@ namespace FDiamondShop.API.Repository
                 var orderDTO = await GetOrderDetails(item.OrderId);
                 if (orderDTO.Status == "Ordered")
                 {
-                    return null;
+                    return orderDTOs;
                 }
                 else
                 {
@@ -230,7 +232,7 @@ namespace FDiamondShop.API.Repository
                 var orderDTO = await GetOrderDetails(item.OrderId);
                 if (orderDTO.Status == "Preparing")
                 {
-                    return null;
+                    return orderDTOs;
                 }
                 else
                 {
