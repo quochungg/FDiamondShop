@@ -123,33 +123,11 @@ export default function OderPage() {
       >
         <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
           <AlertTitle>Success</AlertTitle>
-          Order is completed
+          Assigned the order to the merchandiser
         </Alert>
       </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Orders</Typography>
-        {/* <FormControl>
-          <OutlinedInput
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
-            placeholder="Search OrderID"
-            startAdornment={
-              <InputAdornment position="start">
-                <Iconify
-                  icon="eva:search-fill"
-                  sx={{ color: 'text.disabled', width: 20, height: 20 }}
-                />
-              </InputAdornment>
-            }
-            endAdornment={
-              <InputAdornment position="end">
-                <Button variant="contained" color="primary" onClick={handleSearch}>
-                  Search
-                </Button>
-              </InputAdornment>
-            }
-          />
-        </FormControl> */}
       </Stack>
 
       <Card>

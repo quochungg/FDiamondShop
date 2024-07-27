@@ -43,8 +43,27 @@ const NavConfig = () => {
         },
       ];
       break;
+    case 'ordermanagementstaff':
+      config = [
+        {
+          title: 'dashboard',
+          path: '/',
+          icon: icon('ic_analytics'),
+        },
+        {
+          title: 'order',
+          path: '/order-prepare',
+          icon: icon('ic_order'),
+        },
+      ];
+      break;
     case 'deliverystaff':
       config = [
+        {
+          title: 'dashboard',
+          path: '/',
+          icon: icon('ic_analytics'),
+        },
         {
           title: 'order',
           path: '/order-delivery',

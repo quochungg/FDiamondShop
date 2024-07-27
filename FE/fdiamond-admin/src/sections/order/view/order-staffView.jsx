@@ -6,13 +6,13 @@ import {
   Card,
   Stack,
   Table,
-  // Alert,
+  Alert,
   TableRow,
-  // Snackbar,
+  Snackbar,
   TableBody,
   Container,
   TableCell,
-  // AlertTitle,
+  AlertTitle,
   Typography,
   TableContainer,
   TablePagination,
@@ -30,10 +30,10 @@ import OrderTableRow from '../order-table-row';
 import OrderTableHead from '../order-table-head';
 import OrderTableToolbar from '../order-table-toolbar';
 
-export default function DeliveryOrderView() {
+export default function OderStaffPage() {
   const { account } = useContext(AccountContext);
 
-  // const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const location = useLocation();
 
@@ -51,26 +51,27 @@ export default function DeliveryOrderView() {
 
   useEffect(() => {
     if (location.state && location.state.showSnackbar) {
-      // setOpenSnackbar(true);
+      setOpenSnackbar(true);
       // Clear the state to avoid showing Snackbar again if the user navigates back to this page
       window.history.replaceState({}, document.title);
     }
   }, [location]);
 
-  // const handleCloseSnackbar = () => {
-  //   setOpenSnackbar(false);
-  // };
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const dataFiltered = applyFilter({
     inputData: data,
     comparator: getComparator(order, orderBy),
     filterByOrderId,
   });
+
   useEffect(() => {
     const getAll = async () => {
       try {
         const response = await axios.get(
-          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetAllOrderForDeliveryStaff?id=${account.UserID}`
+          `https://fdiamond-api.azurewebsites.net/api/Order/GetAllOrderForOrderManagementStaff?id=${account.UserID}`
         );
         // console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
         console.log(account.UserID);
@@ -91,6 +92,7 @@ export default function DeliveryOrderView() {
     setPage(0);
     setFilterByOrderId(event.target.value);
   };
+
   const handleSort = (event, orderId) => {
     const isAsc = orderBy === orderId && order === 'asc';
     if (orderId !== '') {
@@ -114,8 +116,20 @@ export default function DeliveryOrderView() {
   };
 
   const notFound = !dataFiltered.length && !!filterByOrderId;
+
   return (
     <Container>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          <AlertTitle>Success</AlertTitle>
+          Order is completed
+        </Alert>
+      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Orders</Typography>
       </Stack>

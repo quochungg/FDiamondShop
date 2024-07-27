@@ -9,34 +9,24 @@ import {
   Stack,
   Table,
   Paper,
-  Alert,
   Select,
   Button,
   MenuItem,
-  Snackbar,
   TableRow,
   TableCell,
   Container,
   TableBody,
   Typography,
-  AlertTitle,
   InputLabel,
   FormControl,
-
-  //   TableContainer,
 } from '@mui/material';
 
-export default function OrderDetailPage() {
+export default function AssignToDelivery() {
   const { orderId } = useParams();
   const [orderData, setOrderData] = useState(null);
   const [staffList, setStaffList] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState('');
   const navigate = useNavigate();
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -54,7 +44,7 @@ export default function OrderDetailPage() {
     const fetchStaffList = async () => {
       try {
         const response = await axios.get(
-          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetOrdermanagementStaff`
+          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetAllDeliveryStaff`
         );
         console.log(response);
         setStaffList(response.data.result);
@@ -72,12 +62,13 @@ export default function OrderDetailPage() {
   }
 
   const handleBack = () => {
-    navigate('/order');
+    navigate('/order-prepare');
   };
-  const handleAssignClick = async (newStatus) => {
+
+  const handleAssignClick = async () => {
     try {
       const response = await axios.post(
-        `https://fdiamond-api.azurewebsites.net/api/Order/AssignToOrderManagementStaff`,
+        `https://fdiamond-api.azurewebsites.net/api/Delivery/AssignToDeliveryStaff`,
         {
           orderId,
           userId: selectedStaff,
@@ -89,46 +80,35 @@ export default function OrderDetailPage() {
           ...prevData,
           status: 'Assigned',
         }));
-        navigate('/order', { state: { showSnackbar: true } });
+        navigate('/order-prepare', { state: { showSnackbar: true } });
       } else {
-        setOpenSnackbar(true);
+        // setOpenSnackbar(true);
       }
     } catch (error) {
       console.error('Error assigning order:', error);
-      setOpenSnackbar(true);
+      // setOpenSnackbar(true);
     }
   };
 
-  const { paymentInfo } = orderData;
+  const { paymentInfo, deliveryDetail } = orderData;
   return (
     <Container>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          <AlertTitle>Error</AlertTitle>
-          Error
-        </Alert>
-      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Order Detail</Typography>
       </Stack>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6} lg={8}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={12} lg={12}>
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
-                Detail
+                Order Detail
               </Typography>
               <Table>
                 <TableBody>
                   {orderData.cartLines.map((cartLine) =>
                     cartLine.cartLineItems.map((item) => (
-                      <TableRow key={item.productId}>
-                        <TableCell align="right">
+                      <TableRow key={item.productId} colSpan={2}>
+                        <TableCell align="center" variant="head">
                           <img
                             src={item.product.productImages[0].imageUrl}
                             alt={item.product.productName}
@@ -140,13 +120,15 @@ export default function OrderDetailPage() {
                             }}
                           />
                         </TableCell>
-                        <TableCell>
-                          <Typography variant="subtitle2">{item.product.productName}</Typography>
-                          <Typography variant="body2" color="textSecondary">
+                        <TableCell variant="head">
+                          <Typography variant="subtitle1">{item.product.productName}</Typography>
+                          <Typography variant="body1" color="textSecondary">
                             #{item.product.productId}
                           </Typography>
                         </TableCell>
-                        <TableCell align="right">${item.price}</TableCell>
+                        <TableCell variant="head" align="left">
+                          ${item.price}
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -155,11 +137,11 @@ export default function OrderDetailPage() {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} md={6} lg={6}>
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
-                Information
+                Order Infomation
               </Typography>
               <Table>
                 <TableBody>
@@ -193,40 +175,83 @@ export default function OrderDetailPage() {
                   </TableRow>
                 </TableBody>
               </Table>
-              {orderData.status === 'Ordered' && (
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                  <InputLabel>Assign to Staff</InputLabel>
-                  <Select
-                    value={selectedStaff}
-                    label="Assign to Staff"
-                    onChange={(e) => setSelectedStaff(e.target.value)}
-                  >
-                    {staffList.map((staff) => (
-                      <MenuItem key={staff.userId} value={staff.userId}>
-                        {staff.firstName} {staff.lastName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-              <Button
-                variant="outlined"
-                color="success"
-                onClick={handleBack}
-                sx={{ mr: 2, marginTop: '20px' }}
-              >
-                Back
-              </Button>
-              {orderData.status === 'Ordered' && (
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleAssignClick}
-                  style={{ marginTop: '20px' }}
-                >
-                  Assign
-                </Button>
-              )}
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6} lg={6}>
+          <Paper>
+            <Box p={2}>
+              <Typography variant="h5" gutterBottom>
+                Delivery Infomation
+              </Typography>
+              <Table>
+                <TableBody>
+                  {deliveryDetail ? (
+                    <>
+                      <TableRow>
+                        <TableCell component="th">Delivery Detail ID</TableCell>
+                        <TableCell>{deliveryDetail.deliveryDetailId}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell component="th">Address</TableCell>
+                        <TableCell>{deliveryDetail.address}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell component="th">Phone</TableCell>
+                        <TableCell>{deliveryDetail.phone}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell component="th">Note</TableCell>
+                        <TableCell>{deliveryDetail.note || 'N/A'}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell component="th">Recipient</TableCell>
+                        <TableCell>
+                          {deliveryDetail.firstName} {deliveryDetail.lastName}
+                        </TableCell>
+                      </TableRow>
+                      {orderData.status === 'Preparing' && (
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                          <InputLabel>Assign to Delivery Staff</InputLabel>
+                          <Select
+                            value={selectedStaff}
+                            label="Assign to Delivery Staff"
+                            onChange={(e) => setSelectedStaff(e.target.value)}
+                          >
+                            {staffList.map((staff) => (
+                              <MenuItem key={staff.userId} value={staff.userId}>
+                                {staff.firstName} {staff.lastName}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                      <Button
+                        variant="outlined"
+                        color="success"
+                        onClick={handleBack}
+                        sx={{ mr: 2, marginTop: '20px' }}
+                      >
+                        Back
+                      </Button>
+                      {orderData.status === 'Preparing' && (
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={handleAssignClick}
+                          style={{ marginTop: '20px' }}
+                        >
+                          Assign
+                        </Button>
+                      )}
+                    </>
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={2}>No delivery details available</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </Box>
           </Paper>
         </Grid>
