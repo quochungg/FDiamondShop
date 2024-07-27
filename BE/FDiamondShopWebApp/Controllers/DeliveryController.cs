@@ -74,7 +74,8 @@ namespace FDiamondShop.API.Controllers
                 var deliverystaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
                 var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);             
                 var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
-                detail.UserId = deliverystaff.Id;               
+                detail.UserId = deliverystaff.Id;
+                order.Status = "Delivering";
                 await _unitOfWork.SaveAsync();
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;

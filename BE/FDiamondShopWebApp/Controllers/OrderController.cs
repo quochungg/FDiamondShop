@@ -505,7 +505,7 @@ namespace FDiamondShop.API.Controllers
                 var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);
 
                 order.OrderManagementStaffId = ordermanagementstaff.Id;
-                
+                order.Status = "Preparing";
                 await _unitOfWork.SaveAsync();
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
