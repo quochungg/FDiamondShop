@@ -129,8 +129,8 @@ namespace FDiamondShop.API.Controllers
                             var product = await _unitOfWork.ProductRepository.GetProductForUpdateAsync(cartLineItem.ProductId);
                             if (product.Quantity < 1)
                             {
-                                await transaction.RollbackAsync();
                                 _transactionInProgress = false;
+                                await transaction.RollbackAsync();
                                 _response.StatusCode = HttpStatusCode.BadRequest;
                                 _response.IsSuccess = false;
                                 _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
@@ -211,6 +211,7 @@ namespace FDiamondShop.API.Controllers
                                 }
                                 else
                                 {
+                                    _transactionInProgress = false;
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
                                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -236,6 +237,7 @@ namespace FDiamondShop.API.Controllers
                                 }
                                 else
                                 {
+                                    _transactionInProgress = false;
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
                                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -268,6 +270,7 @@ namespace FDiamondShop.API.Controllers
                                 }
                                 else
                                 {
+                                    _transactionInProgress = false;
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
                                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -278,7 +281,7 @@ namespace FDiamondShop.API.Controllers
                             }
                             break;
                     }
-                    
+                    _transactionInProgress = false;
                     await _unitOfWork.SaveAsync();
                     await transaction.CommitAsync();
                     _response.IsSuccess = true;
@@ -287,6 +290,7 @@ namespace FDiamondShop.API.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _transactionInProgress = false;
                     await transaction.RollbackAsync();
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
