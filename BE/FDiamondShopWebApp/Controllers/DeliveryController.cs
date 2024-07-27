@@ -72,10 +72,17 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var deliverystaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
-                var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);             
+                var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
+                if (!order.Status.Equals("Preparing"))
+                {
+                    _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED AND ORDER THAT NOT PREPARED" };
+                    return BadRequest(_response);
+
+                }
                 var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
                 detail.UserId = deliverystaff.Id;
-                order.Status = "Delivering";
+                order.Status = "Shipping";
+                order.UpdateDate = DateTime.Now;
                 await _unitOfWork.SaveAsync();
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
