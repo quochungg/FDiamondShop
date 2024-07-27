@@ -16,9 +16,11 @@ namespace FDiamondShop.API.Repository.IRepository
         public Task RollBackOrder(int orderId);
         public Task RePurchase(int orderId);
         Task<IEnumerable<Order>> GetPendingOrdersOlderThan(DateTime cutoffTime);
-        Task UpdateAsync(Order order);
-        public Order GerOrderbyId(int id);
+        
+        public Order GetOrderbyId(int id);
         public Task<List<OrderDTO>> GetAllOrderForOrderManagement(string id);
+        public Task<List<OrderDTO>> GetAllOrderForDelivery(string id);
+
 
 
     }

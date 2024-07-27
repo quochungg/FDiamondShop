@@ -166,12 +166,14 @@ namespace FDiamondShop.API.Repository
         public async Task CompleteOrder(int orderId)
         {
             var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
-            if (order == null)
+            var detail =  _db.DeliveryDetails.FirstOrDefault(dt => dt.DeliveryDetailId == order.DeliveryDetailId);
+            if (order == null && detail == null)
             {
                 throw new Exception("Not found Order");
             }
-            order.Status = "Completed";
+            order.Status = "Delivered";
             order.UpdateDate = DateTime.Now;
+            detail.ReceiveDate = DateTime.Now;
             return;
         }
         public async Task RePurchase(int orderid)
@@ -198,7 +200,7 @@ namespace FDiamondShop.API.Repository
             DateTime cutoffTimeUtc = TimeZoneInfo.ConvertTimeToUtc(cutoffTimeVietnam, vietnamTimeZone);
             return await _db.Orders.Where(x => x.OrderDate < cutoffTimeVietnam && x.Status == "Pending").ToListAsync();
         }
-        public Order GerOrderbyId(int id)
+        public  Order GetOrderbyId(int id)
         {
             return _db.Orders.FirstOrDefault(or => or.OrderId == id);
         }
@@ -208,21 +210,34 @@ namespace FDiamondShop.API.Repository
             List<OrderDTO> orderDTOs = new List<OrderDTO>();
             foreach (var item in order)
             {
-                OrderDTO orderDTO = new OrderDTO
-                {
-                    OrderId = item.OrderId,
-                    BasePrice = item.BasePrice,
-                    DeliveryDetailId = item.DeliveryDetailId,
-                    TotalPrice = item.TotalPrice,
-                    OrderDate = item.OrderDate,
-                    Status = item.Status,
-
-                };
+                var orderDTO = await GetOrderDetails(item.OrderId);
                 if (orderDTO.Status == "Ordered")
+                {
+                    return orderDTOs;
+                }
+                else
                 {
                     orderDTOs.Add(orderDTO);
                 }
 
+            }
+            return orderDTOs;
+        }
+        public async Task<List<OrderDTO>> GetAllOrderForDelivery(string id)
+        {
+            var order = _db.Orders.Include(o => o.DeliveryDetail).Where(x => x.DeliveryDetail.UserId == id).ToList();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (var item in order)
+            {
+                var orderDTO = await GetOrderDetails(item.OrderId);
+                if (orderDTO.Status == "Preparing")
+                {
+                    return orderDTOs;
+                }
+                else
+                {
+                    orderDTOs.Add(orderDTO);
+                }
             }
             return orderDTOs;
         }

@@ -3,7 +3,6 @@ using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -72,9 +71,17 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var deliverystaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
-                var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);             
+                var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
+                if (!order.Status.Equals("Preparing"))
+                {
+                    _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED AND ORDER THAT NOT PREPARED" };
+                    return BadRequest(_response);
+
+                }
                 var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
-                detail.UserId = deliverystaff.Id;               
+                detail.UserId = deliverystaff.Id;
+                order.Status = "Shipping";
+                order.UpdateDate = DateTime.Now;
                 await _unitOfWork.SaveAsync();
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
@@ -93,7 +100,7 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllOrderForDeliveryStaff(string id)
         {
-            var orders = await _unitOfWork.DeliveryRepository.GetAllOrderForDelivery(id);
+            var orders = await _unitOfWork.OrderRepository.GetAllOrderForDelivery(id);
             if(orders.Count()==0)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
@@ -101,10 +108,10 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { "EMPTY" };
                 return NotFound(_response);
             }
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.IsSuccess = true;
-                _response.Result = orders;
-                return Ok(_response);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = orders;
+            return Ok(_response);
             
             
         }
@@ -113,15 +120,16 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateOrderStatus([FromBody] OrderStatusDTO model) 
         {
-            var order=_unitOfWork.OrderRepository.GetOrderDetails(model.OrderId);
-            if(order == null)
+            var order=_unitOfWork.OrderRepository.GetOrderbyId(model.OrderId);
+            if (order == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Order not found" };
                 return BadRequest(_response);
             }
-            await _unitOfWork.DeliveryRepository.UpdateOrderStatus(model);
+            order.Status = model.Status;
+            await _unitOfWork.DeliveryRepository.UpdateOrderStatus(order);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             await _unitOfWork.SaveAsync();

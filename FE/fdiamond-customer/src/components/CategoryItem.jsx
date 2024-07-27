@@ -15,7 +15,7 @@ const CategoryItem = ({ type, imageUrl, linkTo }) => {
                             className="w-full h-full object-cover" />
                     </div>
 
-                    <p className='text-[1.3rem] font-gantari'>
+                    <p className='text-[1.3rem] font-gantari font-[500]'>
                         {type}
                     </p>
                 </Link>

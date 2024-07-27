@@ -19,27 +19,30 @@ const Footer = () => {
                 <div className='py-10'>
 
                     <ul className='flex flex-row justify-center items-start'>
-                        <li className='flex flex-col capitalize mr-40 font-[350] space-y-3 '>
+                        <li className='flex flex-col capitalize mr-40 font-[350] space-y-3'>
                             <Link to={noContentPath}
                             >
                                 <p className='font-semibold text-lg uppercase mb-1'>Customer Care</p>
                             </Link>
 
-                            <Link to='tel:1800545457'>
+                            <Link to='tel:1800545457'
+                                className='hover:text-gray-500 transition-colors duration-150'
+                            >
                                 <div className='flex space-x-2'>
                                     <img src='https://ecommo--ion.bluenile.com/bn-main/phone.447b6.svg' />
                                     <p>1800-54-54-57</p>
                                 </div>
                             </Link>
                             <Link to='mailto:fdiamondshop391@gmail.com'
+                                className='hover:text-gray-500 transition-colors duration-150'
                             >
                                 <div className='flex space-x-2'>
                                     <img src='https://ecommo--ion.bluenile.com/bn-main/email.6041e.svg' />
                                     <p>Email Us</p>
                                 </div>
                             </Link>
-                            <Link to={noContentPath}>Contact Us</Link>
-                            <Link to={noContentPath}>FAQ</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>Contact Us</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>FAQ</Link>
                         </li>
 
 
@@ -50,12 +53,11 @@ const Footer = () => {
                                 <p className='font-semibold text-lg uppercase mb-1'>About FDIAMOND</p>
                             </Link>
 
-                            <Link to={noContentPath}>Quality & Value</Link>
-                            <Link to={noContentPath}>Review</Link>
-                            <Link to={noContentPath}>Blog</Link>
-                            <Link to={noContentPath}>Diamond Sustainability</Link>
-                            <Link to={noContentPath}>Location</Link>
-                            <Link to={noContentPath}>Career</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>Quality & Value</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>Review</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>Blog</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>Diamond Sustainability</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>Location</Link>
                         </li>
 
 
@@ -66,12 +68,12 @@ const Footer = () => {
                                 <p className='font-semibold text-lg uppercase mb-1'>Legal Area</p>
                             </Link>
 
-                            <Link to={noContentPath}>terms of use</Link>
-                            <Link to={noContentPath}>privacy policy</Link>
-                            <Link to={noContentPath}>conditions of sale</Link>
-                            <Link to={noContentPath}>credits</Link>
-                            <Link to={noContentPath}>accessibility statement</Link>
-                            <Link to={noContentPath}>Career</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>terms of use</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>privacy policy</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>conditions of sale</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>credits</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>accessibility statement</Link>
+                            <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'>Career</Link>
                         </li>
 
 
@@ -82,11 +84,11 @@ const Footer = () => {
                             </Link>
 
                             <div className='flex flex-row space-x-10'>
-                                <Link to={noContentPath}><FaInstagram size={27} /></Link>
-                                <Link to={noContentPath}><RiFacebookFill size={27} /></Link>
-                                <Link to={noContentPath}><FaTwitter size={27} /></Link>
-                                <Link to={noContentPath}><IoLogoTiktok size={27} /></Link>
-                                <Link to={noContentPath}><FaSnapchatGhost size={27} /></Link>
+                                <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'><FaInstagram size={27} /></Link>
+                                <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'><RiFacebookFill size={27} /></Link>
+                                <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'><FaTwitter size={27} /></Link>
+                                <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'><IoLogoTiktok size={27} /></Link>
+                                <Link to={noContentPath} className='hover:text-gray-500 transition-colors duration-150'><FaSnapchatGhost size={27} /></Link>
                             </div>
 
 

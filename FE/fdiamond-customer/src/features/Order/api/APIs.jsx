@@ -218,7 +218,7 @@ export const updateRingSize = async (cartLineId, productId, newRingSize) => {
 
 
 // Make an order
-export const makeOrder = async (promoCode) => {
+export const makeOrder = async (promoCode, shippingDetails) => {
     const accessToken = localStorage.getItem('accessToken');
     const userName = JSON.parse(localStorage.getItem('user')).userName;
 
@@ -230,16 +230,28 @@ export const makeOrder = async (promoCode) => {
 
     let reqData;
 
+    console.log(shippingDetails)
+
     if (promoCode) {
         reqData = {
             userName: userName,
             discountName: promoCode.discountCodeName,
-            paymentMethod: 'Paypal'
+            paymentMethod: 'Paypal',
+            address: shippingDetails.address,
+            phone: shippingDetails.phoneNumber,
+            note: shippingDetails.note,
+            lastName: shippingDetails.lastName,
+            firstName: shippingDetails.firstName,
         }
     } else {
         reqData = {
             userName: userName,
-            paymentMethod: 'Paypal'
+            paymentMethod: 'Paypal',
+            address: shippingDetails.address,
+            phone: shippingDetails.phoneNumber,
+            note: shippingDetails.note,
+            lastName: shippingDetails.lastName,
+            firstName: shippingDetails.firstName,
         }
     }
 
@@ -254,6 +266,7 @@ export const makeOrder = async (promoCode) => {
             console.error('There was an error', error);
         }
     }
+    console.log(response);
     return response;
 
 }
