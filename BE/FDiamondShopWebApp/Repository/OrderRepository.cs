@@ -228,7 +228,7 @@ namespace FDiamondShop.API.Repository
             foreach (var item in order)
             {
                 var orderDTO = await GetOrderDetails(item.OrderId);
-                if (orderDTO.Status == "Ordered" || orderDTO.Status == "Preparing")
+                if (orderDTO.Status == "Preparing")
                 {
                     return null;
                 }

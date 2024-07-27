@@ -3,7 +3,6 @@ using FDiamondShop.API.Data;
 using FDiamondShop.API.Models;
 using FDiamondShop.API.Models.DTO;
 using FDiamondShop.API.Repository.IRepository;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

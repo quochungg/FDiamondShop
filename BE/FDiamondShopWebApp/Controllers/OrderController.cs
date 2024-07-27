@@ -21,6 +21,7 @@ namespace FDiamondShop.API.Controllers
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly HttpClient _httpClient;
+        private static bool _transactionInProgress = false;
         public OrderController(IUnitOfWork unitOfWork, FDiamondContext db, IMapper mapper,
             UserManager<ApplicationUser> userManager, HttpClient httpClient)
         {
@@ -54,11 +55,28 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> CreateOrder([FromBody] OrderCreateDTO createDTO)
         {
+            int retryCount = 0;
+            int maxRetries = 3; // Define the maximum number of retries
+
+            while (_transactionInProgress && retryCount < maxRetries)
+            {
+                await Task.Delay(2000); // Wait for 2 seconds
+                retryCount++;
+            }
+
+            if (_transactionInProgress)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "A transaction is already in process. Please try again later." };
+                return BadRequest(_response);
+            }
             List<Product> products = new();
             using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
                 try
                 {
+                    _transactionInProgress = true;
                     decimal totalPrice = 0;
                     var user = _userManager.Users.First(u => u.UserName == createDTO.UserName);
                     var cartLines = await _unitOfWork.CartRepository.GetAllCartlineExist(user);
@@ -112,6 +130,7 @@ namespace FDiamondShop.API.Controllers
                             if (product.Quantity < 1)
                             {
                                 await transaction.RollbackAsync();
+                                _transactionInProgress = false;
                                 _response.StatusCode = HttpStatusCode.BadRequest;
                                 _response.IsSuccess = false;
                                 _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
