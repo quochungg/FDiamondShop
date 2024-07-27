@@ -28,6 +28,7 @@ namespace FDiamondShop.API.Repository
             {
                 UserDTO userDTO = new UserDTO
                 {
+                    UserId = user.Id,
                     UserName = user.UserName,
                     Address = user.Address,
                     FirstName = user.FirstName,
@@ -55,6 +56,7 @@ namespace FDiamondShop.API.Repository
             {
                 UserDTO userDTO = new UserDTO
                 {
+                    UserId = user.Id,
                     UserName = user.UserName,
                     Address = user.Address,
                     FirstName = user.FirstName,
