@@ -148,6 +148,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelecti
                         <div className="font-gantari">
                             <Accordion transition>
                                 <AccordionItem
+                                    initialEntered={true}
                                     header="Product Details"
                                     className={'font-[500] text-[18px] hover:duration-150'}
                                 >

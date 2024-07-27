@@ -13,54 +13,96 @@ const OrderHistoryPage = () => {
     const [resetAfterCancel, setResetAfterCancel] = useState(null);
     const [openModal, setOpenModal] = useState(false);
 
+
     const handleCloseModal = () => {
         setOpenModal(false);
     }
 
+
     const [orderTypes, setOrderTypes] = useState({
         All: 0,
         Ordered: 0,
-        Completed: 0,
+        Delivered: 0,
         Cancelled: 0,
         Pending: 0,
         Failed: 0,
     })
 
 
+    // Call API to get all orders of a specific status
     const getAllOrdersByStatus = async (status) => {
-        const response = await getAllFilterOrders(status);
-        let ordersList = response.data.result
-        if (ordersList) {
-            setOrderArr(ordersList)
+        let response;
+        if (status === 'Ordered') {
+            response = await Promise.all([
+                getAllFilterOrders('Ordered'),
+                getAllFilterOrders('Preparing'),
+                getAllFilterOrders('Shipping'),
+                getAllFilterOrders('Idle')
+            ])
+            const orderedOrders = response[0].data.result ? response[0].data.result : [];
+            const preparingOrders = response[1].data.result ? response[1].data.result : [];
+            const shippingOrders = response[2].data.result ? response[2].data.result : [];
+            const idleOrders = response[3].data.result ? response[3].data.result : [];
+
+            const allOrders = [...orderedOrders, ...preparingOrders, ...shippingOrders, ...idleOrders];
+            setOrderArr(allOrders)
+
         }
+        else {
+            response = await getAllFilterOrders(status);
+            let ordersList = response.data.result
+            if (ordersList) {
+                setOrderArr(ordersList)
+            }
+        }
+        console.log(response)
     }
 
+
+
+    // Call API to get a number of all types of orders based on status
     const getAllOrderTypes = async () => {
         const response = await Promise.all([
             getAllFilterOrders(''),
             getAllFilterOrders('Ordered'),
-            getAllFilterOrders('Completed'),
+            getAllFilterOrders('Preparing'),
+            getAllFilterOrders('Shipping'),
+            getAllFilterOrders('Idle'),
+            getAllFilterOrders('Delivered'),
             getAllFilterOrders('Cancelled'),
             getAllFilterOrders('Pending'),
             getAllFilterOrders('Failed')
         ])
 
+        const allOrders = response[0].data.result;
+
+        const orderedOrders = response[1].data.result;
+        const preparingOrders = response[2].data.result;
+        const shippingOrders = response[3].data.result;
+        const idleOrders = response[4].data.result;
+
+        const deliveredOrders = response[5].data.result;
+
+        const cancelledOrders = response[6].data.result;
+        const pendingOrders = response[7].data.result;
+        const failedOrders = response[8].data.result;
+
 
         setOrderTypes({
-            All: response[0].data.result.length,
-            Ordered: response[1].data.result.length,
-            Completed: response[2].data.result.length,
-            Cancelled: response[3].data.result.length,
-            Pending: response[4].data.result.length,
-            Failed: response[5].data.result.length
+            All: allOrders.length,
+            Ordered: orderedOrders.length + preparingOrders.length + shippingOrders.length + idleOrders.length,
+            Delivered: deliveredOrders.length,
+            Cancelled: cancelledOrders.length,
+            Pending: pendingOrders.length,
+            Failed: failedOrders.length
         })
 
     }
 
 
     useEffect(() => {
-        getAllOrdersByStatus(selectedStatus);
-        getAllOrderTypes();
+        getAllOrdersByStatus(selectedStatus);   // Call API to get all orders of a specific status
+        getAllOrderTypes();  // Call API to get a number of all types of orders based on status
     }, [selectedStatus, resetAfterCancel])
 
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { getAllCartLines, checkValidAllCartLines, makeOrder, getPromoCode } from "../../../api/APIs";
+import { getAllCartLines, checkValidAllCartLines, makeOrder, getPromoCode } from "src/features/Order/api/APIs";
+import { getUser } from "src/features/Authentication/api/APIs";
 import { SlArrowLeft } from "react-icons/sl";
 import { CheckoutLeftSection, CheckoutRightSection, ErrorModal } from 'src/features/Order/components/index';
 import { LoadingSpinner } from 'src/components';
@@ -12,18 +13,17 @@ const CheckoutPage = () => {
 
     const [accessible, setAccessible] = useState(false);
     const [cartLineArr, setCartLineArr] = useState(null);
+    const [shippingDetails, setShippingDetails] = useState({
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        address: '',
+        note: ''
+    });
+    const [shippingDetailsErrors, setShippingDetailsErrors] = useState({});
+
     const [isHandlingPayment, setIsHandlingPayment] = useState(false);
 
-    // Call API to get all cart lines
-    const getCartLines = async () => {
-        const response = await getAllCartLines();
-        const cartLines = response.data.result;
-        if (cartLines) {
-            setCartLineArr(cartLines);
-        } else {    //if cartLines = null => cart is empty
-            setCartLineArr([]);
-        }
-    }
 
     //This page must be accessed from clicking 'Checkout' from Cart Page
     useEffect(() => {
@@ -36,12 +36,40 @@ const CheckoutPage = () => {
     }, []);
 
 
-    // Call API to get all cart lines if page is accessible
+    // Call API to get all cart lines & account details if page is accessible
     useEffect(() => {
         if (accessible) {
             getCartLines();
+            getAccountDetails();
         }
     }, [accessible])
+
+
+    // Call API to get all cart lines
+    const getCartLines = async () => {
+        const response = await getAllCartLines();
+        const cartLines = response.data.result;
+        if (cartLines) {
+            setCartLineArr(cartLines);
+        } else {    //if cartLines = null => cart is empty
+            setCartLineArr([]);
+        }
+    }
+
+    const getAccountDetails = async () => {
+        const response = await getUser();
+        const user = response.data.result;
+        if (user) {
+            const shippingDetails = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber ? user.phoneNumber : '',  //null if this is a google account
+                address: user.address ? user.address : '', //null if this is a google account
+                note: ''
+            };
+            setShippingDetails(shippingDetails);
+        }
+    }
 
 
     const handleLogoClick = () => {
@@ -72,9 +100,52 @@ const CheckoutPage = () => {
     }
 
 
+    const validateShippingAddress = () => {
+        const { firstName, lastName, phoneNumber, address } = shippingDetails;
+        const errors = {};
+        let isValidAll = true;
+
+        // Check if all fields are filled
+        if (firstName === '' || lastName === '' || phoneNumber === '' || address === '') {
+            isValidAll = false;
+            if (firstName === '') errors.firstName = 'First Name & Last Name are both required';
+            if (lastName === '') errors.lastName = 'First Name & Last Name are both required';
+            if (phoneNumber === '') errors.phoneNumber = 'Phone Number is required';
+            if (address === '') errors.address = 'Address is required';
+        }
+
+        // Validate if name starts with a letter and contains at least two characters
+        const nameRegex = /^[^\d][\w\W]{1,}$/;
+        const phoneRegex = /^0\d{9}$/;
+        if (firstName && !nameRegex.test(firstName)) {
+            isValidAll = false;
+            errors.firstName = 'First Name & Last Name must start with a character and contain at least two characters';
+        }
+        if (lastName && !nameRegex.test(lastName)) {
+            isValidAll = false;
+            errors.lastName = 'First Name & Last Name must start with a letter and contain at least two letters';
+        }
+        // Validate if phone number contains only numbers, starts with 0 and has exactly 10 digits
+        if (phoneNumber && !phoneRegex.test(phoneNumber)) {
+            isValidAll = false;
+            errors.phoneNumber = 'Phone Number must start with 0 and contain exactly 10 digits';
+        }
+
+        setShippingDetailsErrors(errors);
+
+        return isValidAll;
+    }
+
+
     // Handle payment when user clicks 'Make Payment' button
     const handleMakePayment = async () => {
         setIsHandlingPayment(true);
+
+        // Validate shipping details
+        if (!validateShippingAddress()) {
+            setIsHandlingPayment(false);
+            return;
+        }
 
         // Assume all are valid
         let isValidAll = true;
@@ -144,8 +215,8 @@ const CheckoutPage = () => {
 
         // If all cart lines are valid, proceed to make payment. Else, show error modal
         if (isValidAll) {
-            const response = await makeOrder(location.state.promoCode);
-            console.log(response);
+            const response = await makeOrder(location.state.promoCode, shippingDetails);
+
             const result = response.data.result;
 
             if (result) {
@@ -190,7 +261,7 @@ const CheckoutPage = () => {
                     }
 
 
-                    <div className='w-screen h-auto font-gantari bg-gray-50'>
+                    <div className='w-auto h-auto font-gantari bg-gray-50'>
 
                         {/* BEGIN HEADER */}
                         <header>
@@ -213,10 +284,9 @@ const CheckoutPage = () => {
                         <div className='w-[75%] mx-auto'>
 
 
-
                             {/* BEGIN MAIN */}
                             <main>
-                                <div className='grid grid-cols-[1fr_36.69%] gap-x-10'>
+                                <div className='grid grid-cols-[1fr_36.69%] gap-x-10 mb-10'>
 
                                     <div className='col-span-full mb-4'>
                                         <p className='uppercase text-center text-[2.5rem] font-[700] font-gantari text-[#151541] py-9'
@@ -236,7 +306,11 @@ const CheckoutPage = () => {
 
 
                                     {/* CHECKOUT LEFT SECTION */}
-                                    <CheckoutLeftSection />
+                                    <CheckoutLeftSection
+                                        shippingDetails={shippingDetails}
+                                        setShippingDetails={setShippingDetails}
+                                        shippingDetailsErrors={shippingDetailsErrors}
+                                    />
 
 
                                     {/* CHECKOUT RIGHT SECTION */}

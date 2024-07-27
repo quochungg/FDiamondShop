@@ -5,7 +5,7 @@ const Hero = () => {
     return (
         <>
             <div>
-                <div className='relative w-full h-[30rem] text-white'>
+                <div className='relative w-full h-[32rem] text-white'>
                     <img
                         src="https://dam.bluenile.com/images/public/24282/diamonds.jpeg"
                         className="w-full h-full object-cover absolute"
@@ -17,11 +17,6 @@ const Hero = () => {
                         <p className='text-[3.2rem] font-lora mb-7 capitalize font-[500] tracking-tight'>Sparkle with us</p>
 
                         <p className="mb-10 leading-loose text-lg font-[500] font-gantari">
-                            {/* At Diamonds Direct, we pride ourselves not only on our stunning
-                            collection of jewelry but also on the array of additional services
-                            we offer to enhance your jewelry experience. From meticulous
-                            repairs to comprehensive appraisals, we are here to meet all your
-                            jewelry needs. */}
                             Superior brilliance is in the cut. Discover the brightest diamonds in our collection, crafted by highly skilled artisans to outshine the rest
                         </p>
 
@@ -36,7 +31,7 @@ const Hero = () => {
                                 onClick={() => navigate('/product/engagement ring')}
                                 className='text-black bg-white w-72 font-[400] py-4 uppercase text-lg font-gantari rounded-sm mx-auto hover:bg-gray-200 transition-colors duration-300'
                             >
-                                Start with a setting
+                                Start with a ring
                             </button>
                         </div>
 

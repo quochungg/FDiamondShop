@@ -2,6 +2,7 @@ import { TailSpin } from 'react-loader-spinner'
 import { useState } from 'react'
 import { cancelOrder } from 'src/features/Order/api/APIs'
 import { useNavigate } from 'react-router-dom';
+import { OrderStatusStepper } from 'src/features/Order/components/index'
 
 
 const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
@@ -32,11 +33,12 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
 
     const differenceInMilliseconds = today.getTime() - orderDate.getTime();
 
-    const has24HoursPassed = differenceInMilliseconds >= 24 * 60 * 60 * 1000;
+    const has12HoursPassed = differenceInMilliseconds >= 12 * 60 * 60 * 1000;
 
+    console.log(orderItem.status);
 
-    const statusColor = orderItem.status === 'Ordered' ? 'text-emerald-600' :
-        orderItem.status === 'Completed' ? 'text-yellow-600' : 'text-red-700';
+    const statusColor = ['Ordered', 'Preparing', 'Shipping', 'Idle', 'Pending'].includes(orderItem.status) ? 'text-emerald-600' :
+        orderItem.status === 'Delivered' ? 'text-yellow-600' : 'text-red-700';
 
 
     const handleCancelOrder = async (orderId) => {
@@ -74,14 +76,24 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
                         <li>
                             <span className='font-[550]'>Order Status: </span>
                             <span className={statusColor + ' font-[650]'}>{orderItem.status}</span>
+
+                            {/* Order Status Stepper */}
+                            {!['Pending', 'Failed', 'Cancelled'].includes(orderItem.status) &&
+                                (
+                                    <div className='mt-10 mb-3'>
+                                        <OrderStatusStepper status={orderItem.status} />
+                                    </div>
+                                )
+                            }
                         </li>
+
                     </ul>
 
                     {orderItem.status === 'Ordered' &&
                         <div className='w-auto self-start mb-7 px-12'>
-                            <p className='text-red-700 text-lg bg-red-100 py-3 px-5 rounded-full border-[1px] border-red-800'
+                            <p className='text-red-700 text-md bg-red-100 py-3 px-5 rounded-full border-[1px] border-red-800'
                             >
-                                You can cancel your order within 24 hours of placing it.
+                                You can only cancel your order within 12 hours of placing it. After 12 hours, it will be processed.
                             </p>
                         </div>
                     }
@@ -116,10 +128,10 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
                                             ) : (
                                                 <button
                                                     onClick={() => handleCancelOrder(orderItem.orderId)}
-                                                    disabled={has24HoursPassed}
+                                                    disabled={has12HoursPassed}
                                                 >
                                                     <p className={`text-white text-md font-[650] py-4 px-16 rounded-md uppercase 
-                                                    ${has24HoursPassed ? 'bg-gray-400' : 'bg-red-800 hover:bg-red-700 transition-colors duration-200'}`}
+                                                    ${has12HoursPassed ? 'bg-gray-400' : 'bg-red-800 hover:bg-red-700 transition-colors duration-200'}`}
                                                     >
                                                         Cancel
                                                     </p>
@@ -139,7 +151,6 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
                                     </button>
                                 </div>
                             )
-
 
                         }
 
