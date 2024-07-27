@@ -37,7 +37,7 @@ namespace FDiamondShop.API.Repository
                     IsGoogleAccount = (user.PasswordHash == null),
                     Role = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
                 };
-                if(userDTO.Role == "deliverystaff")// tam thoi em de admin
+                if(userDTO.Role == "deliverystaff")
                 {
                     userDTOs.Add(userDTO);
                 }
@@ -78,30 +78,7 @@ namespace FDiamondShop.API.Repository
             return _db.DeliveryDetails.FirstOrDefault(dl => dl.DeliveryDetailId == id);
         }
 
-        public async Task<List<OrderDTO>> GetAllOrderForDelivery(string id)
-        {
-            var order=_db.Orders.Include(o => o.DeliveryDetail).Where(x=>x.DeliveryDetail.UserId==id).ToList();
-            List<OrderDTO> orderDTOs = new List<OrderDTO>();
-            foreach (var item in order)
-            {
-                OrderDTO orderDTO = new OrderDTO
-                {
-                    OrderId = item.OrderId,
-                    BasePrice = item.BasePrice,
-                    DeliveryDetailId = item.DeliveryDetailId,                    
-                    TotalPrice = item.TotalPrice,
-                    OrderDate = item.OrderDate,
-                    Status = item.Status,
-                    
-                };
-                if (orderDTO.Status == "Completed")
-                {
-                    orderDTOs.Add(orderDTO);
-                }
-                
-            }
-            return orderDTOs;
-        } 
+        
         public async Task UpdateOrderStatus(Order model)
         {
             
