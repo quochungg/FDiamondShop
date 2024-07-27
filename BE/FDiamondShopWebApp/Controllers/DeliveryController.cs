@@ -72,7 +72,7 @@ namespace FDiamondShop.API.Controllers
             try
             {
                 var deliverystaff = _userManager.Users.FirstOrDefault(us => us.UserName == createDTO.UserName);
-                var order = _unitOfWork.OrderRepository.GerOrderbyId(createDTO.OrderId);             
+                var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);             
                 var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
                 detail.UserId = deliverystaff.Id;               
                 await _unitOfWork.SaveAsync();
@@ -113,15 +113,16 @@ namespace FDiamondShop.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateOrderStatus([FromBody] OrderStatusDTO model) 
         {
-            var order=_unitOfWork.OrderRepository.GetOrderDetails(model.OrderId);
-            if(order == null)
+            var order=_unitOfWork.OrderRepository.GetOrderbyId(model.OrderId);
+            if (order == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Order not found" };
                 return BadRequest(_response);
             }
-            await _unitOfWork.DeliveryRepository.UpdateOrderStatus(model);
+            order.Status = model.Status;
+            await _unitOfWork.DeliveryRepository.UpdateOrderStatus(order);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             await _unitOfWork.SaveAsync();

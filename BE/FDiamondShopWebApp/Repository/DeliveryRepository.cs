@@ -99,11 +99,10 @@ namespace FDiamondShop.API.Repository
             }
             return orderDTOs;
         } 
-        public async Task UpdateOrderStatus(OrderStatusDTO model)
+        public async Task UpdateOrderStatus(Order model)
         {
-            var order = _db.Orders.FirstOrDefault(x => x.OrderId == model.OrderId);
-            order.Status = model.Status;
-            _db.Orders.Update(order);
+            
+            _db.Orders.Update(model);
             
         }
 
