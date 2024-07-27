@@ -28,9 +28,9 @@ namespace FDiamondShop.API.Controllers
             {
                 _db.ApplicationUsers.RemoveRange(_db.ApplicationUsers);
                 await _db.SaveChangesAsync();
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
-                _response.ErrorMessages.Add (ex.Message);
+                _response.ErrorMessages.Add(ex.Message);
                 return BadRequest(_response);
             }
             return NoContent();
@@ -61,7 +61,7 @@ namespace FDiamondShop.API.Controllers
             var products = await _unitOfWork.ProductRepository.GetAllAsync(includeProperties: "SubCategory,SubCategory.Category");
             foreach (var product in products)
             {
-                if( 1 <=  product.SubCategoryId && product.SubCategoryId <= 9)
+                if (1 <= product.SubCategoryId && product.SubCategoryId <= 9)
                 {
                     product.Quantity = 1;
                     product.IsVisible = true;
@@ -116,6 +116,16 @@ namespace FDiamondShop.API.Controllers
         {
             var product = await _unitOfWork.ProductRepository.GetAsync(u => u.ProductId == id);
             product.BasePrice = price;
+            await _unitOfWork.SaveAsync();
+            return NoContent();
+        }
+
+        [HttpGet("update-order-status")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateOrderStatus([FromQuery] int id, string status)
+        {
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == id);
+            order.Status = status;
             await _unitOfWork.SaveAsync();
             return NoContent();
         }
