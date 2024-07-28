@@ -5,7 +5,7 @@ namespace FDiamondShop.API.Repository.IRepository
     public interface IWarrantyRepository : IRepository<Warranty>
     {
         public Task<Warranty> GenerateWarrantyByOrderId(int orderId);
-        public void GenerateWarrantyPDF(Warranty warranty);
+        public Task GenerateWarrantyPDF(int orderId);
         public void GeneratePDF(List<Product> products, Warranty warranty);
     }
 }

@@ -200,7 +200,7 @@ namespace FDiamondShop.API.Controllers
                             decimal amountVNPay = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
                             paymentInfo.Amount = (int)amountVNPay;
 
-                            var paymentApiUrlVNPay = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
+                            var paymentApiUrlVNPay = new Uri(new Uri("https://localhost:7074"), "/api/checkout/vnpay");
                             var paymentResponseVNPay = await _httpClient.PostAsJsonAsync(paymentApiUrlVNPay, paymentInfo);
                             if (paymentResponseVNPay.IsSuccessStatusCode)
                             {
@@ -258,7 +258,7 @@ namespace FDiamondShop.API.Controllers
                             paymentInfo.Amount = orderDTO.TotalPrice;
                             paymentInfo.OrderID = order.OrderId.ToString();
 
-                            var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
+                            var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074"), "/api/checkout/PayPal");
                             var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                             if (paymentResponsePaypal.IsSuccessStatusCode)
