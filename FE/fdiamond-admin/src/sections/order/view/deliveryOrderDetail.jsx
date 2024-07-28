@@ -192,66 +192,58 @@ export default function DeliveryOrderDetail() {
               </Typography>
               <Table>
                 <TableBody>
-                  {deliveryDetail ? (
-                    <>
-                      <TableRow>
-                        <TableCell component="th">Delivery Detail ID</TableCell>
-                        <TableCell>{deliveryDetail.deliveryDetailId}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Address</TableCell>
-                        <TableCell>{deliveryDetail.address}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Phone</TableCell>
-                        <TableCell>{deliveryDetail.phone}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Note</TableCell>
-                        <TableCell>{deliveryDetail.note || 'N/A'}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Recipient</TableCell>
-                        <TableCell>
-                          {deliveryDetail.firstName} {deliveryDetail.lastName}
-                        </TableCell>
-                      </TableRow>
-                      <Button
-                        variant="outlined"
-                        color="success"
-                        onClick={handleBack}
-                        sx={{ mr: 2, marginTop: '20px' }}
-                      >
-                        Back
-                      </Button>
-                      {orderData.status === 'Shipping' && (
-                        <>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={handleOpenIdleDialog}
-                            style={{ marginTop: '20px', marginRight: '20px' }}
-                          >
-                            Idle
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={() => handleStatusChange('Delivered')}
-                            style={{ marginTop: '20px' }}
-                          >
-                            Delivered
-                          </Button>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={2}>No delivery details available</TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow>
+                    <TableCell component="th">Delivery Detail ID</TableCell>
+                    <TableCell>{deliveryDetail.deliveryDetailId}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Address</TableCell>
+                    <TableCell>{deliveryDetail.address}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Phone</TableCell>
+                    <TableCell>{deliveryDetail.phone}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Note</TableCell>
+                    <TableCell>{deliveryDetail.note || 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Recipient</TableCell>
+                    <TableCell>
+                      {deliveryDetail.firstName} {deliveryDetail.lastName}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={handleBack}
+                sx={{ mr: 2, marginTop: '20px' }}
+              >
+                Back
+              </Button>
+              {orderData.status === 'Shipping' && (
+                <>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleOpenIdleDialog}
+                    style={{ marginTop: '20px', marginRight: '20px' }}
+                  >
+                    Idle
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleStatusChange('Delivered')}
+                    style={{ marginTop: '20px' }}
+                  >
+                    Delivered
+                  </Button>
+                </>
+              )}
             </Box>
           </Paper>
         </Grid>

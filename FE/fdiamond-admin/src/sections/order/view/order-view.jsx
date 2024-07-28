@@ -123,7 +123,7 @@ export default function OderPage() {
       >
         <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
           <AlertTitle>Success</AlertTitle>
-          Assigned the order to the merchandiser
+          Assigned the order to the order handleing staff
         </Alert>
       </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
