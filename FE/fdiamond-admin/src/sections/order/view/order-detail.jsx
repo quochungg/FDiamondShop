@@ -99,7 +99,7 @@ export default function OrderDetailPage() {
     }
   };
 
-  const { paymentInfo } = orderData;
+  const { paymentInfo, deliveryDetail } = orderData;
   return (
     <Container>
       <Snackbar
@@ -117,18 +117,18 @@ export default function OrderDetailPage() {
         <Typography variant="h4">Order Detail</Typography>
       </Stack>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6} lg={8}>
+        <Grid item xs={12} md={6} lg={12}>
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
-                Detail
+                Order Detail
               </Typography>
               <Table>
                 <TableBody>
                   {orderData.cartLines.map((cartLine) =>
                     cartLine.cartLineItems.map((item) => (
                       <TableRow key={item.productId}>
-                        <TableCell align="right">
+                        <TableCell align="center" variant="head">
                           <img
                             src={item.product.productImages[0].imageUrl}
                             alt={item.product.productName}
@@ -140,13 +140,15 @@ export default function OrderDetailPage() {
                             }}
                           />
                         </TableCell>
-                        <TableCell>
-                          <Typography variant="subtitle2">{item.product.productName}</Typography>
-                          <Typography variant="body2" color="textSecondary">
+                        <TableCell variant="head">
+                          <Typography variant="subtitle1">{item.product.productName}</Typography>
+                          <Typography variant="body1" color="textSecondary">
                             #{item.product.productId}
                           </Typography>
                         </TableCell>
-                        <TableCell align="right">${item.price}</TableCell>
+                        <TableCell align="left" variant="head">
+                          ${item.price}
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -155,11 +157,11 @@ export default function OrderDetailPage() {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} md={6} lg={6}>
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
-                Information
+                Order Information
               </Typography>
               <Table>
                 <TableBody>
@@ -193,6 +195,51 @@ export default function OrderDetailPage() {
                   </TableRow>
                 </TableBody>
               </Table>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6} lg={6}>
+          <Paper>
+            <Box p={2}>
+              <Typography variant="h5" gutterBottom>
+                Delivery Infomation
+              </Typography>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell component="th">Delivery Detail ID</TableCell>
+                    <TableCell>{deliveryDetail.deliveryDetailId}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Address</TableCell>
+                    <TableCell>{deliveryDetail.address}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Phone</TableCell>
+                    <TableCell>{deliveryDetail.phone}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Note</TableCell>
+                    <TableCell>{deliveryDetail.note || 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Recipient</TableCell>
+                    <TableCell>
+                      {deliveryDetail.firstName} {deliveryDetail.lastName}
+                    </TableCell>
+                  </TableRow>
+                  {orderData.status === 'Idle' && (
+                    <TableRow>
+                      <TableCell component="th">Fail Reason</TableCell>
+                      <TableCell>
+                        {deliveryDetail.failReason ||
+                          'The customer is not present at the delivery address'}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+
               {orderData.status === 'Ordered' && (
                 <FormControl fullWidth sx={{ mt: 2 }}>
                   <InputLabel>Assign to Staff</InputLabel>

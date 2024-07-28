@@ -186,107 +186,99 @@ export default function AssignToDelivery() {
               </Typography>
               <Table>
                 <TableBody>
-                  {deliveryDetail ? (
-                    <>
-                      <TableRow>
-                        <TableCell component="th">Delivery Detail ID</TableCell>
-                        <TableCell>{deliveryDetail.deliveryDetailId}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Address</TableCell>
-                        <TableCell>{deliveryDetail.address}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Phone</TableCell>
-                        <TableCell>{deliveryDetail.phone}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Note</TableCell>
-                        <TableCell>{deliveryDetail.note || 'N/A'}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Recipient</TableCell>
-                        <TableCell>
-                          {deliveryDetail.firstName} {deliveryDetail.lastName}
-                        </TableCell>
-                      </TableRow>
-                      {orderData.status === 'Idle' && (
-                        <TableRow>
-                          <TableCell component="th">Fail Reason</TableCell>
-                          <TableCell>
-                            {deliveryDetail.failReason ||
-                              'The customer is not present at the delivery address'}
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      {orderData.status === 'Preparing' && (
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                          <InputLabel>Assign to Delivery Staff</InputLabel>
-                          <Select
-                            value={selectedStaff}
-                            label="Assign to Delivery Staff"
-                            onChange={(e) => setSelectedStaff(e.target.value)}
-                          >
-                            {staffList.map((staff) => (
-                              <MenuItem key={staff.userId} value={staff.userId}>
-                                {staff.firstName} {staff.lastName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      )}
-                      {orderData.status === 'Idle' && (
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                          <InputLabel>Assign to Delivery Staff</InputLabel>
-                          <Select
-                            value={selectedStaff}
-                            label="Assign to Delivery Staff"
-                            onChange={(e) => setSelectedStaff(e.target.value)}
-                          >
-                            {staffList.map((staff) => (
-                              <MenuItem key={staff.userId} value={staff.userId}>
-                                {staff.firstName} {staff.lastName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      )}
-                      <Button
-                        variant="outlined"
-                        color="success"
-                        onClick={handleBack}
-                        sx={{ mr: 2, marginTop: '20px' }}
-                      >
-                        Back
-                      </Button>
-                      {orderData.status === 'Preparing' && (
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={handleAssignClick}
-                          style={{ marginTop: '20px' }}
-                        >
-                          Assign
-                        </Button>
-                      )}
-                      {orderData.status === 'Idle' && (
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={handleAssignClick}
-                          style={{ marginTop: '20px' }}
-                        >
-                          Assign
-                        </Button>
-                      )}
-                    </>
-                  ) : (
+                  <TableRow>
+                    <TableCell component="th">Delivery Detail ID</TableCell>
+                    <TableCell>{deliveryDetail.deliveryDetailId}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Address</TableCell>
+                    <TableCell>{deliveryDetail.address}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Phone</TableCell>
+                    <TableCell>{deliveryDetail.phone}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Note</TableCell>
+                    <TableCell>{deliveryDetail.note || 'N/A'}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Recipient</TableCell>
+                    <TableCell>
+                      {deliveryDetail.firstName} {deliveryDetail.lastName}
+                    </TableCell>
+                  </TableRow>
+                  {orderData.status === 'Idle' && (
                     <TableRow>
-                      <TableCell colSpan={2}>No delivery details available</TableCell>
+                      <TableCell component="th">Fail Reason</TableCell>
+                      <TableCell>
+                        {deliveryDetail.failReason ||
+                          'The customer is not present at the delivery address'}
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
               </Table>
+              {orderData.status === 'Preparing' && (
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                  <InputLabel>Assign to Delivery Staff</InputLabel>
+                  <Select
+                    value={selectedStaff}
+                    label="Assign to Delivery Staff"
+                    onChange={(e) => setSelectedStaff(e.target.value)}
+                  >
+                    {staffList.map((staff) => (
+                      <MenuItem key={staff.userId} value={staff.userId}>
+                        {staff.firstName} {staff.lastName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              {orderData.status === 'Idle' && (
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                  <InputLabel>Assign to Delivery Staff</InputLabel>
+                  <Select
+                    value={selectedStaff}
+                    label="Assign to Delivery Staff"
+                    onChange={(e) => setSelectedStaff(e.target.value)}
+                  >
+                    {staffList.map((staff) => (
+                      <MenuItem key={staff.userId} value={staff.userId}>
+                        {staff.firstName} {staff.lastName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={handleBack}
+                sx={{ mr: 2, marginTop: '20px' }}
+              >
+                Back
+              </Button>
+              {orderData.status === 'Preparing' && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleAssignClick}
+                  style={{ marginTop: '20px' }}
+                >
+                  Assign
+                </Button>
+              )}
+              {orderData.status === 'Idle' && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleAssignClick}
+                  style={{ marginTop: '20px' }}
+                >
+                  Assign
+                </Button>
+              )}
             </Box>
           </Paper>
         </Grid>

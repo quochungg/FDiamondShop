@@ -32,7 +32,7 @@ export default function NewStaffView() {
 
   const role = [
     { value: 'deliverystaff', label: 'Delivery Staff' },
-    { value: 'ordermanagementstaff', label: 'Merchandiser' },
+    { value: 'ordermanagementstaff', label: 'Order Handling Staff' },
   ];
 
   const handleSubmit = async (event) => {
