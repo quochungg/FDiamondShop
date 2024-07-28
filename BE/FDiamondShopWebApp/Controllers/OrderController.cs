@@ -569,5 +569,21 @@ namespace FDiamondShop.API.Controllers
 
 
         }
+
+        [HttpGet("GetWarranty")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetWarranty(int orderId)
+        {
+            var warranty = await _unitOfWork.WarrantyRepository.GetAsync(w => w.OrderId == orderId, tracked: false);
+            if (warranty == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Warranty not found" };
+                return NotFound(_response);
+            }
+            return File(warranty.WarrantyPDF, "application/pdf", $"warranty{orderId}");
+        }
     }
 }

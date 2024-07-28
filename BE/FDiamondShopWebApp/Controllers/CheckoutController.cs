@@ -7,12 +7,7 @@ using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Utilities;
-using PayPal.v1.Webhooks;
 using System.Net;
-using System.Net.Http.Headers;
 
 namespace FDiamondShop.API.Controllers
 {

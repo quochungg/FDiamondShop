@@ -39,13 +39,13 @@ namespace FDiamondShop.API.Repository
         {
             var listProduct = _db.CartLineItems.Where(x => x.CartLine.OrderId == id).Select(x => x.Product).ToList();
             var warranty = await _db.Warranties.FirstOrDefaultAsync(w => w.OrderId == id);
-            GeneratePDF(listProduct, warranty);
+            warranty.WarrantyPDF = GeneratePDF(listProduct, warranty);
         }
 
-        public void GeneratePDF(List<Product> products, Warranty warranty)
+        public byte[] GeneratePDF(List<Product> products, Warranty warranty)
         {
             QuestPDF.Settings.License = LicenseType.Community;
-            Document.Create(container =>
+            var output = Document.Create(container =>
             {
                 foreach (var product in products)
                 {
@@ -53,7 +53,7 @@ namespace FDiamondShop.API.Repository
                     container
                    .Page(page =>
                    {
-                       page.Size(PageSizes.A4);
+                       page.Size(PageSizes.A5);
                        page.Margin(20);
                        page.PageColor(Colors.White);
                        page.DefaultTextStyle(x => x.FontSize(20));
@@ -94,7 +94,6 @@ namespace FDiamondShop.API.Repository
                                text.Span("Warranty Date: ").FontSize(16).FontFamily(Fonts.TimesNewRoman);
                                text.Span($"{warranty.OrderDate.ToString("dd/mm/yyyy")} - {warranty.ExpiryDate?.ToString("dd/mm/yyyy")}").FontSize(16).ExtraBold();
                            });
-                           column.Item().MaxHeight(200).AlignCenter().PaddingVertical(40).Image("D:\\Code\\csharp\\FDiamondShop\\BE\\FDiamondShopWebApp\\Images\\warrantylabel.png").FitArea();
                            column.Item().PaddingVertical(10).Row(row =>
                            {
                                row.Spacing(20);
@@ -102,15 +101,13 @@ namespace FDiamondShop.API.Repository
                                {
                                    col.Spacing(10);
                                    col.Item().Text("Director's Signature").FontSize(14).AlignCenter().SemiBold();
-                                   col.Item().AlignCenter().MaxWidth(120).MaxHeight(90).Image("D:\\Code\\csharp\\FDiamondShop\\BE\\FDiamondShopWebApp\\Images\\signature.jpg").FitWidth().FitHeight();
-                                   col.Item().Text("Nguyen Huu Quoc Hung").FontSize(14).AlignCenter();
+                                   col.Item().Text("Nguyen Huu Quoc Hung").FontSize(13).AlignCenter();
                                });
                                row.RelativeItem().PaddingLeft(40).Column(col =>
                                {
 
                                    col.Spacing(10);
                                    col.Item().Text("Company").FontSize(14).AlignCenter().SemiBold();
-                                   col.Item().AlignCenter().MaxWidth(90).MaxHeight(90).Image("D:\\Code\\csharp\\FDiamondShop\\BE\\FDiamondShopWebApp\\Images\\logo.png").FitWidth().FitHeight();
                                    col.Item().Text("FDIAMOND").FontSize(14).AlignCenter();
                                });
                            });
@@ -149,7 +146,9 @@ namespace FDiamondShop.API.Repository
 
                 }
 
-            }).GenerateImages();
+            }).GeneratePdf();
+
+            return output;
         }
 
     }
