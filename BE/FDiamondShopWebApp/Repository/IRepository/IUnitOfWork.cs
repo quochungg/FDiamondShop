@@ -18,12 +18,12 @@ namespace FDiamondShop.API.Repository.IRepository
         IPayPalRepository PayPalRepository { get; }        
         IOrderRepository OrderRepository { get; }
         IPaymentRepository PaymentRepository { get; }
-
         IExchangeRepository ExchangeRepository { get; }
         IDashboardRepository DashboardRepository { get; }
         IDeliveryRepository DeliveryRepository { get; }
         IDeliveryDetailRepository DeliveryDetailRepository { get; }
         IWarrantyRepository WarrantyRepository { get; }
+
         Task<IDbContextTransaction> BeginTransactionAsync();
         Task SaveAsync();
     }

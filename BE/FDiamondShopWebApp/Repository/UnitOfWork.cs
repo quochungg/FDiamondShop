@@ -28,6 +28,7 @@ namespace FDiamondShop.API.Repository
         public IDeliveryRepository DeliveryRepository { get; }
         public IDeliveryDetailRepository DeliveryDetailRepository { get; }
         public IWarrantyRepository WarrantyRepository { get; }
+
         public UnitOfWork(FDiamondContext db, 
             IProductRepository productRepository, 
             IProductImageRepository productImageRepository, 
@@ -48,6 +49,7 @@ namespace FDiamondShop.API.Repository
             IDeliveryRepository deliveryRepository,           
             IDeliveryDetailRepository deliveryDetailRepository,
             IWarrantyRepository warrantyRepository
+
             )
         {
             _db = db;
@@ -70,6 +72,7 @@ namespace FDiamondShop.API.Repository
             DeliveryRepository = deliveryRepository;
             DeliveryDetailRepository = deliveryDetailRepository;
             WarrantyRepository = warrantyRepository;
+
 
         }
         public async Task SaveAsync()

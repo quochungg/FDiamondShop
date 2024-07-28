@@ -85,6 +85,10 @@ namespace FDiamondShop.API.Repository
             _db.Orders.Update(model);
             
         }
-        
+        public async Task UpdateDetail(DeliveryDetail obj)
+        {
+            _db.DeliveryDetails.Update(obj);
+        }
+
     }
 }

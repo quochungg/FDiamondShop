@@ -187,7 +187,7 @@ namespace FDiamondShop.API.Controllers
                     {
                         deliveryDetail.LastName = user.LastName;
                     }                  
-                    await _unitOfWork.DeliveryDetailRepository.CreateAsync(deliveryDetail);
+                    await _unitOfWork.DeliveryRepository.CreateAsync(deliveryDetail);
 
                     order.DeliveryDetailId = deliveryDetail.DeliveryDetailId;
                     order.DeliveryDetail = deliveryDetail;
@@ -530,7 +530,7 @@ namespace FDiamondShop.API.Controllers
 
 
                 var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
-                if (!order.Status.Equals("Ordered"))
+                if (!order.Status.Equals("Ordered") && order.OrderManagementStaffId != null)
                 {
                     _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED" };
                     return BadRequest(_response);
