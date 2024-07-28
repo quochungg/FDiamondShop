@@ -210,7 +210,32 @@ export default function AssignToDelivery() {
                           {deliveryDetail.firstName} {deliveryDetail.lastName}
                         </TableCell>
                       </TableRow>
+                      {orderData.status === 'Idle' && (
+                        <TableRow>
+                          <TableCell component="th">Fail Reason</TableCell>
+                          <TableCell>
+                            {deliveryDetail.failReason ||
+                              'The customer is not present at the delivery address'}
+                          </TableCell>
+                        </TableRow>
+                      )}
                       {orderData.status === 'Preparing' && (
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                          <InputLabel>Assign to Delivery Staff</InputLabel>
+                          <Select
+                            value={selectedStaff}
+                            label="Assign to Delivery Staff"
+                            onChange={(e) => setSelectedStaff(e.target.value)}
+                          >
+                            {staffList.map((staff) => (
+                              <MenuItem key={staff.userId} value={staff.userId}>
+                                {staff.firstName} {staff.lastName}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                      {orderData.status === 'Idle' && (
                         <FormControl fullWidth sx={{ mt: 2 }}>
                           <InputLabel>Assign to Delivery Staff</InputLabel>
                           <Select
@@ -235,6 +260,16 @@ export default function AssignToDelivery() {
                         Back
                       </Button>
                       {orderData.status === 'Preparing' && (
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={handleAssignClick}
+                          style={{ marginTop: '20px' }}
+                        >
+                          Assign
+                        </Button>
+                      )}
+                      {orderData.status === 'Idle' && (
                         <Button
                           variant="contained"
                           color="success"

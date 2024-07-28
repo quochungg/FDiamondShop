@@ -14,9 +14,11 @@ const statusColors = {
   Pending: 'warning',
   Ordered: 'primary',
   Completed: 'success',
+  Delivered: 'success',
   Cancelled: 'error',
   Preparing: 'warning',
   Shipping: 'info',
+  Idle: 'secondary',
 };
 
 export default function OrderTableRow({ orderId, orderDate, totalPrice, paymentMethod, status }) {
