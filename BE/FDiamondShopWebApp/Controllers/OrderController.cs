@@ -187,7 +187,7 @@ namespace FDiamondShop.API.Controllers
                     {
                         deliveryDetail.LastName = user.LastName;
                     }                  
-                    await _unitOfWork.DeliveryDetailRepository.CreateAsync(deliveryDetail);
+                    await _unitOfWork.DeliveryRepository.CreateAsync(deliveryDetail);
 
                     order.DeliveryDetailId = deliveryDetail.DeliveryDetailId;
                     order.DeliveryDetail = deliveryDetail;

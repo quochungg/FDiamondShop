@@ -9,5 +9,7 @@ namespace FDiamondShop.API.Repository.IRepository
         public Task<List<UserDTO>> GetOrdermanagementStaff();
         public DeliveryDetail GetDeliveryDetailbyId(int? id);
         public Task UpdateOrderStatus(Order model);
+        public Task UpdateDetail(DeliveryDetail obj);
+
     }
 }

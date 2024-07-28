@@ -135,8 +135,8 @@ namespace FDiamondShop.API.Controllers
             order.Status = model.Status;
             if(model.Status == "Idle")
             {
-                deliveryDetail.FailReason = model.Reason;
-                await _unitOfWork.DeliveryDetailRepository.Update(deliveryDetail);
+                deliveryDetail.FailReason = model.FailReason;
+                await _unitOfWork.DeliveryRepository.UpdateDetail(deliveryDetail);
             }
             await _unitOfWork.DeliveryRepository.UpdateOrderStatus(order);
             _response.IsSuccess = true;
