@@ -75,7 +75,7 @@ export default function DeliveryOrderView() {
         // console.log('API Response:', response.data); // Log phản hồi để kiểm tra cấu trúc
         console.log(account.UserID);
         if (response.data && Array.isArray(response.data.result)) {
-          const Orders = response.data.result.filter((od) => od.status !== 'Failed');
+          const Orders = response.data.result.filter((od) => od.status !== 'Idle');
           setData(Orders);
         } else {
           console.error('Unexpected API response format:', response.data);
