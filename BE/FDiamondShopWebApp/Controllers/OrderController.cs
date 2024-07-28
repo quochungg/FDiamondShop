@@ -526,7 +526,7 @@ namespace FDiamondShop.API.Controllers
 
 
                 var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
-                if (!order.Status.Equals("Ordered"))
+                if (!order.Status.Equals("Ordered") && order.OrderManagementStaffId != null)
                 {
                     _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED" };
                     return BadRequest(_response);
