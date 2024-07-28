@@ -1,8 +1,12 @@
-﻿namespace FDiamondShop.API.Models.DTO
+﻿using RestSharp.Authenticators.OAuth;
+
+namespace FDiamondShop.API.Models.DTO
 {
     public class OrderStatusDTO
     {
         public int OrderId { get; set; }
         public string Status { get; set; }
+
+        public string? Reason { get; set; }
     }
 }
