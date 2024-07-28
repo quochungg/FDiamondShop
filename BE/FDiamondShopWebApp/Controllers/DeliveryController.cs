@@ -121,6 +121,7 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> UpdateOrderStatus([FromBody] OrderStatusDTO model) 
         {
             var order=_unitOfWork.OrderRepository.GetOrderbyId(model.OrderId);
+            var deliveryDetail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
             if (order == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -129,6 +130,11 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
             order.Status = model.Status;
+            if(model.Status == "Idle")
+            {
+                deliveryDetail.FailReason = model.Reason;
+                await _unitOfWork.DeliveryDetailRepository.Update(deliveryDetail);
+            }
             await _unitOfWork.DeliveryRepository.UpdateOrderStatus(order);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
