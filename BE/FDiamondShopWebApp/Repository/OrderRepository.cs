@@ -110,7 +110,8 @@ namespace FDiamondShop.API.Repository
         {
             var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
             var cartlines = await _db.CartLines.Where(x => x.OrderId == orderId).ToListAsync();
-
+            var warranty = await _db.Warranties.FirstOrDefaultAsync(x => x.OrderId == orderId);
+            _db.Warranties.Remove(warranty);
             foreach (var cartline in cartlines)
             {
                 foreach (var cartlineItem in cartline.CartLineItems)

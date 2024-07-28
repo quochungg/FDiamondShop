@@ -258,7 +258,7 @@ namespace FDiamondShop.API.Controllers
                             paymentInfo.Amount = orderDTO.TotalPrice;
                             paymentInfo.OrderID = order.OrderId.ToString();
 
-                            var paymentApiUrlPaypal = new Uri(new Uri("https://localhost:7074"), "/api/checkout/PayPal");
+                            var paymentApiUrlPaypal = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/PayPal");
                             var paymentResponsePaypal = await _httpClient.PostAsJsonAsync(paymentApiUrlPaypal, paymentInfo);
 
                             if (paymentResponsePaypal.IsSuccessStatusCode)
@@ -267,6 +267,10 @@ namespace FDiamondShop.API.Controllers
                                 if (paymentResultPaypal.IsSuccess)
                                 {
                                     _response.Result = new { PaymentUrl = paymentResultPaypal.Result.ToString() };
+                                    
+                                    order.PaymentURL = paymentResultPaypal.Result.ToString();
+                                    await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
+                                    await _unitOfWork.SaveAsync();
                                 }
                                 else
                                 {
@@ -583,7 +587,7 @@ namespace FDiamondShop.API.Controllers
                 _response.ErrorMessages = new List<string> { "Warranty not found" };
                 return NotFound(_response);
             }
-            return File(warranty.WarrantyPDF, "application/pdf", $"warranty{orderId}");
+            return File(warranty.WarrantyPDF, "application/pdf", $"warranty{orderId}.pdf");
         }
     }
 }
