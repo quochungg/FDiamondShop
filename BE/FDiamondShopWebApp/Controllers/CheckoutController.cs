@@ -7,12 +7,7 @@ using FDiamondShop.API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Utilities;
-using PayPal.v1.Webhooks;
 using System.Net;
-using System.Net.Http.Headers;
 
 namespace FDiamondShop.API.Controllers
 {
@@ -239,7 +234,11 @@ namespace FDiamondShop.API.Controllers
 
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-        
+            await _unitOfWork.WarrantyRepository.GenerateWarrantyByOrderId(order.OrderId);
+
+            order.Warranty = await _unitOfWork.WarrantyRepository.GetAsync(w => w.OrderId == order.OrderId);
+
+            await _unitOfWork.WarrantyRepository.GenerateWarrantyPDF(order.OrderId);
           
             await _unitOfWork.SaveAsync();
 

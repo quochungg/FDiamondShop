@@ -200,7 +200,7 @@ namespace FDiamondShop.API.Controllers
                             decimal amountVNPay = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
                             paymentInfo.Amount = (int)amountVNPay;
 
-                            var paymentApiUrlVNPay = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
+                            var paymentApiUrlVNPay = new Uri(new Uri("https://localhost:7074"), "/api/checkout/vnpay");
                             var paymentResponseVNPay = await _httpClient.PostAsJsonAsync(paymentApiUrlVNPay, paymentInfo);
                             if (paymentResponseVNPay.IsSuccessStatusCode)
                             {
@@ -267,6 +267,10 @@ namespace FDiamondShop.API.Controllers
                                 if (paymentResultPaypal.IsSuccess)
                                 {
                                     _response.Result = new { PaymentUrl = paymentResultPaypal.Result.ToString() };
+                                    
+                                    order.PaymentURL = paymentResultPaypal.Result.ToString();
+                                    await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
+                                    await _unitOfWork.SaveAsync();
                                 }
                                 else
                                 {
@@ -568,6 +572,22 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
 
 
+        }
+
+        [HttpGet("GetWarranty")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetWarranty(int orderId)
+        {
+            var warranty = await _unitOfWork.WarrantyRepository.GetAsync(w => w.OrderId == orderId, tracked: false);
+            if (warranty == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Warranty not found" };
+                return NotFound(_response);
+            }
+            return File(warranty.WarrantyPDF, "application/pdf", $"warranty{orderId}.pdf");
         }
     }
 }
