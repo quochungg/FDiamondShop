@@ -293,7 +293,7 @@ const EditProductPage = () => {
                   )}
                 </FormControl>
               </Grid>
-              {product.categoryId !== 3 && (
+              {product.categoryId !== 1 && product.categoryId !== 3 && (
                 <Grid item xs={6}>
                   <FormControl fullWidth required>
                     <InputLabel>Quantity</InputLabel>

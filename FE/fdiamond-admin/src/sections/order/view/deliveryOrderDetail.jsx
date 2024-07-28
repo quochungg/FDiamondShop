@@ -9,23 +9,25 @@ import {
   Stack,
   Table,
   Paper,
-  Select,
+  Dialog,
   Button,
-  MenuItem,
   TableRow,
   TableCell,
   Container,
+  TextField,
   TableBody,
   Typography,
-  InputLabel,
-  FormControl,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
 } from '@mui/material';
 
 export default function DeliveryOrderDetail() {
   const { orderId } = useParams();
   const [orderData, setOrderData] = useState(null);
-  const [staffList, setStaffList] = useState([]);
-  const [selectedStaff, setSelectedStaff] = useState('');
+  const [isIdleDialogOpen, setIsIdleDialogOpen] = useState(false);
+  const [idleFailReason, setIdleFailReason] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,20 +43,7 @@ export default function DeliveryOrderDetail() {
       }
     };
 
-    const fetchStaffList = async () => {
-      try {
-        const response = await axios.get(
-          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetAllDeliveryStaff`
-        );
-        console.log(response);
-        setStaffList(response.data.result);
-      } catch (error) {
-        console.error('Error fetching staff list:', error);
-      }
-    };
-
     fetchOrderDetails();
-    fetchStaffList();
   }, [orderId]);
 
   if (!orderData) {
@@ -65,22 +54,25 @@ export default function DeliveryOrderDetail() {
     navigate('/order-delivery');
   };
 
-  const handleAssignClick = async () => {
+  const handleStatusChange = async (status, failReason) => {
     try {
-      const response = await axios.post(
-        `https://fdiamond-api.azurewebsites.net/api/Delivery/AssignToDeliveryStaff`,
+      const response = await axios.put(
+        `https://fdiamond-api.azurewebsites.net/api/Delivery/UpdateOrderStatus`,
         {
           orderId,
-          userId: selectedStaff,
+          status,
+          failReason: status === 'Idle' ? failReason : null,
         }
       );
+      console.log(response);
+      console.log(orderId, status, failReason);
 
-      if (response.status === 200 || response.status === 201) {
+      if (response.status === 200) {
         setOrderData((prevData) => ({
           ...prevData,
-          status: 'Assigned',
+          status,
         }));
-        navigate('/order-prepare', { state: { showSnackbar: true } });
+        navigate('/order-delivery', { state: { showSnackbar: true } });
       } else {
         // setOpenSnackbar(true);
       }
@@ -88,6 +80,20 @@ export default function DeliveryOrderDetail() {
       console.error('Error assigning order:', error);
       // setOpenSnackbar(true);
     }
+  };
+
+  const handleOpenIdleDialog = () => {
+    setIsIdleDialogOpen(true);
+  };
+
+  const handleCloseIdleDialog = () => {
+    setIsIdleDialogOpen(false);
+    setIdleFailReason('');
+  };
+
+  const handleConfirmIdle = () => {
+    handleStatusChange('Idle', idleFailReason);
+    handleCloseIdleDialog();
   };
 
   const { paymentInfo, deliveryDetail } = orderData;
@@ -210,22 +216,6 @@ export default function DeliveryOrderDetail() {
                           {deliveryDetail.firstName} {deliveryDetail.lastName}
                         </TableCell>
                       </TableRow>
-                      {orderData.status === 'Shipping' && (
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                          <InputLabel>Assign to Delivery Staff</InputLabel>
-                          <Select
-                            value={selectedStaff}
-                            label="Assign to Delivery Staff"
-                            onChange={(e) => setSelectedStaff(e.target.value)}
-                          >
-                            {staffList.map((staff) => (
-                              <MenuItem key={staff.userId} value={staff.userId}>
-                                {staff.firstName} {staff.lastName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      )}
                       <Button
                         variant="outlined"
                         color="success"
@@ -235,14 +225,24 @@ export default function DeliveryOrderDetail() {
                         Back
                       </Button>
                       {orderData.status === 'Shipping' && (
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={handleAssignClick}
-                          style={{ marginTop: '20px' }}
-                        >
-                          Assign
-                        </Button>
+                        <>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            onClick={handleOpenIdleDialog}
+                            style={{ marginTop: '20px', marginRight: '20px' }}
+                          >
+                            Idle
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={() => handleStatusChange('Delivered')}
+                            style={{ marginTop: '20px' }}
+                          >
+                            Delivered
+                          </Button>
+                        </>
                       )}
                     </>
                   ) : (
@@ -256,6 +256,28 @@ export default function DeliveryOrderDetail() {
           </Paper>
         </Grid>
       </Grid>
+      <Dialog open={isIdleDialogOpen} onClose={handleCloseIdleDialog}>
+        <DialogTitle>Enter Reason for Idle Status</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason for setting this order to idle status.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="reason"
+            label="Reason"
+            fullWidth
+            variant="standard"
+            value={idleFailReason}
+            onChange={(e) => setIdleFailReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseIdleDialog}>Cancel</Button>
+          <Button onClick={handleConfirmIdle}>Confirm</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
