@@ -239,7 +239,11 @@ namespace FDiamondShop.API.Controllers
 
             await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
 
-        
+            await _unitOfWork.WarrantyRepository.GenerateWarrantyByOrderId(order.OrderId);
+
+            order.Warranty = await _unitOfWork.WarrantyRepository.GetAsync(w => w.OrderId == order.OrderId);
+
+            _unitOfWork.WarrantyRepository.GenerateWarrantyPDF(order.Warranty);
           
             await _unitOfWork.SaveAsync();
 
