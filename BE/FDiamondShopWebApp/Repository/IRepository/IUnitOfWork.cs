@@ -21,7 +21,7 @@ namespace FDiamondShop.API.Repository.IRepository
         IExchangeRepository ExchangeRepository { get; }
         IDashboardRepository DashboardRepository { get; }
         IDeliveryRepository DeliveryRepository { get; }
-        IDeliveryDetailRepository DeliveryDetailRepository { get; }
+        //IDeliveryDetailRepository DeliveryDetailRepository { get; }
         IWarrantyRepository WarrantyRepository { get; }
 
         Task<IDbContextTransaction> BeginTransactionAsync();
