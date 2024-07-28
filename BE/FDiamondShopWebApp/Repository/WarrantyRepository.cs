@@ -92,7 +92,7 @@ namespace FDiamondShop.API.Repository
                            column.Item().Text(text =>
                            {
                                text.Span("Warranty Date: ").FontSize(16).FontFamily(Fonts.TimesNewRoman);
-                               text.Span($"{warranty.OrderDate.ToString("dd/mm/yyyy")} - {warranty.ExpiryDate?.ToString("dd/mm/yyyy")}").FontSize(16).ExtraBold();
+                               text.Span($"{warranty.OrderDate.ToString("dd/MM/yyyy")} - {warranty.ExpiryDate?.ToString("dd/MM/yyyy")}").FontSize(16).ExtraBold();
                            });
                            column.Item().PaddingVertical(10).Row(row =>
                            {
