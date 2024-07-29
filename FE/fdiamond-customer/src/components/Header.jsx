@@ -68,7 +68,7 @@ const Header = () => {
                     </Link>
 
                     <Link
-                        to='/no-content'
+                        to='/store-location'
                         className="flex items-center gap-2"
                     >
                         <span><SlLocationPin size={iconSize} /></span>
@@ -125,6 +125,8 @@ const Header = () => {
 
                                     <Link onClick={handleSignOut} className="text-[14px] block pl-6 py-4 hover:font-[800] border-t-[1px] font-[700]">Sign Out</Link>
                                 </div>
+
+
                             </div>
                         )
                         : (
@@ -153,6 +155,7 @@ const Header = () => {
                 </div>
 
             </div>
+
 
             {/* 
             <nav className="bg-gray-800">

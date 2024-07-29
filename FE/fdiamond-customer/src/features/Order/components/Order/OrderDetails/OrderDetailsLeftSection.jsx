@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom';
 import { OrderStatusStepper } from 'src/features/Order/components/index';
 
-const OrderDetailsLeftSection = ({ orderDetails }) => {
+const OrderDetailsLeftSection = ({ orderDetails, onlineWarrantyLink }) => {
     const userName = JSON.parse(localStorage.getItem('user')).userName;
 
     const dateString = orderDetails.orderDate;
@@ -81,6 +82,21 @@ const OrderDetailsLeftSection = ({ orderDetails }) => {
                                 <OrderStatusStepper status={orderDetails.status} />
                             </div>
                         )
+                    }
+
+
+                    {/* Online Warranty Link */}
+                    {onlineWarrantyLink &&
+                        <div className=''>
+                            <Link to={onlineWarrantyLink}
+                            >
+                                <p className='mt-12 inline-block font-gantari text-white font-[550] text-lg px-8 py-4 
+                                bg-[#000035] hover:bg-[#26265c] transition-colors duration-200 rounded-md '
+                                >
+                                    Download Product Warranty
+                                </p>
+                            </Link>
+                        </div>
                     }
 
                 </div>

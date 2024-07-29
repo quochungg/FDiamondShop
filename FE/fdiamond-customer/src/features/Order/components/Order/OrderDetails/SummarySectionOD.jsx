@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { reorder } from 'src/features/Order/api/APIs'
 
 
-const SummarySectionOD = ({ orderDetails }) => {
+const SummarySectionOD = ({ orderDetails, pendingPayPalLink }) => {
     const navigate = useNavigate();
 
     const discountCode = orderDetails.discountCode;
@@ -90,7 +90,23 @@ const SummarySectionOD = ({ orderDetails }) => {
                     </button>
                 </div>
             )
+            }
 
+
+            {orderDetails.status === 'Pending' && (
+                <div className='w-full mt-6'>
+                    <Link
+                        to={pendingPayPalLink}
+                        className='w-full'
+                    >
+                        <p className='uppercase text-center text-lg text-white font-[600] tracking-wide 
+                            rounded-md py-4 bg-blue-950 hover:bg-[#34427b] transition-colors duration-200'
+                        >
+                            Continue Your Payment
+                        </p>
+                    </Link>
+                </div>
+            )
             }
         </>
     )

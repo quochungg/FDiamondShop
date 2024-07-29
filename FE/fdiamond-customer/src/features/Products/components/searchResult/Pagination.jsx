@@ -7,10 +7,9 @@ const Pagination = ({ totalPage, handlePageClick, currentPage }) => {
 
     const handlePageChange = (e) => {
         const newPage = e.selected + 1;
-        console.log('currentPage: ', e.selected + 1)
+
         handlePageClick({
-            name: 'pageNumber',
-            value: newPage
+            pageNumber: newPage
         })
     }
 

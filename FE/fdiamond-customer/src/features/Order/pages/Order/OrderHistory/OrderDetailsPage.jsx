@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { getAllOrdersByUserId } from 'src/features/Order/api/APIs'
+import { getAllOrdersByUserId, getPayPalLinkForPending, getOnlineWarranty } from 'src/features/Order/api/APIs'
 import { SlArrowLeft } from "react-icons/sl";
 import { OrderDetailsLeftSection, OrderDetailsRightSection } from 'src/features/Order/components/index';
-import { LoadingSpinner } from 'src/components/index';
 import AppLayout from "src/layout/AppLayout";
 
 const OrderDetailsPage = () => {
@@ -12,6 +11,10 @@ const OrderDetailsPage = () => {
     const orderId = param.orderId;
 
     const [orderDetails, setOrderDetails] = useState(null);
+
+    const [pendingPayPalLink, setPendingPayPalLink] = useState(null);
+
+    const [onlineWarrantyLink, setOnlineWarrantyLink] = useState(null);
 
 
     //Check if Order ID belongs to the user. If it does, set the order details.
@@ -35,6 +38,20 @@ const OrderDetailsPage = () => {
         }
     }
 
+
+    const getPendingPaypalLink = async () => {
+        const response = await getPayPalLinkForPending(orderDetails.orderId);
+        if (response.data.result) {
+            setPendingPayPalLink(response.data.result);
+        }
+    }
+
+
+    const getOnlineWarrantyLink = async () => {
+        const response = await getOnlineWarranty(orderDetails.orderId);
+        setOnlineWarrantyLink(response.config.url);
+    }
+
     useEffect(() => {
         // Order ID is not a valid number
         if (isNaN(Number.parseInt(orderId))) {
@@ -46,6 +63,20 @@ const OrderDetailsPage = () => {
         checkOrderBelongsToUser();
 
     }, [orderId])
+
+
+    useEffect(() => {
+        if (orderDetails) {
+            const orderStatuses = ['Ordered', 'Preparing', 'Shipping', 'Idle', 'Delivered'];
+            if (orderStatuses.includes(orderDetails.status)) {
+                getOnlineWarrantyLink();
+            }
+        }
+
+        if (orderDetails && orderDetails.status === 'Pending') {
+            getPendingPaypalLink();
+        }
+    }, [orderDetails])
 
 
 
@@ -82,12 +113,14 @@ const OrderDetailsPage = () => {
                                     {/* CHECKOUT LEFT SECTION */}
                                     <OrderDetailsLeftSection
                                         orderDetails={orderDetails}
+                                        onlineWarrantyLink={onlineWarrantyLink}
                                     />
 
 
                                     {/* CHECKOUT RIGHT SECTION */}
                                     <OrderDetailsRightSection
                                         orderDetails={orderDetails}
+                                        pendingPayPalLink={pendingPayPalLink}
                                     />
 
                                 </div>

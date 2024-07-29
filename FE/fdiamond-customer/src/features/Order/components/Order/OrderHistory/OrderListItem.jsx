@@ -35,8 +35,6 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
 
     const has12HoursPassed = differenceInMilliseconds >= 12 * 60 * 60 * 1000;
 
-    console.log(orderItem.status);
-
     const statusColor = ['Ordered', 'Preparing', 'Shipping', 'Idle', 'Pending'].includes(orderItem.status) ? 'text-emerald-600' :
         orderItem.status === 'Delivered' ? 'text-yellow-600' : 'text-red-700';
 

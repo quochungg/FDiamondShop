@@ -1,6 +1,10 @@
 // Search Result Page
 export { default as CategoryHero } from './searchResult/CategoryHero'
-export { default as Filter } from './searchResult/Filter'
+export { default as NoProductsFoundByFilter } from './searchResult/NoProductsFoundByFilter'
+export { default as DiamondFilter } from './searchResult/DiamondFilter/DiamondFilter'
+export { default as ClarityMenu } from './searchResult/DiamondFilter/ClarityMenu'
+export { default as CutMenu } from './searchResult/DiamondFilter/CutMenu'
+export { default as ColorMenu } from './searchResult/DiamondFilter/ColorMenu'
 export { default as Pagination } from './searchResult/Pagination'
 export { default as ProductList } from './searchResult/ProductList'
 

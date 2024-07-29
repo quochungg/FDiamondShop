@@ -396,6 +396,56 @@ export const reorder = async (orderId) => {
 }
 
 
+// Get paypal link if order is in pending status
+export const getPayPalLinkForPending = async (orderId) => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    let API_url = API_root + `/Order/GetPaypalLink?orderId=${orderId}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.get(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
+    }
+    return response;
+}
+
+
+// Get online warranty link
+export const getOnlineWarranty = async (orderId) => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    let API_url = API_root + `/Order/GetWarranty?orderId=${orderId}`;
+
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`
+    }
+
+    let response;
+
+    try {
+        response = await axios.get(API_url, { headers: headers })
+    } catch (error) {
+        if (error.response) {
+            response = error.response;
+        } else {
+            console.error('There was an error', error);
+        }
+    }
+    return response;
+}
+
+
 // =======================================================================
 //                                  DISCOUNT
 // =======================================================================

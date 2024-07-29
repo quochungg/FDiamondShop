@@ -18,6 +18,7 @@ export default {
             boxShadow: {
                 'cartline': 'rgba(27, 27, 27, 0.17) 0px 2px 5px',
                 'summary': 'rgba(51, 59, 69, 0.15) 0px 0px 40px',
+                'filter': 'rgba(51, 59, 69, 0.15) 0px 0px 15px',
             }
 
         },

@@ -20,12 +20,13 @@ export const getCategory = async (category) => {
     return response;
 };
 
-export const getProducts = async (category, searchParams, subcategory) => {
+
+export const getProducts = async (category, searchParams) => {
     let response;
     const queryStr = searchParams.toString();
-    const URL_str = `${API_ROOT}/api/product/GetProductWithFilter?CategoryName=${category}&${queryStr}` + (subcategory ? `&subcategoryName=${subcategory}` : '');
+    // const URL_str = `${API_ROOT}/api/product/GetProductWithFilter?CategoryName=${category}&${queryStr}` + (subcategory ? `&subcategoryName=${subcategory}` : '');
+    const URL_str = `${API_ROOT}/api/product/GetProductWithFilter?CategoryName=${category}&${queryStr}`;
     const API_url = URL_str.replace(/ /g, '+');
-
 
     try {
         response = await axios.get(API_url);

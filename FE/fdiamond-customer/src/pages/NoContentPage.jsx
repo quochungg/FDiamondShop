@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import smile from 'src/assets/no-content-smile.svg'
+import smile from 'src/assets/no-content-sad-smile.svg'
 
 const NoContentPage = () => {
     const navigate = useNavigate();

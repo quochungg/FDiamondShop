@@ -9,6 +9,8 @@ function App() {
 
     //General pages
     const Home = React.lazy(() => import("src/pages/Home"));
+    const StoreLocation = React.lazy(() => import("src/pages/StoreLocation"));
+
 
     //Wrapper components
     const CategoryWrapper = React.lazy(() => import("src/features/Products/wrapper/CategoryWrapper"));
@@ -50,13 +52,14 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/product">
                             <Route index element={<Navigate to="/product/diamond" replace />} />
-                            <Route path=":category/:subcategory?" element={<CategoryWrapper />} />
+                            <Route path=":category" element={<CategoryWrapper />} />
                             <Route path="product-details/:productId" element={<ProductDetailsWrapper />} />
                         </Route>
                         <Route path="/search" element={<SearchBarPage />} />
                         <Route path='/promo-code' element={<DiscountListPage />} />
 
                         <Route path='no-content' element={<NoContentPage />} />
+                        <Route path='store-location' element={<StoreLocation />} />
                         <Route path='/no-products-found' element={<NoProductsFound />} />
                         <Route path='/product-not-available' element={<ProductNotAvailable />} />
                         <Route path='/order-not-found' element={<OrderNotFound />} />

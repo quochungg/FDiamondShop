@@ -8,7 +8,6 @@ const Home = () => {
         <>
             <AppLayout>
 
-
                 <Hero />
 
                 <ShopDiamondByShape />

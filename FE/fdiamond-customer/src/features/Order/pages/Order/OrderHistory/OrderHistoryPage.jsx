@@ -55,7 +55,6 @@ const OrderHistoryPage = () => {
                 setOrderArr(ordersList)
             }
         }
-        console.log(response)
     }
 
 

@@ -3,7 +3,7 @@ import { PiHeadphones } from "react-icons/pi";
 import { TfiEmail } from "react-icons/tfi";
 import { ItemListOD, SummarySectionOD } from 'src/features/Order/components/index';
 
-const OrderDetailsRightSection = ({ orderDetails }) => {
+const OrderDetailsRightSection = ({ orderDetails, pendingPayPalLink }) => {
 
     const numberOfItems = Object.keys(orderDetails.cartLines).length;
 
@@ -24,6 +24,7 @@ const OrderDetailsRightSection = ({ orderDetails }) => {
 
                     <SummarySectionOD
                         orderDetails={orderDetails}
+                        pendingPayPalLink={pendingPayPalLink}
                     />
 
 
