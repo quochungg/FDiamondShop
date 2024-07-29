@@ -37,19 +37,19 @@ export default function NewProductView() {
     subCategoryName: '',
     productName: '',
     basePrice: '',
-    quantity: '',
+
     description: '',
     isVisible: false,
     productImages: [],
     GIAImages: [],
-    Color: '', // Giá trị mặc định
-    clarity: '', // Giá trị mặc định
-    Cut: '', // Giá trị mặc định
-    CaratWeight: '', // Giá trị mặc định
-    Florescence: '', // Giá trị mặc định
-    Length: '', // Giá trị mặc định
-    Depth: '', // Giá trị mặc định
-    Width: '', // Giá tr
+    Color: '',
+    clarity: '',
+    Cut: '',
+    CaratWeight: '',
+    Florescence: '',
+    Length: '',
+    Depth: '',
+    Width: '',
     RingMetal: '',
     EarringMetal: '',
     NecklaceMetal: '',
@@ -174,10 +174,20 @@ export default function NewProductView() {
         value: formData[variant.key],
       }));
 
+      let quantity;
+      if (formData.category === 'ring') {
+        quantity = 10000;
+      } else if (formData.category === 'diamond') {
+        quantity = 1;
+      } else {
+        const { quantity: formQuantity } = formData;
+        quantity = formQuantity;
+      }
+
       const productData = {
         subCategoryName: formData.subCategoryName,
         productName: formData.productName,
-        quantity: formData.category === 'ring' ? 10000 : formData.quantity,
+        quantity,
         basePrice: formData.basePrice,
         description: formData.description,
         isVisible: formData.isVisible,
@@ -272,11 +282,12 @@ export default function NewProductView() {
                   <FormControl fullWidth required>
                     <InputLabel>Quantity</InputLabel>
                     <OutlinedInput
-                      value={formData.quantity}
+                      value={formData.category === 'diamond' ? 1 : formData.quantity}
                       onChange={handleInputChange}
                       label="Quantity"
                       name="quantity"
                       type="number"
+                      disabled={formData.category === 'diamond'}
                     />
                     {errors.quantity && (
                       <Typography variant="caption" color="error">
@@ -286,20 +297,7 @@ export default function NewProductView() {
                   </FormControl>
                 </Grid>
               )}
-              {/* {formData.category === 'ring' && (
-                <Grid item xs={6}>
-                  <FormControl fullWidth required>
-                    <InputLabel>Quantity</InputLabel>
-                    <OutlinedInput
-                      value={10000}
-                      disabled
-                      label="Quantity"
-                      name="quantity"
-                      type="number"
-                    />
-                  </FormControl>
-                </Grid>
-              )} */}
+
               {formData.category === 'diamond' && (
                 <DiamondForm formData={formData} handleInputChange={handleInputChange} />
               )}

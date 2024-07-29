@@ -85,8 +85,9 @@ namespace FDiamondShop.API.Repository
             }
             var payment = _db.Payments.FirstOrDefault(x => x.PaymentId == order.PaymentId);
             var paymentDTO = _mapper.Map<PaymentDTO>(payment);
+            var deliveryDetail = _db.DeliveryDetails.FirstOrDefault(x => x.DeliveryDetailId == order.DeliveryDetailId);
             var discountCode = _mapper.Map<DiscountCodeDTO>(order.DiscountCode);
-            var deliveryDetail = _mapper.Map<DeliveryDTO>(order.DeliveryDetail);
+            var deliveryDetailDTO = _mapper.Map<DeliveryDTO>(deliveryDetail);
             OrderDTO model = new OrderDTO()
             {
                 OrderId = order.OrderId,
@@ -99,7 +100,7 @@ namespace FDiamondShop.API.Repository
                 CartLines = cartlineDTOs,
                 DiscountCode = discountCode,
                 UpdateDate = order.UpdateDate,
-                DeliveryDetail = deliveryDetail
+                DeliveryDetail = deliveryDetailDTO
             };
 
 
@@ -110,7 +111,8 @@ namespace FDiamondShop.API.Repository
         {
             var order = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
             var cartlines = await _db.CartLines.Where(x => x.OrderId == orderId).ToListAsync();
-
+            var warranty = await _db.Warranties.FirstOrDefaultAsync(x => x.OrderId == orderId);
+            _db.Warranties.Remove(warranty);
             foreach (var cartline in cartlines)
             {
                 foreach (var cartlineItem in cartline.CartLineItems)

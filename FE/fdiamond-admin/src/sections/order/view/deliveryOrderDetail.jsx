@@ -9,34 +9,26 @@ import {
   Stack,
   Table,
   Paper,
-  Alert,
-  Select,
+  Dialog,
   Button,
-  MenuItem,
-  Snackbar,
   TableRow,
   TableCell,
   Container,
+  TextField,
   TableBody,
   Typography,
-  AlertTitle,
-  InputLabel,
-  FormControl,
-
-  //   TableContainer,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
 } from '@mui/material';
 
-export default function OrderDetailPage() {
+export default function DeliveryOrderDetail() {
   const { orderId } = useParams();
   const [orderData, setOrderData] = useState(null);
-  const [staffList, setStaffList] = useState([]);
-  const [selectedStaff, setSelectedStaff] = useState('');
+  const [isIdleDialogOpen, setIsIdleDialogOpen] = useState(false);
+  const [idleFailReason, setIdleFailReason] = useState('');
   const navigate = useNavigate();
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -51,20 +43,7 @@ export default function OrderDetailPage() {
       }
     };
 
-    const fetchStaffList = async () => {
-      try {
-        const response = await axios.get(
-          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetOrdermanagementStaff`
-        );
-        console.log(response);
-        setStaffList(response.data.result);
-      } catch (error) {
-        console.error('Error fetching staff list:', error);
-      }
-    };
-
     fetchOrderDetails();
-    fetchStaffList();
   }, [orderId]);
 
   if (!orderData) {
@@ -72,52 +51,59 @@ export default function OrderDetailPage() {
   }
 
   const handleBack = () => {
-    navigate('/order');
+    navigate('/order-delivery');
   };
-  const handleAssignClick = async (newStatus) => {
+
+  const handleStatusChange = async (status, failReason) => {
     try {
-      const response = await axios.post(
-        `https://fdiamond-api.azurewebsites.net/api/Order/AssignToOrderManagementStaff`,
+      const response = await axios.put(
+        `https://fdiamond-api.azurewebsites.net/api/Delivery/UpdateOrderStatus`,
         {
           orderId,
-          userId: selectedStaff,
+          status,
+          failReason: status === 'Idle' ? failReason : null,
         }
       );
+      console.log(response);
+      console.log(orderId, status, failReason);
 
-      if (response.status === 200 || response.status === 201) {
+      if (response.status === 200) {
         setOrderData((prevData) => ({
           ...prevData,
-          status: 'Assigned',
+          status,
         }));
-        navigate('/order', { state: { showSnackbar: true } });
+        navigate('/order-delivery', { state: { showSnackbar: true } });
       } else {
-        setOpenSnackbar(true);
+        // setOpenSnackbar(true);
       }
     } catch (error) {
       console.error('Error assigning order:', error);
-      setOpenSnackbar(true);
+      // setOpenSnackbar(true);
     }
+  };
+
+  const handleOpenIdleDialog = () => {
+    setIsIdleDialogOpen(true);
+  };
+
+  const handleCloseIdleDialog = () => {
+    setIsIdleDialogOpen(false);
+    setIdleFailReason('');
+  };
+
+  const handleConfirmIdle = () => {
+    handleStatusChange('Idle', idleFailReason);
+    handleCloseIdleDialog();
   };
 
   const { paymentInfo, deliveryDetail } = orderData;
   return (
     <Container>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          <AlertTitle>Error</AlertTitle>
-          Error
-        </Alert>
-      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Order Detail</Typography>
       </Stack>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6} lg={12}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={12} lg={12}>
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
@@ -127,7 +113,7 @@ export default function OrderDetailPage() {
                 <TableBody>
                   {orderData.cartLines.map((cartLine) =>
                     cartLine.cartLineItems.map((item) => (
-                      <TableRow key={item.productId}>
+                      <TableRow key={item.productId} colSpan={2}>
                         <TableCell align="center" variant="head">
                           <img
                             src={item.product.productImages[0].imageUrl}
@@ -146,7 +132,7 @@ export default function OrderDetailPage() {
                             #{item.product.productId}
                           </Typography>
                         </TableCell>
-                        <TableCell align="left" variant="head">
+                        <TableCell variant="head" align="left">
                           ${item.price}
                         </TableCell>
                       </TableRow>
@@ -161,7 +147,7 @@ export default function OrderDetailPage() {
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
-                Order Information
+                Order Infomation
               </Typography>
               <Table>
                 <TableBody>
@@ -228,34 +214,8 @@ export default function OrderDetailPage() {
                       {deliveryDetail.firstName} {deliveryDetail.lastName}
                     </TableCell>
                   </TableRow>
-                  {orderData.status === 'Idle' && (
-                    <TableRow>
-                      <TableCell component="th">Fail Reason</TableCell>
-                      <TableCell>
-                        {deliveryDetail.failReason ||
-                          'The customer is not present at the delivery address'}
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
-
-              {orderData.status === 'Ordered' && (
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                  <InputLabel>Assign to Staff</InputLabel>
-                  <Select
-                    value={selectedStaff}
-                    label="Assign to Staff"
-                    onChange={(e) => setSelectedStaff(e.target.value)}
-                  >
-                    {staffList.map((staff) => (
-                      <MenuItem key={staff.userId} value={staff.userId}>
-                        {staff.firstName} {staff.lastName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
               <Button
                 variant="outlined"
                 color="success"
@@ -264,20 +224,52 @@ export default function OrderDetailPage() {
               >
                 Back
               </Button>
-              {orderData.status === 'Ordered' && (
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleAssignClick}
-                  style={{ marginTop: '20px' }}
-                >
-                  Assign
-                </Button>
+              {orderData.status === 'Shipping' && (
+                <>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleOpenIdleDialog}
+                    style={{ marginTop: '20px', marginRight: '20px' }}
+                  >
+                    Idle
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleStatusChange('Delivered')}
+                    style={{ marginTop: '20px' }}
+                  >
+                    Delivered
+                  </Button>
+                </>
               )}
             </Box>
           </Paper>
         </Grid>
       </Grid>
+      <Dialog open={isIdleDialogOpen} onClose={handleCloseIdleDialog}>
+        <DialogTitle>Enter Reason for Idle Status</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason for setting this order to idle status.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="reason"
+            label="Reason"
+            fullWidth
+            variant="standard"
+            value={idleFailReason}
+            onChange={(e) => setIdleFailReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseIdleDialog}>Cancel</Button>
+          <Button onClick={handleConfirmIdle}>Confirm</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

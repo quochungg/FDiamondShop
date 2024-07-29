@@ -68,6 +68,8 @@ export default function LoginView() {
           navigate('/');
         } else if (role === 'deliverystaff') {
           navigate('/order-delivery');
+        } else if (role === 'ordermanagementstaff') {
+          navigate('/order-prepare');
         } else {
           setError('Unauthorized role');
         }

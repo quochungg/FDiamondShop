@@ -191,6 +191,17 @@ namespace FDiamondShop.API.Repository
             padding-top: 20px;
             color: #ff0000; /* You can style it as needed */
         }}
+        .download-button {{display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #000035;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }}
+        .download-button:hover {{background-color: #000035;
+        }}
     </style>
 </head>
 <body>
@@ -242,6 +253,7 @@ namespace FDiamondShop.API.Repository
         <div class='cancellation-policy'>
             <p><strong>Cancellation Policy:</strong> If you wish to cancel your order, please do so within 24 hours of placing the order. After this period, the store will not support order cancellations.</p>
         </div>
+        <a href='https://fdiamond-api.azurewebsites.net/api/Order/GetWarranty?orderId={orderDTO.OrderId}' class='download-button' style=""color: white;""  download=""warranty.pdf"">Download Warranty PDF</a>
     </div>
 </body>
 </html>";

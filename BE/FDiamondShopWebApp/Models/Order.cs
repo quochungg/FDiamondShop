@@ -38,5 +38,8 @@ namespace FDiamondShop.API.Models
 
         public ApplicationUser? OrderManagementStaff { get; set; }
 
+        public Warranty Warranty { get; set; }
+        public string PaymentURL { get; set; }
+
     }
 }

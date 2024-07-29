@@ -72,20 +72,23 @@ namespace FDiamondShop.API.Controllers
             {
                 var deliverystaff = _userManager.Users.FirstOrDefault(us => us.Id == createDTO.UserId);
                 var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
-                if (!order.Status.Equals("Preparing"))
+                if (order.Status.Equals("Preparing") || order.Status.Equals("Idle"))
+                {
+                    var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
+                    detail.UserId = deliverystaff.Id;
+                    order.Status = "Shipping";
+                    order.UpdateDate = DateTime.Now;
+                    await _unitOfWork.SaveAsync();
+                    _response.IsSuccess = true;
+                    _response.StatusCode = HttpStatusCode.OK;
+                    return Ok(_response);
+                }
+                else
                 {
                     _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED AND ORDER THAT NOT PREPARED" };
                     return BadRequest(_response);
-
                 }
-                var detail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
-                detail.UserId = deliverystaff.Id;
-                order.Status = "Shipping";
-                order.UpdateDate = DateTime.Now;
-                await _unitOfWork.SaveAsync();
-                _response.IsSuccess = true;
-                _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                
             }
             catch (Exception ex)
             {
@@ -121,6 +124,7 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> UpdateOrderStatus([FromBody] OrderStatusDTO model) 
         {
             var order=_unitOfWork.OrderRepository.GetOrderbyId(model.OrderId);
+            var deliveryDetail = _unitOfWork.DeliveryRepository.GetDeliveryDetailbyId(order.DeliveryDetailId);
             if (order == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -129,6 +133,11 @@ namespace FDiamondShop.API.Controllers
                 return BadRequest(_response);
             }
             order.Status = model.Status;
+            if(model.Status == "Idle")
+            {
+                deliveryDetail.FailReason = model.FailReason;
+                await _unitOfWork.DeliveryRepository.UpdateDetail(deliveryDetail);
+            }
             await _unitOfWork.DeliveryRepository.UpdateOrderStatus(order);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;

@@ -381,7 +381,7 @@ export default function AccountProfile() {
                   <Button
                     variant="outlined"
                     color="primary"
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('-1')}
                     sx={{ mr: 2 }}
                   >
                     Back

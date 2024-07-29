@@ -9,34 +9,24 @@ import {
   Stack,
   Table,
   Paper,
-  Alert,
   Select,
   Button,
   MenuItem,
-  Snackbar,
   TableRow,
   TableCell,
   Container,
   TableBody,
   Typography,
-  AlertTitle,
   InputLabel,
   FormControl,
-
-  //   TableContainer,
 } from '@mui/material';
 
-export default function OrderDetailPage() {
+export default function AssignToDelivery() {
   const { orderId } = useParams();
   const [orderData, setOrderData] = useState(null);
   const [staffList, setStaffList] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState('');
   const navigate = useNavigate();
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -54,7 +44,7 @@ export default function OrderDetailPage() {
     const fetchStaffList = async () => {
       try {
         const response = await axios.get(
-          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetOrdermanagementStaff`
+          `https://fdiamond-api.azurewebsites.net/api/Delivery/GetAllDeliveryStaff`
         );
         console.log(response);
         setStaffList(response.data.result);
@@ -72,12 +62,13 @@ export default function OrderDetailPage() {
   }
 
   const handleBack = () => {
-    navigate('/order');
+    navigate('/order-prepare');
   };
-  const handleAssignClick = async (newStatus) => {
+
+  const handleAssignClick = async () => {
     try {
       const response = await axios.post(
-        `https://fdiamond-api.azurewebsites.net/api/Order/AssignToOrderManagementStaff`,
+        `https://fdiamond-api.azurewebsites.net/api/Delivery/AssignToDeliveryStaff`,
         {
           orderId,
           userId: selectedStaff,
@@ -89,35 +80,24 @@ export default function OrderDetailPage() {
           ...prevData,
           status: 'Assigned',
         }));
-        navigate('/order', { state: { showSnackbar: true } });
+        navigate('/order-prepare', { state: { showSnackbar: true } });
       } else {
-        setOpenSnackbar(true);
+        // setOpenSnackbar(true);
       }
     } catch (error) {
       console.error('Error assigning order:', error);
-      setOpenSnackbar(true);
+      // setOpenSnackbar(true);
     }
   };
 
   const { paymentInfo, deliveryDetail } = orderData;
   return (
     <Container>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          <AlertTitle>Error</AlertTitle>
-          Error
-        </Alert>
-      </Snackbar>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Order Detail</Typography>
       </Stack>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6} lg={12}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={12} lg={12}>
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
@@ -127,7 +107,7 @@ export default function OrderDetailPage() {
                 <TableBody>
                   {orderData.cartLines.map((cartLine) =>
                     cartLine.cartLineItems.map((item) => (
-                      <TableRow key={item.productId}>
+                      <TableRow key={item.productId} colSpan={2}>
                         <TableCell align="center" variant="head">
                           <img
                             src={item.product.productImages[0].imageUrl}
@@ -146,7 +126,7 @@ export default function OrderDetailPage() {
                             #{item.product.productId}
                           </Typography>
                         </TableCell>
-                        <TableCell align="left" variant="head">
+                        <TableCell variant="head" align="left">
                           ${item.price}
                         </TableCell>
                       </TableRow>
@@ -161,7 +141,7 @@ export default function OrderDetailPage() {
           <Paper>
             <Box p={2}>
               <Typography variant="h5" gutterBottom>
-                Order Information
+                Order Infomation
               </Typography>
               <Table>
                 <TableBody>
@@ -239,13 +219,28 @@ export default function OrderDetailPage() {
                   )}
                 </TableBody>
               </Table>
-
-              {orderData.status === 'Ordered' && (
+              {orderData.status === 'Preparing' && (
                 <FormControl fullWidth sx={{ mt: 2 }}>
-                  <InputLabel>Assign to Staff</InputLabel>
+                  <InputLabel>Assign to Delivery Staff</InputLabel>
                   <Select
                     value={selectedStaff}
-                    label="Assign to Staff"
+                    label="Assign to Delivery Staff"
+                    onChange={(e) => setSelectedStaff(e.target.value)}
+                  >
+                    {staffList.map((staff) => (
+                      <MenuItem key={staff.userId} value={staff.userId}>
+                        {staff.firstName} {staff.lastName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              {orderData.status === 'Idle' && (
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                  <InputLabel>Assign to Delivery Staff</InputLabel>
+                  <Select
+                    value={selectedStaff}
+                    label="Assign to Delivery Staff"
                     onChange={(e) => setSelectedStaff(e.target.value)}
                   >
                     {staffList.map((staff) => (
@@ -264,7 +259,17 @@ export default function OrderDetailPage() {
               >
                 Back
               </Button>
-              {orderData.status === 'Ordered' && (
+              {orderData.status === 'Preparing' && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleAssignClick}
+                  style={{ marginTop: '20px' }}
+                >
+                  Assign
+                </Button>
+              )}
+              {orderData.status === 'Idle' && (
                 <Button
                   variant="contained"
                   color="success"

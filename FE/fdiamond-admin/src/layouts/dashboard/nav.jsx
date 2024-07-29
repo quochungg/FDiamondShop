@@ -65,6 +65,11 @@ export default function Nav({ openNav, onCloseNav }) {
             Delivery Staff
           </Typography>
         )}
+        {account.role === 'ordermanagementstaff' && (
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Order Handling Staff
+          </Typography>
+        )}
       </Box>
     </Box>
   );

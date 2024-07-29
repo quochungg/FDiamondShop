@@ -129,8 +129,8 @@ namespace FDiamondShop.API.Controllers
                             var product = await _unitOfWork.ProductRepository.GetProductForUpdateAsync(cartLineItem.ProductId);
                             if (product.Quantity < 1)
                             {
-                                await transaction.RollbackAsync();
                                 _transactionInProgress = false;
+                                await transaction.RollbackAsync();
                                 _response.StatusCode = HttpStatusCode.BadRequest;
                                 _response.IsSuccess = false;
                                 _response.ErrorMessages = new List<string> { $"Product {cartLineItem.Product.ProductName} is out of stock." };
@@ -187,7 +187,7 @@ namespace FDiamondShop.API.Controllers
                     {
                         deliveryDetail.LastName = user.LastName;
                     }                  
-                    await _unitOfWork.DeliveryDetailRepository.CreateAsync(deliveryDetail);
+                    await _unitOfWork.DeliveryRepository.CreateAsync(deliveryDetail);
 
                     order.DeliveryDetailId = deliveryDetail.DeliveryDetailId;
                     order.DeliveryDetail = deliveryDetail;
@@ -200,7 +200,7 @@ namespace FDiamondShop.API.Controllers
                             decimal amountVNPay = await _unitOfWork.ExchangeRepository.ExchangeMoneyToVND(order.TotalPrice, "USD");
                             paymentInfo.Amount = (int)amountVNPay;
 
-                            var paymentApiUrlVNPay = new Uri(new Uri("https://fdiamond-api.azurewebsites.net"), "/api/checkout/vnpay");
+                            var paymentApiUrlVNPay = new Uri(new Uri("https://localhost:7074"), "/api/checkout/vnpay");
                             var paymentResponseVNPay = await _httpClient.PostAsJsonAsync(paymentApiUrlVNPay, paymentInfo);
                             if (paymentResponseVNPay.IsSuccessStatusCode)
                             {
@@ -211,6 +211,7 @@ namespace FDiamondShop.API.Controllers
                                 }
                                 else
                                 {
+                                    _transactionInProgress = false;
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
                                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -236,6 +237,7 @@ namespace FDiamondShop.API.Controllers
                                 }
                                 else
                                 {
+                                    _transactionInProgress = false;
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
                                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -265,9 +267,14 @@ namespace FDiamondShop.API.Controllers
                                 if (paymentResultPaypal.IsSuccess)
                                 {
                                     _response.Result = new { PaymentUrl = paymentResultPaypal.Result.ToString() };
+                                    
+                                    order.PaymentURL = paymentResultPaypal.Result.ToString();
+                                    await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
+                                    await _unitOfWork.SaveAsync();
                                 }
                                 else
                                 {
+                                    _transactionInProgress = false;
                                     await _unitOfWork.OrderRepository.RemoveOrderAsync(order);
                                     await _unitOfWork.SaveAsync();
                                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -278,7 +285,7 @@ namespace FDiamondShop.API.Controllers
                             }
                             break;
                     }
-                    
+                    _transactionInProgress = false;
                     await _unitOfWork.SaveAsync();
                     await transaction.CommitAsync();
                     _response.IsSuccess = true;
@@ -287,6 +294,7 @@ namespace FDiamondShop.API.Controllers
                 }
                 catch (Exception ex)
                 {
+                    _transactionInProgress = false;
                     await transaction.RollbackAsync();
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
@@ -522,7 +530,7 @@ namespace FDiamondShop.API.Controllers
 
 
                 var order = _unitOfWork.OrderRepository.GetOrderbyId(createDTO.OrderId);
-                if (!order.Status.Equals("Ordered"))
+                if (!order.Status.Equals("Ordered") && order.OrderManagementStaffId != null)
                 {
                     _response.ErrorMessages = new List<string> { "CAN NOT ASSIGN THE ORDER THAT ASSIGNED" };
                     return BadRequest(_response);
@@ -564,6 +572,22 @@ namespace FDiamondShop.API.Controllers
             return Ok(_response);
 
 
+        }
+
+        [HttpGet("GetWarranty")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetWarranty(int orderId)
+        {
+            var warranty = await _unitOfWork.WarrantyRepository.GetAsync(w => w.OrderId == orderId, tracked: false);
+            if (warranty == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "Warranty not found" };
+                return NotFound(_response);
+            }
+            return File(warranty.WarrantyPDF, "application/pdf", $"warranty{orderId}.pdf");
         }
     }
 }
