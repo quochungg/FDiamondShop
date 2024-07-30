@@ -1,4 +1,4 @@
-import { Outlet, Navigate, useRoutes } from 'react-router-dom';
+import { Outlet, useRoutes } from 'react-router-dom';
 import { lazy, Suspense, useState, useEffect, useContext } from 'react';
 
 import PrivateRoute from 'src/routes/PrivateRoute';
@@ -191,10 +191,10 @@ const Router = () => {
         path: '404',
         element: <Page404 />,
       },
-      {
-        path: '*',
-        element: <Navigate to="/404" replace />,
-      },
+      // {
+      //   path: '*',
+      //   element: <Navigate to="/404" replace />,
+      // },
     ];
     setRoutes(newRoutes);
   }, [account.role]);
