@@ -589,5 +589,24 @@ namespace FDiamondShop.API.Controllers
             }
             return File(warranty.WarrantyPDF, "application/pdf", $"warranty{orderId}.pdf");
         }
+
+        [HttpGet("GetPaypalLink")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetPaypalLink(int orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId);
+            if (order == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Order not found" };
+                return NotFound(_response);
+            }
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = order.PaymentURL;
+            return Ok(_response);
+        }
     }
 }
