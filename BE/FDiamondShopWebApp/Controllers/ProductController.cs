@@ -403,7 +403,13 @@ namespace FDiamondShop.API.Controllers
             }
             if (subCate != null)
             {
-                productList = productList.Where(u => u.SubCategory.SubcategoryName.ToLower().Contains(subCate.ToLower()));
+                // Split the input string by commas and convert each subcategory to lowercase
+                var subCategories = subCate.Split(',')
+                                           .Select(s => s.Trim().ToLower())
+                                           .ToArray();
+
+                // Filter the product list to include products with any of the subcategories
+                productList = productList.Where(u => subCategories.Any(s => u.SubCategory.SubcategoryName.ToLower().Contains(s)));
             }
             if (orderBy != null)
             {
