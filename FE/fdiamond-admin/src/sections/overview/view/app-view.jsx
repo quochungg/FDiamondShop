@@ -206,7 +206,6 @@ export default function AppView() {
             total={completedOrders}
             color="success"
             sx={{ backgroundColor: '#00A76F', color: '#FFFFFF' }}
-            // icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
         </Grid>
 
@@ -216,7 +215,6 @@ export default function AppView() {
             total={soldProducts}
             color="info"
             sx={{ backgroundColor: '#FFAB00', color: '#000000' }}
-            // icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
         </Grid>
 
@@ -246,11 +244,10 @@ export default function AppView() {
 
           <Grid xs={12} sm={6} md={3}>
             <AppWidgetSummary
-              title="Actual Revenue (4)=(2)-(3)"
+              title="After Discount (4)"
               type="currency"
               total={totalPriceCompletedOrders}
               color="error"
-              // icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
             />
           </Grid>
         </Grid>
