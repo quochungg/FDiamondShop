@@ -5,9 +5,9 @@ import Checkbox from '@mui/material/Checkbox';
 import informationSvg from 'src/features/Products/assets/informationSvg.svg';
 
 
-const CutMenu = ({ cutArr, menuClickHandler, handleInputChange }) => {
+const StyleMenu = ({ styleArr, menuClickHandler, handleInputChange }) => {
 
-    const allCutTypes = ['Good', 'Very Good', 'Excellent', 'Ideal'];
+    const allStyleTypes = ['Halo', 'Vintage', 'Three-Stone', 'Two-Stone', 'Solitaire', 'Sidestone'];
 
     const inputStyle = {
         '&.Mui-checked': {
@@ -16,25 +16,28 @@ const CutMenu = ({ cutArr, menuClickHandler, handleInputChange }) => {
         '& .MuiSvgIcon-root': { fontSize: 25 }
     }
 
+
     return (
         <>
             <div>
-                <div className="p-7 w-[600px] rounded-md">
+                <div className="p-7 w-[600px]  rounded-md">
 
                     <div className='flex flex-row items-start font-gantari justify-between'>
                         <div className="flex flex-row items-center justify-center space-x-2 mb-5">
                             <p className="font-[600] text-xl">
-                                Cut
+                                Style
                             </p>
 
-                            <Link to='https://assets.1215diamonds.com/f_auto,q_auto/1215_diamonds/blog/2021/apr/31/2.jpg' target="_blank">
+                            <Link to='' target="_blank">
                                 <img src={informationSvg} />
                             </Link>
                         </div>
-                        <button onClick={() => menuClickHandler('Cut')} className="flex items-center justify-center mt-1">
+
+                        <button onClick={() => menuClickHandler('Style')} className="flex items-center justify-center mt-1">
                             <IoCloseOutline size={25} />
                         </button>
                     </div>
+
 
                     <ul className="grid grid-cols-3 gap-x-10 gap-y-1">
                         {/* All */}
@@ -42,8 +45,8 @@ const CutMenu = ({ cutArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('All', cutArr, 'Cut')}
-                                        checked={cutArr.length === allCutTypes.length ? true : false}
+                                        onChange={() => handleInputChange('All', styleArr, 'SubcategoryName')}
+                                        checked={styleArr.length === allStyleTypes.length ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
@@ -52,17 +55,16 @@ const CutMenu = ({ cutArr, menuClickHandler, handleInputChange }) => {
                         </li>
 
 
-
                         <li>
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('Excellent', cutArr, 'Cut')}
-                                        checked={cutArr.includes('Excellent') ? true : false}
+                                        onChange={() => handleInputChange('Halo', styleArr, 'SubcategoryName')}
+                                        checked={styleArr.includes('Halo') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="Excellent"
+                                label="Halo"
                             />
                         </li>
 
@@ -71,27 +73,12 @@ const CutMenu = ({ cutArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('Ideal', cutArr, 'Cut')}
-                                        checked={cutArr.includes('Ideal') ? true : false}
+                                        onChange={() => handleInputChange('Vintage', styleArr, 'SubcategoryName')}
+                                        checked={styleArr.includes('Vintage') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="Ideal"
-                            />
-                        </li>
-
-
-
-                        <li>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        onChange={() => handleInputChange('Good', cutArr, 'Cut')}
-                                        checked={cutArr.includes('Good') ? true : false}
-                                        sx={inputStyle}
-                                    />
-                                }
-                                label="Good"
+                                label="Vintage"
                             />
                         </li>
 
@@ -100,15 +87,58 @@ const CutMenu = ({ cutArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('Very Good', cutArr, 'Cut')}
-                                        checked={cutArr.includes('Very Good') ? true : false}
+                                        onChange={() => handleInputChange('Solitaire', styleArr, 'SubcategoryName')}
+                                        checked={styleArr.includes('Solitaire') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="Very Good"
+                                label="Solitaire"
                             />
                         </li>
 
+
+                        <li>
+
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        onChange={() => handleInputChange('Three-Stone', styleArr, 'SubcategoryName')}
+                                        checked={styleArr.includes('Three-Stone') ? true : false}
+                                        sx={inputStyle}
+                                    />
+                                }
+                                label="Three-Stone"
+                            />
+                        </li>
+
+
+                        <li>
+
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        onChange={() => handleInputChange('Two-Stone', styleArr, 'SubcategoryName')}
+                                        checked={styleArr.includes('Two-Stone') ? true : false}
+                                        sx={inputStyle}
+                                    />
+                                }
+                                label="Two-Stone"
+                            />
+                        </li>
+
+
+                        <li>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        onChange={() => handleInputChange('Sidestone', styleArr, 'SubcategoryName')}
+                                        checked={styleArr.includes('Sidestone') ? true : false}
+                                        sx={inputStyle}
+                                    />
+                                }
+                                label="Sidestone"
+                            />
+                        </li>
 
                     </ul>
 
@@ -118,4 +148,4 @@ const CutMenu = ({ cutArr, menuClickHandler, handleInputChange }) => {
     )
 };
 
-export default CutMenu;
+export default StyleMenu;

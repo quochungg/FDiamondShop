@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom';
 import { IoCloseOutline } from "react-icons/io5";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import informationSvg from 'src/features/Products/assets/informationSvg.svg';
+
 
 
 const ClarityMenu = ({ clarityArr, menuClickHandler, handleInputChange }) => {
@@ -17,12 +20,19 @@ const ClarityMenu = ({ clarityArr, menuClickHandler, handleInputChange }) => {
     return (
         <>
             <div>
-                <div className="shadow-filter p-7 w-[600px] mt-5 rounded-md">
+                <div className="p-7 w-[600px]  rounded-md">
 
                     <div className='flex flex-row items-start font-gantari justify-between'>
-                        <p className="font-[600] text-xl mb-5">
-                            Clarity
-                        </p>
+                        <div className="flex flex-row items-center justify-center space-x-2 mb-5">
+                            <p className="font-[600] text-xl">
+                                Clarity
+                            </p>
+
+                            <Link to='https://assets.vrai.com/25216/1652905572-d-clarity-chart.jpg' target="_blank">
+                                <img src={informationSvg} />
+                            </Link>
+                        </div>
+
                         <button onClick={() => menuClickHandler('Clarity')} className="flex items-center justify-center mt-1">
                             <IoCloseOutline size={25} />
                         </button>

@@ -1,14 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { IoCloseOutline } from "react-icons/io5";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import informationSvg from 'src/features/Products/assets/informationSvg.svg';
 
 
+const MetalMenu = ({ metalArr, menuClickHandler, handleInputChange }) => {
 
-const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
-
-    const allColorTypes = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+    const allMetalTypes = ['14k White Gold', '18k White Gold', '14k Yellow Gold', '18k Yellow Gold', '14k Rose Gold', '18k Rose Gold', 'Platinum'];
 
     const inputStyle = {
         '&.Mui-checked': {
@@ -20,31 +19,33 @@ const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
     return (
         <>
             <div>
-                <div className="p-7 w-[500px] rounded-md">
+                <div className="p-7 w-[600px]  rounded-md">
 
                     <div className='flex flex-row items-start font-gantari justify-between'>
                         <div className="flex flex-row items-center justify-center space-x-2 mb-5">
                             <p className="font-[600] text-xl">
-                                Color
+                                Metal
                             </p>
 
-                            <Link to='https://cdn.shopify.com/s/files/1/3038/7578/files/Diamond_Color_8871cb34-881b-4c48-80c7-8b22f9137baa.png?v=1670974645' target="_blank">
+                            <Link to='' target="_blank">
                                 <img src={informationSvg} />
                             </Link>
                         </div>
-                        <button onClick={() => menuClickHandler('Color')} className="flex items-center justify-center mt-1">
+
+                        <button onClick={() => menuClickHandler('Metal')} className="flex items-center justify-center mt-1">
                             <IoCloseOutline size={25} />
                         </button>
                     </div>
 
-                    <ul className="grid grid-cols-4 gap-x-10 gap-y-1">
+
+                    <ul className="grid grid-cols-3 gap-x-4 gap-y-1">
                         {/* All */}
                         <li>
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('All', colorArr, 'Color')}
-                                        checked={colorArr.length === allColorTypes.length ? true : false}
+                                        onChange={() => handleInputChange('All', metalArr, 'Metal')}
+                                        checked={metalArr.length === allMetalTypes.length ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
@@ -57,12 +58,12 @@ const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('D', colorArr, 'Color')}
-                                        checked={colorArr.includes('D') ? true : false}
+                                        onChange={() => handleInputChange('14k White Gold', metalArr, 'Metal')}
+                                        checked={metalArr.includes('14k White Gold') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="D"
+                                label="14k White Gold"
                             />
                         </li>
 
@@ -71,12 +72,12 @@ const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('E', colorArr, 'Color')}
-                                        checked={colorArr.includes('E') ? true : false}
+                                        onChange={() => handleInputChange('18k White Gold', metalArr, 'Metal')}
+                                        checked={metalArr.includes('18k White Gold') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="E"
+                                label="18k White Gold"
                             />
                         </li>
 
@@ -85,12 +86,42 @@ const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('F', colorArr, 'Color')}
-                                        checked={colorArr.includes('F') ? true : false}
+                                        onChange={() => handleInputChange('14k Yellow Gold', metalArr, 'Metal')}
+                                        checked={metalArr.includes('14k Yellow Gold') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="F"
+                                label="14k Yellow Gold"
+                            />
+                        </li>
+
+
+                        <li>
+
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        onChange={() => handleInputChange('18k Yellow Gold', metalArr, 'Metal')}
+                                        checked={metalArr.includes('18k Yellow Gold') ? true : false}
+                                        sx={inputStyle}
+                                    />
+                                }
+                                label="18k Yellow Gold"
+                            />
+                        </li>
+
+
+                        <li>
+
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        onChange={() => handleInputChange('14k Rose Gold', metalArr, 'Metal')}
+                                        checked={metalArr.includes('14k Rose Gold') ? true : false}
+                                        sx={inputStyle}
+                                    />
+                                }
+                                label="14k Rose Gold"
                             />
                         </li>
 
@@ -99,12 +130,12 @@ const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('G', colorArr, 'Color')}
-                                        checked={colorArr.includes('G') ? true : false}
+                                        onChange={() => handleInputChange('18k Rose Gold', metalArr, 'Metal')}
+                                        checked={metalArr.includes('18k Rose Gold') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="G"
+                                label="18k Rose Gold"
                             />
                         </li>
 
@@ -113,71 +144,14 @@ const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        onChange={() => handleInputChange('H', colorArr, 'Color')}
-                                        checked={colorArr.includes('H') ? true : false}
+                                        onChange={() => handleInputChange('Platinum', metalArr, 'Metal')}
+                                        checked={metalArr.includes('Platinum') ? true : false}
                                         sx={inputStyle}
                                     />
                                 }
-                                label="H"
+                                label="Platinum"
                             />
                         </li>
-
-
-                        <li>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        onChange={() => handleInputChange('I', colorArr, 'Color')}
-                                        checked={colorArr.includes('I') ? true : false}
-                                        sx={inputStyle}
-                                    />
-                                }
-                                label="I"
-                            />
-                        </li>
-
-
-                        <li>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        onChange={() => handleInputChange('J', colorArr, 'Color')}
-                                        checked={colorArr.includes('J') ? true : false}
-                                        sx={inputStyle}
-                                    />
-                                }
-                                label="J"
-                            />
-                        </li>
-
-
-                        <li>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        onChange={() => handleInputChange('K', colorArr, 'Color')}
-                                        checked={colorArr.includes('K') ? true : false}
-                                        sx={inputStyle}
-                                    />
-                                }
-                                label="K"
-                            />
-                        </li>
-
-
-                        <li>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        onChange={() => handleInputChange('L', colorArr, 'Color')}
-                                        checked={colorArr.includes('L') ? true : false}
-                                        sx={inputStyle}
-                                    />
-                                }
-                                label="L"
-                            />
-                        </li>
-
 
                     </ul>
 
@@ -187,4 +161,4 @@ const ColorMenu = ({ colorArr, menuClickHandler, handleInputChange }) => {
     )
 };
 
-export default ColorMenu;
+export default MetalMenu;

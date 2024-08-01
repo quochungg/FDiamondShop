@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getProducts, getCategory } from "../api/APIs";
-import { CategoryHero, Pagination, ProductList, SelectionBar, DiamondFilter, NoProductsFoundByFilter } from 'src/features/Products/components/index'
+import {
+    CategoryHero, Pagination, ProductList,
+    SelectionBar, DiamondFilter, RingFilter, NecklaceFilter, EarringFilter,
+    NoProductsFoundByFilter, SortProductList,
+} from 'src/features/Products/components/index'
 import AppLayout from "src/layout/AppLayout";
 import { LoadingSpinner } from "src/components";
+import resetFilterSvg from 'src/features/Products/assets/resetFilterSvg.svg';
 
 
 const SearchResultPage = ({ category }) => {
@@ -41,12 +46,10 @@ const SearchResultPage = ({ category }) => {
         });
     };
 
-    console.log('searchParams', searchParams);
-
 
     const handleResetFilter = () => {
         setSearchParams(() => ({
-            pageNumber: 1
+            pageNumber: 1,
         }))
         setResetFilter(!resetFilter);
     }
@@ -119,34 +122,102 @@ const SearchResultPage = ({ category }) => {
             {validatePageNumber()}
             <AppLayout>
 
+                {/* Category Hero */}
                 <CategoryHero categoryInfo={categoryInfo} />
 
+
+
+                {/* Sort And Filter Section */}
+                <div className="mt-14 mx-14 border-y-[1px] bg-blue-950 px-12">
+
+
+                    <div className="flex flex-row justify-between items-center mb-12 mt-24">
+
+                        {/* Filter */}
+                        <div className="flex flex-row justify-center items-start space-x-4">
+
+                            {category === 'diamond' &&
+                                <DiamondFilter
+                                    key={resetFilter}
+                                    searchParams={searchParams}
+                                    handleSearchParams={handleSearchParams}
+                                    handleResetFilter={handleResetFilter}
+                                />
+                            }
+
+                            {category === 'engagement ring' &&
+                                <RingFilter
+                                    key={resetFilter}
+                                    searchParams={searchParams}
+                                    handleSearchParams={handleSearchParams}
+                                    handleResetFilter={handleResetFilter}
+                                />
+                            }
+
+
+                            {category === 'earring' &&
+                                <EarringFilter
+                                    key={resetFilter}
+                                    searchParams={searchParams}
+                                    handleSearchParams={handleSearchParams}
+                                    handleResetFilter={handleResetFilter}
+                                />
+                            }
+
+
+                            {category === 'necklace' &&
+                                <NecklaceFilter
+                                    key={resetFilter}
+                                    searchParams={searchParams}
+                                    handleSearchParams={handleSearchParams}
+                                    handleResetFilter={handleResetFilter}
+                                />
+                            }
+
+                            <div className="mt-6">
+                                <button
+                                    className='bg-gray-100 hover:bg-gray-200 transition-colors duration-200 font-gantari font-[600] rounded-full 
+                                     px-6 py-4 flex flex-row justify-center items-center space-x-3'
+                                    onClick={() => handleResetFilter()}
+                                >
+                                    <img src={resetFilterSvg} />
+                                    <p>Reset Filters</p>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        {/* Sort By Price */}
+                        <div className="self-end">
+                            <SortProductList
+                                key={resetFilter}
+                                handleSearchParams={handleSearchParams}
+                            />
+                        </div>
+
+                    </div>
+
+
+                    {/* Total Products */}
+                    <div className="text-right mb-5">
+                        <p className="text-white tracking-wide font-gantari font-[350]"
+                        >
+                            {totalProducts ? totalProducts : 0} Results Found
+                        </p>
+                    </div>
+
+
+
+                </div>
+
+
+                {/* Selection Bar */}
                 {appendableCategory.includes(categoryInfo.categoryName) &&
                     <SelectionBar
                         key={resetSelectionBar}
                         setResetSelectionBar={setResetSelectionBar}
                     />
                 }
-
-
-                {/* Filter */}
-                <div>
-                    <div>
-                        <p>{totalProducts ? totalProducts : 0} Result</p>
-                    </div>
-
-
-                    {category === 'diamond' &&
-                        <DiamondFilter
-                            key={resetFilter}
-                            category={category}
-                            searchParams={searchParams}
-                            handleSearchParams={handleSearchParams}
-                            handleResetFilter={handleResetFilter}
-                        />
-                    }
-                </div>
-
 
 
                 {productList ?
@@ -157,12 +228,15 @@ const SearchResultPage = ({ category }) => {
                                     productList={productList}
                                     category={category}
                                 />
-                                <Pagination
-                                    key={category}
-                                    totalPage={totalPage}
-                                    handlePageClick={handleSearchParams}
-                                    currentPage={Number(searchParams.get('pageNumber'))}
-                                />
+                                <div className="my-3">
+                                    <Pagination
+                                        key={category}
+                                        totalPage={totalPage}
+                                        handlePageClick={handleSearchParams}
+                                        currentPage={Number(searchParams.get('pageNumber'))}
+                                    />
+                                </div>
+
                             </div>
                         ) : (
                             <NoProductsFoundByFilter
