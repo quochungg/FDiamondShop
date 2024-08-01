@@ -33,7 +33,7 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
 
     const differenceInMilliseconds = today.getTime() - orderDate.getTime();
 
-    const has12HoursPassed = differenceInMilliseconds >= 12 * 60 * 60 * 1000;
+    const has4MinutesPassed = differenceInMilliseconds >= 4 * 60 * 1000;
 
     const statusColor = ['Ordered', 'Preparing', 'Shipping', 'Idle', 'Pending'].includes(orderItem.status) ? 'text-emerald-600' :
         orderItem.status === 'Delivered' ? 'text-yellow-600' : 'text-red-700';
@@ -91,7 +91,7 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
                         <div className='w-auto self-start mb-7 px-12'>
                             <p className='text-red-700 text-md bg-red-100 py-3 px-5 rounded-full border-[1px] border-red-800'
                             >
-                                You can only cancel your order within 12 hours of placing it. After 12 hours, it will be processed.
+                                You can only cancel your order within 4 minutes of placing it. After 4 minutes, it might be processed.
                             </p>
                         </div>
                     }
@@ -126,10 +126,10 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
                                             ) : (
                                                 <button
                                                     onClick={() => handleCancelOrder(orderItem.orderId)}
-                                                    disabled={has12HoursPassed}
+                                                    disabled={has4MinutesPassed}
                                                 >
                                                     <p className={`text-white text-md font-[650] py-4 px-16 rounded-md uppercase 
-                                                    ${has12HoursPassed ? 'bg-gray-400' : 'bg-red-800 hover:bg-red-700 transition-colors duration-200'}`}
+                                                    ${has4MinutesPassed ? 'bg-gray-400' : 'bg-red-800 hover:bg-red-700 transition-colors duration-200'}`}
                                                     >
                                                         Cancel
                                                     </p>

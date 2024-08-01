@@ -34,6 +34,7 @@ export default function LoginView() {
         event.preventDefault();
         setLoading(true);
 
+        // Validate form if any field is empty
         if (!userName || !password) {
             setError('Please fill in all fields');
             setLoading(false);
