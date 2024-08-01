@@ -83,6 +83,7 @@ const SummarySectionCK = ({ promoCode, cartLineArr, onMakePayment }) => {
                         Make payment
                     </p>
                 </button>
+                <p className="mt-7 font-gantari font-[550] italic text-red-600">* Note: After clicking Make Payment, please make sure to pay your order within 5 minutes</p>
             </div>
         </>
     )
