@@ -1,5 +1,4 @@
-Diamond Shop System - SWP391 project
-![screencapture-localhost-5174-product-diamond-2024-06-19-07_38_34](https://github.com/quochungg/FDiamondShop/assets/167979922/404aa80a-6696-403e-9ebb-b33c1487a5d7)
+# Diamond Shop System - SWP391 project
 - Project Tracking
   
   https://docs.google.com/spreadsheets/d/1_KQ_Ekz96dBMHueeMBkS5EH1SxAo9njEWgm_3NB2ejU/edit?usp=sharing
@@ -29,139 +28,134 @@ Diamond Shop System - SWP391 project
   - Nguyen Huu Quoc Hung - SE172905
   - Ha Duy Tung - SE173573
   - Tran Nguyen Thu An - SE182972
-
-# About
+# 1.Requirement:
+## About
 
 This is an online jewelry retailer specializing in custom-designed diamonds and fine jewelry. Leveraging advanced imaging technology, we offer our customers the ability to view and select high-quality diamonds and settings to create personalized pieces. Our platform provides an educational and transparent buying process, ensuring every customer can make informed decisions with ease. At [FDiamond Shop], we are committed to exceptional customer service, ethical sourcing.
 
-# Epic
+## Feature
+### Feature 1: Account Management
+#### FE-01: User Authentication and Registration
+FR1.1: Login as Customer (via Gmail or other methods)
 
-- Product Management
+FR1.2: Login as Administrator
 
-- Discount Management
+FR2.1: Register Customer
 
-- Order Management
+FR2.2: Register Administrator
 
-- Account Management
+FR3: Forgot Password
 
-- Admin site Management
+FR4: Update Account Information
 
-- Other
-### Table 1: User Stories of Each Sprint
-| Sprint   | User Story ID | Description                |
-|----------|----------------|----------------------------|
-| Sprint 1 | UC-01    | Register                      |
-|          | UC-02    | Login                     |
-|          | UC-03    | Login With Google           |
-|          | UC-04    | Manage Personal Information            |
-|          | UC-05    | Add Product           |
-|          | UC-06    | Delete Product                 |
-|          | UC-07    | Search Product               |
-|          | UC-08    | Update Product               |
-|          | UC- 09   | View Product Details                |
-| Sprint2  | UC-10   | Create Discount Code              |
-|          | UC-11    | Search Discoust Code by Name            |
-|          | UC-12   | View All Discount Code            |
-|          | UC-13    | Cancel Discount Code               |
-|          | UC-14    | Update Discount Code                 |
-|          | UC-15    | Add Products to Cart                 |
-|          | UC-16    | Remove Products From Cart               |
-|          | UC-17    | View Cart            |
-| Sprint 3 | UC-18    | Order               |
-|          | UC-19    | Apply Discount to Order               |
-|          | UC-20    | Excute Payment                 |
-|          | UC-21    | Cancel Order                 |
-|          | UC-22    | View Order Details                 |
-|          | UC-23    | View Order History               |
-|          | UC-24    | Receive New Orders                 |
-|          | UC-25    | View All Order        |
-|          | UC-26    | View All Accounts         |
-|          | UC-27    | View Dashboard   .      |
+### Feature 2: Product Management
+#### FE-02: Product Catalogue Management
+FR5.1: Search Products by ID/Name
 
+FR5.2: Filter Products (Customer and Admin Views)
 
+FR5.3: Sort Products
 
+FR5.4: View Product Details
 
+FR5.5: Add New Products (Admin)
 
-### SWT Assignment
-### Table 2: Member Assignment for Sprint 1
-| Member Name | User Story ID | Description            |
-|-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-03   |  Login With Google                 |
-| Nguyen Thi Bich Duyen     | UC-01   | Register       |
-| Nguyen Thi Ngoc Thu   | UC-02    | Login (Customer)                    |
-| Ha Duy Tung    | UC-05    | Add Product                   |
-| Ha Duy Tung    | UC-10    | Update Product                  |
-| Tran Nguyen Thu An       | UC-02    | Login (Admin)           |
-| Doan Dang Thien Bao       | UC-00    |            |
+FR5.6: Edit Product Details (Admin)
 
-### Table 2: Member Assignment for Sprint 2
-| Member Name | User Story ID | Description            |
-|-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-24   | Cancel Order                |
-| Nguyen Huu Quoc Hung     | UC-06   | Confirm Email                 |
-| Nguyen Thi Bich Duyen     | UC-17   | Add Products to Cart       |
-| Nguyen Thi Ngoc Thu   | UC-16    | Update Discount Code                    |
-| Ha Duy Tung    | UC-13    | Search Discoust Code by Name                   |
-| Tran Nguyen Thu An       | UC-18    | Remove Products From Cart           |
-| Doan Dang Thien Bao       | UC-12    | Create Discount Code            |
-| Doan Dang Thien Bao       | UC-15    | Cancel Discount Code            |      
+FR5.7: Delete Products (Admin)
 
-### Table 3: Member Assignment for Sprint 3
-| Member Name | User Story ID | Description            |
-|-------------|---------------|------------------------|
-| Nguyen Huu Quoc Hung     | UC-20   | Order                |
-| Tran Nguyen Thu An       | UC-21    | Apply Discount to Order           |
-| Ha Duy Tung    | UC-22    | Select Payment Method                   |
-| Nguyen Thi Ngoc Thu   | UC-24    | Cancel Order                    |
-| Nguyen Thi Bich Duyen     | UC-25   | View Order Details      |
-| Nguyen Thi Bich Duyen     | UC-26   | View Order History       |
-| Doan Dang Thien Bao       | UC-27    | Receive New Orders            | 
-| Doan Dang Thien Bao       | UC-28    | View All Order             |
-| Tran Nguyen Thu An       | UC-29    | View All Accounts           |
-| Nguyen Thi Ngoc Thu   | UC-30    | View Dashboard                  |
-<!-- ## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
+### Feature 3: Order Management
+#### FE-03: Order Processing and Fulfilment
+FR6.1: Create Order
 
-![license](https://img.shields.io/badge/license-MIT-blue.svg)
+FR6.2: Add Products to Cart
 
-> Free React Admin Dashboard made with Material-UI components and React.
+FR6.3: View Cart and Cart Lines
 
-![preview](public/assets/preview.jpg)
+FR6.4: Remove Cart Lines or Items
 
-## Demo
+FR6.5: Apply Voucher to Payment
 
-- [Dashboard Page](https://minimal-kit-react.vercel.app/)
-- [Users Page](https://minimal-kit-react.vercel.app/user)
-- [Products Page](https://minimal-kit-react.vercel.app/products)
-- [Blog Page](https://minimal-kit-react.vercel.app/blog)
-- [Login Page](https://minimal-kit-react.vercel.app/login)
-- [Not Found Page](https://minimal-kit-react.vercel.app/404)
+FR6.6: Execute Payment (Momo, PayPal, VnPay)
 
-## Quick start
+FR6.7: View Order History and Details
 
-- [Download from Github](https://github.com/minimal-ui-kit/material-kit-react/archive/refs/heads/main.zip) or clone the repo : `git clone https://github.com/minimal-ui-kit/material-kit-react.git`
-- Recommended `Node.js v18.x`.
-- **Install:** `yarn install`
-- **Start:** `yarn dev`
-- **Build:** `yarn build`
+FR6.8: Cancel Order (Manually or Automatically)
 
-## Upgrade to PRO Version
+### Feature 4: Discount Management
+#### FE-04: Promotions and Discounts
+FR7.1: Create and Manage Discount Codes
 
-| Minimal Free     | [Minimal Pro](https://material-ui.com/store/items/minimal-dashboard/) |
-| :--------------- | :-------------------------------------------------------------------- |
-| **6** Demo Pages | **70+** Demo Pages                                                    |
-| -                | Authentication with **Amplify**, **Auth0**, **JWT** and **Firebase**  |
-| -                | [+More components](https://minimals.cc/components)                    |
-| -                | Dark & light mode                                                     |
-| -                | Next.js version                                                       |
-| -                | TypeScript version (Standard Plus and Extended license)               |
-| -                | Design Figma File (Standard Plus and Extended license)                |
-| -                | Complete Users Flows                                                  |
-| -                | Learn more: [Package & License](https://docs.minimals.cc/package)     |
+FR7.2: Apply Discounts to Orders
 
-## License
+FR7.3: Search Discount by Name
 
-Distributed under the MIT License. See [LICENSE](https://github.com/minimal-ui-kit/minimal.free/blob/main/LICENSE.md) for more information.
+### Feature 5: Admin Report Management
+#### FE-05: Reporting and Analytics
+FR8.1: Generate Sales Reports
 
-## Contact us
+FR8.2: View Customer Analytics
 
-Email: support@minimals.cc -->
+FR8.3: View Product Analytics
+
+FR8.4: View Order Analytics
+
+### Feature 6: Delivery Management
+#### FE-06 : Manage delivery
+FR9: Assign order to delivery staffs
+
+FR10: Update order status
+## 2.GUI:
+<details>
+  <summary>Click me</summary><br>
+  
+### 2.1 Customer Pages
+#### Sign in & Sign up page
+![image](https://github.com/user-attachments/assets/c0f06bfb-a845-4b98-82b2-712a5cf059bb)
+![image](https://github.com/user-attachments/assets/a0d353a9-c831-4477-9dd8-01521d7893e6)
+#### Home page
+![image](https://github.com/user-attachments/assets/0a309469-f200-4406-8200-a545b41066ae)
+#### Product page
+![image](https://github.com/user-attachments/assets/f2a2c754-7aeb-4f6a-b10f-c863d8853d98)
+#### Product details page
+![image](https://github.com/user-attachments/assets/53c16d8d-dd76-4661-aa08-ea3043e1af2f)
+#### Shopping Cart page
+![image](https://github.com/user-attachments/assets/36bf6037-0ee8-4635-a9f2-829940301409)
+#### Discount Code page
+![image](https://github.com/user-attachments/assets/7771cd5a-f412-47d6-85c3-afd8b5ddcc38)
+#### Checkout page
+![image](https://github.com/user-attachments/assets/1e571ed5-963a-435d-858d-59f1ca38ff4d)
+#### Successful payment page
+![image](https://github.com/user-attachments/assets/c32c7dde-b2b6-4b2c-9a6b-3c0e87e65324)
+#### Order history page
+![image](https://github.com/user-attachments/assets/e78e3e65-5c28-4ebc-9181-0ab76be52b98)
+#### Account detail page
+![image](https://github.com/user-attachments/assets/eac5d948-2853-4c44-8882-90b281ee472b)
+### 2.2 Admin Pages
+#### Sign in % Sign up page
+![image](https://github.com/user-attachments/assets/d7133f09-6dbb-40cd-ba78-bfb2fdac788c)
+#### Manage staffs page
+![image](https://github.com/user-attachments/assets/67279aa5-06a3-42aa-8e22-21cf562ab254)
+#### Add new staff page
+![image](https://github.com/user-attachments/assets/30b2efc8-bce9-4301-8ee3-fd0224c16d8e)
+#### Manage products page
+![image](https://github.com/user-attachments/assets/67477c60-695d-4f8b-b272-8ea029e85360)
+#### Add new product page
+![image](https://github.com/user-attachments/assets/4eca187f-ab9e-4b2b-967d-72c82dfa708d)
+#### Manage orders page
+![image](https://github.com/user-attachments/assets/6a7f80d7-368b-4267-b54c-610ec8071175)
+#### Order detail page
+![image](https://github.com/user-attachments/assets/4c892bc3-6390-46bf-ab12-352154074915)
+#### Add new discount page
+![image](https://github.com/user-attachments/assets/44020d25-080f-42cd-82b6-b28f5f0d6e2a)
+</details>
+
+## 3.Database Design
+<details>
+  <summary>Click me</summary><br>
+
+### ERD
+https://drive.google.com/file/d/1p8GJO6FrXx7xXIC5sYxDu3W2-M5W4R72/view?usp=sharing
+![image](https://github.com/user-attachments/assets/7d2dd642-c1b7-4fd3-8e90-9c79b51d3697)
+</details>
+
