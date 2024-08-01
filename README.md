@@ -33,17 +33,17 @@
 
 This is an online jewelry retailer specializing in custom-designed diamonds and fine jewelry. Leveraging advanced imaging technology, we offer our customers the ability to view and select high-quality diamonds and settings to create personalized pieces. Our platform provides an educational and transparent buying process, ensuring every customer can make informed decisions with ease. At [FDiamond Shop], we are committed to exceptional customer service, ethical sourcing.
 
-### Feature
-## Feature 1: Account Management
-### FE-01: User Authentication and Registration
+## Feature
+### Feature 1: Account Management
+#### FE-01: User Authentication and Registration
 FR1.1: Login as Customer (via Gmail or other methods)
 FR1.2: Login as Administrator
 FR2.1: Register Customer
 FR2.2: Register Administrator
 FR3: Forgot Password
 FR4: Update Account Information
-## Feature 2: Product Management
-### FE-02: Product Catalogue Management
+### Feature 2: Product Management
+#### FE-02: Product Catalogue Management
 FR5.1: Search Products by ID/Name
 FR5.2: Filter Products (Customer and Admin Views)
 FR5.3: Sort Products
@@ -51,8 +51,8 @@ FR5.4: View Product Details
 FR5.5: Add New Products (Admin)
 FR5.6: Edit Product Details (Admin)
 FR5.7: Delete Products (Admin)
-## Feature 3: Order Management
-### FE-03: Order Processing and Fulfilment
+### Feature 3: Order Management
+#### FE-03: Order Processing and Fulfilment
 FR6.1: Create Order
 FR6.2: Add Products to Cart
 FR6.3: View Cart and Cart Lines
@@ -61,19 +61,19 @@ FR6.5: Apply Voucher to Payment
 FR6.6: Execute Payment (Momo, PayPal, VnPay)
 FR6.7: View Order History and Details
 FR6.8: Cancel Order (Manually or Automatically)
-## Feature 4: Discount Management
-### FE-04: Promotions and Discounts
+### Feature 4: Discount Management
+#### FE-04: Promotions and Discounts
 FR7.1: Create and Manage Discount Codes	
 FR7.2: Apply Discounts to Orders
 FR7.3: Search Discount by Name
-## Feature 5: Admin Report Management
-### FE-05: Reporting and Analytics
+### Feature 5: Admin Report Management
+#### FE-05: Reporting and Analytics
 FR8.1: Generate Sales Reports
 FR8.2: View Customer Analytics
 FR8.3: View Product Analytics
 FR8.4: View Order Analytics
-## Feature 6: Delivery Management
-### FE-06 : Manage delivery
+### Feature 6: Delivery Management
+#### FE-06 : Manage delivery
 FR9: Assign order to delivery staffs
 FR10: Update order status
 ## 2.GUI:
