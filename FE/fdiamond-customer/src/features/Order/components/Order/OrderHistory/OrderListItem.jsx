@@ -1,13 +1,16 @@
 import { TailSpin } from 'react-loader-spinner'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { cancelOrder } from 'src/features/Order/api/APIs'
 import { useNavigate } from 'react-router-dom';
 import { OrderStatusStepper } from 'src/features/Order/components/index'
 
 
-const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
+const OrderListItem = ({ orderItem, setResetAfterCancel, setResetThePage }) => {
 
     const navigate = useNavigate();
+
+    const [has4MinutesPassed, setHas4MinutesPassed] = useState(false);
+
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -29,23 +32,43 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
 
 
     // Compare today's date with the order date based on milliseconds
-    const today = new Date();
+    const checkIf4MinutesPassed = () => {
+        const today = new Date();
 
-    const differenceInMilliseconds = today.getTime() - orderDate.getTime();
+        const differenceInMilliseconds = today.getTime() - orderDate.getTime();
 
-    const has4MinutesPassed = differenceInMilliseconds >= 4 * 60 * 1000;
+        const has4MinutesPassed = differenceInMilliseconds >= 4 * 60 * 1000;
+
+        return has4MinutesPassed;
+    }
+
+
+    useEffect(() => {
+        const has4MinutesPassed = checkIf4MinutesPassed();
+        if (has4MinutesPassed) {
+            setHas4MinutesPassed(true);
+        }
+    }, [])
+
+
 
     const statusColor = ['Ordered', 'Preparing', 'Shipping', 'Idle', 'Pending'].includes(orderItem.status) ? 'text-emerald-600' :
         orderItem.status === 'Delivered' ? 'text-yellow-600' : 'text-red-700';
 
 
     const handleCancelOrder = async (orderId) => {
-        const result = confirm('Are you sure you want to cancel this order?');
-        if (result) {
-            setIsLoading(true);
-            const response = await cancelOrder(orderId);
-            if (response.status === 200) {
-                setResetAfterCancel(prev => !prev);
+        const has4MinutesPassed = checkIf4MinutesPassed();
+        if (has4MinutesPassed) {
+            alert('You can only cancel your order within 4 minutes of placing it. After 4 minutes, it might be processed.');
+            setResetThePage(prev => !prev); //Rerender the component after 4 minutes
+        } else {
+            const result = confirm('Are you sure you want to cancel this order?');
+            if (result) {
+                setIsLoading(true);
+                const response = await cancelOrder(orderId);
+                if (response.status === 200) {
+                    setResetAfterCancel(prev => !prev);
+                }
             }
         }
         setIsLoading(false);
@@ -54,6 +77,7 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
     const handleViewOrderDetails = async () => {
         navigate(`/order-details/${orderItem.orderId}`);
     }
+
 
 
     return (
@@ -126,7 +150,7 @@ const OrderListItem = ({ orderItem, setResetAfterCancel }) => {
                                             ) : (
                                                 <button
                                                     onClick={() => handleCancelOrder(orderItem.orderId)}
-                                                    disabled={has4MinutesPassed}
+                                                    disabled={checkIf4MinutesPassed()}
                                                 >
                                                     <p className={`text-white text-md font-[650] py-4 px-16 rounded-md uppercase 
                                                     ${has4MinutesPassed ? 'bg-gray-400' : 'bg-red-800 hover:bg-red-700 transition-colors duration-200'}`}
