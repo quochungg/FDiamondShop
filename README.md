@@ -35,9 +35,10 @@ Diamond Shop System - SWP391 project
 This is an online jewelry retailer specializing in custom-designed diamonds and fine jewelry. Leveraging advanced imaging technology, we offer our customers the ability to view and select high-quality diamonds and settings to create personalized pieces. Our platform provides an educational and transparent buying process, ensuring every customer can make informed decisions with ease. At [FDiamond Shop], we are committed to exceptional customer service, ethical sourcing.
 
 ### Feature
-# 2.GUI:
+## 2.GUI:
 <details>
   <summary>Click me</summary><br>
+  
 ## 2.1 Customer Pages
 ### Sign in & Sign up
 ![image](https://github.com/user-attachments/assets/c0f06bfb-a845-4b98-82b2-712a5cf059bb)
