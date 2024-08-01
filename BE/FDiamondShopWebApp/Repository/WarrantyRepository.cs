@@ -49,7 +49,7 @@ namespace FDiamondShop.API.Repository
             {
                 foreach (var product in products)
                 {
-
+                    string? img = _db.ProductImages.FirstOrDefault(x => x.ProductId == product.ProductId && x.IsGia)?.ImageUrl;
                     container
                    .Page(page =>
                    {
@@ -94,6 +94,10 @@ namespace FDiamondShop.API.Repository
                                text.Span("Warranty Date: ").FontSize(16).FontFamily(Fonts.TimesNewRoman);
                                text.Span($"{warranty.OrderDate.ToString("dd/MM/yyyy")} - {warranty.ExpiryDate?.ToString("dd/MM/yyyy")}").FontSize(16).ExtraBold();
                            });
+                           if(!String.IsNullOrEmpty(img))
+                           {
+                               column.Item().Hyperlink(img).Text("Diamond's GIA");
+                           }
                            column.Item().PaddingVertical(10).Row(row =>
                            {
                                row.Spacing(20);

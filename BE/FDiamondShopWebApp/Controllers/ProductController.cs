@@ -390,7 +390,7 @@ namespace FDiamondShop.API.Controllers
             [FromQuery(Name = "Color")] string color = null,
             [FromQuery(Name = "CaratFrom")] double caratFrom = 1.0,
             [FromQuery(Name = "CaratTo")] double caratTo = 30.0,
-            [FromQuery(Name = "PriceFrom")] decimal priceFrom = 100,
+            [FromQuery(Name = "PriceFrom")] decimal priceFrom = 1,
             [FromQuery(Name = "PriceTo")] decimal priceTo = 30000,
             [FromQuery(Name = "Metal")] string metal = null
             )
@@ -425,9 +425,12 @@ namespace FDiamondShop.API.Controllers
             productList = productList.Where(u => u.BasePrice >= priceFrom && u.BasePrice <= priceTo);
             if (cateName?.ToLower() == "diamond")
             {
+                var calarityList = clarity?.Split(',')
+                    .Select(s => s.Trim())
+                    .ToList();
                 productList = productList.Where(p =>
                     p.ProductVariantValues.Any(v => v.VariantId == 4 && Convert.ToDouble(v.Value) >= caratFrom && Convert.ToDouble(v.Value) <= caratTo) &&
-                    (clarity == null || p.ProductVariantValues.Any(v => v.VariantId == 2 && clarity.Contains(v.Value))) &&
+                    (clarity == null || p.ProductVariantValues.Any(v => v.VariantId == 2 && calarityList.Contains(v.Value))) &&
                     (color == null || p.ProductVariantValues.Any(v => v.VariantId == 1 && color.Contains(v.Value))) &&
                     (cut == null || p.ProductVariantValues.Any(v => v.VariantId == 3 && cut.Contains(v.Value)))
                 );
@@ -435,7 +438,7 @@ namespace FDiamondShop.API.Controllers
             else
             {
                 productList = productList.Where(p =>
-                    metal == null || p.ProductVariantValues.Any(v => (v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9) && metal.Contains(v.Value))
+                    metal == null || p.ProductVariantValues.Any(v => (v.VariantId == 8 || v.VariantId == 11 || v.VariantId == 9) && metal.ToLower().Contains(v.Value.ToLower()))
                 );
             }
             
