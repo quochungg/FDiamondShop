@@ -445,16 +445,19 @@ namespace FDiamondShop.API.Controllers
         public async Task<IActionResult> GetAllOrder()
         {
             var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "CartLines.CartLineItems.Product.SubCategory.Category,DiscountCode,Payment");
+            
             if (orders == null)
             {
+                
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.ErrorMessages.Add("EMPTY");
                 return Ok(_response);
             }
+            var returnOrder = _mapper.Map<List<OrderDTO>>(orders);
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
-            _response.Result = orders;
+            _response.Result = returnOrder;
             return Ok(_response);
         }
 
