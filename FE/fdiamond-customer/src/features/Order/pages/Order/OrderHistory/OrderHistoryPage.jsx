@@ -12,6 +12,7 @@ const OrderHistoryPage = () => {
     const [selectedStatus, setSelectedStatus] = useState('');
     const [resetAfterCancel, setResetAfterCancel] = useState(null);
     const [openModal, setOpenModal] = useState(false);
+    const [resetThePage, setResetThePage] = useState(false);
 
 
     const handleCloseModal = () => {
@@ -151,10 +152,12 @@ const OrderHistoryPage = () => {
                                     />
 
                                     <OrderList
+                                        key={resetThePage}
                                         selectedStatus={selectedStatus}
                                         orderArr={orderArr}
                                         orderTypes={orderTypes}
                                         setResetAfterCancel={setResetAfterCancel}
+                                        setResetThePage={setResetThePage}
                                     />
 
                                 </div>

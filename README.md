@@ -1,21 +1,4 @@
 # Diamond Shop System - SWP391 project
-- Project Tracking
-  
-  https://docs.google.com/spreadsheets/d/1_KQ_Ekz96dBMHueeMBkS5EH1SxAo9njEWgm_3NB2ejU/edit?usp=sharing
-  
-- Usecase List
-
-  https://docs.google.com/spreadsheets/d/1uiBUuUwCw7POmWJfGRHV07HYhllTbghzrYamDNfgfLc/edit?usp=sharing
-
-- API Postman
-
-  https://documenter.getpostman.com/view/36189969/2sA3kSoiHt
-  
-- SRS 
-
-  https://docs.google.com/document/d/1KStpC8Z2f0te3t9XLxPAABaqf7SuWLAN/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
-  
-
 # Team's Member
 
 - Front - end
@@ -32,8 +15,22 @@
 ## About
 
 This is an online jewelry retailer specializing in custom-designed diamonds and fine jewelry. Leveraging advanced imaging technology, we offer our customers the ability to view and select high-quality diamonds and settings to create personalized pieces. Our platform provides an educational and transparent buying process, ensuring every customer can make informed decisions with ease. At [FDiamond Shop], we are committed to exceptional customer service, ethical sourcing.
+- Project Tracking
+  
+  https://docs.google.com/spreadsheets/d/1_KQ_Ekz96dBMHueeMBkS5EH1SxAo9njEWgm_3NB2ejU/edit?usp=sharing
+  
+- Usecase List
 
-## Feature
+  https://docs.google.com/spreadsheets/d/1uiBUuUwCw7POmWJfGRHV07HYhllTbghzrYamDNfgfLc/edit?usp=sharing
+
+- API Postman
+
+  https://documenter.getpostman.com/view/36189969/2sA3kSoiHt
+  
+- SRS 
+
+  https://docs.google.com/document/d/1KStpC8Z2f0te3t9XLxPAABaqf7SuWLAN/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
+## 1.Feature
 ### Feature 1: Account Management
 #### FE-01: User Authentication and Registration
 FR1.1: Login as Customer (via Gmail or other methods)
@@ -159,3 +156,5 @@ https://drive.google.com/file/d/1p8GJO6FrXx7xXIC5sYxDu3W2-M5W4R72/view?usp=shari
 ![image](https://github.com/user-attachments/assets/7d2dd642-c1b7-4fd3-8e90-9c79b51d3697)
 </details>
 
+## 4.ConClusion
+The Diamond Shop System (SWP391) is a comprehensive solution tailored for online jewelry retail. It specializes in custom-designed diamonds and fine jewelry, leveraging advanced imaging technology and a user-centric design to offer customers an educational and transparent buying experience. This system includes features such as account management, product management, order processing, discount management, admin reporting, and delivery management. The backend and frontend teams have collaboratively developed a robust platform that ensures high-quality service, efficient order fulfillment, and a seamless user experience. Through continuous updates and enhancements, we are committed to maintaining exceptional customer service and ethical sourcing standards. Thank you for exploring our project. We welcome feedback and contributions to help us improve and expand the system.

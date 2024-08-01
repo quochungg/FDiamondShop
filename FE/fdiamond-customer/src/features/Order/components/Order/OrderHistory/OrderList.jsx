@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { OrderListItem } from 'src/features/Order/components/index';
 import emptyOrderSvg from 'src/features/Order/assets/emptyOrderSvg.svg'
 
-const OrderList = ({ orderTypes, selectedStatus, orderArr, setResetAfterCancel }) => {
+const OrderList = ({ orderTypes, selectedStatus, orderArr, setResetAfterCancel, setResetThePage }) => {
 
     const status = selectedStatus === 'Ordered' ? 'Processing' : selectedStatus;
 
@@ -57,6 +57,7 @@ const OrderList = ({ orderTypes, selectedStatus, orderArr, setResetAfterCancel }
                                     orderItem={orderItem}
                                     setResetAfterCancel={setResetAfterCancel}
                                     orderTypes={orderTypes}
+                                    setResetThePage={setResetThePage}
                                 />
                             </div>
                         ))
