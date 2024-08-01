@@ -33,7 +33,7 @@
 
 This is an online jewelry retailer specializing in custom-designed diamonds and fine jewelry. Leveraging advanced imaging technology, we offer our customers the ability to view and select high-quality diamonds and settings to create personalized pieces. Our platform provides an educational and transparent buying process, ensuring every customer can make informed decisions with ease. At [FDiamond Shop], we are committed to exceptional customer service, ethical sourcing.
 
-## Feature
+## 1.Feature
 ### Feature 1: Account Management
 #### FE-01: User Authentication and Registration
 FR1.1: Login as Customer (via Gmail or other methods)
