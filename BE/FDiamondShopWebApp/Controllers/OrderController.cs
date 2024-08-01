@@ -611,5 +611,24 @@ namespace FDiamondShop.API.Controllers
             _response.Result = order.PaymentURL;
             return Ok(_response);
         }
+
+        [HttpGet("GetDashboard")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDashboard()
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "CartLines.CartLineItems.Product.SubCategory.Category,DiscountCode,Payment");
+            if (orders == null)
+            {
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.ErrorMessages.Add("EMPTY");
+                return Ok(_response);
+            }
+            var returnOrder = _unitOfWork.OrderRepository.GetOrderDashboards(orders);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = returnOrder;
+            return Ok(_response);
+        }
     }
 }

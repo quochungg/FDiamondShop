@@ -243,9 +243,37 @@ namespace FDiamondShop.API.Repository
             }
             return orderDTOs;
         }
-        public Task UpdateAsync(Order order)
+
+        public List<OrderDashboardDTO> GetOrderDashboards(List<Order> orders)
         {
-            throw new NotImplementedException();
+            List<OrderDashboardDTO> orderDashboardDTOs = new List<OrderDashboardDTO>();
+            foreach (var order in orders)
+            {
+                var orderDashboardDTO = new OrderDashboardDTO
+                {
+                    OrderId = order.OrderId,
+                    OrderDate = order.OrderDate,
+                    DiscountPercent = order.DiscountCode?.DiscountPercent ?? 0,
+                    BasePrice = order.BasePrice,
+                    TotalPrice = order.TotalPrice,
+                    Status = order.Status,
+                    ProductDashboardDTOs = new List<ProductDashboardDTO>()
+                };
+                foreach (var cartLine in order.CartLines)
+                {
+                    foreach (var cartLineItem in cartLine.CartLineItems)
+                    {
+                        var productDashboardDTO = new ProductDashboardDTO
+                        {
+                            ProductId = cartLineItem.Product.ProductId,
+                            CategoryId = cartLineItem.Product.SubCategory.CategoryId,
+                        };
+                        orderDashboardDTO.ProductDashboardDTOs.Add(productDashboardDTO);
+                    }
+                }
+                orderDashboardDTOs.Add(orderDashboardDTO);
+            }
+            return orderDashboardDTOs;
         }
     }
 

@@ -41,9 +41,10 @@ namespace FDiamondShop.API
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<Order, OrderCreateDTO>().ReverseMap();
 
+
             CreateMap<DeliveryDetail, DeliveryDTO>().ReverseMap();
             CreateMap<DeliveryDetail, AssignCreateDTO>().ReverseMap();
-
+            
 
 
 
