@@ -50,6 +50,7 @@ const DetailSection = ({ product, isAppendable, isDiamondInCart, setResetSelecti
             }
         }
 
+        //get selectionBar from local storage
         const selectionBar = JSON.parse(localStorage.getItem('selectionBar') || '{}');
 
         //save appended product to local storage

@@ -19,20 +19,6 @@ const SelectionBar = ({ setResetSelectionBar }) => {
     const [showGoToCartBtn, setShowGoToCartBtn] = useState(false);
 
 
-
-    useEffect(() => {
-        getSelectionItems();
-    })
-
-
-    useEffect(() => {
-        if (diamond && engagementRing) {
-            handleShowGoToCart();
-            calculateTotalPrice();
-        }
-    }, [diamond, engagementRing])
-
-
     //Get selection items when Selection bar is mounted
     const getSelectionItems = async () => {
         if (selectionBar.diamond && !selectionBar.engagementRing) {
@@ -68,6 +54,7 @@ const SelectionBar = ({ setResetSelectionBar }) => {
             }
         ]
 
+        // Check if attachment items are already existing in cart
         const response = await checkExistingAttachmentInCart(attachmentItemsArr);
 
         if (response.data.result) {
@@ -91,8 +78,6 @@ const SelectionBar = ({ setResetSelectionBar }) => {
                 ringSize: 0
             }
         ]
-
-
 
         navigate('/cart', {
             state: {
@@ -123,6 +108,20 @@ const SelectionBar = ({ setResetSelectionBar }) => {
     }
 
 
+
+    useEffect(() => {
+        getSelectionItems();
+    }, [])
+
+
+    useEffect(() => {
+        if (diamond && engagementRing) {
+            handleShowGoToCart();
+            calculateTotalPrice();
+        }
+    }, [diamond, engagementRing])
+
+
     return (
         <>
             <div className="flex flex-row content-center pt-12 px-16 w-full ">
@@ -139,7 +138,6 @@ const SelectionBar = ({ setResetSelectionBar }) => {
                                 ('border-black border-r-[1px] flex items-center justify-between w-full px-6 rounded-l-full bg-[#fcf9f2]')
                             }
                             >
-
                                 <div className='flex w-[80%] '>
                                     {/* Check icon */}
                                     <div className='w-[10%] flex items-center justify-center'>
@@ -243,8 +241,7 @@ const SelectionBar = ({ setResetSelectionBar }) => {
 
                                     <div className='w-[90%] text-base px-3'>
                                         {/* Product title */}
-                                        <Link to={engagementRing.isVisible ?
-                                            `/product/product-details/${engagementRing.productId}` : '#'}
+                                        <Link to={engagementRing.isVisible ? `/product/product-details/${engagementRing.productId}` : '#'}
                                             className={!engagementRing.isVisible && 'pointer-events-none'}
                                         >
                                             <p

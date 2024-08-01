@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "react-icons-kit";
 // import { useLocation, useNavigate, Link } from "react-router-dom";
-import { updateUserAPI, loginAPI, loginGoogleAPI, getUser } from "../api/APIs";
+import { updateUserAPI, getUser } from "../api/APIs";
 import { eyeOff } from "react-icons-kit/feather/eyeOff";
 import { eye } from "react-icons-kit/feather/eye";
 import { TailSpin } from "react-loader-spinner";

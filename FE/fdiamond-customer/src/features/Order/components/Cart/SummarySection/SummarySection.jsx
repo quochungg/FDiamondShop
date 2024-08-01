@@ -133,11 +133,6 @@ const SummarySection = ({ cartLineArr, onCheckout }) => {
                                 }
                             </li>
 
-                            {/* <li className="flex justify-between">
-                                <p>US & Int. Shipping</p>
-                                <p>Free</p>
-                            </li> */}
-
                         </ul>
                     </div>
 

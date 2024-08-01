@@ -11,18 +11,19 @@ const DiamondFilter = ({ searchParams, handleSearchParams }) => {
         if (showFilterMenu === param) {  // this is when the same menu is clicked again, close the menu
             setFilterMenu(null);
         } else {
-            setFilterMenu(param);
+            setFilterMenu(param); // if the menu is null, open the menu
         }
     };
 
 
+    // Update the search params with new props
     const handleUpdateSearchParams = (props) => {
         handleSearchParams({
             ...props,
         })
     }
 
-
+    // Get the search params from the url and convert them from string to arrays
     let shapeArr = searchParams.get('SubcategoryName') ? searchParams.get('SubcategoryName').split(',') : [];
     let clarityArr = searchParams.get('Clarity') ? searchParams.get('Clarity').split(',') : [];
     let colorArr = searchParams.get('Color') ? searchParams.get('Color').split(',') : [];
@@ -57,13 +58,13 @@ const DiamondFilter = ({ searchParams, handleSearchParams }) => {
                     break;
             }
 
-            if (arrType.length === targetArr.length) {
+            if (arrType.length === targetArr.length) { //  unselect all
                 handleUpdateSearchParams({
                     [arrTypeName]: []
                 })
             }
             else {
-                handleUpdateSearchParams({
+                handleUpdateSearchParams({ // select all
                     [arrTypeName]: targetArr
                 })
             }
@@ -71,13 +72,13 @@ const DiamondFilter = ({ searchParams, handleSearchParams }) => {
         }
 
 
-        if (arrType.includes(value)) {
+        if (arrType.includes(value)) { // remove the value from the array if checked
             handleUpdateSearchParams({
                 [arrTypeName]: arrType.filter(item => item !== value)  // remove the value from the array if unchecked
             })
         }
         else {
-            handleUpdateSearchParams({
+            handleUpdateSearchParams({ // add the value to the array if checked
                 [arrTypeName]: [...arrType, value]
             })
         }
@@ -101,8 +102,6 @@ const DiamondFilter = ({ searchParams, handleSearchParams }) => {
 
                     {/* Shape */}
                     <div>
-
-
                         <div className='relative'>
                             <button
                                 className='border border-white rounded-full px-8 py-3 hover:bg-gray-100 transition-colors duration-150 text-white hover:text-black'
@@ -121,7 +120,6 @@ const DiamondFilter = ({ searchParams, handleSearchParams }) => {
                                 </div>
                             }
                         </div>
-
                     </div>
 
 

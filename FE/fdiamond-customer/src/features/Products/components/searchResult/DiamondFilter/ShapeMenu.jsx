@@ -54,7 +54,6 @@ const ShapeMenu = ({ shapeArr, menuClickHandler, handleInputChange }) => {
 
 
                         <li>
-
                             <FormControlLabel
                                 control={
                                     <Checkbox

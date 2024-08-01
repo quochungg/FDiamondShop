@@ -11,7 +11,6 @@ function App() {
     const Home = React.lazy(() => import("src/pages/Home"));
     const StoreLocation = React.lazy(() => import("src/pages/StoreLocation"));
 
-
     //Wrapper components
     const CategoryWrapper = React.lazy(() => import("src/features/Products/wrapper/CategoryWrapper"));
     const ProductDetailsWrapper = React.lazy(() => import("src/features/Products/wrapper/ProductDetailsWrapper"));

@@ -12,7 +12,6 @@ const ProductDetailsPage = ({ productId }) => {
 
     const navigate = useNavigate();
 
-    // const { productId } = useParams();
     const [product, setProduct] = useState(null);
 
     const appendableCategories = ['Diamond', 'Engagement Ring'];

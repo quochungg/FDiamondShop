@@ -2,10 +2,12 @@ import { useState } from "react";
 import { ImageModal } from "../index";
 
 const ImageCarousel = ({ product }) => {
+
     const [activeImage, setActiveImage] = useState(product.productImages[0].imageUrl)
 
     const [open, setOpen] = useState(false);
 
+    // Close GIA modal
     const handleClose = () => {
         setOpen(false);
     }
@@ -29,6 +31,7 @@ const ImageCarousel = ({ product }) => {
                         return (
                             <>
                                 {image.isGia === false ? (
+                                    // Normal Image
                                     <div
                                         key={index}
                                         className=
@@ -47,6 +50,7 @@ const ImageCarousel = ({ product }) => {
                                     </div>
                                 ) : (
                                     <>
+                                        {/* GIA Image */}
                                         <div
                                             key={index}
                                             className="group"
@@ -61,6 +65,8 @@ const ImageCarousel = ({ product }) => {
                                             </p>
 
                                         </div>
+
+                                        {/* GIA Modal  */}
                                         {open && <ImageModal open={open} onClose={handleClose} imageUrl={image.imageUrl} />}
                                     </>
                                 )
@@ -70,6 +76,8 @@ const ImageCarousel = ({ product }) => {
                     })}
                 </div>
 
+
+                {/* Big, active image */}
                 <div className="flex-1 w-full flex justify-center items-center">
                     <img
                         src={activeImage}

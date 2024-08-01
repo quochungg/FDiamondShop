@@ -14,6 +14,7 @@ const CartPage = () => {
     const [cartLineArr, setCartLineArr] = useState(null);
     const [handleAddedItem, setHandleAddedItem] = useState(false);
 
+
     // Handle new added item
     useEffect(() => {
 
@@ -49,7 +50,7 @@ const CartPage = () => {
 
                 navigate('/cart', { state: newState, replace: true });  //reset location.state right after adding new items to cart by rerendering. This won't unmount and remount the component.
 
-                localStorage.removeItem('selectionBar'); // set null for local storage after adding to cart
+                localStorage.removeItem('selectionBar'); // set null for local storage after adding to cart => clean the selection bar
 
             }
             addToCart();
@@ -98,11 +99,13 @@ const CartPage = () => {
 
         removeCartLine(cartLine.cartLineId);
 
+        // single cart line
         if (cartLine.cartLineItems.length === 1) {
             const categoryName = cartLine.cartLineItems[0].product.categoryName.toLowerCase();
             navigate(`/product/${categoryName}`)
         }
 
+        // attchment cart line: ring + diamond
         if (cartLine.cartLineItems.length === 2) {
 
             const diamond = cartLine.cartLineItems.find((item) => item.product.categoryName === 'Diamond');
@@ -150,6 +153,7 @@ const CartPage = () => {
     };
 
 
+    // when user click on checkout button
     const handleCheckout = async (promoCode) => {
         // CART LINES : Check if all cart lines are valid. Invalid if there are DUPLICATED or UNAVAILABLE cart lines
         const response = await checkValidAllCartLines();

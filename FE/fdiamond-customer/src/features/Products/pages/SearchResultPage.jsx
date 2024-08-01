@@ -47,6 +47,7 @@ const SearchResultPage = ({ category }) => {
     };
 
 
+    //Remove all filters and reset the page number to 1
     const handleResetFilter = () => {
         setSearchParams(() => ({
             pageNumber: 1,
@@ -118,13 +119,13 @@ const SearchResultPage = ({ category }) => {
 
     return (
         <>
-
+            {/* Validate page number in the url */}
             {validatePageNumber()}
+
             <AppLayout>
 
                 {/* Category Hero */}
                 <CategoryHero categoryInfo={categoryInfo} />
-
 
 
                 {/* Sort And Filter Section */}
@@ -205,8 +206,6 @@ const SearchResultPage = ({ category }) => {
                             {totalProducts ? totalProducts : 0} Results Found
                         </p>
                     </div>
-
-
 
                 </div>
 

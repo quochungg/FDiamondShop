@@ -8,8 +8,6 @@ import { TailSpin } from 'react-loader-spinner'
 import { IoHome } from "react-icons/io5";
 import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from "react-icons/fc";
-// import { GoogleLogin } from '@react-oauth/google';
-// import { jwtDecode } from "jwt-decode";
 import { useAuth } from "src/context/AuthProvider";
 
 const RegisterPage = () => {
@@ -135,7 +133,6 @@ const RegisterPage = () => {
 
     const loginGoogle = useGoogleLogin({
         onSuccess: async googleResponse => {
-            // console.log(googleResponse);
             loginWithGoogle(googleResponse.access_token)
         },
     });
@@ -445,7 +442,7 @@ const RegisterPage = () => {
 
                 {/*END LEFT SECTION */}
 
-            </div >
+            </div>
 
         </>
     )
