@@ -25,7 +25,7 @@ namespace FDiamondShop.API.Repository
             order.CartLines = _db.Orders.SelectMany(o => o.CartLines).Include(cl => cl.CartLineItems).ThenInclude(cli => cli.Product).Where(x => x.OrderId == orderId).ToList();
             Warranty warranty = new Warranty{ 
                 Order = order,
-                CustomerName = order.User.LastName + " " + order.User.FirstName,
+                CustomerName = order.User.FirstName + " " + order.User.LastName,
                 OrderDate = order.OrderDate,
                 OrderId = order.OrderId,
                 ExpiryDate = order.OrderDate.AddYears(5)
@@ -96,7 +96,7 @@ namespace FDiamondShop.API.Repository
                            });
                            if(!String.IsNullOrEmpty(img))
                            {
-                               column.Item().Hyperlink(img).Text("Diamond's GIA");
+                               column.Item().AlignCenter().Hyperlink(img).Text("Diamond's GIA").Bold();
                            }
                            column.Item().PaddingVertical(10).Row(row =>
                            {
