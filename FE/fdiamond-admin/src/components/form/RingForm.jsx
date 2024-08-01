@@ -19,8 +19,8 @@ function RingForm({ formData, handleInputChange }) {
             <MenuItem value="Halo">Halo</MenuItem>
             <MenuItem value="Vintage">Vintage</MenuItem>
             <MenuItem value="Sidestone">Sidestone</MenuItem>
-            <MenuItem value="Three-stone">Three-stone</MenuItem>
-            <MenuItem value="Two-stone">Two-stone</MenuItem>
+            <MenuItem value="Three-Stone">Three-stone</MenuItem>
+            <MenuItem value="Two-Stone">Two-stone</MenuItem>
           </Select>
         </FormControl>
       </Grid>
@@ -38,12 +38,26 @@ function RingForm({ formData, handleInputChange }) {
       <Grid item md={6}>
         <FormControl fullWidth required>
           <InputLabel>Metal</InputLabel>
-          <OutlinedInput
+          {/* <OutlinedInput
             value={formData.RingMetal}
             onChange={handleInputChange}
             label="Metal"
             name="RingMetal"
-          />
+          /> */}
+          <Select
+            value={formData.RingMetal}
+            onChange={handleInputChange}
+            label="Metal"
+            name="RingMetal"
+          >
+            <MenuItem value="14k White Gold">14k White Gold</MenuItem>
+            <MenuItem value="18k White Gold">18k White Gold</MenuItem>
+            <MenuItem value="14k Yellow Gold">14k Yellow Gold</MenuItem>
+            <MenuItem value="18k Yellow Gold">18k Yellow Gold</MenuItem>
+            <MenuItem value="14k Rose Gold">14k Rose Gold</MenuItem>
+            <MenuItem value="18k Rose Gold">18k Rose Gold</MenuItem>
+            <MenuItem value="Platinum">Platinum</MenuItem>
+          </Select>
         </FormControl>
       </Grid>
       {/* Add more fields specific to Ring */}

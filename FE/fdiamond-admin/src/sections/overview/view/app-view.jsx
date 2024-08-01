@@ -57,7 +57,7 @@ export default function AppView() {
 
   const fetchData = useCallback(() => {
     axios
-      .get('https://fdiamond-api.azurewebsites.net/api/Order/GetAllOrder')
+      .get('https://fdiamond-api.azurewebsites.net/api/Order/GetDashboard')
       .then((response) => {
         if (response.data.isSuccess) {
           const ordersByYear = response.data.result.filter(
@@ -69,22 +69,16 @@ export default function AppView() {
           );
           setPurchasedOrders(purchaseOrdersData.length || 0);
 
-          const completedOrdersData = ordersByYear.filter((order) => order.status === 'Completed');
+          const completedOrdersData = ordersByYear.filter((order) => order.status === 'Delivered');
 
           const cancelledOrdersData = ordersByYear.filter((order) => order.status === 'Cancelled');
           setCompletedOrders(completedOrdersData.length || 0);
 
           const soldProductsCount =
-            completedOrdersData.reduce((total, order) => {
-              const orderQuantity = order.cartLines.reduce((orderTotal, cartLine) => {
-                const cartLineQuantity = cartLine.cartLineItems.reduce(
-                  (cartLineTotal, item) => cartLineTotal + 1, // Assuming each item in cartLineItems represents one product
-                  0
-                );
-                return orderTotal + cartLineQuantity;
-              }, 0);
-              return total + orderQuantity;
-            }, 0) || 0;
+            completedOrdersData.reduce(
+              (total, order) => total + order.productDashboardDTOs.length,
+              0
+            ) || 0;
 
           setSoldProducts(soldProductsCount);
 
@@ -114,21 +108,19 @@ export default function AppView() {
             revenueByMonth[month] += order.totalPrice;
             completedOrdersByMonthTemp[month] += 1;
 
-            order.cartLines.forEach((cartLine) => {
-              cartLine.cartLineItems.forEach((item) => {
-                const category = item.product.subCategory.category.categoryName;
-                if (category) {
-                  if (!productCategoryCount[category]) {
-                    productCategoryCount[category] = 0;
-                  }
-                  productCategoryCount[category] += 1;
-
-                  if (!localProductCategoryByMonth[category]) {
-                    localProductCategoryByMonth[category] = Array(12).fill(0);
-                  }
-                  localProductCategoryByMonth[category][month] += 1;
+            order.productDashboardDTOs.forEach((item) => {
+              const category = `Category ${item.categoryId}`;
+              if (category) {
+                if (!productCategoryCount[category]) {
+                  productCategoryCount[category] = 0;
                 }
-              });
+                productCategoryCount[category] += 1;
+
+                if (!localProductCategoryByMonth[category]) {
+                  localProductCategoryByMonth[category] = Array(12).fill(0);
+                }
+                localProductCategoryByMonth[category][month] += 1;
+              }
             });
           });
 
