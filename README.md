@@ -1,4 +1,4 @@
-# ![408472](https://github.com/user-attachments/assets/c6aa3188-38dd-48b5-b16b-3afe71e214b5) Diamond Shop System - SWP391 project
+# Diamond Shop System - SWP391 project
 - Project Tracking
   
   https://docs.google.com/spreadsheets/d/1_KQ_Ekz96dBMHueeMBkS5EH1SxAo9njEWgm_3NB2ejU/edit?usp=sharing
@@ -42,6 +42,18 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 ### Sign in & Sign up
 ![image](https://github.com/user-attachments/assets/c0f06bfb-a845-4b98-82b2-712a5cf059bb)
 ![image](https://github.com/user-attachments/assets/a0d353a9-c831-4477-9dd8-01521d7893e6)
+### Home page
+![image](https://github.com/user-attachments/assets/d4c18100-6bc7-433e-877f-455aeb917389)
+### Product page
+![image](https://github.com/user-attachments/assets/5074d7fa-c752-4b93-90c9-248da9989e2b)
+### Product details page
+![image](https://github.com/user-attachments/assets/1bbb349d-5986-44d4-bbee-a4a2fbd7f5ca)
+### Shopping Cart page
+![image](https://github.com/user-attachments/assets/a58bf7dc-cdce-4099-addb-aca50488b152)
+### Discount Code page
+![image](https://github.com/user-attachments/assets/c4a198d5-ce33-48f2-906b-914aa5850824)
+### Checkout page
+![image](https://github.com/user-attachments/assets/09a6c612-0d8b-4d86-a80d-175310dee366)
+### Successful payment page
 
-###
 </details>
