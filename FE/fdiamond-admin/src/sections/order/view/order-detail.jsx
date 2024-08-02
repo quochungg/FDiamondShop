@@ -34,7 +34,7 @@ export default function OrderDetailPage() {
     const navigate = useNavigate();
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
-    let has4MinutesPassed;
+    let has2MinutesPassed;
 
     // Check if 4 minutes have passed since the order was placed
     if (orderData) {
@@ -48,7 +48,7 @@ export default function OrderDetailPage() {
 
         const differenceInMilliseconds = today.getTime() - orderDate.getTime();
 
-        has4MinutesPassed = differenceInMilliseconds >= 4 * 60 * 1000;
+        has2MinutesPassed = differenceInMilliseconds >= 2 * 60 * 1000;
     }
 
 
@@ -286,7 +286,7 @@ export default function OrderDetailPage() {
                             </Button>
 
                             {orderData.status === 'Ordered' && (
-                                has4MinutesPassed ? (
+                                has2MinutesPassed ? (
                                     <Button
                                         variant="contained"
                                         color="success"
