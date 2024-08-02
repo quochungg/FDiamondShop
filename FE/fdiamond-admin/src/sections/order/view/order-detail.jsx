@@ -36,7 +36,7 @@ export default function OrderDetailPage() {
 
     let has2MinutesPassed;
 
-    // Check if 4 minutes have passed since the order was placed
+    // Check if 2 minutes have passed since the order was placed
     if (orderData) {
         // Compare today's date with the order date based on milliseconds
 
