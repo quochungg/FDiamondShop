@@ -27,7 +27,7 @@ This is an online jewelry retailer specializing in custom-designed diamonds and 
 
   https://documenter.getpostman.com/view/36189969/2sA3kSoiHt
   
-- SRS 
+- SRS
 
   https://docs.google.com/document/d/1KStpC8Z2f0te3t9XLxPAABaqf7SuWLAN/edit?usp=sharing&ouid=108552960582977013912&rtpof=true&sd=true
 ## 1.Feature
