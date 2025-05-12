@@ -156,5 +156,5 @@ https://drive.google.com/file/d/1p8GJO6FrXx7xXIC5sYxDu3W2-M5W4R72/view?usp=shari
 ![image](https://github.com/user-attachments/assets/7d2dd642-c1b7-4fd3-8e90-9c79b51d3697)
 </details>
 
-## 4.ConcConclusion
+## 4.Conclusion
 The Diamond Shop System (SWP391) is a comprehensive solution tailored for online jewelry retail. It specializes in custom-designed diamonds and fine jewelry, leveraging advanced imaging technology and a user-centric design to offer customers an educational and transparent buying experience. This system includes features such as account management, product management, order processing, discount management, admin reporting, and delivery management. The backend and frontend teams have collaboratively developed a robust platform that ensures high-quality service, efficient order fulfillment, and a seamless user experience. Through continuous updates and enhancements, we are committed to maintaining exceptional customer service and ethical sourcing standards. Thank you for exploring our project. We welcome feedback and contributions to help us improve and expand the system.
