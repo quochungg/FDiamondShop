@@ -1,12 +1,12 @@
 # Diamond Shop System - SWP391 project
 # Team's Member
 
-- Front - end
+- Frontend
   
   - Nguyen Thi Bich Duyen - SE183629
   - Doan Dang Thien Bao - SE171827
     
-- Back - end
+- Backend
   
   - Nguyen Huu Quoc Hung - SE172905
   - Ha Duy Tung - SE173573
