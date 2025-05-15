@@ -84,61 +84,61 @@ We are committed to:
 
 ### 👤 Customer Pages
 
-- **Sign in & Sign up**
+- #### Sign In & Sign Up:
   ![Sign In](https://github.com/user-attachments/assets/c0f06bfb-a845-4b98-82b2-712a5cf059bb)
   ![Sign Up](https://github.com/user-attachments/assets/a0d353a9-c831-4477-9dd8-01521d7893e6)
 
-- **Home Page**
+- #### Home Page
   ![Home](https://github.com/user-attachments/assets/0a309469-f200-4406-8200-a545b41066ae)
 
-- **Product Listing**
+- #### Product Listing
   ![Products](https://github.com/user-attachments/assets/f2a2c754-7aeb-4f6a-b10f-c863d8853d98)
 
-- **Product Details**
+- #### Product Details
   ![Details](https://github.com/user-attachments/assets/53c16d8d-dd76-4661-aa08-ea3043e1af2f)
 
-- **Shopping Cart**
+- #### Shopping Cart
   ![Cart](https://github.com/user-attachments/assets/36bf6037-0ee8-4635-a9f2-829940301409)
 
-- **Discount Code**
+- #### Discount Code
   ![Discount](https://github.com/user-attachments/assets/7771cd5a-f412-47d6-85c3-afd8b5ddcc38)
 
-- **Checkout Page**
+- #### Checkout Page
   ![Checkout](https://github.com/user-attachments/assets/1e571ed5-963a-435d-858d-59f1ca38ff4d)
 
-- **Successful Payment**
+- #### Successful Payment
   ![Payment](https://github.com/user-attachments/assets/c32c7dde-b2b6-4b2c-9a6b-3c0e87e65324)
 
-- **Order History**
+- #### Order History
   ![History](https://github.com/user-attachments/assets/e78e3e65-5c28-4ebc-9181-0ab76be52b98)
 
-- **Account Detail**
+- #### Account Detail
   ![Account](https://github.com/user-attachments/assets/eac5d948-2853-4c44-8882-90b281ee472b)
 
 ### 🛠 Admin Pages
 
-- **Sign in & Sign up**
+- #### Sign in & Sign up
   ![Admin Sign In](https://github.com/user-attachments/assets/d7133f09-6dbb-40cd-ba78-bfb2fdac788c)
 
-- **Manage Staffs**
+- #### Manage Staffs
   ![Staffs](https://github.com/user-attachments/assets/67279aa5-06a3-42aa-8e22-21cf562ab254)
 
-- **Add New Staff**
+- #### Add New Staff
   ![New Staff](https://github.com/user-attachments/assets/30b2efc8-bce9-4301-8ee3-fd0224c16d8e)
 
-- **Manage Products**
+- #### Manage Products
   ![Manage Products](https://github.com/user-attachments/assets/67477c60-695d-4f8b-b272-8ea029e85360)
 
-- **Add New Product**
+- #### Add New Product
   ![New Product](https://github.com/user-attachments/assets/4eca187f-ab9e-4b2b-967d-72c82dfa708d)
 
-- **Manage Orders**
+- #### Manage Orders
   ![Orders](https://github.com/user-attachments/assets/6a7f80d7-368b-4267-b54c-610ec8071175)
 
-- **Order Details**
+- #### Order Details
   ![Order Detail](https://github.com/user-attachments/assets/4c892bc3-6390-46bf-ab12-352154074915)
 
-- **Add New Discount**
+- #### Add New Discount
   ![New Discount](https://github.com/user-attachments/assets/44020d25-080f-42cd-82b6-b28f5f0d6e2a)
 
 </details>
