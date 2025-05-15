@@ -84,7 +84,8 @@ We are committed to:
 
 ### 👤 Customer Pages
 
-- #### Sign In & Sign Up:
+- #### Sign In & Sign Up
+
   ![Sign In](https://github.com/user-attachments/assets/c0f06bfb-a845-4b98-82b2-712a5cf059bb)
   ![Sign Up](https://github.com/user-attachments/assets/a0d353a9-c831-4477-9dd8-01521d7893e6)
 
