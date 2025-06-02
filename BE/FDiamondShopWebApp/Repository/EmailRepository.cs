@@ -140,7 +140,7 @@ namespace FDiamondShop.API.Repository
             line-height: 1.6;
             text-align: center;
             background-color: #f4f4f4;asasas
-            margin: 0;
+            margin: 0;aaaa
             padding: 0;
         }}
         .container {{
