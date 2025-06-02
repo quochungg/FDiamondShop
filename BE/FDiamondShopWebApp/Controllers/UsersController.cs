@@ -284,7 +284,7 @@ namespace FDiamondShop.API.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
-                return Redirect("http://localhost:5173/verified-email");
+                return Redirect("http://fdiamond-api.azurewebsites.net/verified-email");
             }
             return BadRequest("Error confirming your email.");
         }
