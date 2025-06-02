@@ -139,7 +139,7 @@ namespace FDiamondShop.API.Repository
             font-family: Arial, sans-serif;
             line-height: 1.6;
             text-align: center;
-            background-color: #f4f4f4;
+            background-color: #f4f4f4;asasas
             margin: 0;
             padding: 0;
         }}
